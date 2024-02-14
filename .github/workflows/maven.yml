@@ -33,6 +33,18 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
+# 업로드 실행
+    - name : upload file
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SSH_IP }}
+        username: ${{ secrets.SSH_ID }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        source: "target/*.jar"
+        target: "~/"
+        rm: false
+
 # 쉘 스크립트 실행
     - name: execute shell script
       uses: appleboy/ssh-action@master
@@ -45,21 +57,5 @@ jobs:
         script: "./startup.sh" 
 
 # SonarQube 실행
-    - name: SonarQube Scan
-      uses: SonarSource/sonarqube-scan-action@master
-      env:
-        SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
-        SONAR_HOST_URL: ${{ secrets.SONARQUBE_SERVER_URL }}
-      with:
-        args: >
-          -Dsonar.projectKey=${{ secrets.SONARQUBE_PROJECT_KEY }}
-          -Dsonar.sources=.
-          -Dsonar.exclusions=**/*.html  
-		      -Dsonar.java.binaries=target/classes
-
-# 업로드 실행
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: my-artifact
-        path: target/*.jar
+    - name : Run SonarQube
+      run : mvn sonar:sonar -Dsonar.projectKey=my-books-resource -Dsonar.host.url=${{secrets.SONARQUBE_SERVER_URL}} -Dsonar.login=${{secrets.SONARQUBE_TOKEN}}
