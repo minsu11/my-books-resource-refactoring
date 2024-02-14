@@ -3,6 +3,7 @@ package store.mybooks.resource.book.entity;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,11 +39,11 @@ public class Book {
     @Column(name = "book_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_status_id")
     private BookStatus bookStatus;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "publisher_id")
     private Publisher publisher;
 
@@ -72,27 +73,27 @@ public class Book {
 
 
     @Column(name = "book_discount_rate")
-    private int bookDiscountRate;
+    private Integer bookDiscountRate;
 
     @Column(name = "book_stock")
-    private int bookStock;
+    private Integer bookStock;
 
     @Column(name = "book_viewcount")
-    private int bookViewCount;
+    private Integer bookViewCount;
 
 
     @Column(name = "book_total_score")
-    private int bookTotalScore;
+    private Integer bookTotalScore;
 
 
     @Column(name = "book_review_count")
-    private int bookReviewCount;
+    private Integer bookReviewCount;
 
     @Column(name = "book_like_count")
-    private int bookLikeCount;
+    private Integer bookLikeCount;
 
     @Column(name = "is_packaging")
-    private boolean isPackaging;
+    private Boolean isPackaging;
 
     @Column(name = "book_created_at")
     private LocalDate bookCreatedAt;
