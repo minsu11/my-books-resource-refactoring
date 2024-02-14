@@ -1,4 +1,4 @@
-package store.mybooks.resource.book_category;
+package store.mybooks.resource.book_tag.entity;
 
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -13,11 +13,11 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import store.mybooks.resource.book.entity.Book;
-import store.mybooks.resource.category.entity.Category;
+import store.mybooks.resource.tag.entity.Tag;
 
 /**
  * packageName    : store.mybooks.resource.domain.entity
- * fileName       : BookCategory
+ * fileName       : BookTag
  * author         : damho
  * date           : 2/13/24
  * description    :
@@ -27,15 +27,15 @@ import store.mybooks.resource.category.entity.Category;
  * 2/13/24        damho       최초 생성
  */
 @Entity
-@Table(name = "book_category")
-public class BookCategory {
+@Table(name = "book_tag")
+public class BookTag {
     @EmbeddedId
     private Pk pk;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
-    @MapsId(value = "categoryId")
-    private Category category;
+    @JoinColumn(name = "tag_id")
+    @MapsId(value = "tagId")
+    private Tag tag;
 
     @ManyToOne
     @JoinColumn(name = "book_id")
@@ -43,7 +43,7 @@ public class BookCategory {
     private Book book;
 
     /**
-     * BookCategory 의 Pk.
+     * BookTag 의 Pk .
      */
     @NoArgsConstructor
     @AllArgsConstructor
@@ -53,7 +53,7 @@ public class BookCategory {
         @Column(name = "book_id")
         private Long bookId;
 
-        @Column(name = "category_id")
-        private Integer categoryId;
+        @Column(name = "tag_id")
+        private Integer tagId;
     }
 }
