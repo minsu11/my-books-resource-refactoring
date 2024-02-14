@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * packageName    : store.mybooks.resource.domain.entity
+ * packageName    : store.mybooks.resource.point_name_rule.entity
  * fileName       : PointNameRule
  * author         : damho
  * date           : 2/13/24

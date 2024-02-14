@@ -3,6 +3,7 @@ package store.mybooks.resource.point_rule.entity;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,7 +13,7 @@ import javax.persistence.Table;
 import store.mybooks.resource.point_name_rule.entity.PointNameRule;
 
 /**
- * packageName    : store.mybooks.resource.domain.entity
+ * packageName    : store.mybooks.resource.point_rule.entity
  * fileName       : PointRule
  * author         : damho
  * date           : 2/13/24
@@ -30,7 +31,7 @@ public class PointRule {
     @Column(name = "point_rule_id")
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "point_name_id")
     private PointNameRule pointNameRule;
 
