@@ -16,7 +16,7 @@ import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.tag.entity.Tag;
 
 /**
- * packageName    : store.mybooks.resource.domain.entity
+ * packageName    : store.mybooks.resource.book_tag.entity
  * fileName       : BookTag
  * author         : damho
  * date           : 2/13/24

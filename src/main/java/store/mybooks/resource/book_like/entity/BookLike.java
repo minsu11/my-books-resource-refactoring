@@ -17,7 +17,7 @@ import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.user.entity.User;
 
 /**
- * packageName    : store.mybooks.resource.booklike.entity
+ * packageName    : store.mybooks.resource.book_like.entity
  * fileName       : BookLike
  * author         : newjaehun
  * date           : 2/13/24

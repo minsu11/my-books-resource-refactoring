@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * packageName    : store.mybooks.resource.domain.entity
+ * packageName    : store.mybooks.resource.category.entity
  * fileName       : Category
  * author         : damho
  * date           : 2/13/24

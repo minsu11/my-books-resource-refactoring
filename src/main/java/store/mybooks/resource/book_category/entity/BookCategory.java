@@ -16,7 +16,7 @@ import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.category.entity.Category;
 
 /**
- * packageName    : store.mybooks.resource.domain.entity
+ * packageName    : store.mybooks.resource.book_category.entity
  * fileName       : BookCategory
  * author         : damho
  * date           : 2/13/24
