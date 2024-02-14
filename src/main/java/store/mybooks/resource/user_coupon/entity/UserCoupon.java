@@ -14,7 +14,7 @@ import store.mybooks.resource.coupon.entity.Coupon;
 import store.mybooks.resource.user.entity.User;
 
 /**
- * packageName    : store.mybooks.resource.domain.entity
+ * packageName    : store.mybooks.resource.user_coupon.entity
  * fileName       : UserCoupon
  * author         : damho
  * date           : 2/13/24
