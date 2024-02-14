@@ -5,6 +5,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
@@ -17,7 +18,7 @@ import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.user.entity.User;
 
 /**
- * packageName    : store.mybooks.resource.booklike.entity
+ * packageName    : store.mybooks.resource.book_like.entity
  * fileName       : BookLike
  * author         : newjaehun
  * date           : 2/13/24
@@ -37,12 +38,12 @@ public class BookLike {
     private Pk pk;
 
     @MapsId("userId")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     @MapsId("bookId")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     private Book book;
 
@@ -56,9 +57,9 @@ public class BookLike {
     @Getter
     public static class Pk implements Serializable {
         @Column(name = "user_id")
-        private long userId;
+        private Long userId;
 
         @Column(name = "book_id")
-        private long bookId;
+        private Long bookId;
     }
 }

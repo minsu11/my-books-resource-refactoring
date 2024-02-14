@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * packageName    : store.mybooks.resource.bookstatus.entity
+ * packageName    : store.mybooks.resource.book_status.entity
  * fileName       : BookStatus
  * author         : newjaehun
  * date           : 2/13/24
