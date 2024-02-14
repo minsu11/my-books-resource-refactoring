@@ -2,6 +2,7 @@ package store.mybooks.resource.cart.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -9,7 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import store.mybooks.resource.user.entity.User;
 
@@ -26,16 +27,17 @@ import store.mybooks.resource.user.entity.User;
  */
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Getter
 @Entity
 @Table(name = "cart")
 public class Cart {
+
     @Id
-    @Column(name = "cart_id")
+    @Column(name = "cart_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }
