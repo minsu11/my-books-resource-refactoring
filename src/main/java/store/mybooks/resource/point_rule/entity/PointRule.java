@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import store.mybooks.resource.point_name_rule.entity.PointNameRule;
 
 /**
- * packageName    : store.mybooks.resource.domain.entity
+ * packageName    : store.mybooks.resource.point_rule.entity
  * fileName       : PointRule
  * author         : damho
  * date           : 2/13/24
