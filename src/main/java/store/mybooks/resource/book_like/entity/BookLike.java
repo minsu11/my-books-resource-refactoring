@@ -14,6 +14,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import store.mybooks.resource.book.entity.Book;
+import store.mybooks.resource.user.entity.User;
 
 /**
  * packageName    : store.mybooks.resource.booklike.entity

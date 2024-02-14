@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.category.entity.Category;
 
 /**

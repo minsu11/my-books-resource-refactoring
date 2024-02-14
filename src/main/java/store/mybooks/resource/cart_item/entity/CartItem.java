@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.cart.entity.Cart;
 
 /**

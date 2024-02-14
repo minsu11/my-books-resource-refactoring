@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import org.springframework.data.redis.core.RedisHash;
+import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.cart.entity.Cart;
 
 /**

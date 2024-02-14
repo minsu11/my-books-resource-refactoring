@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.Getter;
 import org.springframework.data.redis.core.RedisHash;
+import store.mybooks.resource.user.entity.User;
 
 /**
  * packageName    : store.mybooks.resource.cart.entity

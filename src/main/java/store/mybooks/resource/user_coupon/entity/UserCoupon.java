@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import store.mybooks.resource.coupon.entity.Coupon;
+import store.mybooks.resource.user.entity.User;
 
 /**
  * packageName    : store.mybooks.resource.domain.entity
