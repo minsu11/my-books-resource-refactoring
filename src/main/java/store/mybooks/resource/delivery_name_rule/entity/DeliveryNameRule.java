@@ -31,14 +31,14 @@ import lombok.NoArgsConstructor;
 public class DeliveryNameRule {
 
     @Id
-    @Column(name = "delivery_name_rule_id", nullable = false)
+    @Column(name = "delivery_name_rule_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "delivery_name", nullable = false)
+    @Column(name = "delivery_name")
     private String name;
 
-    @Column(name = "delivery_name_created_at", nullable = false)
+    @Column(name = "delivery_name_created_at")
     private LocalDate createdAt;
 
 }

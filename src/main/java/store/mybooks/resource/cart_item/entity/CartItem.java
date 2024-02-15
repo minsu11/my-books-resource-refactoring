@@ -34,18 +34,18 @@ import store.mybooks.resource.cart.entity.Cart;
 public class CartItem {
 
     @Id
-    @Column(name = "cart_detail_id", nullable = false)
+    @Column(name = "cart_detail_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "cart_detail_amount", nullable = false)
+    @Column(name = "cart_detail_amount")
     private Integer amount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id", nullable = false)
+    @JoinColumn(name = "cart_id")
     private Cart cart;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id", nullable = false)
+    @JoinColumn(name = "book_id")
     private Book book;
 }

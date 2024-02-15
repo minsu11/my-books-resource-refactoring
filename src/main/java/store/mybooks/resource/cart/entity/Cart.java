@@ -33,11 +33,11 @@ import store.mybooks.resource.user.entity.User;
 public class Cart {
 
     @Id
-    @Column(name = "cart_id", nullable = false)
+    @Column(name = "cart_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 }

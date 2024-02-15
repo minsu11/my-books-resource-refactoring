@@ -35,26 +35,26 @@ import store.mybooks.resource.delivery_name_rule.entity.DeliveryNameRule;
 public class DeliveryRule {
 
     @Id
-    @Column(name = "delivery_rule_id", nullable = false)
+    @Column(name = "delivery_rule_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "delivery_name_rule_id", nullable = false)
+    @JoinColumn(name = "delivery_name_rule_id")
     private DeliveryNameRule deliveryNameRule;
 
-    @Column(name = "delivery_company_name", nullable = false)
+    @Column(name = "delivery_company_name")
     private String companyName;
 
-    @Column(name = "delivery_cost", nullable = false)
+    @Column(name = "delivery_cost")
     private Integer cost;
 
-    @Column(name = "delivery_rule_cost", nullable = false)
+    @Column(name = "delivery_rule_cost")
     private Integer ruleCost;
 
-    @Column(name = "delivery_rule_created_at", nullable = false)
+    @Column(name = "delivery_rule_created_at")
     private LocalDate createdAt;
 
-    @Column(name = "is_available", nullable = false)
+    @Column(name = "is_available")
     private Boolean isAvailable;
 }
