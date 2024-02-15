@@ -57,9 +57,6 @@ public class User {
     @Column(name = "is_admin")
     private Boolean isAdmin;
 
-    @Column(name = "user_point")
-    private Integer point;
-
     @Column(name = "user_created_at")
     private LocalDateTime createdAt;
 
@@ -70,5 +67,7 @@ public class User {
     @Column(name = "user_delete_at")
     private LocalDateTime deleteAt;
 
+    @Column(name = "user_grade_changed_date")
+    private LocalDate gradeChangedDate;
 
 }
