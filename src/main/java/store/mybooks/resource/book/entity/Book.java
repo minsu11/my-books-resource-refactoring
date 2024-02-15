@@ -1,15 +1,7 @@
 package store.mybooks.resource.book.entity;
 
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -53,7 +45,7 @@ public class Book {
     @Column(name = "book_isbn")
     private String isbn;
 
-    @Column(name = "book_publishdate")
+    @Column(name = "book_publish_date")
     private LocalDate publishDate;
 
     @Column(name = "book_page")
@@ -78,7 +70,7 @@ public class Book {
     @Column(name = "book_stock")
     private Integer bookStock;
 
-    @Column(name = "book_viewcount")
+    @Column(name = "book_view_count")
     private Integer bookViewCount;
 
 
