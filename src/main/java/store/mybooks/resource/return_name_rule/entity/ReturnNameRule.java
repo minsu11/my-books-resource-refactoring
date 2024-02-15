@@ -36,10 +36,10 @@ public class ReturnNameRule {
     @Column(name = "return_name_rule_id")
     private Integer id;
 
-    @Column(name = "return_name", nullable = false)
+    @Column(name = "return_name")
     private String name;
 
-    @Column(name = "return_name_created_at", nullable = false)
+    @Column(name = "return_name_created_at")
     private LocalDate createdAt;
 
 }

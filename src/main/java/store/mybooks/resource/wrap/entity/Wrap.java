@@ -35,16 +35,16 @@ public class Wrap {
     @Column(name = "wrap_id")
     private Integer id;
 
-    @Column(name = "wrap_name", nullable = false)
+    @Column(name = "wrap_name")
     private String name;
 
-    @Column(name = "wrap_cost", nullable = false)
+    @Column(name = "wrap_cost")
     private Integer cost;
 
-    @Column(name = "wrap_created_at", nullable = false)
+    @Column(name = "wrap_created_at")
     private LocalDate createdAt;
 
-    @Column(name = "is_available", nullable = false)
+    @Column(name = "is_available")
     private Boolean isAvailable;
 
 }
