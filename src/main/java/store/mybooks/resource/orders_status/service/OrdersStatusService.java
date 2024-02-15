@@ -27,10 +27,10 @@ import store.mybooks.resource.orders_status.repository.OrdersStatusRepository;
 public class OrdersStatusService {
     private OrdersStatusRepository ordersStatusRepository;
 
-    public OrdersStatusResponse getOrdersStatusById(OrdersStatusRequest request) {
+    public OrdersStatusResponse getOrdersStatusById(String ordersStatusId) {
 
         OrdersStatus ordersStatus = ordersStatusRepository.findById(
-                request.getId()).orElseThrow(() -> new OrdersStatusNotFoundException());
+                ordersStatusId).orElseThrow(() -> new OrdersStatusNotFoundException());
         return ordersStatus.convertToOrdersStatusResponse();
     }
 
