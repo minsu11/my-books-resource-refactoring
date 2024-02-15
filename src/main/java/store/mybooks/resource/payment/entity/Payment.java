@@ -28,8 +28,8 @@ public class Payment {
     @Column(name = "payment_id")
     private Long id;
 
-    @Column(name = "payment_at")
-    private LocalDateTime dateAt;
+    @Column(name = "payment_created_at")
+    private LocalDateTime createdAt;
 
     @Column(name = "payment_order_number")
     private String orderNumber;
