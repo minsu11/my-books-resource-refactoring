@@ -4,8 +4,10 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import store.mybooks.resource.order_detail_status.dto.request.OrderDetailStatusRequest;
 import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusResponse;
 import store.mybooks.resource.order_detail_status.entity.OrderDetailStatus;
+import store.mybooks.resource.order_detail_status.exception.OrderDetailStatusAlreadyExistException;
 import store.mybooks.resource.order_detail_status.exception.OrderDetailStatusNotFoundException;
 import store.mybooks.resource.order_detail_status.repository.OrderDetailStatusRepository;
 
@@ -36,5 +38,14 @@ public class OrderDetailStatusService {
         return orderDetailStatusRepository.getOrderDetailStatusResponseList();
     }
 
+    public OrderDetailStatusResponse createOrderDetailStatus(OrderDetailStatusRequest request) {
+        if (orderDetailStatusRepository.findById(request.getId()).isPresent()) {
+            throw new OrderDetailStatusAlreadyExistException("이미 존재한 상태");
+        }
+        OrderDetailStatus orderDetailStatus = new OrderDetailStatus(request.getId());
+        orderDetailStatusRepository.save(orderDetailStatus);
+
+        return orderDetailStatus.convertToOrderDetailStatusResponse();
+    }
 
 }
