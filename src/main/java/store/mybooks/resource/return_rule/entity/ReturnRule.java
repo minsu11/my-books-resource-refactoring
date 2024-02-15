@@ -3,6 +3,7 @@ package store.mybooks.resource.return_rule.entity;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -36,20 +37,20 @@ public class ReturnRule {
     @Column(name = "return_rule_id")
     private Integer id;
 
-    @Column(name = "return_rule_delivery_fee", nullable = false)
+    @Column(name = "return_rule_delivery_fee")
     private Integer deliveryFee;
 
-    @Column(name = "return_rule_term", nullable = false)
+    @Column(name = "return_rule_term")
     private Integer term;
 
-    @Column(name = "is_available", nullable = false)
+    @Column(name = "is_available")
     private Boolean isAvailable;
 
-    @Column(name = "return_created_at", nullable = false)
+    @Column(name = "return_created_at")
     private LocalDate createdAt;
 
-    @ManyToOne
-    @JoinColumn(name = "return_name_rule_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "return_name_rule_id")
     private ReturnNameRule returnNameRule;
 
 }
