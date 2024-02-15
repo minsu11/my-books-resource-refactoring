@@ -30,7 +30,6 @@ public class UserStatus {
 
     @Id
     @Column(name = "user_status_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
 
