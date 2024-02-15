@@ -1,15 +1,7 @@
 package store.mybooks.resource.book.entity;
 
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -53,7 +45,7 @@ public class Book {
     @Column(name = "book_isbn")
     private String isbn;
 
-    @Column(name = "book_publishdate")
+    @Column(name = "book_publish_date")
     private LocalDate publishDate;
 
     @Column(name = "book_page")
@@ -73,28 +65,17 @@ public class Book {
 
 
     @Column(name = "book_discount_rate")
-    private Integer bookDiscountRate;
+    private Integer discountRate;
 
     @Column(name = "book_stock")
-    private Integer bookStock;
+    private Integer stock;
 
-    @Column(name = "book_viewcount")
-    private Integer bookViewCount;
-
-
-    @Column(name = "book_total_score")
-    private Integer bookTotalScore;
-
-
-    @Column(name = "book_review_count")
-    private Integer bookReviewCount;
-
-    @Column(name = "book_like_count")
-    private Integer bookLikeCount;
+    @Column(name = "book_view_count")
+    private Integer viewCount;
 
     @Column(name = "is_packaging")
     private Boolean isPackaging;
 
-    @Column(name = "book_created_at")
-    private LocalDate bookCreatedAt;
+    @Column(name = "book_created_date")
+    private LocalDate createdDate;
 }

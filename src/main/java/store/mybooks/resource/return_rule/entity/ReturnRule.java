@@ -1,15 +1,7 @@
 package store.mybooks.resource.return_rule.entity;
 
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,8 +38,8 @@ public class ReturnRule {
     @Column(name = "is_available")
     private Boolean isAvailable;
 
-    @Column(name = "return_created_at")
-    private LocalDate createdAt;
+    @Column(name = "return_created_date")
+    private LocalDate createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "return_name_rule_id")

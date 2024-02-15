@@ -1,12 +1,7 @@
 package store.mybooks.resource.tag.entity;
 
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * packageName    : store.mybooks.resource.domain.entity
@@ -30,6 +25,6 @@ public class Tag {
     @Column(name = "tag_name")
     private String name;
 
-    @Column(name = "tag_created_at")
-    private LocalDate createdAt;
+    @Column(name = "tag_created_date")
+    private LocalDate createdDate;
 }
