@@ -29,12 +29,9 @@ import lombok.NoArgsConstructor;
 public class UserStatus {
 
     @Id
-    @Column(name = "ust_status_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "user_status_id")
+    private String id;
 
-    @Column(name = "user_status_name")
-    private String name;
 
 
 }
