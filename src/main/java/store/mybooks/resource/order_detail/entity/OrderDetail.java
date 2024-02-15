@@ -43,28 +43,28 @@ public class OrderDetail {
     @Column(name = "order_detail_id")
     private Long id;
 
-    @Column(name = "book_cost", nullable = false)
+    @Column(name = "book_cost")
     private Integer bookCost;
 
-    @Column(name = "order_detail_amount", nullable = false)
+    @Column(name = "order_detail_amount")
     private Integer amount;
 
-    @Column(name = "is_coupon_used", nullable = false)
+    @Column(name = "is_coupon_used")
     private Boolean isCouponUsed;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
     private BookOrder bookOrder;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id", nullable = false)
+    @JoinColumn(name = "book_id")
     private Book book;
 
-    @ManyToOne
-    @JoinColumn(name = "order_detail_status_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_detail_status_id")
     private OrderDetailStatus detailStatus;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "user_coupon_id")
     private UserCoupon userCoupon;
 

@@ -35,7 +35,7 @@ public class OrderDetailStatus {
     @Column(name = "order_detail_id")
     private Long id;
 
-    @Column(name = "order_detail_status_name", nullable = false)
+    @Column(name = "order_detail_status_name")
     private String name;
 
 }

@@ -14,7 +14,6 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
 import store.mybooks.resource.orders_status.entity.OrdersStatus;
 import store.mybooks.resource.user.entity.User;
@@ -35,41 +34,39 @@ import store.mybooks.resource.wrap.entity.Wrap;
  */
 
 @Getter
-@Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "book_order")
 public class BookOrder {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
     private Long id;
 
-    @Column(name = "order_outdate", nullable = false)
+    @Column(name = "order_out_date")
     private LocalDate outDate;
 
-    @Column(name = "order_date", nullable = false)
+    @Column(name = "order_date")
     private LocalDate date;
 
     @Column(name = "order_invoice_number")
     private String invoiceNumber;
 
-    @Column(name = "order_receiver_name", nullable = false)
+    @Column(name = "order_receiver_name")
     private String receiverName;
 
-    @Column(name = "order_receiver_address", nullable = false)
+    @Column(name = "order_receiver_address")
     private String receiverAddress;
 
-    @Column(name = "order_receiver_phonenumber", nullable = false)
+    @Column(name = "order_receiver_phonenumber")
     private String receiverPhoneNumber;
 
     @Column(name = "order_receiver_message")
     private String receiverMessage;
 
-    @Column(name = "order_total_cost", nullable = false)
+    @Column(name = "order_total_cost")
     private Integer totalCost;
 
     @Column(name = "order_point_cost")
@@ -81,29 +78,29 @@ public class BookOrder {
     @Column(name = "is_coupon_used")
     private Boolean isCouponUsed;
 
-    @Column(name = "order_number", nullable = false)
+    @Column(name = "order_number")
     private String number;
 
     @Column(name = "order_find_password")
     private String findPassword;
 
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @JoinColumn(name = "orders_status_id", nullable = false)
+    @JoinColumn(name = "orders_status_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private OrdersStatus orderStatus;
 
-    @ManyToOne
-    @JoinColumn(name = "delivery_rule_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "delivery_rule_id")
     private DeliveryRule deliveryRule;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "user_coupon_id")
     private UserCoupon userCoupon;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "wrap_id")
     private Wrap wrap;
 
