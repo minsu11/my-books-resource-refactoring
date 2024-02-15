@@ -48,4 +48,10 @@ public class OrderDetailStatusService {
         return orderDetailStatus.convertToOrderDetailStatusResponse();
     }
 
+    public OrderDetailStatusResponse deleteOrderDetailStatus(String id) {
+        OrderDetailStatus orderDetailStatus = orderDetailStatusRepository.findById(id)
+                .orElseThrow(OrderDetailStatusNotFoundException::new);
+        orderDetailStatusRepository.delete(orderDetailStatus);
+        return orderDetailStatus.convertToOrderDetailStatusResponse();
+    }
 }
