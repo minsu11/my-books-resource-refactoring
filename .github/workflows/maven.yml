@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: JAVA CI
+name: Docker Image CI
 
 on:
   push:
@@ -33,17 +33,20 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
-# 업로드 실행
-    - name : upload file
-      uses: appleboy/scp-action@master
+# 도커 로그인
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
       with:
-        host: ${{ secrets.SSH_IP }}
-        username: ${{ secrets.SSH_ID }}
-        key: ${{ secrets.SSH_KEY }}
-        port: ${{ secrets.SSH_PORT }}
-        source: "target/*.jar"
-        target: "~/"
-        rm: false
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+# 도커 이미지 빌드
+    - name: Build the Docker image
+      run: docker build -t newjaehun/resource .
+      
+# 이미지 띄우기
+    - name: push Docker image
+      run: docker push newjaehun/resource
 
 # 쉘 스크립트 실행
     - name: execute shell script
@@ -55,7 +58,8 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         script_stop: true
         script: "./startup.sh" 
-
-# SonarQube 실행
+        
+# SonarQube 실행  
     - name : Run SonarQube
-      run : mvn sonar:sonar -Dsonar.projectKey=my-books-resource -Dsonar.host.url=${{secrets.SONARQUBE_SERVER_URL}} -Dsonar.login=${{secrets.SONARQUBE_TOKEN}}
+      run : mvn sonar:sonar -Dsonar.projectKey=my-books-resource -Dsonar.host.url=${{secrets.SONAR_HOST}} -Dsonar.login=${{secrets.SONAR_TOKEN}}
+
