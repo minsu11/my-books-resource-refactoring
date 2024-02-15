@@ -29,12 +29,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @Table(name = "orders_status")
 public class OrdersStatus {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "orders_status_id")
     private Integer id;
 
-    @Column(name = "order_status_name", nullable = false)
+    @Column(name = "order_status_name")
     private String name;
 }
