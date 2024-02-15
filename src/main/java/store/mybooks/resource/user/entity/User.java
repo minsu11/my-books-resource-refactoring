@@ -2,15 +2,7 @@ package store.mybooks.resource.user.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.Getter;
 import store.mybooks.resource.user_grade.entity.UserGrade;
 import store.mybooks.resource.user_status.entity.UserStatus;
@@ -51,7 +43,7 @@ public class User {
     @Column(name = "user_password")
     private String password;
 
-    @Column(name = "user_phonenumber")
+    @Column(name = "user_phone_number")
     private String phoneNumber;
 
     @Column(name = "user_email")
