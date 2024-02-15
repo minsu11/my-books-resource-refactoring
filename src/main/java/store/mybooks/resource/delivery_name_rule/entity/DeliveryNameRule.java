@@ -1,14 +1,9 @@
 package store.mybooks.resource.delivery_name_rule.entity;
 
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
@@ -24,7 +19,7 @@ import lombok.NoArgsConstructor;
  */
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Getter
 @Entity
 @Table(name = "delivery_name_rule")
 public class DeliveryNameRule {
@@ -37,7 +32,7 @@ public class DeliveryNameRule {
     @Column(name = "delivery_name")
     private String name;
 
-    @Column(name = "delivery_name_created_at")
-    private LocalDate createdAt;
+    @Column(name = "delivery_name_created_date")
+    private LocalDate createdDate;
 
 }

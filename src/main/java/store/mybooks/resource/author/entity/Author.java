@@ -1,12 +1,7 @@
 package store.mybooks.resource.author.entity;
 
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,6 +34,6 @@ public class Author {
     @Column(name = "author_content")
     private String content;
 
-    @Column(name = "author_created_at")
-    private LocalDate createdAt;
+    @Column(name = "author_created_date")
+    private LocalDate createdDate;
 }

@@ -5,6 +5,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
@@ -16,7 +17,7 @@ import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.category.entity.Category;
 
 /**
- * packageName    : store.mybooks.resource.domain.entity
+ * packageName    : store.mybooks.resource.book_category.entity
  * fileName       : BookCategory
  * author         : damho
  * date           : 2/13/24
@@ -32,12 +33,12 @@ public class BookCategory {
     @EmbeddedId
     private Pk pk;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     @MapsId(value = "categoryId")
     private Category category;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     @MapsId(value = "bookId")
     private Book book;

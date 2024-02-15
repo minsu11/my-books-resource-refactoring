@@ -1,19 +1,12 @@
 package store.mybooks.resource.coupon.entity;
 
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.category.entity.Category;
 
 /**
- * packageName    : store.mybooks.resource.domain.entity
+ * packageName    : store.mybooks.resource.coupon.entity
  * fileName       : Coupon
  * author         : damho
  * date           : 2/13/24
@@ -34,11 +27,11 @@ public class Coupon {
     @Column(name = "coupon_name")
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     private Book book;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
@@ -66,7 +59,7 @@ public class Coupon {
     @Column(name = "is_target_order")
     private Boolean isTargetOrder;
 
-    @Column(name = "coupon_created_at")
-    private LocalDate createdAt;
+    @Column(name = "coupon_created_date")
+    private LocalDate createdDate;
 
 }
