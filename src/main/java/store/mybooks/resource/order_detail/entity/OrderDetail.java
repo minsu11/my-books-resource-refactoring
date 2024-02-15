@@ -64,7 +64,7 @@ public class OrderDetail {
     @JoinColumn(name = "order_detail_status_id")
     private OrderDetailStatus detailStatus;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_coupon_id")
     private UserCoupon userCoupon;
 

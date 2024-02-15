@@ -96,7 +96,7 @@ public class BookOrder {
     @JoinColumn(name = "delivery_rule_id")
     private DeliveryRule deliveryRule;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_coupon_id")
     private UserCoupon userCoupon;
 
