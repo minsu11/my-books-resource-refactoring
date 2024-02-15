@@ -1,7 +1,9 @@
 package store.mybooks.resource.order_detail_status.service;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusResponse;
 import store.mybooks.resource.order_detail_status.entity.OrderDetailStatus;
 import store.mybooks.resource.order_detail_status.exception.OrderDetailStatusNotFoundException;
@@ -23,9 +25,16 @@ import store.mybooks.resource.order_detail_status.repository.OrderDetailStatusRe
 public class OrderDetailStatusService {
     private OrderDetailStatusRepository orderDetailStatusRepository;
 
+    @Transactional(readOnly = true)
     public OrderDetailStatusResponse getOrderDetailStatus(String id) {
         OrderDetailStatus orderDetailStatus = orderDetailStatusRepository.findById(id).orElseThrow(() -> new OrderDetailStatusNotFoundException("order detail이 없음"));
         return orderDetailStatus.convertToOrderDetailStatusResponse();
     }
-    
+
+    @Transactional(readOnly = true)
+    public List<OrderDetailStatusResponse> getOrderDetailStatusList() {
+        return orderDetailStatusRepository.getOrderDetailStatusResponseList();
+    }
+
+
 }
