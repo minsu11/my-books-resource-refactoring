@@ -1,6 +1,7 @@
 package store.mybooks.resource.category.entity;
 
 import java.time.LocalDate;
+import java.util.List;
 import javax.persistence.*;
 
 /**
@@ -22,8 +23,12 @@ public class Category {
     @Column(name = "category_id")
     private Integer id;
 
-    @Column(name = "parent_category_id")
-    private Integer parentCategoryId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_category_id")
+    private Category parentCategoryId;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentCategoryId")
+    private List<Category> childCategoryList;
 
     @Column(name = "category_name")
     private String name;
