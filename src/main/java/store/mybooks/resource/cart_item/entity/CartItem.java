@@ -2,15 +2,15 @@ package store.mybooks.resource.cart_item.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.cart.entity.Cart;
@@ -28,7 +28,7 @@ import store.mybooks.resource.cart.entity.Cart;
  */
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Getter
 @Entity
 @Table(name = "cart_detail")
 public class CartItem {
@@ -41,11 +41,11 @@ public class CartItem {
     @Column(name = "cart_detail_amount")
     private Integer amount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id")
     private Cart cart;
 
-    @OneToMany
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     private Book book;
 }
