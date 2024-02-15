@@ -3,7 +3,6 @@ package store.mybooks.resource.payment.entity;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,31 +29,31 @@ import store.mybooks.resource.book_order.entity.BookOrder;
 @Entity
 @Table(name = "payment")
 public class Payment {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "payment_id")
     private Long id;
 
-    @Column(name = "payment_datetime", nullable = false)
+    @Column(name = "payment_datetime")
     private LocalDateTime dateTime;
 
-    @Column(name = "payment_order_number", nullable = false)
+    @Column(name = "payment_order_number")
     private String orderNumber;
 
-    @Column(name = "payment_status", nullable = false)
+    @Column(name = "payment_status")
     private String status;
 
-    @Column(name = "payment_buyer", nullable = false)
+    @Column(name = "payment_buyer")
     private String buyer;
 
-    @Column(name = "payment_cost", nullable = false)
+    @Column(name = "payment_cost")
     private Integer cost;
 
-    @Column(name = "payment_type", nullable = false)
+    @Column(name = "payment_type")
     private String type;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "order_id")
     private BookOrder bookOrder;
 
