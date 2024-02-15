@@ -65,28 +65,17 @@ public class Book {
 
 
     @Column(name = "book_discount_rate")
-    private Integer bookDiscountRate;
+    private Integer discountRate;
 
     @Column(name = "book_stock")
-    private Integer bookStock;
+    private Integer stock;
 
     @Column(name = "book_view_count")
-    private Integer bookViewCount;
-
-
-    @Column(name = "book_total_score")
-    private Integer bookTotalScore;
-
-
-    @Column(name = "book_review_count")
-    private Integer bookReviewCount;
-
-    @Column(name = "book_like_count")
-    private Integer bookLikeCount;
+    private Integer viewCount;
 
     @Column(name = "is_packaging")
     private Boolean isPackaging;
 
-    @Column(name = "book_created_at")
-    private LocalDate bookCreatedAt;
+    @Column(name = "book_created_date")
+    private LocalDate createdDate;
 }
