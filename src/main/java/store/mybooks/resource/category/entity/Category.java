@@ -1,12 +1,7 @@
 package store.mybooks.resource.category.entity;
 
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * packageName    : store.mybooks.resource.category.entity
@@ -33,6 +28,6 @@ public class Category {
     @Column(name = "category_name")
     private String name;
 
-    @Column(name = "category_created_at")
-    private LocalDate createdAt;
+    @Column(name = "category_created_date")
+    private LocalDate createdDate;
 }
