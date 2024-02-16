@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
-import store.mybooks.resource.user.dto.request.UserDeleteRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
@@ -63,6 +62,7 @@ public class UserService {
         return resultUser.convertToCreateResponse();
     }
 
+    @Transactional
     public UserModifyResponse modifyUser(UserModifyRequest modifyRequest) {
 
         // 없으면 예외처리
@@ -81,7 +81,15 @@ public class UserService {
 
     }
 
-   
+    @Transactional
+    public UserDeleteResponse deleteUser(String email) {
+
+        userRepository.findByEmail(email).orElseThrow(UserNotExistException::new);
+
+        userRepository.deleteByEmail(email);
+
+        return new UserDeleteResponse("유저 삭제완료");
+    }
 
 
 }

@@ -3,6 +3,8 @@ package store.mybooks.resource.user.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
+import store.mybooks.resource.user.dto.response.UserDeleteResponse;
 import store.mybooks.resource.user.dto.response.UserModifyResponse;
 import store.mybooks.resource.user.service.UserService;
 
@@ -39,18 +42,27 @@ public class UserRestController {
             @RequestBody UserCreateRequest createRequest) {
 
 
-        UserCreateResponse user = userService.createUser(createRequest);
+        UserCreateResponse createResponse = userService.createUser(createRequest);
 
 
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+        return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<UserModifyResponse> modifyUser(@RequestBody UserModifyRequest modifyRequest) {
 
-        UserModifyResponse user = userService.modifyUser(modifyRequest);
+        UserModifyResponse modifyResponse = userService.modifyUser(modifyRequest);
 
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{email}")
+    public ResponseEntity<UserDeleteResponse> deleteUser(@PathVariable(name = "email") String email) {
+        UserDeleteResponse deleteResponse = userService.deleteUser(email);
+
+        System.out.println(deleteResponse.toString());
+
+        return new ResponseEntity<>(deleteResponse, HttpStatus.OK);
     }
 
 
