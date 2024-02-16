@@ -20,4 +20,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class OrdersStatusResponse {
     private String id;
+
 }
