@@ -4,10 +4,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import store.mybooks.resource.orders_status.dto.request.OrdersStatusRequest;
+import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 
 /**
  * packageName    : store.mybooks.resource.ordersstatus.entity
@@ -21,15 +20,20 @@ import lombok.Setter;
  * 2/13/24        minsu11       최초 생성
  */
 @Getter
-@Setter
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "orders_status")
 public class OrdersStatus {
-
-
     @Id
-    @Column(name = "order_status_id")
+    @Column(name = "orders_status_id")
     private String id;
+
+    public OrdersStatus(OrdersStatusRequest request) {
+        this.id = request.getId();
+    }
+
+    public OrdersStatusResponse convertToOrdersStatusResponse() {
+        return OrdersStatusResponse.builder()
+                .id(this.id)
+                .build();
+    }
 }
