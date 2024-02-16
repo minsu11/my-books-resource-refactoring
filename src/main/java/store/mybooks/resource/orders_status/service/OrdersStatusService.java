@@ -2,7 +2,7 @@ package store.mybooks.resource.orders_status.service;
 
 import java.util.List;
 import java.util.Objects;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import store.mybooks.resource.orders_status.dto.request.OrdersStatusCreateRequest;
 import store.mybooks.resource.orders_status.dto.request.OrdersStatusRequest;
@@ -25,9 +25,9 @@ import store.mybooks.resource.orders_status.repository.OrdersStatusRepository;
  * 2/15/24        minsu11       최초 생성
  */
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OrdersStatusService {
-    private OrdersStatusRepository ordersStatusRepository;
+    private final OrdersStatusRepository ordersStatusRepository;
 
     public OrdersStatusResponse getOrdersStatus(OrdersStatusRequest request) {
 
