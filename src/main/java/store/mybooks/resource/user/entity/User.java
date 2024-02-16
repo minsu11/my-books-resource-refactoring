@@ -77,13 +77,13 @@ public class User {
     private LocalDate gradeChangedDate;
 
 
-    public void setByCreateRequest(UserCreateRequest createRequest, UserStatus userStatus, UserGrade userGrade) {
+    public User(UserCreateRequest createRequest, UserStatus userStatus, UserGrade userGrade) {
         this.email = createRequest.getEmail();
         this.birth = createRequest.getBirth();
         this.password = createRequest.getPassword();
         this.phoneNumber = createRequest.getPhoneNumber();
         this.isAdmin = createRequest.getIsAdmin();
-        this.name = createRequest.getUserName();
+        this.name = createRequest.getName();
         this.userStatus = userStatus;
         this.userGrade = userGrade;
 
@@ -93,12 +93,13 @@ public class User {
         this.lastestLogin = null;
     }
 
-    public void setByModifyRequest(UserModifyRequest modifyRequest) {
+
+    public void setByModifyRequest(UserModifyRequest modifyRequest, UserStatus userStatus, UserGrade userGrade) {
 
         this.name = modifyRequest.getName();
         this.password = modifyRequest.getPassword();
-        this.userGrade = modifyRequest.getUserGradeName();
-        this.userStatus = modifyRequest.getUserStatusName();
+        this.userGrade = userGrade;
+        this.userStatus = userStatus;
     }
 
 
@@ -118,8 +119,8 @@ public class User {
         return UserModifyResponse.builder()
                 .name(this.name)
                 .password(this.password)
-                .userGradeName(this.userGrade)
-                .userStatusName(this.userStatus)
+                .userGradeName(this.userGrade.getName())
+                .userStatusName(this.userStatus.getId())
                 .build();
     }
 

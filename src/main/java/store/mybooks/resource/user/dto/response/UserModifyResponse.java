@@ -25,8 +25,8 @@ public class UserModifyResponse {
 
     private String name;
     private String password;
-    private UserStatus userStatusName;
-    private UserGrade userGradeName;
+    private String userStatusName;
+    private String userGradeName;
 
 
 }
