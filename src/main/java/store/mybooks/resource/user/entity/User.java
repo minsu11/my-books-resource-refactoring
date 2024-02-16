@@ -70,10 +70,10 @@ public class User {
 
 
     @Column(name = "user_latest_login_at")
-    private LocalDateTime lastestLogin;
+    private LocalDateTime latestLogin;
 
     @Column(name = "user_deleted_at")
-    private LocalDateTime deleteAt;
+    private LocalDateTime deletedAt;
 
     @Column(name = "user_grade_changed_date")
     private LocalDate gradeChangedDate;
@@ -91,8 +91,8 @@ public class User {
 
         this.createdAt = LocalDateTime.now();
         this.gradeChangedDate = null;
-        this.deleteAt = null;
-        this.lastestLogin = null;
+        this.deletedAt = null;
+        this.latestLogin = null;
     }
 
 
@@ -120,9 +120,9 @@ public class User {
 
         return UserModifyResponse.builder()
                 .name(this.name)
-                .password(this.password)
                 .userGradeName(this.userGrade.getName())
                 .userStatusName(this.userStatus.getId())
+                .phoneNumber(this.phoneNumber)
                 .build();
     }
 

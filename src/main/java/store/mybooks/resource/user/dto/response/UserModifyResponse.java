@@ -24,9 +24,10 @@ import store.mybooks.resource.user_status.entity.UserStatus;
 public class UserModifyResponse {
 
     private String name;
-    private String password;
     private String userStatusName;
     private String userGradeName;
+    private String phoneNumber;
+
 
 
 }
