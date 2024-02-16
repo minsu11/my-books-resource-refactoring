@@ -1,29 +1,23 @@
 package store.mybooks.resource.orders_status.dto.response;
 
-import com.querydsl.core.annotations.QueryProjection;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
  * packageName    : store.mybooks.resource.orders_status.dto.response
- * fileName       : OrdersStatusResponse
+ * fileName       : OrdersStatusCreateResponse
  * author         : minsu11
- * date           : 2/15/24
+ * date           : 2/16/24
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 2/15/24        minsu11       최초 생성
+ * 2/16/24        minsu11       최초 생성
  */
 @Getter
-@Builder
 @NoArgsConstructor
-public class OrdersStatusResponse {
+@AllArgsConstructor
+public class OrdersStatusCreateResponse {
     private String id;
-
-    @QueryProjection
-    public OrdersStatusResponse(String id) {
-        this.id = id;
-    }
 }
