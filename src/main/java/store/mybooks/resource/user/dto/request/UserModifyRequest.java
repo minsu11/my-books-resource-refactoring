@@ -2,6 +2,8 @@ package store.mybooks.resource.user.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import store.mybooks.resource.user_grade.entity.UserGrade;
+import store.mybooks.resource.user_status.entity.UserStatus;
 
 /**
  * packageName    : store.mybooks.resource.user.dto.request
@@ -19,12 +21,11 @@ import lombok.Getter;
 public class UserModifyRequest {
 
     private String name;
-
     private String email;
-
     private String password;
 
-    private String phoneNumber;
+    private UserStatus userStatusName;
+    private UserGrade userGradeName;
 
 
 }

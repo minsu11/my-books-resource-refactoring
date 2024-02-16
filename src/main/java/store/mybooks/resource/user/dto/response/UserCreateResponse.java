@@ -25,19 +25,14 @@ public class UserCreateResponse {
 
     private String name;
 
-    private String password;
-
-    private String phoneNumber;
-
     private String email;
 
     private LocalDate birth;
 
-    private UserStatus userStatusName;
+    private String userStatusName;
 
-    private UserGrade userGradeName;
+    private String userGradeName;
 
-    private LocalDateTime createdAt;
 
 
 }

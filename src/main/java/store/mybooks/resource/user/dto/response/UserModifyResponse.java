@@ -25,11 +25,8 @@ public class UserModifyResponse {
 
     private String name;
     private String password;
-    private String phoneNumber;
-    private LocalDate birth;
     private UserStatus userStatusName;
     private UserGrade userGradeName;
 
-    private LocalDateTime createdAt;
 
 }
