@@ -11,10 +11,10 @@ package store.mybooks.resource.user.exception;
  * -----------------------------------------------------------
  * 2/13/24        masiljangajji       최초 생성
  */
-public class UserAlreadyExistException extends RuntimeException{
+public class UserAlreadyExistException extends RuntimeException {
 
     // Custom Exception 이름이 곧 어떤 Exception임을 나타냄
-    public UserAlreadyExistException() {
-        super("이미 존재하는 유저");
+    public UserAlreadyExistException(String email) {
+        super(String.format("[%s]는 이미 존재하는 email입니다.", email));
     }
 }
