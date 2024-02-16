@@ -15,5 +15,5 @@ import lombok.Getter;
  */
 @Getter
 public class PublisherDeleteRequest {
-    private int id;
+    private Integer id;
 }

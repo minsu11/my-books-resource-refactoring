@@ -15,5 +15,5 @@ import lombok.Getter;
  */
 @Getter
 public class PublisherGetRequest {
-    private int id;
+    private Integer id;
 }

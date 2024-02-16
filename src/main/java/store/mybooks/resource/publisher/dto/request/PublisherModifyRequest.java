@@ -15,6 +15,6 @@ import lombok.Getter;
  */
 @Getter
 public class PublisherModifyRequest {
-    private int id;
+    private Integer id;
     private String changeName;
 }
