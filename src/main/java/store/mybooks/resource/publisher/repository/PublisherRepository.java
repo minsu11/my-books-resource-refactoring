@@ -1,6 +1,8 @@
 package store.mybooks.resource.publisher.repository;
 
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
 import store.mybooks.resource.publisher.entity.Publisher;
 
 /**
@@ -14,7 +16,7 @@ import store.mybooks.resource.publisher.entity.Publisher;
  * -----------------------------------------------------------
  * 2/14/24        newjaehun       최초 생성
  */
-public interface PublisherRepository extends JpaRepository<Publisher, Integer> {
-
+public interface PublisherRepository extends JpaRepository<Publisher, Integer>,  PublisherRepositoryCustom{
+    List<PublisherGetResponse> findAllBy();
     Boolean existsByName(String name);
 }

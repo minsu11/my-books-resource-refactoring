@@ -1,7 +1,6 @@
 package store.mybooks.resource.publisher.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,17 +33,7 @@ public class PublisherService {
 
     @Transactional(readOnly = true)
     public List<PublisherGetResponse> getAllPublisher() {
-        List<Publisher> publisherList = publisherRepository.findAll();
-        return publisherList.stream()
-                .map(Publisher::convertToGetResponse)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public PublisherGetResponse getPublisher(Integer publisherId) {
-        Publisher publisher =
-                publisherRepository.findById(publisherId).orElseThrow(PublisherNotExistException::new);
-        return publisher.convertToGetResponse();
+        return publisherRepository.findAllBy();
     }
 
     @Transactional

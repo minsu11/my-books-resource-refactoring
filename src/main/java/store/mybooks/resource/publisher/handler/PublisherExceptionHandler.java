@@ -23,6 +23,8 @@ public class PublisherExceptionHandler {
 
     @ExceptionHandler(PublisherNotExistException.class)
     public ResponseEntity<PublisherDeleteResponse> notExistException(){
-        return new ResponseEntity<>(new PublisherDeleteResponse("존재하지 않는 출판사"), HttpStatus.NOT_FOUND);
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new PublisherDeleteResponse("존재하지 않는 출판사"));
     }
 }
