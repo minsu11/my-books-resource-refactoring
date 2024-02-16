@@ -1,14 +1,7 @@
 package store.mybooks.resource.payment.entity;
 
 import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import store.mybooks.resource.book_order.entity.BookOrder;
@@ -35,8 +28,8 @@ public class Payment {
     @Column(name = "payment_id")
     private Long id;
 
-    @Column(name = "payment_datetime")
-    private LocalDateTime dateTime;
+    @Column(name = "payment_created_at")
+    private LocalDateTime createdAt;
 
     @Column(name = "payment_order_number")
     private String orderNumber;

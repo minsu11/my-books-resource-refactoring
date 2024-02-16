@@ -1,15 +1,8 @@
 package store.mybooks.resource.review.entity;
 
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import store.mybooks.resource.book.entity.Book;
+import javax.persistence.*;
+import store.mybooks.resource.order_detail.entity.OrderDetail;
 import store.mybooks.resource.user.entity.User;
 
 /**
@@ -33,17 +26,16 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name="user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name="book_id")
-    private Book book;
-
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_detail_id")
+    private OrderDetail orderDetail;
+    
     @Column(name = "review_rate")
     private Integer rate;
-
 
     @Column(name = "review_date")
     private LocalDate date;

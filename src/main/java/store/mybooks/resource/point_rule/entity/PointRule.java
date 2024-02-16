@@ -1,15 +1,7 @@
 package store.mybooks.resource.point_rule.entity;
 
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import store.mybooks.resource.point_name_rule.entity.PointNameRule;
 
 /**
@@ -41,6 +33,6 @@ public class PointRule {
     @Column(name = "point_rule_cost")
     private Integer cost;
 
-    @Column(name = "point_rule_created_at")
-    private LocalDate createdAt;
+    @Column(name = "point_rule_created_date")
+    private LocalDate createdDate;
 }
