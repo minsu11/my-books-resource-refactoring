@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.orders_status.dto.request.OrdersStatusRequest;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 import store.mybooks.resource.orders_status.entity.OrdersStatus;
@@ -16,7 +17,7 @@ import store.mybooks.resource.orders_status.repository.OrdersStatusRepository;
  * fileName       : OrdersStatusService
  * author         : minsu11
  * date           : 2/15/24
- * description    :
+ * description    : orders_status 테이블의 등록, 수정, 삭제 메서드를 담은 service
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
@@ -27,6 +28,7 @@ import store.mybooks.resource.orders_status.repository.OrdersStatusRepository;
 public class OrdersStatusService {
     private OrdersStatusRepository ordersStatusRepository;
 
+    @Transactional(readOnly = true)
     public OrdersStatusResponse getOrdersStatusById(String ordersStatusId) {
 
         OrdersStatus ordersStatus = ordersStatusRepository.findById(
@@ -34,6 +36,7 @@ public class OrdersStatusService {
         return ordersStatus.convertToOrdersStatusResponse();
     }
 
+    @Transactional(readOnly = true)
     public List<OrdersStatusResponse> getOrdersStatusList() {
         List<OrdersStatusResponse> ordersStatusResponses = ordersStatusRepository.getOrdersStatusList();
 
@@ -43,6 +46,7 @@ public class OrdersStatusService {
         return ordersStatusResponses;
     }
 
+    @Transactional
     public OrdersStatusResponse createOrdersStatus(OrdersStatusRequest request) {
         if (ordersStatusRepository.findById(request.getId()).isPresent()) {
             throw new OrdersStatusAlreadyExistException("order status 이미 존재");
@@ -53,12 +57,4 @@ public class OrdersStatusService {
     }
 
 
-    public OrdersStatusResponse deleteOrderStatus(OrdersStatusRequest request) {
-        if (!ordersStatusRepository.findById(request.getId()).isPresent()) {
-            throw new OrdersStatusNotFoundException("삭제할 order status 없음");
-        }
-        OrdersStatus ordersStatus = new OrdersStatus(request);
-        ordersStatusRepository.delete(ordersStatus);
-        return ordersStatus.convertToOrdersStatusResponse();
-    }
 }
