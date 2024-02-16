@@ -45,7 +45,7 @@ public class Publisher {
     @Column(name = "publisher_created_date")
     private LocalDate createdDate;
 
-    public void setByCreateRequest(PublisherCreateRequest createRequest) {
+    public Publisher(PublisherCreateRequest createRequest) {
         this.name = createRequest.getName();
         this.createdDate = LocalDate.now();
     }
