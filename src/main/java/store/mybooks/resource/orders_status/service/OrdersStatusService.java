@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.orders_status.dto.request.OrdersStatusRequest;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 import store.mybooks.resource.orders_status.entity.OrdersStatus;
-import store.mybooks.resource.orders_status.exception.OrdersStatusAlreadyExistException;
 import store.mybooks.resource.orders_status.exception.OrdersStatusNotFoundException;
 import store.mybooks.resource.orders_status.repository.OrdersStatusRepository;
 
@@ -48,10 +47,8 @@ public class OrdersStatusService {
 
     @Transactional
     public OrdersStatusResponse createOrdersStatus(OrdersStatusRequest request) {
-        if (ordersStatusRepository.findById(request.getId()).isPresent()) {
-            throw new OrdersStatusAlreadyExistException("order status 이미 존재");
-        }
-        OrdersStatus ordersStatus = new OrdersStatus(request);
+        OrdersStatus ordersStatus = ordersStatusRepository.findById(request.getId())
+                .orElseThrow(OrdersStatusNotFoundException::new);
         ordersStatusRepository.save(ordersStatus);
         return ordersStatus.convertToOrdersStatusResponse();
     }
