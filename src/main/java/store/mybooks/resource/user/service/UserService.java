@@ -15,9 +15,11 @@ import store.mybooks.resource.user.exception.UserNotExistException;
 import store.mybooks.resource.user.repository.UserRepository;
 import store.mybooks.resource.user_grade.entity.UserGrade;
 import store.mybooks.resource.user_grade.enumeration.UserGradeEnum;
+import store.mybooks.resource.user_grade.exception.UserGradeNotExistException;
 import store.mybooks.resource.user_grade.repository.UserGradeRepository;
 import store.mybooks.resource.user_status.entity.UserStatus;
 import store.mybooks.resource.user_status.enumeration.UserStatusEnum;
+import store.mybooks.resource.user_status.exception.UserStatusNotExistException;
 import store.mybooks.resource.user_status.repository.UserStatusRepository;
 
 /**
@@ -49,12 +51,16 @@ public class UserService {
 
         // 이미 존재하면 예외처리
         if (userRepository.findByEmail(createRequest.getEmail()).isPresent()) {
-            throw new UserAlreadyExistException();
+            throw new UserAlreadyExistException(createRequest.getEmail());
         }
 
+        String userStatusName = UserStatusEnum.ACTIVE.toString();
+        String userGradeName = UserGradeEnum.NORMAL.toString();
 
-        UserStatus userStatus = userStatusRepository.findById(UserStatusEnum.ACTIVE.toString()).orElseThrow();
-        UserGrade userGrade = userGradeRepository.findByName(UserGradeEnum.NORMAL.toString()).orElseThrow();
+        UserStatus userStatus = userStatusRepository.findById(userStatusName)
+                .orElseThrow(() -> new UserStatusNotExistException(userStatusName));
+        UserGrade userGrade = userGradeRepository.findByName(userGradeName)
+                .orElseThrow(() -> new UserGradeNotExistException(userGradeName));
 
         User user = new User(createRequest, userStatus, userGrade);
 
@@ -68,7 +74,7 @@ public class UserService {
 
         // 없으면 예외처리
         User user = userRepository.findByEmail(modifyRequest.getEmail())
-                .orElseThrow(UserNotExistException::new);
+                .orElseThrow(() -> new UserNotExistException(modifyRequest.getEmail()));
 
         UserStatus userStatus = userStatusRepository.findById(modifyRequest.getUserStatusName()).orElseThrow();
         UserGrade userGrade = userGradeRepository.findByName(modifyRequest.getUserGradeName()).orElseThrow();
@@ -76,26 +82,26 @@ public class UserService {
 
         user.setByModifyRequest(modifyRequest, userStatus, userGrade);
 
-        User resultUser = userRepository.save(user);
 
-        return resultUser.convertToModifyResponse();
+        return user.convertToModifyResponse();
 
     }
 
     @Transactional
     public UserDeleteResponse deleteUser(String email) {
 
-        userRepository.findByEmail(email).orElseThrow(UserNotExistException::new);
+        userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistException(email));
 
+        // 이거 소프트삭제로 변경 필요함
         userRepository.deleteByEmail(email);
 
-        return new UserDeleteResponse("유저 삭제완료");
+        return new UserDeleteResponse("유저 Soft 삭제완료");
     }
 
     @Transactional(readOnly = true)
     public UserGetResponse findByEmail(String email) {
 
-        userRepository.findByEmail(email).orElseThrow(UserNotExistException::new);
+        userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistException(email));
 
         return userRepository.queryByEmail(email);
     }
