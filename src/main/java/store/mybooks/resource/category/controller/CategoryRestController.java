@@ -54,7 +54,7 @@ public class CategoryRestController {
      * @return response entity
      */
     @GetMapping("/{id}")
-    public ResponseEntity<List<CategoryGetResponse>> getCategoriesByParentCategoryId(@PathVariable("id") int id) {
+    public ResponseEntity<List<CategoryGetResponse>> getCategoriesByParentCategoryId(@PathVariable("id") Integer id) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(categoryService.getCategoriesByParentCategoryId(id));
@@ -69,9 +69,12 @@ public class CategoryRestController {
      * @return response entity
      */
     @PostMapping
-    public ResponseEntity<CategoryCreateResponse> createPost(@RequestBody CategoryCreateRequest categoryCreateRequest) {
+    public ResponseEntity<CategoryCreateResponse> createCategory(
+            @RequestBody CategoryCreateRequest categoryCreateRequest) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(categoryService.createCategory(categoryCreateRequest));
     }
+
+
 }

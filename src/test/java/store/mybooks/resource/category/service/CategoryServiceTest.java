@@ -43,7 +43,7 @@ class CategoryServiceTest {
         categoryGetResponseList.add(new CategoryGetResponse() {
             @Override
             public Integer getId() {
-                return 1;
+                return (Integer) 1;
             }
 
             @Override
@@ -76,7 +76,7 @@ class CategoryServiceTest {
         categoryGetResponseList.add(new CategoryGetResponse() {
             @Override
             public Integer getId() {
-                return 2;
+                return (Integer) 2;
             }
 
             @Override
@@ -84,7 +84,7 @@ class CategoryServiceTest {
                 return new CategoryGetResponse() {
                     @Override
                     public Integer getId() {
-                        return 1;
+                        return (Integer) 1;
                     }
 
                     @Override
