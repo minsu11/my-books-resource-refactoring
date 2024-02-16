@@ -26,26 +26,25 @@ import store.mybooks.resource.user_status.entity.UserStatus;
  * 2/16/24        masiljangajji       최초 생성
  */
 
-@Builder
-@Getter
-public class UserGetResponse {
 
-    private String userGradeName;
+public interface UserGetResponse {
 
-    private String userStatusName;
+    String getUserGradeName();
 
-    private String name;
+    String getUserStatusId();
 
-    private String phoneNumber;
+    String getName();
 
-    private String email;
+    String getPhoneNumber();
 
-    private LocalDate birth;
+    String getEmail();
 
-    private LocalDateTime createdAt;
+    LocalDate getBirth();
 
-    private LocalDateTime lastestLogin;
+    LocalDateTime getCreatedAt();
 
-    private LocalDate gradeChangedDate;
+    LocalDateTime getLastestLogin();
+
+    LocalDate getGradeChangedDate();
 
 }

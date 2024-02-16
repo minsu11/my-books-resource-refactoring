@@ -126,19 +126,4 @@ public class User {
                 .build();
     }
 
-    public UserGetResponse convertToGetResponse() {
-
-        return UserGetResponse.builder()
-                .birth(this.birth)
-                .gradeChangedDate(this.gradeChangedDate)
-                .createdAt(this.createdAt)
-                .email(this.email)
-                .lastestLogin(this.lastestLogin)
-                .name(this.name)
-                .phoneNumber(this.phoneNumber)
-                .userGradeName(this.userGrade.getName())
-                .userStatusName(this.userStatus.getId())
-                .build();
-    }
-
 }

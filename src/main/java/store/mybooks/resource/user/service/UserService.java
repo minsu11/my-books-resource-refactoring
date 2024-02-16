@@ -95,8 +95,9 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserGetResponse findByEmail(String email) {
 
-        User user = userRepository.findByEmail(email).orElseThrow(UserNotExistException::new);
-        return user.convertToGetResponse();
+        userRepository.findByEmail(email).orElseThrow(UserNotExistException::new);
+
+        return userRepository.queryByEmail(email);
     }
 
 
