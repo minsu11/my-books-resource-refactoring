@@ -35,15 +35,16 @@ public class PublisherService {
 
     public List<PublisherGetResponse> getAllPublisher() {
         List<Publisher> publisherList = publisherRepository.findAll();
+        PublisherGetResponse getResponse;
         return publisherList.stream()
-                .map(publisher -> new PublisherGetResponse(publisher.getId(), publisher.getName()))
+                .map(publisher -> publisher.convertToGetResponse())
                 .collect(Collectors.toList());
     }
 
     public PublisherGetResponse getPublisher(PublisherGetRequest getRequest) {
         Publisher publisher =
                 publisherRepository.findById(getRequest.getId()).orElseThrow(PublisherNotExistException::new);
-        return new PublisherGetResponse(publisher.getId(), publisher.getName());
+        return publisher.convertToGetResponse();
     }
 
     public PublisherCreateResponse createPublisher(PublisherCreateRequest createRequest) {
