@@ -59,7 +59,7 @@ public class PublisherRestController {
 
     @PutMapping
     public ResponseEntity<PublisherModifyResponse> modifyPublisher(@RequestBody PublisherModifyRequest modifyRequest) {
-        PublisherModifyResponse modifyPublisher = publisherService.modifyPublisherInfo(modifyRequest);
+        PublisherModifyResponse modifyPublisher = publisherService.modifyPublisher(modifyRequest);
         return new ResponseEntity<>(modifyPublisher, HttpStatus.OK);
     }
 
