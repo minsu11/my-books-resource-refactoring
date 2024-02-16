@@ -57,7 +57,7 @@ public class PublisherService {
         return resultPublisher.convertToCreateResponse();
     }
 
-    public PublisherModifyResponse modifyPublisherInfo(PublisherModifyRequest modifyRequest) {
+    public PublisherModifyResponse modifyPublisher(PublisherModifyRequest modifyRequest) {
         Publisher publisher =
                 publisherRepository.findById(modifyRequest.getId()).orElseThrow(PublisherNotExistException::new);
         publisher.setByModifyRequest(modifyRequest);
