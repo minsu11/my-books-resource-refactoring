@@ -62,4 +62,3 @@ jobs:
 # SonarQube 실행  
     - name : Run SonarQube
       run : mvn sonar:sonar -Dsonar.projectKey=my-books-resource -Dsonar.host.url=${{secrets.SONAR_HOST}} -Dsonar.login=${{secrets.SONAR_TOKEN}}
-
