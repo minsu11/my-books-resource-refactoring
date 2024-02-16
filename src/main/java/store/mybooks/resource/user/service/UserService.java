@@ -44,7 +44,7 @@ public class UserService {
 
     private final UserGradeRepository userGradeRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public UserCreateResponse createUser(UserCreateRequest createRequest) {
 
         // 이미 존재하면 예외처리
@@ -56,16 +56,32 @@ public class UserService {
         UserStatus userStatus = userStatusRepository.findById(UserStatusEnum.ACTIVE.toString()).orElseThrow();
         UserGrade userGrade = userGradeRepository.findByName(UserGradeEnum.NORMAL.toString()).orElseThrow();
 
-        User user = new User();
-        user.setByCreateRequest(createRequest, userStatus, userGrade);
-
+        User user = new User(createRequest, userStatus, userGrade);
 
         User resultUser = userRepository.save(user);
 
         return resultUser.convertToCreateResponse();
     }
 
-    
+    public UserModifyResponse modifyUser(UserModifyRequest modifyRequest) {
+
+        // 없으면 예외처리
+        User user = userRepository.findByEmail(modifyRequest.getEmail())
+                .orElseThrow(UserNotExistException::new);
+
+        UserStatus userStatus = userStatusRepository.findById(modifyRequest.getUserStatusName()).orElseThrow();
+        UserGrade userGrade = userGradeRepository.findByName(modifyRequest.getUserGradeName()).orElseThrow();
+
+
+        user.setByModifyRequest(modifyRequest, userStatus, userGrade);
+
+        User resultUser = userRepository.save(user);
+
+        return resultUser.convertToModifyResponse();
+
+    }
+
+   
 
 
 }
