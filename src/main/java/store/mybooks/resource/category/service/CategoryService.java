@@ -1,12 +1,16 @@
 package store.mybooks.resource.category.service;
 
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.category.dto.request.CategoryCreateRequest;
+import store.mybooks.resource.category.dto.request.CategoryModifyRequest;
 import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
+import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
+import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 import store.mybooks.resource.category.entity.Category;
 import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
@@ -43,7 +47,7 @@ public class CategoryService {
      */
     @Transactional(readOnly = true)
     public List<CategoryGetResponse> getCategoriesByParentCategoryId(int id) {
-        if (!categoryRepository.existsById((Integer) id)) {
+        if (!categoryRepository.existsById(id)) {
             throw new CategoryNotExistsException();
         }
 
@@ -65,5 +69,60 @@ public class CategoryService {
         }
 
         return categoryRepository.save(new Category(categoryCreateRequest)).convertToCategoryCreateResponse();
+    }
+
+    /**
+     * methodName : modifyCategory
+     * author : damho-lee
+     * description : category 수정.
+     *
+     * @param id                    수정하려는 category 의 id. 존재하지 않으면 CategoryNotExistsException.
+     * @param categoryModifyRequest ParentCategoryId, name 포함.
+     *                              ParentCategoryId 가 Null 이 아니고 존재하지 않으면 CategoryNotExistsException .
+     * @return category modify response
+     */
+    @Transactional
+    public CategoryModifyResponse modifyCategory(int id, CategoryModifyRequest categoryModifyRequest) {
+        Optional<Category> optionalCategory = categoryRepository.findById(id);
+        if (optionalCategory.isEmpty()) {
+            throw new CategoryNotExistsException();
+        }
+
+        Category parentCategory = null;
+        Integer parentCategoryId = categoryModifyRequest.getParentCategoryId();
+        if (parentCategoryId != null) {
+            Optional<Category> optionalParentCategory = categoryRepository.findById(parentCategoryId);
+            if (optionalParentCategory.isEmpty()) {
+                throw new CategoryNotExistsException();
+            }
+
+            parentCategory = optionalParentCategory.get();
+        }
+
+        Category category = optionalCategory.get();
+        return category.modifyCategory(parentCategory, categoryModifyRequest.getName());
+    }
+
+    /**
+     * methodName : deleteCategory
+     * author : damho-lee
+     * description : id 를 통해 category 삭제.
+     *
+     * @param id 삭제하고자 하는 카테고리의 id. id 에 해당하는 category 가 없는 경우 CategoryNotExistsException.
+     * @return CategoryDeleteResponse
+     */
+    @Transactional
+    public CategoryDeleteResponse deleteCategory(int id) {
+        Optional<Category> optionalCategory = categoryRepository.findById(id);
+
+        if (optionalCategory.isEmpty()) {
+            throw new CategoryNotExistsException();
+        }
+
+        categoryRepository.deleteById(id);
+
+        return CategoryDeleteResponse.builder()
+                .name(optionalCategory.get().getName())
+                .build();
     }
 }

@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import store.mybooks.resource.category.dto.request.CategoryCreateRequest;
 import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
+import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 
 /**
  * packageName    : store.mybooks.resource.category.entity
@@ -73,6 +74,27 @@ public class Category {
      */
     public CategoryCreateResponse convertToCategoryCreateResponse() {
         return CategoryCreateResponse.builder()
+                .name(this.name)
+                .build();
+    }
+
+
+    /**
+     * methodName : modifyCategory
+     * author : damho-lee
+     * description : 카테고리 수정.
+     *
+     * @param parentCategory 부모 카테고리. null 인 경우 최상위 카테고리.
+     * @param name           카테고리 이름.
+     * @return CategoryModifyResponse
+     */
+    public CategoryModifyResponse modifyCategory(Category parentCategory, String name) {
+        this.parentCategory = parentCategory;
+        this.name = name;
+
+        return CategoryModifyResponse.builder()
+                .parentCategoryId(this.parentCategory.getId())
+                .parentCategoryName(this.parentCategory.getName())
                 .name(this.name)
                 .build();
     }
