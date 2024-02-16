@@ -4,9 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.publisher.dto.request.PublisherCreateRequest;
-import store.mybooks.resource.publisher.dto.request.PublisherDeleteRequest;
-import store.mybooks.resource.publisher.dto.request.PublisherGetRequest;
 import store.mybooks.resource.publisher.dto.request.PublisherModifyRequest;
 import store.mybooks.resource.publisher.dto.response.PublisherCreateResponse;
 import store.mybooks.resource.publisher.dto.response.PublisherDeleteResponse;
@@ -33,6 +32,7 @@ import store.mybooks.resource.publisher.repository.PublisherRepository;
 public class PublisherService {
     private final PublisherRepository publisherRepository;
 
+    @Transactional(readOnly = true)
     public List<PublisherGetResponse> getAllPublisher() {
         List<Publisher> publisherList = publisherRepository.findAll();
         return publisherList.stream()
@@ -40,36 +40,37 @@ public class PublisherService {
                 .collect(Collectors.toList());
     }
 
-    public PublisherGetResponse getPublisher(PublisherGetRequest getRequest) {
+    @Transactional(readOnly = true)
+    public PublisherGetResponse getPublisher(Integer publisherId) {
         Publisher publisher =
-                publisherRepository.findById(getRequest.getId()).orElseThrow(PublisherNotExistException::new);
+                publisherRepository.findById(publisherId).orElseThrow(PublisherNotExistException::new);
         return publisher.convertToGetResponse();
     }
 
+    @Transactional
     public PublisherCreateResponse createPublisher(PublisherCreateRequest createRequest) {
-        Publisher publisher = new Publisher();
-        publisher.setByCreateRequest(createRequest);
+        Publisher publisher = new Publisher(createRequest);
 
-        if (publisherRepository.findByName(createRequest.getName()).isPresent()) {
+        if(Boolean.TRUE.equals(publisherRepository.existsByName(createRequest.getName()))){
             throw new PublisherAlreadyExistException();
         }
+
         Publisher resultPublisher = publisherRepository.save(publisher);
         return resultPublisher.convertToCreateResponse();
     }
 
+    @Transactional
     public PublisherModifyResponse modifyPublisher(PublisherModifyRequest modifyRequest) {
         Publisher publisher =
                 publisherRepository.findById(modifyRequest.getId()).orElseThrow(PublisherNotExistException::new);
         publisher.setByModifyRequest(modifyRequest);
-        Publisher resultPublisher = publisherRepository.save(publisher);
-        return resultPublisher.convertToModifyResponse();
+        return publisher.convertToModifyResponse();
     }
 
-
-    public PublisherDeleteResponse deletePublisher(PublisherDeleteRequest deleteRequest) {
+    @Transactional
+    public PublisherDeleteResponse deletePublisher(Integer publisherId) {
         Publisher publisher =
-                publisherRepository.findById(deleteRequest.getId()).orElseThrow(PublisherNotExistException::new);
-
+                publisherRepository.findById(publisherId).orElseThrow(PublisherNotExistException::new);
         publisherRepository.delete(publisher);
         return new PublisherDeleteResponse("출판사명: " + publisher.getName() + " 삭제 성공");
     }
