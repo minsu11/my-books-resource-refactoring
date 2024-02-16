@@ -35,9 +35,8 @@ public class PublisherService {
 
     public List<PublisherGetResponse> getAllPublisher() {
         List<Publisher> publisherList = publisherRepository.findAll();
-        PublisherGetResponse getResponse;
         return publisherList.stream()
-                .map(publisher -> publisher.convertToGetResponse())
+                .map(Publisher::convertToGetResponse)
                 .collect(Collectors.toList());
     }
 
@@ -72,7 +71,7 @@ public class PublisherService {
                 publisherRepository.findById(deleteRequest.getId()).orElseThrow(PublisherNotExistException::new);
 
         publisherRepository.delete(publisher);
-        return new PublisherDeleteResponse("출판사: " + publisher.getName() + " 삭제 성공");
+        return new PublisherDeleteResponse("출판사명: " + publisher.getName() + " 삭제 성공");
     }
 
 }
