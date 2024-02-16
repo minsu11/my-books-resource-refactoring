@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import store.mybooks.resource.orders_status.dto.request.OrdersStatusCreateRequest;
 import store.mybooks.resource.orders_status.dto.request.OrdersStatusRequest;
+import store.mybooks.resource.orders_status.dto.response.OrdersStatusCreateResponse;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 import store.mybooks.resource.orders_status.service.OrdersStatusService;
 
@@ -42,10 +44,10 @@ public class OrdersStatusController {
     }
 
     @PostMapping
-    public ResponseEntity<OrdersStatusResponse> createOrdersStatus(
-            @RequestBody OrdersStatusRequest request
+    public ResponseEntity<OrdersStatusCreateResponse> createOrdersStatus(
+            @RequestBody OrdersStatusCreateRequest request
     ) {
-        OrdersStatusResponse response = ordersStatusService.createOrdersStatus(request);
+        OrdersStatusCreateResponse response = ordersStatusService.createOrdersStatus(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
