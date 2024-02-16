@@ -9,6 +9,8 @@ import org.hibernate.mapping.Bag;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
+import store.mybooks.resource.user.dto.response.UserDeleteResponse;
+import store.mybooks.resource.user.dto.response.UserGetResponse;
 import store.mybooks.resource.user.dto.response.UserModifyResponse;
 import store.mybooks.resource.user_grade.entity.UserGrade;
 import store.mybooks.resource.user_status.entity.UserStatus;
@@ -119,6 +121,21 @@ public class User {
         return UserModifyResponse.builder()
                 .name(this.name)
                 .password(this.password)
+                .userGradeName(this.userGrade.getName())
+                .userStatusName(this.userStatus.getId())
+                .build();
+    }
+
+    public UserGetResponse convertToGetResponse() {
+
+        return UserGetResponse.builder()
+                .birth(this.birth)
+                .gradeChangedDate(this.gradeChangedDate)
+                .createdAt(this.createdAt)
+                .email(this.email)
+                .lastestLogin(this.lastestLogin)
+                .name(this.name)
+                .phoneNumber(this.phoneNumber)
                 .userGradeName(this.userGrade.getName())
                 .userStatusName(this.userStatus.getId())
                 .build();

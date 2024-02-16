@@ -7,6 +7,7 @@ import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
+import store.mybooks.resource.user.dto.response.UserGetResponse;
 import store.mybooks.resource.user.dto.response.UserModifyResponse;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user.exception.UserAlreadyExistException;
@@ -89,6 +90,13 @@ public class UserService {
         userRepository.deleteByEmail(email);
 
         return new UserDeleteResponse("유저 삭제완료");
+    }
+
+    @Transactional(readOnly = true)
+    public UserGetResponse findByEmail(String email) {
+
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotExistException::new);
+        return user.convertToGetResponse();
     }
 
 
