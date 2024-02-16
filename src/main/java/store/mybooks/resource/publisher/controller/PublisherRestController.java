@@ -40,32 +40,35 @@ public class PublisherRestController {
     @GetMapping
     public ResponseEntity<List<PublisherGetResponse>> getAllPublishers() {
         List<PublisherGetResponse> publishers = publisherService.getAllPublisher();
-        return new ResponseEntity<>(publishers, HttpStatus.OK);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<PublisherGetResponse> getPublisher(@PathVariable("id") Integer publisherId) {
-        PublisherGetResponse getResponse = publisherService.getPublisher(publisherId);
-        return new ResponseEntity<>(getResponse, HttpStatus.OK);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(publishers);
     }
 
     @PostMapping
     public ResponseEntity<PublisherCreateResponse> createPublisher(
             @RequestBody PublisherCreateRequest createRequest) {
         PublisherCreateResponse createPublisher = publisherService.createPublisher(createRequest);
-        return new ResponseEntity<>(createPublisher, HttpStatus.CREATED);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(createPublisher);
     }
 
     @PutMapping
     public ResponseEntity<PublisherModifyResponse> modifyPublisher(@RequestBody PublisherModifyRequest modifyRequest) {
         PublisherModifyResponse modifyPublisher = publisherService.modifyPublisher(modifyRequest);
-        return new ResponseEntity<>(modifyPublisher, HttpStatus.OK);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(modifyPublisher);
     }
 
 
     @DeleteMapping("/{id}")
     public ResponseEntity<PublisherDeleteResponse> deletePublisher(@PathVariable("id") Integer publisherId) {
         PublisherDeleteResponse deleteResponse = publisherService.deletePublisher(publisherId);
-        return new ResponseEntity<>(deleteResponse, HttpStatus.OK);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(deleteResponse);
+
     }
 }
