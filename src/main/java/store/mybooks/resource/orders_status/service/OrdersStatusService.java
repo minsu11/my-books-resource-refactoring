@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import store.mybooks.resource.orders_status.dto.request.OrdersStatusCreateRequest;
 import store.mybooks.resource.orders_status.dto.request.OrdersStatusRequest;
+import store.mybooks.resource.orders_status.dto.response.OrdersStatusCreateResponse;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 import store.mybooks.resource.orders_status.entity.OrdersStatus;
 import store.mybooks.resource.orders_status.exception.OrdersStatusAlreadyExistException;
@@ -43,13 +45,13 @@ public class OrdersStatusService {
         return ordersStatusResponses;
     }
 
-    public OrdersStatusResponse createOrdersStatus(OrdersStatusRequest request) {
+    public OrdersStatusCreateResponse createOrdersStatus(OrdersStatusCreateRequest request) {
         if (ordersStatusRepository.findById(request.getId()).isPresent()) {
             throw new OrdersStatusAlreadyExistException("order status 이미 존재");
         }
         OrdersStatus ordersStatus = new OrdersStatus(request);
         ordersStatusRepository.save(ordersStatus);
-        return ordersStatus.convertToOrdersStatusResponse();
+        return ordersStatus.convertToOrdersStatusCreateResponse();
     }
 
 

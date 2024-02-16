@@ -5,7 +5,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Getter;
+import store.mybooks.resource.orders_status.dto.request.OrdersStatusCreateRequest;
 import store.mybooks.resource.orders_status.dto.request.OrdersStatusRequest;
+import store.mybooks.resource.orders_status.dto.response.OrdersStatusCreateResponse;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 
 /**
@@ -31,8 +33,18 @@ public class OrdersStatus {
         this.id = request.getId();
     }
 
+    public OrdersStatus(OrdersStatusCreateRequest request) {
+        this.id = request.getId();
+    }
+
     public OrdersStatusResponse convertToOrdersStatusResponse() {
         return OrdersStatusResponse.builder()
+                .id(this.id)
+                .build();
+    }
+
+    public OrdersStatusCreateResponse convertToOrdersStatusCreateResponse() {
+        return OrdersStatusCreateResponse.builder()
                 .id(this.id)
                 .build();
     }
