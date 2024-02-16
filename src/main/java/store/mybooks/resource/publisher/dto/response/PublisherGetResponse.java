@@ -1,6 +1,7 @@
 package store.mybooks.resource.publisher.dto.response;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
 /**
  * packageName    : store.mybooks.resource.publisher.dto.response
@@ -13,8 +14,9 @@ import lombok.AllArgsConstructor;
  * -----------------------------------------------------------
  * 2/16/24        newjaehun       최초 생성
  */
-@AllArgsConstructor
+@Builder
+@Getter
 public class PublisherGetResponse {
-    private int id;
+    private Integer id;
     private String name;
 }
