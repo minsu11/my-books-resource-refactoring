@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import store.mybooks.resource.orders_status.dto.request.OrdersStatusCreateRequest;
-import store.mybooks.resource.orders_status.dto.request.OrdersStatusRequest;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusCreateResponse;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 import store.mybooks.resource.orders_status.service.OrdersStatusService;
@@ -28,11 +27,11 @@ import store.mybooks.resource.orders_status.service.OrdersStatusService;
 public class OrdersStatusController {
     private OrdersStatusService ordersStatusService;
 
-    @GetMapping("/request")
+    @GetMapping("/{id}")
     public ResponseEntity<OrdersStatusResponse> getOrdersStatus(
-            @RequestBody OrdersStatusRequest request
+            @PathVariable(name = "id") String ordersStatusId
     ) {
-        OrdersStatusResponse response = ordersStatusService.getOrdersStatus(request);
+        OrdersStatusResponse response = ordersStatusService.getOrdersStatusById(ordersStatusId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

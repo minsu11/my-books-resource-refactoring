@@ -4,12 +4,8 @@ import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-<<<<<<< HEAD
-import store.mybooks.resource.orders_status.dto.request.OrdersStatusCreateRequest;
-=======
 import org.springframework.transaction.annotation.Transactional;
->>>>>>> dev
-import store.mybooks.resource.orders_status.dto.request.OrdersStatusRequest;
+import store.mybooks.resource.orders_status.dto.request.OrdersStatusCreateRequest;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusCreateResponse;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 import store.mybooks.resource.orders_status.entity.OrdersStatus;
@@ -36,7 +32,7 @@ public class OrdersStatusService {
     public OrdersStatusResponse getOrdersStatusById(String ordersStatusId) {
 
         OrdersStatus ordersStatus = ordersStatusRepository.findById(
-                request.getId()).orElseThrow(() -> new OrdersStatusNotFoundException());
+                ordersStatusId).orElseThrow(() -> new OrdersStatusNotFoundException());
         return ordersStatus.convertToOrdersStatusResponse();
     }
 
@@ -52,7 +48,7 @@ public class OrdersStatusService {
 
 
     @Transactional
-    public OrdersStatusResponse createOrdersStatus(OrdersStatusRequest request) {
+    public OrdersStatusCreateResponse createOrdersStatus(OrdersStatusCreateRequest request) {
         OrdersStatus ordersStatus = ordersStatusRepository.findById(request.getId())
                 .orElseThrow(OrdersStatusNotFoundException::new);
 
