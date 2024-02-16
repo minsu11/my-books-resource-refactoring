@@ -23,7 +23,7 @@ import store.mybooks.resource.orders_status.service.OrdersStatusService;
  * 2/16/24        minsu11       최초 생성
  */
 @RestController
-@RequestMapping("/api/orders-status")
+@RequestMapping("/api/orders-statuses")
 @AllArgsConstructor
 public class OrdersStatusController {
     private OrdersStatusService ordersStatusService;
