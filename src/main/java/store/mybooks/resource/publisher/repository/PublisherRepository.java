@@ -1,6 +1,5 @@
 package store.mybooks.resource.publisher.repository;
 
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import store.mybooks.resource.publisher.entity.Publisher;
 
@@ -16,5 +15,6 @@ import store.mybooks.resource.publisher.entity.Publisher;
  * 2/14/24        newjaehun       최초 생성
  */
 public interface PublisherRepository extends JpaRepository<Publisher, Integer> {
-    Optional<Publisher> findByName(String name);
+
+    Boolean existsByName(String name);
 }
