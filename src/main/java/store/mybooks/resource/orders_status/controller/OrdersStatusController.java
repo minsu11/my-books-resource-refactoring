@@ -28,11 +28,11 @@ import store.mybooks.resource.orders_status.service.OrdersStatusService;
 public class OrdersStatusController {
     private OrdersStatusService ordersStatusService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/request")
     public ResponseEntity<OrdersStatusResponse> getOrdersStatus(
-            @PathVariable String id
+            @RequestBody OrdersStatusRequest request
     ) {
-        OrdersStatusResponse response = ordersStatusService.getOrdersStatusById(id);
+        OrdersStatusResponse response = ordersStatusService.getOrdersStatus(request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
