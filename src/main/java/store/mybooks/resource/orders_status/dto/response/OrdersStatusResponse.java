@@ -1,9 +1,8 @@
 package store.mybooks.resource.orders_status.dto.response;
 
-import com.querydsl.core.annotations.QueryProjection;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 /**
  * packageName    : store.mybooks.resource.orders_status.dto.response
@@ -18,12 +17,8 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @Builder
-@NoArgsConstructor
+@AllArgsConstructor
 public class OrdersStatusResponse {
     private String id;
 
-    @QueryProjection
-    public OrdersStatusResponse(String id) {
-        this.id = id;
-    }
 }
