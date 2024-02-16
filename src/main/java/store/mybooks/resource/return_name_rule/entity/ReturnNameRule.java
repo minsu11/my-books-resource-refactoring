@@ -1,12 +1,7 @@
 package store.mybooks.resource.return_name_rule.entity;
 
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,10 +31,10 @@ public class ReturnNameRule {
     @Column(name = "return_name_rule_id")
     private Integer id;
 
-    @Column(name = "return_name", nullable = false)
+    @Column(name = "return_name")
     private String name;
 
-    @Column(name = "return_name_created_at", nullable = false)
-    private LocalDate createdAt;
+    @Column(name = "return_name_created_date")
+    private LocalDate createdDate;
 
 }

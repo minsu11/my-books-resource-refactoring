@@ -2,6 +2,7 @@ package store.mybooks.resource.return_detail.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,15 +39,15 @@ public class ReturnDetail {
     @Column(name = "return_detail_id")
     private Long id;
 
-    @Column(name = "return_detail_amount", nullable = false)
+    @Column(name = "return_detail_amount")
     private Integer amount;
 
     @ManyToOne
-    @JoinColumn(name = "book_return_id", nullable = false)
+    @JoinColumn(name = "book_return_id")
     private BookReturn bookReturn;
 
-    @ManyToOne
-    @JoinColumn(name = "order_detail_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_detail_id")
     private OrderDetail orderDetail;
 
 

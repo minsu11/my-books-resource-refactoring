@@ -1,12 +1,8 @@
 package store.mybooks.resource.category.entity;
 
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.util.List;
+import javax.persistence.*;
 
 /**
  * packageName    : store.mybooks.resource.category.entity
@@ -27,12 +23,16 @@ public class Category {
     @Column(name = "category_id")
     private Integer id;
 
-    @Column(name = "parent_category_id")
-    private Integer parentCategoryId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_category_id")
+    private Category parentCategoryId;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentCategoryId")
+    private List<Category> childCategoryList;
 
     @Column(name = "category_name")
     private String name;
 
-    @Column(name = "category_created_at")
-    private LocalDate createdAt;
+    @Column(name = "category_created_date")
+    private LocalDate createdDate;
 }

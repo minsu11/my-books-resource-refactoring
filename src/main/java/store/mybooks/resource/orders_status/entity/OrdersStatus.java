@@ -2,8 +2,6 @@ package store.mybooks.resource.orders_status.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -29,12 +27,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Table(name = "orders_status")
 public class OrdersStatus {
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "orders_status_id")
-    private Integer id;
 
-    @Column(name = "order_status_name", nullable = false)
-    private String name;
+
+    @Id
+    @Column(name = "order_status_id")
+    private String id;
 }

@@ -3,6 +3,7 @@ package store.mybooks.resource.book_return.entity;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,7 +13,6 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import store.mybooks.resource.return_rule.entity.ReturnRule;
 
 /**
@@ -27,7 +27,6 @@ import store.mybooks.resource.return_rule.entity.ReturnRule;
  * 2/13/24        minsu11       최초 생성
  */
 @Getter
-@Setter
 @Entity
 @Table(name = "book_return")
 @NoArgsConstructor
@@ -38,13 +37,13 @@ public class BookReturn {
     @Column(name = "book_return_id")
     private Long id;
 
-    @Column(name = "is_damage", nullable = false)
+    @Column(name = "is_damage")
     private Boolean isDamage;
 
-    @Column(name = "return_date", nullable = false)
+    @Column(name = "return_date")
     private LocalDate returnDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "return_rule_id")
     private ReturnRule returnRule;
 }
