@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import store.mybooks.resource.orders_status.dto.request.OrdersStatusCreateRequest;
 import store.mybooks.resource.orders_status.dto.request.OrdersStatusRequest;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusCreateResponse;
@@ -24,6 +25,7 @@ import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 @Getter
 @Entity
 @Table(name = "orders_status")
+@NoArgsConstructor
 public class OrdersStatus {
     @Id
     @Column(name = "orders_status_id")
