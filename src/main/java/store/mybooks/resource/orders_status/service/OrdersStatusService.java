@@ -9,6 +9,7 @@ import store.mybooks.resource.orders_status.dto.request.OrdersStatusCreateReques
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusCreateResponse;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 import store.mybooks.resource.orders_status.entity.OrdersStatus;
+import store.mybooks.resource.orders_status.exception.OrdersStatusAlreadyExistException;
 import store.mybooks.resource.orders_status.exception.OrdersStatusNotFoundException;
 import store.mybooks.resource.orders_status.repository.OrdersStatusRepository;
 
@@ -49,9 +50,10 @@ public class OrdersStatusService {
 
     @Transactional
     public OrdersStatusCreateResponse createOrdersStatus(OrdersStatusCreateRequest request) {
-        OrdersStatus ordersStatus = ordersStatusRepository.findById(request.getId())
-                .orElseThrow(OrdersStatusNotFoundException::new);
-
+        if (ordersStatusRepository.findById(request.getId()).isPresent()) {
+            throw new OrdersStatusAlreadyExistException("아이디가 이미 존재");
+        }
+        OrdersStatus ordersStatus = new OrdersStatus(request);
         ordersStatusRepository.save(ordersStatus);
         return ordersStatus.convertToOrdersStatusCreateResponse();
     }
