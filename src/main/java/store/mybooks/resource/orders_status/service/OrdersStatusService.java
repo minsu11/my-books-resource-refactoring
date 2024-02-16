@@ -32,7 +32,7 @@ public class OrdersStatusService {
     public OrdersStatusResponse getOrdersStatusById(String ordersStatusId) {
 
         OrdersStatus ordersStatus = ordersStatusRepository.findById(
-                ordersStatusId).orElseThrow(() -> new OrdersStatusNotFoundException());
+                ordersStatusId).orElseThrow(OrdersStatusNotFoundException::new);
         return ordersStatus.convertToOrdersStatusResponse();
     }
 

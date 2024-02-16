@@ -1,5 +1,6 @@
 package store.mybooks.resource.orders_status.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,6 +17,7 @@ import lombok.Getter;
  */
 @Getter
 @Builder
+@AllArgsConstructor
 public class OrdersStatusCreateResponse {
     private String id;
 }
