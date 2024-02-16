@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class UserCreateRequest {
 
-    private String userName;
+    private String name;
 
     private String password;
 
