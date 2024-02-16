@@ -51,7 +51,7 @@ public class OrdersStatusController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/delete")
     public ResponseEntity<OrdersStatusResponse> deleteOrdersStatus(@RequestBody OrdersStatusRequest request) {
         OrdersStatusResponse response = ordersStatusService.deleteOrderStatus(request);
         return new ResponseEntity<>(response, HttpStatus.OK);
