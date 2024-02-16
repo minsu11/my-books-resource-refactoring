@@ -1,9 +1,12 @@
 package store.mybooks.resource.user.controller;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,6 +17,7 @@ import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
+import store.mybooks.resource.user.dto.response.UserGetResponse;
 import store.mybooks.resource.user.dto.response.UserModifyResponse;
 import store.mybooks.resource.user.service.UserService;
 
@@ -60,9 +64,16 @@ public class UserRestController {
     public ResponseEntity<UserDeleteResponse> deleteUser(@PathVariable(name = "email") String email) {
         UserDeleteResponse deleteResponse = userService.deleteUser(email);
 
-        System.out.println(deleteResponse.toString());
+        return new ResponseEntity<>(deleteResponse, HttpStatus.ACCEPTED);
+    }
 
-        return new ResponseEntity<>(deleteResponse, HttpStatus.OK);
+    @GetMapping("/{email}")
+    public ResponseEntity<UserGetResponse> findUserByEmail(@PathVariable(name = "email") String email) {
+
+
+        UserGetResponse getResponse = userService.findByEmail(email);
+
+        return new ResponseEntity<>(getResponse, HttpStatus.OK);
     }
 
 
