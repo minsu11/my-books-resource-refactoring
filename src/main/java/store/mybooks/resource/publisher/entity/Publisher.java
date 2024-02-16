@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 import store.mybooks.resource.publisher.dto.request.PublisherCreateRequest;
 import store.mybooks.resource.publisher.dto.request.PublisherModifyRequest;
 import store.mybooks.resource.publisher.dto.response.PublisherCreateResponse;
-import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
 import store.mybooks.resource.publisher.dto.response.PublisherModifyResponse;
 
 /**
@@ -45,7 +44,7 @@ public class Publisher {
     @Column(name = "publisher_created_date")
     private LocalDate createdDate;
 
-    public void setByCreateRequest(PublisherCreateRequest createRequest) {
+    public Publisher(PublisherCreateRequest createRequest) {
         this.name = createRequest.getName();
         this.createdDate = LocalDate.now();
     }
@@ -61,12 +60,6 @@ public class Publisher {
                 .build();
     }
 
-    public PublisherGetResponse convertToGetResponse() {
-        return PublisherGetResponse.builder()
-                .id(this.id)
-                .name(this.name)
-                .build();
-    }
 
     public PublisherModifyResponse convertToModifyResponse() {
         return PublisherModifyResponse.builder()
