@@ -59,6 +59,16 @@ jobs:
           script_stop: true
           script: "./startup.sh"
 
+      - name: execute shell script
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_SERVER2_IP }}
+          username: ${{ secrets.SSH_ID }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script_stop: true
+          script: "./startup.sh"
+
       # SonarQube 실행
       - name: Run SonarQube
         run: mvn sonar:sonar -Dsonar.projectKey=my-books-resource -Dsonar.host.url=${{secrets.SONAR_HOST}} -Dsonar.login=${{secrets.SONAR_TOKEN}}
