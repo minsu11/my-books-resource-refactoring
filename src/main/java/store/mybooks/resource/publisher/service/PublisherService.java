@@ -49,9 +49,9 @@ public class PublisherService {
     }
 
     @Transactional
-    public PublisherModifyResponse modifyPublisher(PublisherModifyRequest modifyRequest) {
+     public PublisherModifyResponse modifyPublisher(Integer publisherId, PublisherModifyRequest modifyRequest) {
         Publisher publisher =
-                publisherRepository.findById(modifyRequest.getId()).orElseThrow(PublisherNotExistException::new);
+                publisherRepository.findById(publisherId).orElseThrow(PublisherNotExistException::new);
         publisher.setByModifyRequest(modifyRequest);
         return publisher.convertToModifyResponse();
     }

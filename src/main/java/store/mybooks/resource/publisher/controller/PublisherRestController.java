@@ -54,9 +54,9 @@ public class PublisherRestController {
                 .body(createPublisher);
     }
 
-    @PutMapping
-    public ResponseEntity<PublisherModifyResponse> modifyPublisher(@RequestBody PublisherModifyRequest modifyRequest) {
-        PublisherModifyResponse modifyPublisher = publisherService.modifyPublisher(modifyRequest);
+    @PutMapping("/{id}")
+    public ResponseEntity<PublisherModifyResponse> modifyPublisher(@PathVariable("id") Integer publisherId, @RequestBody PublisherModifyRequest modifyRequest) {
+        PublisherModifyResponse modifyPublisher = publisherService.modifyPublisher(publisherId, modifyRequest);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(modifyPublisher);
@@ -69,6 +69,5 @@ public class PublisherRestController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(deleteResponse);
-
     }
 }
