@@ -19,5 +19,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DeliveryNameRuleModifyRequest {
-    String deliveryName;
+    private String deliveryName;
 }

@@ -1,8 +1,9 @@
 package store.mybooks.resource.delivery_rule.repository;
 
+import com.querydsl.core.annotations.QueryProjection;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import store.mybooks.resource.delivery_rule.dto.DeliveryRuleResponse;
+import store.mybooks.resource.delivery_rule.dto.DeliveryRuleDto;
 import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
 
 /**
@@ -17,5 +18,6 @@ import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
  * 2/15/24        Fiat_lux       최초 생성
  */
 public interface DeliveryRuleRepository extends JpaRepository<DeliveryRule, Integer> {
-    Optional<DeliveryRuleResponse> findDeliveryRuleById(Integer deliveryRuleId);
+
+    Optional<DeliveryRule> findDeliveryRuleById(Integer deliveryRuleId);
 }

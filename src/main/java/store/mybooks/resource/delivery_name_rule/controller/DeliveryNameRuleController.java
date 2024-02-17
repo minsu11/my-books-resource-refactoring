@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.delivery_name_rule.dto.DeliveryNameRuleDto;
 import store.mybooks.resource.delivery_name_rule.dto.DeliveryNameRuleModifyRequest;
 import store.mybooks.resource.delivery_name_rule.dto.DeliveryNameRuleRegisterRequest;
+import store.mybooks.resource.delivery_name_rule.dto.DeliveryNameRuleResponse;
 import store.mybooks.resource.delivery_name_rule.service.DeliveryNameRuleService;
 
 /**
@@ -44,11 +45,12 @@ public class DeliveryNameRuleController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createDeliveryNameRule(
+    public ResponseEntity<DeliveryNameRuleResponse> createDeliveryNameRule(
             @RequestBody DeliveryNameRuleRegisterRequest deliveryNameRuleRegisterRequest) {
-        deliveryNameRuleService.registerDeliveryNameRule(deliveryNameRuleRegisterRequest);
+        DeliveryNameRuleResponse deliveryNameRuleResponse =
+                deliveryNameRuleService.registerDeliveryNameRule(deliveryNameRuleRegisterRequest);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(deliveryNameRuleResponse);
     }
 
     @PutMapping("/{deliveryNameRuleId}")

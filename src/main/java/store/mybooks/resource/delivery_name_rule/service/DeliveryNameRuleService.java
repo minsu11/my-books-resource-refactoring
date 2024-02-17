@@ -1,11 +1,14 @@
 package store.mybooks.resource.delivery_name_rule.service;
 
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.delivery_name_rule.dto.DeliveryNameRuleDto;
+import store.mybooks.resource.delivery_name_rule.dto.DeliveryNameRuleMapper;
 import store.mybooks.resource.delivery_name_rule.dto.DeliveryNameRuleModifyRequest;
 import store.mybooks.resource.delivery_name_rule.dto.DeliveryNameRuleRegisterRequest;
+import store.mybooks.resource.delivery_name_rule.dto.DeliveryNameRuleResponse;
 import store.mybooks.resource.delivery_name_rule.entity.DeliveryNameRule;
 import store.mybooks.resource.delivery_name_rule.exception.DeliveryNameRuleNotFoundException;
 import store.mybooks.resource.delivery_name_rule.repository.DeliveryNameRuleRepository;
@@ -22,18 +25,19 @@ import store.mybooks.resource.delivery_name_rule.repository.DeliveryNameRuleRepo
  * 2/15/24        Fiat_lux       최초 생성
  */
 @Service
+@RequiredArgsConstructor
 public class DeliveryNameRuleService {
-    private final DeliveryNameRuleRepository deliveryNameRuleRepository;
 
-    public DeliveryNameRuleService(DeliveryNameRuleRepository deliveryNameRuleRepository) {
-        this.deliveryNameRuleRepository = deliveryNameRuleRepository;
-    }
+    private final DeliveryNameRuleRepository deliveryNameRuleRepository;
+    private final DeliveryNameRuleMapper deliveryNameRuleMapper;
+
 
     @Transactional
-    public void registerDeliveryNameRule(
+    public DeliveryNameRuleResponse registerDeliveryNameRule(
             DeliveryNameRuleRegisterRequest deliveryNameRuleRegisterRequest) {
         DeliveryNameRule deliveryNameRule = new DeliveryNameRule(deliveryNameRuleRegisterRequest);
-        this.deliveryNameRuleRepository.save(deliveryNameRule);
+        DeliveryNameRule saveDeliveryNameRule = this.deliveryNameRuleRepository.save(deliveryNameRule);
+        return deliveryNameRuleMapper.mapToResponse(saveDeliveryNameRule);
     }
 
     @Transactional(readOnly = true)

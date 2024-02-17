@@ -1,6 +1,10 @@
 package store.mybooks.resource.delivery_rule.dto;
 
 import java.time.LocalDate;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 /**
@@ -15,19 +19,23 @@ import java.time.LocalDate;
  * 2/16/24        Fiat_lux       최초 생성
  */
 
-public interface DeliveryRuleResponse {
+@Builder
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class DeliveryRuleResponse {
 
-    Integer getId();
+    private Integer id;
 
-    Integer getDeliveryNameRuleId();
+    private Integer deliveryNameRuleId;
 
-    String getCompanyName();
+    private String companyName;
 
-    Integer getCost();
+    private Integer cost;
 
-    Integer getRuleCost();
+    private Integer ruleCost;
 
-    LocalDate getCreatedDate();
+    private LocalDate createdDate;
 
-    Boolean getIsAvailable();
+    private Boolean isAvailable;
 }
