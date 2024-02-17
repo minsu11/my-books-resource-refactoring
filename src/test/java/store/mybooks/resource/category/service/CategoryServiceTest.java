@@ -47,9 +47,6 @@ class CategoryServiceTest {
     @Mock
     CategoryRepository categoryRepository;
 
-    @Mock
-    Category category;
-
     @InjectMocks
     CategoryService categoryService;
 
