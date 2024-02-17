@@ -2,6 +2,7 @@ package store.mybooks.resource.eureka.actuator;
 
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.stereotype.Component;
 
 /**
  * packageName    : store.mybooks.resource.eureka.actuator
@@ -14,6 +15,7 @@ import org.springframework.boot.actuate.health.HealthIndicator;
  * -----------------------------------------------------------
  * 2/17/24        minsu11       최초 생성
  */
+@Component
 public class CustomHealthIndicator implements HealthIndicator {
     private final ApplicationStatus applicationStatus;
 
