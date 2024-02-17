@@ -79,10 +79,15 @@ public class CategoryService {
      * @param id                    수정하려는 category 의 id. 존재하지 않으면 CategoryNotExistsException.
      * @param categoryModifyRequest ParentCategoryId, name 포함.
      *                              ParentCategoryId 가 Null 이 아니고 존재하지 않으면 CategoryNotExistsException .
+     *                              name 이 이미 존재하는 경우 CategoryNameAlreadyExistsException.
      * @return category modify response
      */
     @Transactional
     public CategoryModifyResponse modifyCategory(int id, CategoryModifyRequest categoryModifyRequest) {
+        if (categoryRepository.existsByName(categoryModifyRequest.getName())) {
+            throw new CategoryNameAlreadyExistsException();
+        }
+
         Optional<Category> optionalCategory = categoryRepository.findById(id);
         if (optionalCategory.isEmpty()) {
             throw new CategoryNotExistsException();
