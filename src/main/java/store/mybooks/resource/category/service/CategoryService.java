@@ -1,7 +1,6 @@
 package store.mybooks.resource.category.service;
 
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,27 +78,24 @@ public class CategoryService {
      * @param id                    수정하려는 category 의 id. 존재하지 않으면 CategoryNotExistsException.
      * @param categoryModifyRequest ParentCategoryId, name 포함.
      *                              ParentCategoryId 가 Null 이 아니고 존재하지 않으면 CategoryNotExistsException .
+     *                              name 이 이미 존재하는 경우 CategoryNameAlreadyExistsException.
      * @return category modify response
      */
     @Transactional
     public CategoryModifyResponse modifyCategory(int id, CategoryModifyRequest categoryModifyRequest) {
-        Optional<Category> optionalCategory = categoryRepository.findById(id);
-        if (optionalCategory.isEmpty()) {
-            throw new CategoryNotExistsException();
+        if (categoryRepository.existsByName(categoryModifyRequest.getName())) {
+            throw new CategoryNameAlreadyExistsException();
         }
+
+        Category category = categoryRepository.findById(id).orElseThrow(CategoryNotExistsException::new);
 
         Category parentCategory = null;
+
         Integer parentCategoryId = categoryModifyRequest.getParentCategoryId();
         if (parentCategoryId != null) {
-            Optional<Category> optionalParentCategory = categoryRepository.findById(parentCategoryId);
-            if (optionalParentCategory.isEmpty()) {
-                throw new CategoryNotExistsException();
-            }
-
-            parentCategory = optionalParentCategory.get();
+            parentCategory = categoryRepository.findById(parentCategoryId).orElseThrow(CategoryNotExistsException::new);
         }
 
-        Category category = optionalCategory.get();
         return category.modifyCategory(parentCategory, categoryModifyRequest.getName());
     }
 
@@ -113,16 +109,12 @@ public class CategoryService {
      */
     @Transactional
     public CategoryDeleteResponse deleteCategory(int id) {
-        Optional<Category> optionalCategory = categoryRepository.findById(id);
-
-        if (optionalCategory.isEmpty()) {
-            throw new CategoryNotExistsException();
-        }
+        Category category = categoryRepository.findById(id).orElseThrow(CategoryNotExistsException::new);
 
         categoryRepository.deleteById(id);
 
         return CategoryDeleteResponse.builder()
-                .name(optionalCategory.get().getName())
+                .name(category.getName())
                 .build();
     }
 }
