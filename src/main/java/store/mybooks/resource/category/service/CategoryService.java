@@ -1,7 +1,6 @@
 package store.mybooks.resource.category.service;
 
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,23 +87,15 @@ public class CategoryService {
             throw new CategoryNameAlreadyExistsException();
         }
 
-        Optional<Category> optionalCategory = categoryRepository.findById(id);
-        if (optionalCategory.isEmpty()) {
-            throw new CategoryNotExistsException();
-        }
+        Category category = categoryRepository.findById(id).orElseThrow(CategoryNotExistsException::new);
 
         Category parentCategory = null;
+
         Integer parentCategoryId = categoryModifyRequest.getParentCategoryId();
         if (parentCategoryId != null) {
-            Optional<Category> optionalParentCategory = categoryRepository.findById(parentCategoryId);
-            if (optionalParentCategory.isEmpty()) {
-                throw new CategoryNotExistsException();
-            }
-
-            parentCategory = optionalParentCategory.get();
+            parentCategory = categoryRepository.findById(parentCategoryId).orElseThrow(CategoryNotExistsException::new);
         }
 
-        Category category = optionalCategory.get();
         return category.modifyCategory(parentCategory, categoryModifyRequest.getName());
     }
 
@@ -118,16 +109,12 @@ public class CategoryService {
      */
     @Transactional
     public CategoryDeleteResponse deleteCategory(int id) {
-        Optional<Category> optionalCategory = categoryRepository.findById(id);
-
-        if (optionalCategory.isEmpty()) {
-            throw new CategoryNotExistsException();
-        }
+        Category category = categoryRepository.findById(id).orElseThrow(CategoryNotExistsException::new);
 
         categoryRepository.deleteById(id);
 
         return CategoryDeleteResponse.builder()
-                .name(optionalCategory.get().getName())
+                .name(category.getName())
                 .build();
     }
 }
