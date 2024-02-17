@@ -1,9 +1,7 @@
 package store.mybooks.resource.delivery_rule.repository;
 
-import com.querydsl.core.annotations.QueryProjection;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import store.mybooks.resource.delivery_rule.dto.DeliveryRuleDto;
 import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
 
 /**

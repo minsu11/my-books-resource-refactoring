@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import store.mybooks.resource.delivery_rule.dto.DeliveryRuleDto;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleModifyRequest;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleRegisterRequest;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleResponse;

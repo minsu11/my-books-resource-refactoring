@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.delivery_name_rule.entity.DeliveryNameRule;
 import store.mybooks.resource.delivery_name_rule.exception.DeliveryNameRuleNotFoundException;
 import store.mybooks.resource.delivery_name_rule.repository.DeliveryNameRuleRepository;
-import store.mybooks.resource.delivery_rule.dto.DeliveryRuleDto;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleMapper;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleModifyRequest;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleRegisterRequest;
