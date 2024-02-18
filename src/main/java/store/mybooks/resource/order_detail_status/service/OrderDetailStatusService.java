@@ -14,15 +14,18 @@ import store.mybooks.resource.order_detail_status.exception.OrderDetailStatusNot
 import store.mybooks.resource.order_detail_status.repository.OrderDetailStatusRepository;
 
 /**
- * packageName    : store.mybooks.resource.order_detail_status.service
- * fileName       : OrderDetailStatusService
- * author         : minsu11
- * date           : 2/16/24
- * description    : 상세 주문 상태 데이터를 등록 및 조회를 할 수 있는 Service
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 2/16/24        minsu11       최초 생성
+ * packageName    : store.mybooks.resource.order_detail_status.service <br>
+ * fileName       : OrderDetailStatusService <br>
+ * author         : minsu11 <br>
+ * date           : 2/16/24 <br>
+ * description    : 상세 주문 상태 데이터를 등록 및 조회를 할 수 있는 Service <br>
+ * =========================================================== <br>
+ * DATE              AUTHOR             NOTE <br>
+ * ----------------------------------------------------------- <br>
+ * 2/16/24        minsu11       최초 생성 <br>
+ * 2/16/24        minsu11       최초 구현 <br>
+ * 2/18/24        minsu11       데이터 베이스에서 반환된 데이터가 빈 값인 <br>
+ * 경우 exception 반환에서 빈 리스트로 변경   <br>
  */
 @Service
 @RequiredArgsConstructor
