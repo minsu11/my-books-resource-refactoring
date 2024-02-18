@@ -20,7 +20,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderDetailCreateResponse {
+public class OrderDetailStatusCreateResponse {
     private String id;
 
 }
