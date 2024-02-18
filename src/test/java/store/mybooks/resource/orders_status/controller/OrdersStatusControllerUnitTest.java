@@ -1,6 +1,7 @@
 package store.mybooks.resource.orders_status.controller;
 
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -11,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Collections;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -84,15 +86,14 @@ class OrdersStatusControllerUnitTest {
     }
 
     @Test
-    void givenOrdersStatus_whenGetOrdersStatusList_thenReturnOrdersStatusNotFoundException() throws Exception {
-        given(ordersStatusService.getOrdersStatusList()).willThrow(NullPointerException.class);
+    void givenOrdersStatus_whenGetOrdersStatusList_thenReturnEmptyOrdersStatusList() throws Exception {
+        given(ordersStatusService.getOrdersStatusList()).willReturn(Collections.emptyList());
 
-        Throwable th = catchThrowable(() ->
-                mockMvc.perform(get("/api/orders-statuses"))
-                        .andExpect(status().isBadRequest())
-                        .andDo(print()));
-        Assertions.assertThat(th).isInstanceOf(NestedServletException.class)
-                .hasCauseInstanceOf(NullPointerException.class);
+        mockMvc.perform(get("/api/orders-statuses"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(0)));
+
     }
 
     @Test

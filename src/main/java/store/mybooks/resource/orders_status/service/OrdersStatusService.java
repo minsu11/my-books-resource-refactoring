@@ -1,7 +1,6 @@
 package store.mybooks.resource.orders_status.service;
 
 import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,12 +40,7 @@ public class OrdersStatusService {
 
     @Transactional(readOnly = true)
     public List<OrdersStatusResponse> getOrdersStatusList() {
-        List<OrdersStatusResponse> ordersStatusResponses = ordersStatusRepository.getOrdersStatusList();
-
-        if (Objects.isNull(ordersStatusResponses)) {
-            throw new NullPointerException("order status null");
-        }
-        return ordersStatusResponses;
+        return ordersStatusRepository.getOrdersStatusList();
     }
 
 
