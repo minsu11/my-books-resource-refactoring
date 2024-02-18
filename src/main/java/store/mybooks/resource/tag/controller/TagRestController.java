@@ -75,7 +75,7 @@ public class TagRestController {
      * @param tagModifyRequest name 을 포함.
      * @return response entity
      */
-    @PutMapping("{/id}")
+    @PutMapping("/{id}")
     public ResponseEntity<TagModifyResponse> modifyTag(@PathVariable("id") int id,
                                                        @RequestBody TagModifyRequest tagModifyRequest) {
         return ResponseEntity
@@ -83,6 +83,14 @@ public class TagRestController {
                 .body(tagService.modifyTag(id, tagModifyRequest));
     }
 
+    /**
+     * methodName : deleteTag
+     * author : damho-lee
+     * description : 태그 삭제 메서드.
+     *
+     * @param id 삭제하려는 Tag 의 id.
+     * @return ResponseEntity
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<TagDeleteResponse> deleteTag(@PathVariable("id") int id) {
         return ResponseEntity
