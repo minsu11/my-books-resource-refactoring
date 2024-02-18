@@ -21,5 +21,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CartRegisterRequest {
-    Long userId;
+    private Long userId;
 }
