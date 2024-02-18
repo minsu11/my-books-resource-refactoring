@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import store.mybooks.resource.delivery_name_rule.dto.DeliveryNameRuleModifyRequest;
 import store.mybooks.resource.delivery_name_rule.dto.DeliveryNameRuleRegisterRequest;
 
@@ -27,6 +28,7 @@ import store.mybooks.resource.delivery_name_rule.dto.DeliveryNameRuleRegisterReq
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 @Entity
 @Table(name = "delivery_name_rule")
 public class DeliveryNameRule {
