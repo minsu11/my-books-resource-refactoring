@@ -1,7 +1,9 @@
 package store.mybooks.resource.user_grade.repository;
 
+import java.util.Iterator;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import store.mybooks.resource.user_grade.dto.response.UserGradeGetResponse;
 import store.mybooks.resource.user_grade.entity.UserGrade;
 
 /**
@@ -17,6 +19,10 @@ import store.mybooks.resource.user_grade.entity.UserGrade;
  */
 public interface UserGradeRepository extends JpaRepository<UserGrade, Integer> {
 
-    Optional<UserGrade> findByName(String name);
+
+    UserGradeGetResponse queryById(Integer id);
+
+    Optional<UserGrade> findByName(String userGradeName);
+
 
 }
