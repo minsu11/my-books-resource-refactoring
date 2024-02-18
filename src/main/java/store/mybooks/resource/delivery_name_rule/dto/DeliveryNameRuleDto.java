@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public interface DeliveryNameRuleDto {
     Integer getId();
 
-    Integer getName();
+    String getName();
 
     LocalDate getCreatedDate();
 }
