@@ -30,12 +30,26 @@ import store.mybooks.resource.publisher.repository.PublisherRepository;
 @RequiredArgsConstructor
 public class PublisherService {
     private final PublisherRepository publisherRepository;
-
+    /**
+     * methodName : getAllPublisher
+     * author : newjaehun
+     * description : 전체 출판사 리스트 반환
+     *
+     * @return list
+     */
     @Transactional(readOnly = true)
     public List<PublisherGetResponse> getAllPublisher() {
         return publisherRepository.findAllBy();
     }
 
+    /**
+     * methodName : createPublisher
+     * author : newjaehun
+     * description : 출판사 추가하는 메서드
+     *
+     * @param createRequest: 추가할 name, name이 이미 존재하는 경우 PublisherAlreadyExistException 발생
+     * @return publisherCreateResponse: 추가된 name
+     */
     @Transactional
     public PublisherCreateResponse createPublisher(PublisherCreateRequest createRequest) {
         Publisher publisher = new Publisher(createRequest);
@@ -48,6 +62,15 @@ public class PublisherService {
         return resultPublisher.convertToCreateResponse();
     }
 
+    /**
+     * methodName : modifyPublisher
+     * author : newjaehun
+     * description : 출판사 수정하는 메서드
+     *
+     * @param publisherId 수정하려는 publisher 의 id, 존재하지 않으면 PublisherNotExistException 발생
+     * @param modifyRequest: 수정할 name 포함
+     * @return publisherModifyResponse: 수정된 name 포함
+     */
     @Transactional
      public PublisherModifyResponse modifyPublisher(Integer publisherId, PublisherModifyRequest modifyRequest) {
         Publisher publisher =
@@ -56,12 +79,21 @@ public class PublisherService {
         return publisher.convertToModifyResponse();
     }
 
+    /**
+     * methodName : deletePublisher
+     * author : newjaehun
+     * description : 출판사 삭제하는 메서드
+     *
+     * @param publisherId 삭제하려는 publisher 의 id, 존재하지 않으면 PublisherNotExistException 발생
+     * @return publisherDeleteResponse: 삭제된 name 포함
+     */
     @Transactional
     public PublisherDeleteResponse deletePublisher(Integer publisherId) {
         Publisher publisher =
                 publisherRepository.findById(publisherId).orElseThrow(PublisherNotExistException::new);
-        publisherRepository.delete(publisher);
-        return new PublisherDeleteResponse("출판사명: " + publisher.getName() + " 삭제 성공");
+
+        publisherRepository.deleteById(publisherId);
+        return new PublisherDeleteResponse(publisher.getName());
     }
 
 }

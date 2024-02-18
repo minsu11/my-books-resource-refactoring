@@ -37,6 +37,13 @@ import store.mybooks.resource.publisher.service.PublisherService;
 public class PublisherRestController {
     private final PublisherService publisherService;
 
+    /**
+     * methodName : getAllPublishers
+     * author : newjaehun
+     * description : 전체 출판사 리스트 반환
+     *
+     * @return ResponseEntity
+     */
     @GetMapping
     public ResponseEntity<List<PublisherGetResponse>> getAllPublishers() {
         List<PublisherGetResponse> publishers = publisherService.getAllPublisher();
@@ -45,6 +52,14 @@ public class PublisherRestController {
                 .body(publishers);
     }
 
+    /**
+     * methodName : createPublisher
+     * author : newjaehun
+     * description : 출판사 추가
+     *
+     * @param createRequest: 추가할 name 포함
+     * @return ResponseEntity
+     */
     @PostMapping
     public ResponseEntity<PublisherCreateResponse> createPublisher(
             @RequestBody PublisherCreateRequest createRequest) {
@@ -54,6 +69,15 @@ public class PublisherRestController {
                 .body(createPublisher);
     }
 
+    /**
+     * methodName : modifyPublisher
+     * author : newjaehun
+     * description : 출판사 수정
+     *
+     * @param publisherId: 수정하려는 publisher 의 id
+     * @param modifyRequest: 수정할 name 포함
+     * @return ResponseEntity
+     */
     @PutMapping("/{id}")
     public ResponseEntity<PublisherModifyResponse> modifyPublisher(@PathVariable("id") Integer publisherId, @RequestBody PublisherModifyRequest modifyRequest) {
         PublisherModifyResponse modifyPublisher = publisherService.modifyPublisher(publisherId, modifyRequest);
@@ -63,6 +87,14 @@ public class PublisherRestController {
     }
 
 
+    /**
+     * methodName : deletePublisher
+     * author : newjaehun
+     * description : 출판사 삭제
+     *
+     * @param publisherId: 수정하려는 publisher 의 id
+     * @return ResponseEntity
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<PublisherDeleteResponse> deletePublisher(@PathVariable("id") Integer publisherId) {
         PublisherDeleteResponse deleteResponse = publisherService.deletePublisher(publisherId);
