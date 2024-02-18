@@ -3,6 +3,7 @@ package store.mybooks.resource.publisher.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -109,7 +110,7 @@ class PublisherServiceTest {
 
         PublisherModifyRequest modifyRequest= new PublisherModifyRequest("publisherNameChange");
 
-        when(publisherRepository.findById(publisherId)).thenReturn(Optional.of(publisher));
+        when(publisherRepository.findById(eq(publisherId))).thenReturn(Optional.of(publisher));
 
         PublisherModifyResponse response = publisherService.modifyPublisher(publisherId, modifyRequest);
         assertThat(response.getName()).isEqualTo(modifyRequest.getChangeName());
@@ -120,7 +121,7 @@ class PublisherServiceTest {
         Integer publisherId = 1;
         PublisherModifyRequest modifyRequest= new PublisherModifyRequest("publisherNameChange");
 
-        when(publisherRepository.findById(publisherId)).thenReturn(Optional.empty());
+        when(publisherRepository.findById(eq(publisherId))).thenReturn(Optional.empty());
         assertThrows(PublisherNotExistException.class, () -> publisherService.modifyPublisher(publisherId, modifyRequest));
     }
 
@@ -129,7 +130,7 @@ class PublisherServiceTest {
         Integer publisherId = 1;
         Publisher publisher = new Publisher(publisherId, "publisherName", LocalDate.now());
 
-        when(publisherRepository.findById(publisherId)).thenReturn(Optional.of(publisher));
+        when(publisherRepository.findById(eq(publisherId))).thenReturn(Optional.of(publisher));
         doNothing().when(publisherRepository).deleteById(publisherId);
 
         PublisherDeleteResponse response = publisherService.deletePublisher(publisherId);
@@ -140,7 +141,7 @@ class PublisherServiceTest {
     @Test
     void givenPublisherId_whenNotExistPublisherDelete_thenThrowPublisherNotExistException() {
         Integer publisherId = 1;
-        when(publisherRepository.findById(publisherId)).thenReturn(Optional.empty());
+        when(publisherRepository.findById(eq(publisherId))).thenReturn(Optional.empty());
         assertThrows(PublisherNotExistException.class, () -> publisherService.deletePublisher(publisherId));
     }
 }
