@@ -13,6 +13,7 @@ package store.mybooks.resource.user_status.exception;
  */
 public class UserStatusNotExistException extends RuntimeException{
 
+    // todo 이건 나중에 삭제 할 수도있음 
     public UserStatusNotExistException(String userStatusName) {
         super(String.format("[%s]는 존재하지 않는 User Status 입니다",userStatusName));
     }
