@@ -3,6 +3,8 @@ package store.mybooks.resource.user.controller;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,6 +43,7 @@ public class UserRestController {
 
     private final UserService userService;
 
+
     @PostMapping
     public ResponseEntity<UserCreateResponse> createUser(
             @RequestBody UserCreateRequest createRequest) {
@@ -52,10 +55,11 @@ public class UserRestController {
         return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
     }
 
-    @PutMapping
-    public ResponseEntity<UserModifyResponse> modifyUser(@RequestBody UserModifyRequest modifyRequest) {
+    @PutMapping("/{email}")
+    public ResponseEntity<UserModifyResponse> modifyUser(@PathVariable(name = "email") String email,
+                                                         @RequestBody UserModifyRequest modifyRequest) {
 
-        UserModifyResponse modifyResponse = userService.modifyUser(modifyRequest);
+        UserModifyResponse modifyResponse = userService.modifyUser(email,modifyRequest);
 
         return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
     }
