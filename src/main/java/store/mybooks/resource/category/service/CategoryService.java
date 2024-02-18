@@ -47,7 +47,7 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public List<CategoryGetResponse> getCategoriesByParentCategoryId(int id) {
         if (!categoryRepository.existsById(id)) {
-            throw new CategoryNotExistsException();
+            throw new CategoryNotExistsException(id);
         }
 
         return categoryRepository.findAllByParentCategory_Id(id);
@@ -87,13 +87,14 @@ public class CategoryService {
             throw new CategoryNameAlreadyExistsException();
         }
 
-        Category category = categoryRepository.findById(id).orElseThrow(CategoryNotExistsException::new);
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotExistsException(id));
 
         Category parentCategory = null;
 
         Integer parentCategoryId = categoryModifyRequest.getParentCategoryId();
         if (parentCategoryId != null) {
-            parentCategory = categoryRepository.findById(parentCategoryId).orElseThrow(CategoryNotExistsException::new);
+            parentCategory =
+                    categoryRepository.findById(parentCategoryId).orElseThrow(() -> new CategoryNotExistsException(id));
         }
 
         return category.modifyCategory(parentCategory, categoryModifyRequest.getName());
@@ -109,7 +110,7 @@ public class CategoryService {
      */
     @Transactional
     public CategoryDeleteResponse deleteCategory(int id) {
-        Category category = categoryRepository.findById(id).orElseThrow(CategoryNotExistsException::new);
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotExistsException(id));
 
         categoryRepository.deleteById(id);
 
