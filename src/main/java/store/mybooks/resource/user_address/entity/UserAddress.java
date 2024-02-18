@@ -40,7 +40,7 @@ public class UserAddress {
     @Column(name = "address_alias")
     private String alias;
 
-    @Column(name = "address_full_name")
+    @Column(name = "address_full_name ")
     private String fullName;
 
 
