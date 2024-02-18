@@ -48,7 +48,7 @@ public class TagService {
     @Transactional
     public TagCreateResponse createTag(TagCreateRequest tagCreateRequest) {
         if (tagRepository.existsByName(tagCreateRequest.getName())) {
-            throw new TagNameAlreadyExistsException();
+            throw new TagNameAlreadyExistsException(tagCreateRequest.getName());
         }
 
         return tagRepository.save(new Tag(tagCreateRequest)).convertToCreateResponse();
@@ -69,11 +69,11 @@ public class TagService {
     public TagModifyResponse modifyTag(int id, TagModifyRequest tagModifyRequest) {
         Optional<Tag> optionalTag = tagRepository.findById(id);
         if (optionalTag.isEmpty()) {
-            throw new TagNotExistsException();
+            throw new TagNotExistsException(id);
         }
 
         if (tagRepository.existsByName(tagModifyRequest.getName())) {
-            throw new TagNameAlreadyExistsException();
+            throw new TagNameAlreadyExistsException(tagModifyRequest.getName());
         }
 
         Tag tag = optionalTag.get();
@@ -94,7 +94,7 @@ public class TagService {
      */
     @Transactional
     public TagDeleteResponse deleteTag(int id) {
-        Tag tag = tagRepository.findById(id).orElseThrow(TagNotExistsException::new);
+        Tag tag = tagRepository.findById(id).orElseThrow(() -> new TagNotExistsException(id));
 
         tagRepository.deleteById(id);
 
