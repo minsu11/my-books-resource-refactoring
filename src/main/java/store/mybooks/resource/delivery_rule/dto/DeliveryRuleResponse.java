@@ -1,10 +1,12 @@
 package store.mybooks.resource.delivery_rule.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import store.mybooks.resource.delivery_name_rule.entity.DeliveryNameRule;
 
 
 /**
@@ -19,15 +21,16 @@ import lombok.NoArgsConstructor;
  * 2/16/24        Fiat_lux       최초 생성
  */
 
-@Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"deliveryNameRule"})
 public class DeliveryRuleResponse {
 
     private Integer id;
 
-    private Integer deliveryNameRuleId;
+    private DeliveryNameRule deliveryNameRule;
 
     private String companyName;
 
