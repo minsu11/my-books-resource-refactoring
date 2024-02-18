@@ -3,7 +3,12 @@ package store.mybooks.resource.user.dto.response;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
+import net.bytebuddy.implementation.bind.annotation.BindingPriority;
+import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import store.mybooks.resource.user_grade.entity.UserGrade;
 import store.mybooks.resource.user_status.entity.UserStatus;
 
@@ -19,15 +24,19 @@ import store.mybooks.resource.user_status.entity.UserStatus;
  * 2/13/24        masiljangajji       최초 생성
  */
 
-@Builder
+
+
+@Setter
 @Getter
+@Builder
 public class UserModifyResponse {
 
     private String name;
     private String userStatusName;
     private String userGradeName;
-    private String phoneNumber;
-
+    private LocalDateTime latestLogin;
+    private LocalDateTime deletedAt;
+    private LocalDate gradeChangeDate;
 
 
 }
