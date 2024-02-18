@@ -29,4 +29,6 @@ public class OrderDetailStatusRepositoryImpl extends QuerydslRepositorySupport i
                 .select(Projections.constructor(OrderDetailStatusResponse.class, orderDetailStatus.id))
                 .fetch();
     }
+
+    
 }

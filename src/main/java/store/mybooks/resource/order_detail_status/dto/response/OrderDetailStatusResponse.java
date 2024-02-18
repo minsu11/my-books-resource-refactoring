@@ -1,8 +1,8 @@
 package store.mybooks.resource.order_detail_status.dto.response;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * packageName    : store.mybooks.resource.order_detail_status.dto.response
@@ -16,7 +16,7 @@ import lombok.Getter;
  * 2/16/24        minsu11       최초 생성
  */
 @Getter
-@Builder
+@Setter
 @AllArgsConstructor
 public class OrderDetailStatusResponse {
     private String id;

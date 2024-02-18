@@ -1,10 +1,11 @@
 package store.mybooks.resource.order_detail_status.service;
 
 import java.util.List;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.order_detail_status.dto.request.OrderDetailStatusRequest;
+import store.mybooks.resource.order_detail_status.dto.response.OrderDetailMapper;
 import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusResponse;
 import store.mybooks.resource.order_detail_status.entity.OrderDetailStatus;
 import store.mybooks.resource.order_detail_status.exception.OrderDetailStatusAlreadyExistException;
@@ -23,14 +24,15 @@ import store.mybooks.resource.order_detail_status.repository.OrderDetailStatusRe
  * 2/16/24        minsu11       최초 생성
  */
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OrderDetailStatusService {
-    private OrderDetailStatusRepository orderDetailStatusRepository;
+    private final OrderDetailStatusRepository orderDetailStatusRepository;
+    private final OrderDetailMapper mapper;
 
     @Transactional(readOnly = true)
     public OrderDetailStatusResponse getOrderDetailStatus(String id) {
         OrderDetailStatus orderDetailStatus = orderDetailStatusRepository.findById(id).orElseThrow(() -> new OrderDetailStatusNotFoundException("order detail이 없음"));
-        return orderDetailStatus.convertToOrderDetailStatusResponse();
+        return mapper.mapToOrderDetailStatusResponse(orderDetailStatus);
     }
 
     @Transactional(readOnly = true)
