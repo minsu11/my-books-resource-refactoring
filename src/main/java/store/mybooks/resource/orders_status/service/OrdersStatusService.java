@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.orders_status.dto.request.OrdersStatusCreateRequest;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusCreateResponse;
+import store.mybooks.resource.orders_status.dto.response.OrdersStatusMapper;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 import store.mybooks.resource.orders_status.entity.OrdersStatus;
 import store.mybooks.resource.orders_status.exception.OrdersStatusAlreadyExistException;
@@ -28,13 +29,14 @@ import store.mybooks.resource.orders_status.repository.OrdersStatusRepository;
 @RequiredArgsConstructor
 public class OrdersStatusService {
     private final OrdersStatusRepository ordersStatusRepository;
+    private final OrdersStatusMapper mapper;
 
     @Transactional(readOnly = true)
     public OrdersStatusResponse getOrdersStatusById(String ordersStatusId) {
 
         OrdersStatus ordersStatus = ordersStatusRepository.findById(
                 ordersStatusId).orElseThrow(OrdersStatusNotFoundException::new);
-        return ordersStatus.convertToOrdersStatusResponse();
+        return mapper.mapToResponse(ordersStatus);
     }
 
     @Transactional(readOnly = true)
@@ -55,7 +57,7 @@ public class OrdersStatusService {
         }
         OrdersStatus ordersStatus = new OrdersStatus(request);
         ordersStatusRepository.save(ordersStatus);
-        return ordersStatus.convertToOrdersStatusCreateResponse();
+        return mapper.mapToCreateResponse(ordersStatus);
     }
 
 

@@ -33,7 +33,7 @@ import store.mybooks.resource.orders_status.service.OrdersStatusService;
  * fileName       : OrdersStatusControllerTest
  * author         : minsu11
  * date           : 2/16/24
- * description    :
+ * description    : OrdersStatus 관련 unit test code
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
@@ -51,9 +51,10 @@ class OrdersStatusControllerUnitTest {
     @Test
     void givenOrdersStatus_whenGetOrderStatusById_thenReturnOrdersStatusResponse() throws Exception {
         OrdersStatusResponse response = new OrdersStatusResponse("test");
-        given(ordersStatusService.getOrdersStatusById(anyString())).willReturn(response);
+        given(ordersStatusService.getOrdersStatusById(any())).willReturn(response);
 
-        mockMvc.perform(get("/api/orders-statuses/{id}", "test"))
+        mockMvc.perform(get("/api/orders-statuses/{orderStatusId}", "test")
+                )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", equalTo("test")));

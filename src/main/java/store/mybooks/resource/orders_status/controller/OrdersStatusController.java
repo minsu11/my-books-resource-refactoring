@@ -1,7 +1,7 @@
 package store.mybooks.resource.orders_status.controller;
 
 import java.util.List;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,13 +23,13 @@ import store.mybooks.resource.orders_status.service.OrdersStatusService;
  */
 @RestController
 @RequestMapping("/api/orders-statuses")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OrdersStatusController {
-    private OrdersStatusService ordersStatusService;
+    private final OrdersStatusService ordersStatusService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/{ordersStatusId}")
     public ResponseEntity<OrdersStatusResponse> getOrdersStatus(
-            @PathVariable(name = "id") String ordersStatusId
+            @PathVariable String ordersStatusId
     ) {
         OrdersStatusResponse response = ordersStatusService.getOrdersStatusById(ordersStatusId);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -41,13 +41,7 @@ public class OrdersStatusController {
         List<OrdersStatusResponse> ordersStatusResponseList = ordersStatusService.getOrdersStatusList();
         return new ResponseEntity<>(ordersStatusResponseList, HttpStatus.OK);
     }
-
-    @GetMapping("/test")
-    public ResponseEntity<String> test(
-    ) {
-        List<OrdersStatusResponse> ordersStatusResponseList = ordersStatusService.getOrdersStatusList();
-        return new ResponseEntity<>("OK", HttpStatus.OK);
-    }
+    
 
     @PostMapping
     public ResponseEntity<OrdersStatusCreateResponse> createOrdersStatus(
