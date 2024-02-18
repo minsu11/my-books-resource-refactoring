@@ -53,14 +53,15 @@ public class DeliveryNameRuleService {
     }
 
     @Transactional
-    public void modifyDeliveryNameRule(Integer deliveryNameRuleId,
-                                       DeliveryNameRuleModifyRequest deliveryNameRuleModifyRequest) {
+    public DeliveryNameRuleResponse modifyDeliveryNameRule(Integer deliveryNameRuleId,
+                                                           DeliveryNameRuleModifyRequest deliveryNameRuleModifyRequest) {
         Optional<DeliveryNameRule> optionalDeliveryNameRule =
                 this.deliveryNameRuleRepository.findById(deliveryNameRuleId);
 
         if (optionalDeliveryNameRule.isPresent()) {
             DeliveryNameRule deliveryNameRule = optionalDeliveryNameRule.get();
-            deliveryNameRule.setDeliveryNameRule(deliveryNameRuleModifyRequest);
+            deliveryNameRule.setName(deliveryNameRuleModifyRequest.getDeliveryName());
+            return deliveryNameRuleMapper.mapToResponse(deliveryNameRule);
         } else {
             throw new DeliveryNameRuleNotFoundException("배송 이름 규칙이 존재하지 않습니다.");
         }
