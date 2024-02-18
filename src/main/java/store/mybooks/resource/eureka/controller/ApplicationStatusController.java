@@ -21,7 +21,7 @@ import store.mybooks.resource.eureka.actuator.ApplicationStatus;
  * 2/17/24        minsu11       최초 생성
  */
 @RestController
-@RequestMapping("/actuator/status")
+@RequestMapping("/api/actuator/status")
 public class ApplicationStatusController {
 
     private final ApplicationInfoManager applicationInfoManager;

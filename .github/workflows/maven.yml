@@ -10,9 +10,9 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "main", "dev", "eureka-test" ]
+    branches: [ "main", "dev" ]
   pull_request:
-    branches: [ "main", "dev", "eureka-test" ]
+    branches: [ "main", "dev" ]
 
 jobs:
   build:
@@ -53,6 +53,16 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_IP }}
+          username: ${{ secrets.SSH_ID }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script_stop: true
+          script: "./startup.sh"
+
+      - name: execute shell script
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_SERVER2_IP }}
           username: ${{ secrets.SSH_ID }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
