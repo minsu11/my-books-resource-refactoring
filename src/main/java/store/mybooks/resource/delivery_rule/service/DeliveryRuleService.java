@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.delivery_name_rule.entity.DeliveryNameRule;
 import store.mybooks.resource.delivery_name_rule.exception.DeliveryNameRuleNotFoundException;
 import store.mybooks.resource.delivery_name_rule.repository.DeliveryNameRuleRepository;
+import store.mybooks.resource.delivery_rule.dto.DeliveryRuleDto;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleMapper;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleModifyRequest;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleRegisterRequest;
@@ -35,7 +36,7 @@ public class DeliveryRuleService {
     private final DeliveryRuleMapper deliveryRuleMapper;
 
     @Transactional
-    public void registerDeliveryRule(DeliveryRuleRegisterRequest deliveryRuleRegisterRequest) {
+    public DeliveryRuleResponse registerDeliveryRule(DeliveryRuleRegisterRequest deliveryRuleRegisterRequest) {
         Optional<DeliveryNameRule> optionalDeliveryNameRule =
                 deliveryNameRuleRepository.findById(deliveryRuleRegisterRequest.getDeliveryNameRuleId());
 
@@ -43,37 +44,42 @@ public class DeliveryRuleService {
             DeliveryNameRule deliveryNameRule = optionalDeliveryNameRule.get();
             DeliveryRule deliveryRule = new DeliveryRule(deliveryRuleRegisterRequest, deliveryNameRule);
 
-            deliveryRuleRepository.save(deliveryRule);
+            DeliveryRule saveDeliveryRule = deliveryRuleRepository.save(deliveryRule);
+            return deliveryRuleMapper.mapToResponse(saveDeliveryRule);
         } else {
             throw new DeliveryNameRuleNotFoundException("배송 이름 규칙이 존재하지 않습니다.");
         }
     }
 
     @Transactional(readOnly = true)
-    public DeliveryRuleResponse getDeliveryRule(Integer id) {
-        Optional<DeliveryRule> optionalDeliveryRule = deliveryRuleRepository.findDeliveryRuleById(id);
+    public DeliveryRuleDto getDeliveryRule(Integer id) {
+        Optional<DeliveryRuleDto> optionalDeliveryRule = deliveryRuleRepository.findDeliveryRuleById(id);
 
         if (optionalDeliveryRule.isPresent()) {
-            DeliveryRule deliveryRule = optionalDeliveryRule.get();
 
-            return deliveryRuleMapper.mapToResponse(deliveryRule);
+            return optionalDeliveryRule.get();
         } else {
             throw new DeliveryRuleNotFoundException("배송 규칙이 존재하지 않습니다");
         }
     }
 
     @Transactional
-    public void modifyDeliveryRule(Integer id, DeliveryRuleModifyRequest deliveryRuleModifyRequest) {
+    public DeliveryRuleResponse modifyDeliveryRule(Integer id, DeliveryRuleModifyRequest deliveryRuleModifyRequest) {
         Optional<DeliveryRule> optionalDeliveryRule = deliveryRuleRepository.findById(id);
         Optional<DeliveryNameRule> optionalDeliveryNameRule =
                 deliveryNameRuleRepository.findById(deliveryRuleModifyRequest.getDeliveryNameRuleId());
-
-        if (optionalDeliveryRule.isPresent() && optionalDeliveryNameRule.isPresent()) {
+        if (optionalDeliveryRule.isEmpty()) {
+            throw new DeliveryRuleNotFoundException("배송 규칙이 존재하지 않습니다");
+        } else if (optionalDeliveryNameRule.isEmpty()) {
+            throw new DeliveryRuleNotFoundException("배송 규칙이 존재하지 않습니다");
+        } else {
             DeliveryRule deliveryRule = optionalDeliveryRule.get();
             DeliveryNameRule deliveryNameRule = optionalDeliveryNameRule.get();
-            deliveryRule.setDeliveryRule(deliveryRuleModifyRequest, deliveryNameRule);
-        } else {
-            throw new DeliveryRuleNotFoundException("배송 규칙이 존재하지 않습니다");
+            deliveryRule.setDeliveryNameRule(deliveryNameRule);
+            deliveryRule.setCompanyName(deliveryRuleModifyRequest.getDeliveryRuleCompanyName());
+            deliveryRule.setCost(deliveryRuleModifyRequest.getDeliveryCost());
+            deliveryRule.setRuleCost(deliveryRuleModifyRequest.getDeliveryRuleCost());
+            return deliveryRuleMapper.mapToResponse(deliveryRule);
         }
     }
 
