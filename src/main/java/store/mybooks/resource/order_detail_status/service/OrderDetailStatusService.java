@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.order_detail_status.dto.request.OrderDetailStatusRequest;
 import store.mybooks.resource.order_detail_status.dto.response.OrderDetailMapper;
+import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusCreateResponse;
 import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusResponse;
 import store.mybooks.resource.order_detail_status.entity.OrderDetailStatus;
 import store.mybooks.resource.order_detail_status.exception.OrderDetailStatusAlreadyExistException;
@@ -40,20 +41,14 @@ public class OrderDetailStatusService {
         return orderDetailStatusRepository.getOrderDetailStatusResponseList();
     }
 
-    public OrderDetailStatusResponse createOrderDetailStatus(OrderDetailStatusRequest request) {
+    public OrderDetailStatusCreateResponse createOrderDetailStatus(OrderDetailStatusRequest request) {
         if (orderDetailStatusRepository.findById(request.getId()).isPresent()) {
             throw new OrderDetailStatusAlreadyExistException("이미 존재한 상태");
         }
         OrderDetailStatus orderDetailStatus = new OrderDetailStatus(request.getId());
         orderDetailStatusRepository.save(orderDetailStatus);
 
-        return orderDetailStatus.convertToOrderDetailStatusResponse();
+        return mapper.mapToOrderDetailStatusCreateResponse(orderDetailStatus);
     }
 
-    public OrderDetailStatusResponse deleteOrderDetailStatus(String id) {
-        OrderDetailStatus orderDetailStatus = orderDetailStatusRepository.findById(id)
-                .orElseThrow(OrderDetailStatusNotFoundException::new);
-        orderDetailStatusRepository.delete(orderDetailStatus);
-        return orderDetailStatus.convertToOrderDetailStatusResponse();
-    }
 }
