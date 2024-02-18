@@ -13,8 +13,8 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import store.mybooks.resource.delivery_name_rule.entity.DeliveryNameRule;
-import store.mybooks.resource.delivery_rule.dto.DeliveryRuleModifyRequest;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleRegisterRequest;
 
 /**
@@ -31,6 +31,7 @@ import store.mybooks.resource.delivery_rule.dto.DeliveryRuleRegisterRequest;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 @Entity
 @Table(name = "delivery_rule")
 public class DeliveryRule {
@@ -66,14 +67,6 @@ public class DeliveryRule {
         this.ruleCost = deliveryRuleRegisterRequest.getDeliveryRuleCost();
         this.createdDate = LocalDate.now();
         this.isAvailable = true;
-    }
-
-    public void setDeliveryRule(DeliveryRuleModifyRequest deliveryRuleModifyRequest,
-                                DeliveryNameRule deliveryNameRule) {
-        this.deliveryNameRule = deliveryNameRule;
-        this.companyName = deliveryRuleModifyRequest.getDeliveryRuleCompanyName();
-        this.cost = deliveryRuleModifyRequest.getCost();
-        this.ruleCost = deliveryRuleModifyRequest.getDeliveryRuleCost();
     }
 
 }
