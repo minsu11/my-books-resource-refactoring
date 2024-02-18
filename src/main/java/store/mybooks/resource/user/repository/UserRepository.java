@@ -3,6 +3,8 @@ package store.mybooks.resource.user.repository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
 import store.mybooks.resource.user.entity.User;
@@ -26,5 +28,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
     UserGetResponse queryByEmail(String email);
+
+    Page<UserGetResponse> queryAllBy(Pageable pageable);
 
 }
