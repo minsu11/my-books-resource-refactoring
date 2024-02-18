@@ -3,11 +3,13 @@ package store.mybooks.resource.user.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import store.mybooks.resource.user.dto.mapper.UserCreateMapper;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
+import store.mybooks.resource.user.dto.mapper.UserModifyMapper;
 import store.mybooks.resource.user.dto.response.UserModifyResponse;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user.exception.UserAlreadyExistException;
@@ -37,6 +39,7 @@ import store.mybooks.resource.user_status.repository.UserStatusRepository;
 
 @AllArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class UserService {
 
 
@@ -59,46 +62,54 @@ public class UserService {
 
         UserStatus userStatus = userStatusRepository.findById(userStatusName)
                 .orElseThrow(() -> new UserStatusNotExistException(userStatusName));
+
+        // todo 이거 변경가능함
         UserGrade userGrade = userGradeRepository.findByName(userGradeName)
-                .orElseThrow(() -> new UserGradeNotExistException(userGradeName));
+                .orElseThrow(() -> new UserGradeNotExistException(1));
+
+
 
         User user = new User(createRequest, userStatus, userGrade);
 
-        User resultUser = userRepository.save(user);
+        userRepository.save(user);
 
-        return resultUser.convertToCreateResponse();
+        // todo 이거 mapstruct 써서 변경할 수 있음
+        return UserCreateMapper.INSTANCE.toUserCreateResponse(user);
     }
 
     @Transactional
-    public UserModifyResponse modifyUser(UserModifyRequest modifyRequest) {
+    public UserModifyResponse modifyUser(String email, UserModifyRequest modifyRequest) {
 
         // 없으면 예외처리
-        User user = userRepository.findByEmail(modifyRequest.getEmail())
-                .orElseThrow(() -> new UserNotExistException(modifyRequest.getEmail()));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotExistException(email));
 
-        UserStatus userStatus = userStatusRepository.findById(modifyRequest.getUserStatusName()).orElseThrow();
-        UserGrade userGrade = userGradeRepository.findByName(modifyRequest.getUserGradeName()).orElseThrow();
+        String userStatusName = modifyRequest.getUserStatusName();
+        String userGradeName = modifyRequest.getUserGradeName();
 
+        UserStatus userStatus = userStatusRepository.findById(userStatusName)
+                .orElseThrow(() -> new UserStatusNotExistException(userStatusName));
+        UserGrade userGrade = userGradeRepository.findByName(userGradeName).orElseThrow(() -> new RuntimeException());
 
         user.setByModifyRequest(modifyRequest, userStatus, userGrade);
 
-
-        return user.convertToModifyResponse();
+        return UserModifyMapper.INSTANCE.toUserModifyResponse(user);
 
     }
 
     @Transactional
     public UserDeleteResponse deleteUser(String email) {
 
-        userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistException(email));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistException(email));
 
-        // 이거 소프트삭제로 변경 필요함
-        userRepository.deleteByEmail(email);
+        String userStatusName = UserStatusEnum.INACTIVE.toString();
+        UserStatus userStatus = userStatusRepository.findById(userStatusName)
+                .orElseThrow(() -> new UserStatusNotExistException(userStatusName));
 
-        return new UserDeleteResponse("유저 Soft 삭제완료");
+        user.modifyUserStatus(userStatus);
+        return new UserDeleteResponse(String.format("[%s] 유저 삭제완료", email));
     }
 
-    @Transactional(readOnly = true)
     public UserGetResponse findByEmail(String email) {
 
         userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistException(email));

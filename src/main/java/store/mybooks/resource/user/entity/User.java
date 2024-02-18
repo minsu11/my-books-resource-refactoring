@@ -96,34 +96,23 @@ public class User {
     }
 
 
-    public void setByModifyRequest(UserModifyRequest modifyRequest, UserStatus userStatus, UserGrade userGrade) {
+    public void setByModifyRequest(UserModifyRequest modifyRequest, UserStatus userStatus,
+                                   UserGrade userGrade) {
 
         this.name = modifyRequest.getName();
         this.password = modifyRequest.getPassword();
+        this.latestLogin = modifyRequest.getLatestLogin();
+        this.deletedAt = modifyRequest.getDeletedAt();
+        this.gradeChangedDate = modifyRequest.getGradeChangeDate();
+        this.phoneNumber = modifyRequest.getPhoneNumber();
+
         this.userGrade = userGrade;
         this.userStatus = userStatus;
     }
 
-
-    public UserCreateResponse convertToCreateResponse() {
-
-        return UserCreateResponse.builder()
-                .name(this.name)
-                .userGradeName(this.userGrade.getName())
-                .userStatusName(this.userStatus.getId())
-                .email(this.email)
-                .birth(this.birth)
-                .build();
+    public void modifyUserStatus(UserStatus userStatus) {
+        this.userStatus = userStatus;
     }
 
-    public UserModifyResponse convertToModifyResponse() {
-
-        return UserModifyResponse.builder()
-                .name(this.name)
-                .userGradeName(this.userGrade.getName())
-                .userStatusName(this.userStatus.getId())
-                .phoneNumber(this.phoneNumber)
-                .build();
-    }
 
 }

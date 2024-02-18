@@ -3,7 +3,9 @@ package store.mybooks.resource.user.dto.response;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 import store.mybooks.resource.user_grade.entity.UserGrade;
 import store.mybooks.resource.user_status.entity.UserStatus;
 
@@ -19,8 +21,8 @@ import store.mybooks.resource.user_status.entity.UserStatus;
  * 2/13/24        masiljangajji       최초 생성
  */
 
+@Data
 @Builder
-@Getter
 public class UserCreateResponse {
 
     private String name;

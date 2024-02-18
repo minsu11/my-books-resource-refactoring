@@ -26,9 +26,7 @@ import store.mybooks.resource.user_status.entity.UserStatus;
 
 
 
-@Setter
-@Getter
-@Builder
+@Data
 public class UserModifyResponse {
 
     private String name;
