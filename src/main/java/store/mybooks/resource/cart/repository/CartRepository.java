@@ -2,6 +2,7 @@ package store.mybooks.resource.cart.repository;
 
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import store.mybooks.resource.cart.dto.CartDto;
 import store.mybooks.resource.cart.entity.Cart;
 
 /**
@@ -16,5 +17,7 @@ import store.mybooks.resource.cart.entity.Cart;
  * 2/15/24        Fiat_lux       최초 생성
  */
 public interface CartRepository extends JpaRepository<Cart, Long> {
-    Optional<Cart> findCartByUserId(Long userId);
+    Boolean existsCartByUserId(Long userId);
+
+    Optional<CartDto> findCartByUserId(Long userId);
 }
