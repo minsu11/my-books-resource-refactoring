@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,8 @@ import store.mybooks.resource.tag.dto.response.TagCreateResponse;
 import store.mybooks.resource.tag.dto.response.TagDeleteResponse;
 import store.mybooks.resource.tag.dto.response.TagGetResponse;
 import store.mybooks.resource.tag.dto.response.TagModifyResponse;
+import store.mybooks.resource.tag.exception.TagNameAlreadyExistsException;
+import store.mybooks.resource.tag.exception.TagNotExistsException;
 import store.mybooks.resource.tag.service.TagService;
 
 /**
@@ -96,5 +99,35 @@ public class TagRestController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(tagService.deleteTag(id));
+    }
+
+    /**
+     * methodName : tagNotExistsExceptionHandler
+     * author : damho-lee
+     * description : TagNotExistsException 를 처리하는 ExceptionHandler.
+     *
+     * @param exception TagNotExistsException.
+     * @return ResponseEntity, 404 에러
+     */
+    @ExceptionHandler(TagNotExistsException.class)
+    public ResponseEntity<String> tagNotExistsExceptionHandler(TagNotExistsException exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
+    }
+
+    /**
+     * methodName : tagNameAlreadyExistsExceptionHandler
+     * author : damho-lee
+     * description : TagNameAlreadyExistsException 를 처리하는 Exception Handler.
+     *
+     * @param exception TagNameAlreadyExistsException
+     * @return ResponseEntity, 404 에러
+     */
+    @ExceptionHandler(TagNameAlreadyExistsException.class)
+    public ResponseEntity<String> tagNameAlreadyExistsExceptionHandler(TagNameAlreadyExistsException exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
     }
 }
