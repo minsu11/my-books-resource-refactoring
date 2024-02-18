@@ -54,10 +54,12 @@ public class DeliveryNameRuleController {
     }
 
     @PutMapping("/{deliveryNameRuleId}")
-    public ResponseEntity<Void> modifyDeliveryNameRule(@PathVariable("deliveryNameRuleId") Integer deliveryNameRuleId,
-                                                       DeliveryNameRuleModifyRequest deliveryNameRuleModifyRequest) {
-        deliveryNameRuleService.modifyDeliveryNameRule(deliveryNameRuleId, deliveryNameRuleModifyRequest);
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public ResponseEntity<DeliveryNameRuleResponse> modifyDeliveryNameRule(
+            @PathVariable("deliveryNameRuleId") Integer deliveryNameRuleId,
+            @RequestBody DeliveryNameRuleModifyRequest deliveryNameRuleModifyRequest) {
+        DeliveryNameRuleResponse deliveryNameRuleResponse =
+                deliveryNameRuleService.modifyDeliveryNameRule(deliveryNameRuleId, deliveryNameRuleModifyRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(deliveryNameRuleResponse);
     }
 
     @DeleteMapping("/{deliveryNameRuleId}")
@@ -65,4 +67,5 @@ public class DeliveryNameRuleController {
         deliveryNameRuleService.deleteDeliveryNameRule(deliveryNameRuleId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
 }
