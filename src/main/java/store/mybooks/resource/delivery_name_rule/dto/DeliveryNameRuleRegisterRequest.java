@@ -1,7 +1,7 @@
 package store.mybooks.resource.delivery_name_rule.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
  * -----------------------------------------------------------
  * 2/15/24        Fiat_lux       최초 생성
  */
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class DeliveryNameRuleRegisterRequest {
