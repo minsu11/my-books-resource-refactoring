@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import store.mybooks.resource.delivery_rule.dto.DeliveryRuleDto;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleModifyRequest;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleRegisterRequest;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleResponse;
@@ -36,26 +37,29 @@ public class DeliveryRuleController {
     }
 
     @GetMapping("/{deliveryRuleId}")
-    public ResponseEntity<DeliveryRuleResponse> getDeliveryRule(
+    public ResponseEntity<DeliveryRuleDto> getDeliveryRule(
             @PathVariable("deliveryRuleId") Integer deliveryRuleId) {
-        DeliveryRuleResponse deliveryRule = deliveryRuleService.getDeliveryRule(deliveryRuleId);
+        DeliveryRuleDto deliveryRule = deliveryRuleService.getDeliveryRule(deliveryRuleId);
 
         return ResponseEntity.ok().body(deliveryRule);
     }
 
     @PostMapping
-    public ResponseEntity<Void> createDeliveryRule(
+    public ResponseEntity<DeliveryRuleResponse> createDeliveryRule(
             @RequestBody DeliveryRuleRegisterRequest deliveryRuleRegisterRequest) {
-        deliveryRuleService.registerDeliveryRule(deliveryRuleRegisterRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        DeliveryRuleResponse deliveryRuleResponse =
+                deliveryRuleService.registerDeliveryRule(deliveryRuleRegisterRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(deliveryRuleResponse);
     }
 
     @PutMapping("/{deliveryRuleId}")
-    public ResponseEntity<Void> modifyDeliveryRule(@PathVariable("deliveryRuleId") Integer deliveryRuleId,
-                                                   @RequestBody DeliveryRuleModifyRequest deliveryRuleModifyRequest) {
-        deliveryRuleService.modifyDeliveryRule(deliveryRuleId, deliveryRuleModifyRequest);
+    public ResponseEntity<DeliveryRuleResponse> modifyDeliveryRule(
+            @PathVariable("deliveryRuleId") Integer deliveryRuleId,
+            @RequestBody DeliveryRuleModifyRequest deliveryRuleModifyRequest) {
+        DeliveryRuleResponse deliveryRuleResponse =
+                deliveryRuleService.modifyDeliveryRule(deliveryRuleId, deliveryRuleModifyRequest);
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK).body(deliveryRuleResponse);
     }
 
     @DeleteMapping("/{deliveryRuleId}")
