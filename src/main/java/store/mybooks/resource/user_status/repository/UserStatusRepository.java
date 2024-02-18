@@ -1,6 +1,7 @@
 package store.mybooks.resource.user_status.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import store.mybooks.resource.user_status.dto.response.UserStatusGetResponse;
 import store.mybooks.resource.user_status.entity.UserStatus;
 
 /**
@@ -17,6 +18,6 @@ import store.mybooks.resource.user_status.entity.UserStatus;
 public interface UserStatusRepository extends JpaRepository<UserStatus, String> {
 
 
-
+    UserStatusGetResponse queryById(String id);
 
 }
