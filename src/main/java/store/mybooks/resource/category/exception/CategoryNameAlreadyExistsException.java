@@ -12,7 +12,7 @@ package store.mybooks.resource.category.exception;
  * 2/16/24          damho-lee          최초 생성
  */
 public class CategoryNameAlreadyExistsException extends RuntimeException {
-    public CategoryNameAlreadyExistsException() {
-
+    public CategoryNameAlreadyExistsException(String name) {
+        super("CategoryName : " + name + "이 이미 존재합니다.");
     }
 }

@@ -64,7 +64,7 @@ public class CategoryService {
     @Transactional
     public CategoryCreateResponse createCategory(CategoryCreateRequest categoryCreateRequest) {
         if (categoryRepository.existsByName(categoryCreateRequest.getName())) {
-            throw new CategoryNameAlreadyExistsException();
+            throw new CategoryNameAlreadyExistsException(categoryCreateRequest.getName());
         }
 
         return categoryRepository.save(new Category(categoryCreateRequest)).convertToCategoryCreateResponse();
@@ -84,7 +84,7 @@ public class CategoryService {
     @Transactional
     public CategoryModifyResponse modifyCategory(int id, CategoryModifyRequest categoryModifyRequest) {
         if (categoryRepository.existsByName(categoryModifyRequest.getName())) {
-            throw new CategoryNameAlreadyExistsException();
+            throw new CategoryNameAlreadyExistsException(categoryModifyRequest.getName());
         }
 
         Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotExistsException(id));
