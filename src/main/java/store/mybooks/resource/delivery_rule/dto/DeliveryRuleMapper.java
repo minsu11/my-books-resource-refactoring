@@ -15,9 +15,10 @@ import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
  * -----------------------------------------------------------
  * 2/17/24        Fiat_lux       최초 생성
  */
-@Mapper
+@Mapper(componentModel = "spring")
 public interface DeliveryRuleMapper {
     DeliveryRuleMapper INSTANCE = Mappers.getMapper(DeliveryRuleMapper.class);
+
 
     DeliveryRuleResponse mapToResponse(DeliveryRule deliveryRule);
 }
