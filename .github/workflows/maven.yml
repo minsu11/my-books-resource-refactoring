@@ -10,9 +10,9 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "main", "dev", "eureka-test" ]
+    branches: [ "main", "dev" ]
   pull_request:
-    branches: [ "main", "dev", "eureka-test" ]
+    branches: [ "main", "dev" ]
 
 jobs:
   build:
