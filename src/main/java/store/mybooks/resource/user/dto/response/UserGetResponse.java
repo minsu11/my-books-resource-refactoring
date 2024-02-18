@@ -43,7 +43,7 @@ public interface UserGetResponse {
 
     LocalDateTime getCreatedAt();
 
-    LocalDateTime getLastestLogin();
+    LocalDateTime getLatestLogin();
 
     LocalDate getGradeChangedDate();
 
