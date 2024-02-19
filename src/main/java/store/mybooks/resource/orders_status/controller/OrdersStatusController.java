@@ -41,7 +41,6 @@ public class OrdersStatusController {
         List<OrdersStatusResponse> ordersStatusResponseList = ordersStatusService.getOrdersStatusList();
         return new ResponseEntity<>(ordersStatusResponseList, HttpStatus.OK);
     }
-    
 
     @PostMapping
     public ResponseEntity<OrdersStatusCreateResponse> createOrdersStatus(
