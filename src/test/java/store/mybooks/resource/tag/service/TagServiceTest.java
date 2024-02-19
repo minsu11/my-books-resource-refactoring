@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -48,6 +49,7 @@ class TagServiceTest {
     TagService tagService;
 
     @Test
+    @DisplayName("getTags 리턴 값 테스트")
     void givenGetTags_whenNormalCase_thenReturnTagGetResponseList() {
         List<TagGetResponse> list = new ArrayList<>();
         list.add(() -> "firstTagName");
@@ -66,6 +68,7 @@ class TagServiceTest {
     }
 
     @Test
+    @DisplayName("createTag 메서드 정상적인 경우 테스트")
     void givenCreateTag_whenNormalCase_thenReturnTagCreateResponse() {
         TagCreateRequest tagCreateRequest = new TagCreateRequest("IT");
 
@@ -80,6 +83,7 @@ class TagServiceTest {
     }
 
     @Test
+    @DisplayName("createTag 메서드 중복되는 name 으로 생성하는 경우 테스트")
     void givenCreateTag_whenDuplicateTagName_thenThrowTagNameAlreadyExistsException() {
         TagCreateRequest tagCreateRequest = new TagCreateRequest("IT");
 
@@ -89,6 +93,7 @@ class TagServiceTest {
     }
 
     @Test
+    @DisplayName("modifyTag 메서드 정상적인 경우 테스트")
     void givenModifyTag_whenNormalCase_thenReturnTagModifyResponse() {
         TagCreateRequest tagCreateRequest = new TagCreateRequest("IT");
         Tag tag = new Tag(tagCreateRequest);
@@ -104,6 +109,7 @@ class TagServiceTest {
     }
 
     @Test
+    @DisplayName("modifyTag 메서드 태그 아이디가 존재하지 않는 경우 테스트")
     void givenModifyTag_whenNotExistsTagId_thenThrowTagNotExistsException() {
         TagModifyRequest tagModifyRequest = new TagModifyRequest("Education");
 
@@ -113,6 +119,7 @@ class TagServiceTest {
     }
 
     @Test
+    @DisplayName("modifyTag 메서드 수정하려는 태그 이름이 이미 존재하는 경우 테스트")
     void givenModifyTag_whenDuplicateTagName_thenThrowTagNameAlreadyExistsException() {
         TagModifyRequest modifyRequest = new TagModifyRequest("Education");
         TagCreateRequest tagCreateRequest = new TagCreateRequest("IT");
@@ -125,6 +132,7 @@ class TagServiceTest {
     }
 
     @Test
+    @DisplayName("deleteTag 메서드 정상적인 경우 테스트")
     void givenDeleteTag_whenNormalCase_thenReturnTagDeleteResponse() {
         Tag tag = new Tag(new TagCreateRequest("IT"));
         when(tagRepository.findById(anyInt())).thenReturn(Optional.of(tag));
@@ -137,6 +145,7 @@ class TagServiceTest {
     }
 
     @Test
+    @DisplayName("deleteTag 메서드 존재하지 않는 태그 아이디로 삭제 요청하는 경우 테스트")
     void givenDeleteTag_NotExistsTagId_thenThrowTagNotExistsException() {
         when(tagRepository.findById(anyInt())).thenReturn(Optional.empty());
 
