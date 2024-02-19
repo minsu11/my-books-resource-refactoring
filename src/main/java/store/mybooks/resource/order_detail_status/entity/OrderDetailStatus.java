@@ -7,7 +7,8 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import store.mybooks.resource.order_detail_status.dto.request.OrderDetailStatusRequest;
+import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusResponse;
 
 /**
  * packageName    : store.mybooks.resource.order_detail_status.entity
@@ -21,7 +22,6 @@ import lombok.Setter;
  * 2/13/24        minsu11       최초 생성
  */
 @Getter
-@Setter
 @Entity
 @Table(name = "order_detail_status")
 @NoArgsConstructor
@@ -32,4 +32,13 @@ public class OrderDetailStatus {
     @Column(name = "order_detail_status_id")
     private String id;
 
+    public OrderDetailStatus(OrderDetailStatusRequest request) {
+        this.id = request.getId();
+    }
+
+    public OrderDetailStatusResponse convertToOrderDetailStatusResponse() {
+        return OrderDetailStatusResponse.builder()
+                .id(this.id)
+                .build();
+    }
 }
