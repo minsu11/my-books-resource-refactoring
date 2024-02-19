@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -51,7 +52,8 @@ class CategoryServiceTest {
     CategoryService categoryService;
 
     @Test
-    void givenCategory_whenFindHighestCategories_thenReturnHighestCategoryGetResponseList() {
+    @DisplayName("getHighestCategories 메서드 최상위 카테고리들만 가져온다")
+    void givenGetHighestCategories_whenNormalCase_thenReturnHighestCategoryGetResponseList() {
         List<CategoryGetResponse> categoryGetResponseList = new ArrayList<>();
         categoryGetResponseList.add(new CategoryGetResponse() {
             @Override
@@ -84,7 +86,8 @@ class CategoryServiceTest {
     }
 
     @Test
-    void givenCategory_whenFindCategoryListByParentCategoryId_thenReturnCategoryGetResponseList() {
+    @DisplayName("getCategoriesByPArentCategoryId 메서드 ParentCategoryId 로 Category 들을 가져온다")
+    void givenGetCategoriesByParentCategoryId_whenFindCategoryListByParentCategoryId_thenReturnCategoryGetResponseList() {
         List<CategoryGetResponse> categoryGetResponseList = new ArrayList<>();
         categoryGetResponseList.add(new CategoryGetResponse() {
             @Override
@@ -136,6 +139,7 @@ class CategoryServiceTest {
     }
 
     @Test
+    @DisplayName("getCategoriesByParentCategoryId 메서드 존재하지 않는 ParentCategoryId 의 경우")
     void givenGetCategoriesByParentCategoryId_whenNotExistsParentCategoryId_thenThrowCategoryNotExistsException() {
         when(categoryRepository.existsById(anyInt())).thenReturn(false);
 
@@ -143,7 +147,8 @@ class CategoryServiceTest {
     }
 
     @Test
-    void givenCategory_whenCreateCategory_thenSaveCategoryAndReturnCategoryCreateResponse() {
+    @DisplayName("createCategory 메서드 정상적인 경우")
+    void givenCreateCategory_whenNormalCase_thenSaveCategoryAndReturnCategoryCreateResponse() {
         String name = "categoryName";
         CategoryCreateRequest categoryCreateRequest = new CategoryCreateRequest(null, name);
 
@@ -156,6 +161,7 @@ class CategoryServiceTest {
     }
 
     @Test
+    @DisplayName("createCategory 메서드 중복된 CategoryName 의 경우")
     void givenCreateCategory_whenDuplicateName_thenThrowCategoryNameAlreadyExistsException() {
         when(categoryRepository.existsByName(anyString())).thenReturn(true);
 
@@ -164,7 +170,8 @@ class CategoryServiceTest {
     }
 
     @Test
-    void givenModifyCategory_whenCorrectParameter_thenReturnCategoryModifyResponse() {
+    @DisplayName("modifyCategory 메서드 정상적인 경우")
+    void givenModifyCategory_whenNormalCase_thenReturnCategoryModifyResponse() {
         Category parentCategory = new Category(1, null, null, "parentCategory", LocalDate.now());
         Category childCategory = new Category(2, null, null, "childCategory", LocalDate.now());
 
@@ -181,6 +188,7 @@ class CategoryServiceTest {
     }
 
     @Test
+    @DisplayName("modifyCategory 메서드 중복된 CategoryName 의 경우")
     void givenModifyCategory_whenDuplicateName_thenThrowCategoryNameAlreadyExistsException() {
         when(categoryRepository.existsByName(anyString())).thenReturn(true);
 
@@ -190,6 +198,7 @@ class CategoryServiceTest {
     }
 
     @Test
+    @DisplayName("modifyCategory 메서드 존재하지 않는 CategoryId 의 경우")
     void givenModifyCategory_whenNotExistsCategoryId_thenThrowCategoryNotExistsException() {
         when(categoryRepository.existsByName(anyString())).thenReturn(false);
         when(categoryRepository.findById(anyInt())).thenReturn(Optional.empty());
@@ -199,6 +208,7 @@ class CategoryServiceTest {
     }
 
     @Test
+    @DisplayName("modifyCategory 메서드 존재하지 않는 ParentCategoryId 의 경우")
     void givenModifyCategory_whenNotExistsParentCategoryId_thenThrowCategoryNotExistsException() {
         Integer notExistsParentCategoryId = 1;
         Integer categoryId = 2;
@@ -215,6 +225,7 @@ class CategoryServiceTest {
     }
 
     @Test
+    @DisplayName("deleteCategory 메서드 정상적인 경우")
     void givenDeleteCategory_whenExistsCategoryId_thenReturnCategoryDeleteResponse() {
         Category category = new Category(1, null, null, "categoryName", null);
 
@@ -227,6 +238,7 @@ class CategoryServiceTest {
     }
 
     @Test
+    @DisplayName("deleteCategory 메서드 존재하지 않는 CategoryId 의 경우")
     void givenDeleteCategory_whenNotExistsCategoryId_thenThrowCategoryNotExistsException() {
         when(categoryRepository.findById(anyInt())).thenReturn(Optional.empty());
 
