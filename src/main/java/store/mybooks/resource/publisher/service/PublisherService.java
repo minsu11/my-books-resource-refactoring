@@ -77,7 +77,7 @@ public class PublisherService {
         Publisher publisher =
                 publisherRepository.findById(publisherId).orElseThrow(PublisherNotExistException::new);
 
-        if(Boolean.TRUE.equals(publisherRepository.existsByName(modifyRequest.getChangeName()))){
+        if(publisherRepository.existsByName(modifyRequest.getChangeName())){
             throw new PublisherAlreadyExistException();
         }
         publisher.setByModifyRequest(modifyRequest);
