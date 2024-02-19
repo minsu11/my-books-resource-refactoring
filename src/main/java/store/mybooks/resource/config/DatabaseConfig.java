@@ -40,7 +40,7 @@ public class DatabaseConfig {
     public DataSource dataSource() {
         BasicDataSource dataSource = new BasicDataSource();
 
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setUrl(keyConfig.keyStore(databaseProperties.getUrl()));
         dataSource.setUsername(keyConfig.keyStore(databaseProperties.getUserName()));
         dataSource.setPassword(keyConfig.keyStore(databaseProperties.getPassword()));
