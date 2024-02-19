@@ -29,6 +29,7 @@ import store.mybooks.resource.order_detail_status.repository.OrderDetailStatusRe
  */
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class OrderDetailStatusService {
     private final OrderDetailStatusRepository orderDetailStatusRepository;
     private final OrderDetailMapper mapper;
@@ -43,7 +44,6 @@ public class OrderDetailStatusService {
      * @return order detail status response
      * @throws OrderDetailStatusNotFoundException id와 동일한 상세 주문 상태가 없는 경우
      */
-    @Transactional(readOnly = true)
     public OrderDetailStatusResponse getOrderDetailStatus(String id) {
         OrderDetailStatus orderDetailStatus = orderDetailStatusRepository.findById(id).orElseThrow(() -> new OrderDetailStatusNotFoundException("order detail이 없음"));
         return mapper.mapToOrderDetailStatusResponse(orderDetailStatus);
@@ -58,7 +58,6 @@ public class OrderDetailStatusService {
      *
      * @return list
      */
-    @Transactional(readOnly = true)
     public List<OrderDetailStatusResponse> getOrderDetailStatusList() {
 
         return orderDetailStatusRepository.getOrderDetailStatusResponseList();
@@ -73,6 +72,7 @@ public class OrderDetailStatusService {
      * @return order detail status create response
      * @throws OrderDetailStatusAlreadyExistException database 안에 데이터가 있는 경우
      */
+    @Transactional
     public OrderDetailStatusCreateResponse createOrderDetailStatus(OrderDetailStatusRequest request) {
         if (orderDetailStatusRepository.findById(request.getId()).isPresent()) {
             throw new OrderDetailStatusAlreadyExistException("이미 존재한 상태");
