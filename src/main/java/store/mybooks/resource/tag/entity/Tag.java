@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import store.mybooks.resource.tag.dto.request.TagCreateRequest;
 import store.mybooks.resource.tag.dto.request.TagModifyRequest;
 
 /**
@@ -39,8 +38,8 @@ public class Tag {
     @Column(name = "tag_created_date")
     private LocalDate createdDate;
 
-    public Tag(TagCreateRequest tagCreateRequest) {
-        this.name = tagCreateRequest.getName();
+    public Tag(String name) {
+        this.name = name;
         this.createdDate = LocalDate.now();
     }
 

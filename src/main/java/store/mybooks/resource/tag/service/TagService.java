@@ -51,7 +51,7 @@ public class TagService {
             throw new TagNameAlreadyExistsException(tagCreateRequest.getName());
         }
 
-        return TagMapper.INSTANCE.createResponse(tagRepository.save(new Tag(tagCreateRequest)));
+        return TagMapper.INSTANCE.createResponse(tagRepository.save(new Tag(tagCreateRequest.getName())));
     }
 
     /**
