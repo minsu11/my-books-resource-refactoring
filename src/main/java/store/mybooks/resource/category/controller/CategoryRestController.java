@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +18,6 @@ import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
-import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
-import store.mybooks.resource.category.exception.CategoryNotExistsException;
 import store.mybooks.resource.category.service.CategoryService;
 
 /**
@@ -115,36 +112,5 @@ public class CategoryRestController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(categoryService.deleteCategory(id));
-    }
-
-    /**
-     * methodName : categoryNotExistsExceptionHandler
-     * author : damho-lee
-     * description : CategoryNotExistsExceptionHandler 를 처리하는 메서드.
-     *
-     * @param exception CategoryNotExistsException .
-     * @return ResponseEntity, 404 에러
-     */
-    @ExceptionHandler(CategoryNotExistsException.class)
-    public ResponseEntity<String> categoryNotExistsExceptionHandler(CategoryNotExistsException exception) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(exception.getMessage());
-    }
-
-    /**
-     * methodName : categoryNameAlreadyExistsExceptionHandler
-     * author : damho-lee
-     * description : CategoryNameAlreadyExistsException 를 처리하는 메서드.
-     *
-     * @param exception CategoryNameAlreadyExistsException.
-     * @return ResponseEntity, 404 에러
-     */
-    @ExceptionHandler(CategoryNameAlreadyExistsException.class)
-    public ResponseEntity<String> categoryNameAlreadyExistsExceptionHandler(
-            CategoryNameAlreadyExistsException exception) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(exception.getMessage());
     }
 }
