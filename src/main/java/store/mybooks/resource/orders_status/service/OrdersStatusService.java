@@ -77,7 +77,8 @@ public class OrdersStatusService {
      */
     @Transactional
     public OrdersStatusCreateResponse createOrdersStatus(OrdersStatusCreateRequest request) {
-        if (ordersStatusRepository.findById(request.getId()).isPresent()) {
+
+        if (ordersStatusRepository.existsById(request.getId())) {
             throw new OrdersStatusAlreadyExistException("아이디가 이미 존재");
         }
         OrdersStatus ordersStatus = new OrdersStatus(request);
