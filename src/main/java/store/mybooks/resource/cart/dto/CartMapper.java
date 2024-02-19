@@ -17,7 +17,5 @@ import store.mybooks.resource.cart.entity.Cart;
  */
 @Mapper(componentModel = "spring")
 public interface CartMapper {
-    CartMapper INSTANCE = Mappers.getMapper(CartMapper.class);
-
     CartResponse mapToResponse(Cart cart);
 }
