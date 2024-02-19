@@ -29,18 +29,7 @@ public class UserStatusService {
     private final UserStatusRepository userStatusRepository;
 
 
-    public UserStatusCreateResponse createUserStatus(UserStatusCreateRequest createRequest) {
 
-
-        if (userStatusRepository.findById(createRequest.getId()).isPresent()) {
-            throw new UserStatusAlreadyExistException(createRequest.getId());
-        }
-
-        UserStatus userStatus = new UserStatus(createRequest);
-        userStatusRepository.save(userStatus);
-
-        return UserStatusCreateMapper.INSTANCE.toUserStatusCreateResponse(userStatus);
-    }
 
     public UserStatusGetResponse findUserStatusById(String id) {
 

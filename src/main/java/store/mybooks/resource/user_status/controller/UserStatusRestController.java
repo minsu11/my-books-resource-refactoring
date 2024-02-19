@@ -36,20 +36,11 @@ public class UserStatusRestController {
 
     private final UserStatusService userStatusService;
 
-    @PostMapping
-    public ResponseEntity<UserStatusCreateResponse> createUserStatus(
-            @RequestBody UserStatusCreateRequest createRequest) {
-
-        UserStatusCreateResponse createResponse = userStatusService.createUserStatus(createRequest);
-
-        return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<UserStatusGetResponse> getUserStatus(@PathVariable(name = "id") String id) {
 
         UserStatusGetResponse getResponse = userStatusService.findUserStatusById(id);
-        return new ResponseEntity<>(getResponse,HttpStatus.OK);
+        return new ResponseEntity<>(getResponse, HttpStatus.OK);
     }
 
 
