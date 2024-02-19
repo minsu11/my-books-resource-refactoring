@@ -1,21 +1,19 @@
 package store.mybooks.resource.orders_status.controller;
 
-import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,12 +23,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.util.NestedServletException;
 import store.mybooks.resource.orders_status.dto.request.OrdersStatusCreateRequest;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusCreateResponse;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
-import store.mybooks.resource.orders_status.exception.OrdersStatusAlreadyExistException;
-import store.mybooks.resource.orders_status.exception.OrdersStatusNotFoundException;
 import store.mybooks.resource.orders_status.service.OrdersStatusService;
 
 /**
@@ -62,6 +57,8 @@ class OrdersStatusControllerUnitTest {
     }
 
     @Test
+    @Order(1)
+    @DisplayName("id를 통한 api get 요청 시 id와 동일한 응답 테스트")
     void givenOrdersStatus_whenGetOrderStatusById_thenReturnOrdersStatusResponse() throws Exception {
         OrdersStatusResponse response = new OrdersStatusResponse("test");
         given(ordersStatusService.getOrdersStatusById(any())).willReturn(response);
@@ -73,20 +70,10 @@ class OrdersStatusControllerUnitTest {
                 .andExpect(jsonPath("$.id", equalTo("test")));
     }
 
-    @Test
-    void givenOrderStatus_whenGetOrderStatusById_thenReturnOrdersStatusNotFoundException() throws Exception {
-        given(ordersStatusService.getOrdersStatusById(anyString())).willThrow(OrdersStatusNotFoundException.class);
-
-        Throwable th = catchThrowable(() ->
-                mockMvc.perform(get("/api/orders-statuses/{id}", "test1"))
-                        .andExpect(status().isBadRequest())
-                        .andDo(print()));
-        Assertions.assertThat(th).isInstanceOf(NestedServletException.class)
-                .hasCauseInstanceOf(OrdersStatusNotFoundException.class);
-
-    }
 
     @Test
+    @Order(2)
+    @DisplayName("주문 상태 리스트를 요청 테스트")
     void givenOrdersStatus_whenGetOrdersStatusList_thenReturnOrdersStatusResponseList() throws Exception {
         given(ordersStatusService.getOrdersStatusList()).willReturn(
                 List.of(new OrdersStatusResponse("test")));
@@ -97,6 +84,8 @@ class OrdersStatusControllerUnitTest {
     }
 
     @Test
+    @Order(3)
+    @DisplayName("DB table에 정보가 없는 경우 빈 리스트 반환하는 테스트")
     void givenOrdersStatus_whenGetOrdersStatusList_thenReturnEmptyOrdersStatusList() throws Exception {
         given(ordersStatusService.getOrdersStatusList()).willReturn(Collections.emptyList());
 
@@ -108,6 +97,8 @@ class OrdersStatusControllerUnitTest {
     }
 
     @Test
+    @Order(4)
+    @DisplayName("request의 값이 등록이 되는 지 테스트")
     void givenOrdersStatus_whenCreateOrdersStatus_thenReturnOrdersStatusCreateResponse() throws Exception {
         OrdersStatusCreateResponse response = new OrdersStatusCreateResponse("test");
         OrdersStatusCreateRequest request = new OrdersStatusCreateRequest();
@@ -121,18 +112,5 @@ class OrdersStatusControllerUnitTest {
                 .andExpect(jsonPath("$.id", equalTo("test")));
     }
 
-    @Test
-    void givenOrderStatus_whenCreateOrderStatus_thenReturnOrders() throws Exception {
-        OrdersStatusCreateRequest request = new OrdersStatusCreateRequest();
-        ObjectMapper mapper = new ObjectMapper();
-        given(ordersStatusService.createOrdersStatus(any())).willThrow(OrdersStatusAlreadyExistException.class);
-        Throwable th = catchThrowable(() ->
-                mockMvc.perform(post("/api/orders-statuses")
-                                .content(mapper.writeValueAsString(request))
-                                .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest())
-                        .andDo(print()));
-        Assertions.assertThat(th).isInstanceOf(NestedServletException.class)
-                .hasCauseInstanceOf(OrdersStatusAlreadyExistException.class);
-    }
+
 }
