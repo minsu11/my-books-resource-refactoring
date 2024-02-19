@@ -78,7 +78,6 @@ public class User {
     @Column(name = "user_grade_changed_date")
     private LocalDate gradeChangedDate;
 
-
     public User(UserCreateRequest createRequest, UserStatus userStatus, UserGrade userGrade) {
         this.email = createRequest.getEmail();
         this.birth = createRequest.getBirth();

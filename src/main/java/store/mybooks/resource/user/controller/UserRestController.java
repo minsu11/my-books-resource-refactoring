@@ -85,8 +85,8 @@ public class UserRestController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserGetResponse>> findAllUser(@RequestParam(defaultValue = "0") int page,
-                                                             @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<UserGetResponse>> findAllUser(@RequestParam(defaultValue = "0") Integer page,
+                                                             @RequestParam(defaultValue = "10") Integer size) {
 
         Page<UserGetResponse> paginationUsr = userService.findAllUser(page, size);
         return new ResponseEntity<>(paginationUsr,HttpStatus.OK);

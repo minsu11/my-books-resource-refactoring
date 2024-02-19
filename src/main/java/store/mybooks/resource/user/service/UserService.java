@@ -4,27 +4,25 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import store.mybooks.resource.user.dto.mapper.UserCreateMapper;
+import store.mybooks.resource.user.dto.mapper.UserMapper;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
-import store.mybooks.resource.user.dto.mapper.UserModifyMapper;
 import store.mybooks.resource.user.dto.response.UserModifyResponse;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user.exception.UserAlreadyExistException;
 import store.mybooks.resource.user.exception.UserNotExistException;
 import store.mybooks.resource.user.repository.UserRepository;
 import store.mybooks.resource.user_grade.entity.UserGrade;
-import store.mybooks.resource.user_grade.enumeration.UserGradeEnum;
-import store.mybooks.resource.user_grade.exception.UserGradeNotExistException;
+import store.mybooks.resource.user_grade.exception.UserGradeAlreadyUsedException;
+import store.mybooks.resource.user_grade.exception.UserGradeIdNotExistException;
 import store.mybooks.resource.user_grade.repository.UserGradeRepository;
+import store.mybooks.resource.user_grade_name.enumeration.UserGradeNameEnum;
+import store.mybooks.resource.user_grade_name.exception.UserGradeNameNotExistException;
 import store.mybooks.resource.user_status.entity.UserStatus;
 import store.mybooks.resource.user_status.enumeration.UserStatusEnum;
 import store.mybooks.resource.user_status.exception.UserStatusNotExistException;
@@ -64,22 +62,20 @@ public class UserService {
         }
 
         String userStatusName = UserStatusEnum.ACTIVE.toString();
-        String userGradeName = UserGradeEnum.NORMAL.toString();
+        String userGradeName = UserGradeNameEnum.NORMAL.toString();
 
         UserStatus userStatus = userStatusRepository.findById(userStatusName)
                 .orElseThrow(() -> new UserStatusNotExistException(userStatusName));
 
-        // todo 이거 변경가능함
-        UserGrade userGrade = userGradeRepository.findByName(userGradeName)
-                .orElseThrow(() -> new UserGradeNotExistException(1));
+        UserGrade userGrade = userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(userGradeName)
+                .orElseThrow(() -> new UserGradeNameNotExistException(userGradeName));
 
 
         User user = new User(createRequest, userStatus, userGrade);
 
         userRepository.save(user);
 
-        // todo 이거 mapstruct 써서 변경할 수 있음
-        return UserCreateMapper.INSTANCE.toUserCreateResponse(user);
+        return UserMapper.INSTANCE.toUserCreateResponse(user);
     }
 
     @Transactional
@@ -94,11 +90,12 @@ public class UserService {
 
         UserStatus userStatus = userStatusRepository.findById(userStatusName)
                 .orElseThrow(() -> new UserStatusNotExistException(userStatusName));
-        UserGrade userGrade = userGradeRepository.findByName(userGradeName).orElseThrow(() -> new RuntimeException());
+        UserGrade userGrade = userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(userGradeName).orElseThrow(
+                UserGradeIdNotExistException::new);
 
         user.setByModifyRequest(modifyRequest, userStatus, userGrade);
 
-        return UserModifyMapper.INSTANCE.toUserModifyResponse(user);
+        return UserMapper.INSTANCE.toUserModifyResponse(user);
 
     }
 
@@ -122,7 +119,7 @@ public class UserService {
         return userRepository.queryByEmail(email);
     }
 
-    public Page<UserGetResponse> findAllUser(int page, int size) {
+    public Page<UserGetResponse> findAllUser(Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         return userRepository.queryAllBy(pageable);
     }
