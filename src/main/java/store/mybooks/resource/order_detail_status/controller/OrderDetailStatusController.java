@@ -1,7 +1,7 @@
 package store.mybooks.resource.order_detail_status.controller;
 
 import java.util.List;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +23,7 @@ import store.mybooks.resource.order_detail_status.service.OrderDetailStatusServi
  */
 @RestController
 @RequestMapping("/api/order-detail-statuses")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OrderDetailStatusController {
     private final OrderDetailStatusService orderDetailStatusService;
 
@@ -56,7 +56,7 @@ public class OrderDetailStatusController {
         List<OrderDetailStatusResponse> response = orderDetailStatusService.getOrderDetailStatusList();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    
+
     @PostMapping
     public ResponseEntity<OrderDetailStatusCreateResponse> createOrderDetailStatus(
             @RequestBody OrderDetailStatusRequest request) {
