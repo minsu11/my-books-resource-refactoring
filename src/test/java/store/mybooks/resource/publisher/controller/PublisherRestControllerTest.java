@@ -28,6 +28,8 @@ import store.mybooks.resource.publisher.dto.response.PublisherCreateResponse;
 import store.mybooks.resource.publisher.dto.response.PublisherDeleteResponse;
 import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
 import store.mybooks.resource.publisher.dto.response.PublisherModifyResponse;
+import store.mybooks.resource.publisher.entity.Publisher;
+import store.mybooks.resource.publisher.mapper.PublisherMapper;
 import store.mybooks.resource.publisher.service.PublisherService;
 
 /**
@@ -99,9 +101,8 @@ class PublisherRestControllerTest {
     void createPublisher() throws Exception{
         String name = "publisherName";
         PublisherCreateRequest request = new PublisherCreateRequest(name);
-        PublisherCreateResponse response = PublisherCreateResponse.builder()
-                .name(name)
-                .build();
+        Publisher publisher = new Publisher(name);
+        PublisherCreateResponse response=PublisherMapper.INSTANCE.createResponse(publisher);
         when(publisherService.createPublisher(any(PublisherCreateRequest.class))).thenReturn(response);
 
         mockMvc.perform(post(url)
@@ -117,10 +118,9 @@ class PublisherRestControllerTest {
     void modifyPublisher() throws Exception {
         Integer publisherId = 1;
         String nameToChange = "nameToChange";
+        Publisher publisher = new Publisher(nameToChange);
         PublisherModifyRequest request = new PublisherModifyRequest(nameToChange);
-        PublisherModifyResponse response = PublisherModifyResponse.builder()
-                .name(nameToChange)
-                .build();
+        PublisherModifyResponse response = PublisherMapper.INSTANCE.modifyResponse(publisher);
 
         when(publisherService.modifyPublisher(eq(publisherId), any(PublisherModifyRequest.class)))
                 .thenReturn(response);
@@ -138,13 +138,14 @@ class PublisherRestControllerTest {
     @Test
     void deletePublisher() throws Exception {
         Integer publisherId = 1;
-        PublisherDeleteResponse response = new PublisherDeleteResponse("publisherName1");
+        Publisher publisher = new Publisher("publisherName1");
+        PublisherDeleteResponse response= PublisherMapper.INSTANCE.deleteResponse(publisher);
 
         when(publisherService.deletePublisher(eq(publisherId))).thenReturn(response);
 
         mockMvc.perform(delete(url+"/{id}", publisherId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("publisherName1"));
+                .andExpect(jsonPath("$.name").value("publisherName1"));
     }
 }

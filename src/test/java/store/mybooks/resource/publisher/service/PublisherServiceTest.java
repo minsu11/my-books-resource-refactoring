@@ -134,7 +134,7 @@ class PublisherServiceTest {
         doNothing().when(publisherRepository).deleteById(publisherId);
 
         PublisherDeleteResponse response = publisherService.deletePublisher(publisherId);
-        assertThat(response.getMessage()).isEqualTo(publisher.getName());
+        assertThat(response.getName()).isEqualTo(publisher.getName());
         verify(publisherRepository, times(1)).deleteById(publisherId);
     }
 
