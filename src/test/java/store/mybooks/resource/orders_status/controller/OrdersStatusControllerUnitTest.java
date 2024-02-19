@@ -15,13 +15,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import java.util.List;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.util.NestedServletException;
 import store.mybooks.resource.orders_status.dto.request.OrdersStatusCreateRequest;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusCreateResponse;
@@ -41,14 +44,22 @@ import store.mybooks.resource.orders_status.service.OrdersStatusService;
  * -----------------------------------------------------------
  * 2/16/24        minsu11       최초 생성
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 class OrdersStatusControllerUnitTest {
-    @Autowired
+
     MockMvc mockMvc;
 
-    @MockBean
+    @InjectMocks
+    OrdersStatusController ordersStatusController;
+
+    @Mock
     OrdersStatusService ordersStatusService;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(ordersStatusController).build();
+    }
 
     @Test
     void givenOrdersStatus_whenGetOrderStatusById_thenReturnOrdersStatusResponse() throws Exception {
