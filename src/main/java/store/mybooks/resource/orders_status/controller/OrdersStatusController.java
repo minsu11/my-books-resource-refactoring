@@ -27,6 +27,14 @@ import store.mybooks.resource.orders_status.service.OrdersStatusService;
 public class OrdersStatusController {
     private final OrdersStatusService ordersStatusService;
 
+    /**
+     * methodName : getOrdersStatus<br>
+     * author : minsu11<br>
+     * description : 요청 들어온 id 값에 따른 주문 상태 응답<br>
+     *
+     * @param ordersStatusId 요청 들어오는 주문 상태 아이디<br>
+     * @return 주문 상태 응답 타입에 대한 response entity 반환<br>
+     */
     @GetMapping("/{ordersStatusId}")
     public ResponseEntity<OrdersStatusResponse> getOrdersStatus(
             @PathVariable String ordersStatusId
@@ -35,6 +43,13 @@ public class OrdersStatusController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    /**
+     * methodName : getOrdersStatusList<br>
+     * author : minsu11<br>
+     * description : 요청에 따라 주문 상태의 모든 데이터를 리스트로 반환
+     *
+     * @return 주문 상태 응답 리스트 타입에 대한 response entity 반환<br>
+     */
     @GetMapping
     public ResponseEntity<List<OrdersStatusResponse>> getOrdersStatusList(
     ) {
@@ -42,6 +57,14 @@ public class OrdersStatusController {
         return new ResponseEntity<>(ordersStatusResponseList, HttpStatus.OK);
     }
 
+    /**
+     * methodName : createOrdersStatus<br>
+     * author : minsu11<br>
+     * description : post 요청으로 들어오는 데이터를 저장<br>
+     *
+     * @param request 등록을 요청한 데이터<br>
+     * @return 등록한 주문 상태 타입에 대한 response entity으로 반환<br>
+     */
     @PostMapping
     public ResponseEntity<OrdersStatusCreateResponse> createOrdersStatus(
             @RequestBody OrdersStatusCreateRequest request
