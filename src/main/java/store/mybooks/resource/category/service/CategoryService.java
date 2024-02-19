@@ -67,7 +67,16 @@ public class CategoryService {
             throw new CategoryNameAlreadyExistsException(categoryCreateRequest.getName());
         }
 
-        return categoryRepository.save(new Category(categoryCreateRequest)).convertToCategoryCreateResponse();
+        Category parentCategory = null;
+        Integer parentCategoryId = categoryCreateRequest.getParentCategoryId();
+        String name = categoryCreateRequest.getName();
+        
+        if (parentCategoryId != null) {
+            parentCategory = categoryRepository.findById(parentCategoryId)
+                    .orElseThrow(() -> new CategoryNotExistsException(parentCategoryId));
+        }
+
+        return categoryRepository.save(new Category(parentCategory, name)).convertToCategoryCreateResponse();
     }
 
     /**

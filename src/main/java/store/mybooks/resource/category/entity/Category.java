@@ -16,7 +16,6 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import store.mybooks.resource.category.dto.request.CategoryCreateRequest;
 import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 
@@ -60,9 +59,16 @@ public class Category {
      *
      * @param categoryCreateRequest 카테고리 생성 request
      */
-    public Category(CategoryCreateRequest categoryCreateRequest) {
-        this.parentCategory = categoryCreateRequest.getParentCategory();
-        this.name = categoryCreateRequest.getName();
+
+    /**
+     * Category 생성자.
+     *
+     * @param parentCategory the parent category
+     * @param name           the name
+     */
+    public Category(Category parentCategory, String name) {
+        this.parentCategory = parentCategory;
+        this.name = name;
         this.createdDate = LocalDate.now();
         this.childCategoryList = new ArrayList<>();
     }

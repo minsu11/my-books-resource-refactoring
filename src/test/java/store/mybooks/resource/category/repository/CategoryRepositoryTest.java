@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import store.mybooks.resource.category.dto.request.CategoryCreateRequest;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.category.entity.Category;
 
@@ -33,12 +32,10 @@ class CategoryRepositoryTest {
     @BeforeEach
     @Transactional
     void setup() {
-        CategoryCreateRequest parentCategoryCreateRequest = new CategoryCreateRequest(null, "firstCategory");
-        Category parentCategory = new Category(parentCategoryCreateRequest);
+        Category parentCategory = new Category(null, "firstCategory");
         actualParentCategory = categoryRepository.save(parentCategory);
 
-        CategoryCreateRequest childCategoryCreateRequest = new CategoryCreateRequest(parentCategory, "secondCategory");
-        Category childCategory = new Category(childCategoryCreateRequest);
+        Category childCategory = new Category(parentCategory, "secondCategory");
         actualChildCategory = categoryRepository.save(childCategory);
 
     }
