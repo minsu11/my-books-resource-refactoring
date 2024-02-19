@@ -18,7 +18,7 @@ import store.mybooks.resource.user_status.entity.UserStatus;
  * 2/18/24        masiljangajji       최초 생성
  */
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface UserStatusCreateMapper {
 
     UserStatusCreateMapper INSTANCE = Mappers.getMapper(UserStatusCreateMapper.class);

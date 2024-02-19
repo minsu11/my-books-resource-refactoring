@@ -13,6 +13,6 @@ package store.mybooks.resource.user_grade.exception;
  */
 public class UserGradeAlreadyExistException extends RuntimeException {
     public UserGradeAlreadyExistException(String userGradeName) {
-        super(String.format("[%s]는 이미 존재하는 userGradeName 입니다.", userGradeName));
+        super(String.format("[%s]는 활성상태인 userGrade 입니다.", userGradeName));
     }
 }

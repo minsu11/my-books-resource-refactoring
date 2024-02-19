@@ -2,6 +2,8 @@ package store.mybooks.resource.user_grade.repository;
 
 import java.util.Iterator;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import store.mybooks.resource.user_grade.dto.response.UserGradeGetResponse;
 import store.mybooks.resource.user_grade.entity.UserGrade;
@@ -22,7 +24,11 @@ public interface UserGradeRepository extends JpaRepository<UserGrade, Integer> {
 
     UserGradeGetResponse queryById(Integer id);
 
-    Optional<UserGrade> findByName(String userGradeName);
+    Optional<UserGrade> findByUserGradeNameIdAndIsAvailableIsTrue(String userGradeName);
+
+    Optional<UserGrade> findByUserGradeNameId(String userGradeName);
+
+    Page<UserGradeGetResponse> queryAllBy(Pageable pageable);
 
 
 }

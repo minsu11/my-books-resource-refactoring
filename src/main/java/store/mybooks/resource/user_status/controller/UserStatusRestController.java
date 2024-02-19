@@ -1,5 +1,6 @@
 package store.mybooks.resource.user_status.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,6 @@ import store.mybooks.resource.user_status.service.UserStatusService;
  * -----------------------------------------------------------
  * 2/18/24        masiljangajji       최초 생성
  */
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users/statuses")
@@ -36,20 +36,34 @@ public class UserStatusRestController {
 
     private final UserStatusService userStatusService;
 
-    @PostMapping
-    public ResponseEntity<UserStatusCreateResponse> createUserStatus(
-            @RequestBody UserStatusCreateRequest createRequest) {
-
-        UserStatusCreateResponse createResponse = userStatusService.createUserStatus(createRequest);
-
-        return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
-    }
-
+    /**
+     * Gets user status.
+     *
+     * id를 통해 특정 UserStatus를 조회하는 api
+     *
+     * @param id the id
+     * @return the user status
+     */
     @GetMapping("/{id}")
     public ResponseEntity<UserStatusGetResponse> getUserStatus(@PathVariable(name = "id") String id) {
 
         UserStatusGetResponse getResponse = userStatusService.findUserStatusById(id);
-        return new ResponseEntity<>(getResponse,HttpStatus.OK);
+        return new ResponseEntity<>(getResponse, HttpStatus.OK);
+    }
+
+    /**
+     * Gets all user status.
+     *
+     * 모든 UserStatus를 List형태로 조회하는 api
+     *
+     * @return the all user status
+     */
+    @GetMapping
+    public ResponseEntity<List<UserStatusGetResponse>> getAllUserStatus() {
+
+        List<UserStatusGetResponse> getResponses = userStatusService.findAllUserStatus();
+
+        return new ResponseEntity<>(getResponses, HttpStatus.OK);
     }
 
 

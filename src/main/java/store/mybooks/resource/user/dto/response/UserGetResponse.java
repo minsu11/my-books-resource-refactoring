@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 import store.mybooks.resource.user_grade.entity.UserGrade;
+import store.mybooks.resource.user_grade_name.entity.UserGradeName;
 import store.mybooks.resource.user_status.entity.UserStatus;
 
 /**
@@ -29,7 +30,7 @@ import store.mybooks.resource.user_status.entity.UserStatus;
 
 public interface UserGetResponse {
 
-    String getUserGradeName();
+    String getUserGradeUserGradeNameId();
 
     String getUserStatusId();
 
@@ -46,5 +47,6 @@ public interface UserGetResponse {
     LocalDateTime getLatestLogin();
 
     LocalDate getGradeChangedDate();
+
 
 }
