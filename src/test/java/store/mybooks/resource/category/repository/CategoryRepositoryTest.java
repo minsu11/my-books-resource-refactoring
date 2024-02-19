@@ -39,7 +39,6 @@ class CategoryRepositoryTest {
 
         CategoryCreateRequest childCategoryCreateRequest = new CategoryCreateRequest(parentCategory, "secondCategory");
         Category childCategory = new Category(childCategoryCreateRequest);
-        System.out.println("parentCategory : " + childCategory.getParentCategory());
         actualChildCategory = categoryRepository.save(childCategory);
 
     }
@@ -48,7 +47,6 @@ class CategoryRepositoryTest {
     @Transactional
     void givenCategory_whenFindHighestCategoryList_thenReturnHighestCategoryGetResponseList() {
         List<CategoryGetResponse> highestCategoryList = categoryRepository.findAllByParentCategoryIsNull();
-        System.out.println(highestCategoryList.get(0).getName());
         assertThat(highestCategoryList).hasSize(1);
 
         CategoryGetResponse parentActual = highestCategoryList.get(0);
