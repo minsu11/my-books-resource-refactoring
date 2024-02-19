@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import store.mybooks.resource.category.dto.request.CategoryCreateRequest;
@@ -33,6 +34,7 @@ import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 @Entity
 @Table(name = "category")
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 public class Category {
     @Id
@@ -77,7 +79,6 @@ public class Category {
                 .name(this.name)
                 .build();
     }
-
 
     /**
      * methodName : modifyCategory
