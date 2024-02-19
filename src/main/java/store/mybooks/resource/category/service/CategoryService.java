@@ -47,7 +47,7 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public List<CategoryGetResponse> getCategoriesByParentCategoryId(int id) {
         if (!categoryRepository.existsById(id)) {
-            throw new CategoryNotExistsException();
+            throw new CategoryNotExistsException(id);
         }
 
         return categoryRepository.findAllByParentCategory_Id(id);
@@ -64,7 +64,7 @@ public class CategoryService {
     @Transactional
     public CategoryCreateResponse createCategory(CategoryCreateRequest categoryCreateRequest) {
         if (categoryRepository.existsByName(categoryCreateRequest.getName())) {
-            throw new CategoryNameAlreadyExistsException();
+            throw new CategoryNameAlreadyExistsException(categoryCreateRequest.getName());
         }
 
         return categoryRepository.save(new Category(categoryCreateRequest)).convertToCategoryCreateResponse();
@@ -84,16 +84,17 @@ public class CategoryService {
     @Transactional
     public CategoryModifyResponse modifyCategory(int id, CategoryModifyRequest categoryModifyRequest) {
         if (categoryRepository.existsByName(categoryModifyRequest.getName())) {
-            throw new CategoryNameAlreadyExistsException();
+            throw new CategoryNameAlreadyExistsException(categoryModifyRequest.getName());
         }
 
-        Category category = categoryRepository.findById(id).orElseThrow(CategoryNotExistsException::new);
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotExistsException(id));
 
         Category parentCategory = null;
 
         Integer parentCategoryId = categoryModifyRequest.getParentCategoryId();
         if (parentCategoryId != null) {
-            parentCategory = categoryRepository.findById(parentCategoryId).orElseThrow(CategoryNotExistsException::new);
+            parentCategory =
+                    categoryRepository.findById(parentCategoryId).orElseThrow(() -> new CategoryNotExistsException(id));
         }
 
         return category.modifyCategory(parentCategory, categoryModifyRequest.getName());
@@ -109,7 +110,7 @@ public class CategoryService {
      */
     @Transactional
     public CategoryDeleteResponse deleteCategory(int id) {
-        Category category = categoryRepository.findById(id).orElseThrow(CategoryNotExistsException::new);
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotExistsException(id));
 
         categoryRepository.deleteById(id);
 

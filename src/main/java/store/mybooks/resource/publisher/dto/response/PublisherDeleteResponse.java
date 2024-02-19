@@ -1,7 +1,7 @@
 package store.mybooks.resource.publisher.dto.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * packageName    : store.mybooks.resource.publisher.dto.response
@@ -14,8 +14,8 @@ import lombok.Getter;
  * -----------------------------------------------------------
  * 2/16/24        newjaehun       최초 생성
  */
-@AllArgsConstructor
+@Setter
 @Getter
 public class PublisherDeleteResponse {
-    private String message;
+    private String name;
 }
