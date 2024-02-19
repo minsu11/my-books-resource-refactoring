@@ -1,11 +1,12 @@
 package store.mybooks.resource.orders_status.controller;
 
 import java.util.List;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import store.mybooks.resource.orders_status.dto.request.OrdersStatusRequest;
+import store.mybooks.resource.orders_status.dto.request.OrdersStatusCreateRequest;
+import store.mybooks.resource.orders_status.dto.response.OrdersStatusCreateResponse;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 import store.mybooks.resource.orders_status.service.OrdersStatusService;
 
@@ -21,16 +22,16 @@ import store.mybooks.resource.orders_status.service.OrdersStatusService;
  * 2/16/24        minsu11       최초 생성
  */
 @RestController
-@RequestMapping("/api/orders-status")
-@AllArgsConstructor
+@RequestMapping("/api/orders-statuses")
+@RequiredArgsConstructor
 public class OrdersStatusController {
-    private OrdersStatusService ordersStatusService;
+    private final OrdersStatusService ordersStatusService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/{ordersStatusId}")
     public ResponseEntity<OrdersStatusResponse> getOrdersStatus(
-            @PathVariable String id
+            @PathVariable String ordersStatusId
     ) {
-        OrdersStatusResponse response = ordersStatusService.getOrdersStatusById(id);
+        OrdersStatusResponse response = ordersStatusService.getOrdersStatusById(ordersStatusId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -40,21 +41,14 @@ public class OrdersStatusController {
         List<OrdersStatusResponse> ordersStatusResponseList = ordersStatusService.getOrdersStatusList();
         return new ResponseEntity<>(ordersStatusResponseList, HttpStatus.OK);
     }
-
-    @GetMapping("/test")
-    public ResponseEntity<String> test(
-    ) {
-        List<OrdersStatusResponse> ordersStatusResponseList = ordersStatusService.getOrdersStatusList();
-        return new ResponseEntity<>("OK", HttpStatus.OK);
-    }
+    
 
     @PostMapping
-    public ResponseEntity<OrdersStatusResponse> createOrdersStatus(
-            @RequestBody OrdersStatusRequest request
+    public ResponseEntity<OrdersStatusCreateResponse> createOrdersStatus(
+            @RequestBody OrdersStatusCreateRequest request
     ) {
-        OrdersStatusResponse response = ordersStatusService.createOrdersStatus(request);
+        OrdersStatusCreateResponse response = ordersStatusService.createOrdersStatus(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
 
 }

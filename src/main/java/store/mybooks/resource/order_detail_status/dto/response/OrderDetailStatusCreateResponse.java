@@ -1,23 +1,26 @@
-package store.mybooks.resource.order_detail_status.dto.request;
+package store.mybooks.resource.order_detail_status.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
- * packageName    : store.mybooks.resource.order_detail_status.dto.request
- * fileName       : OrderDetailStatusRequest
+ * packageName    : store.mybooks.resource.order_detail_status.dto.response
+ * fileName       : OrderDetailCreateResponse
  * author         : minsu11
- * date           : 2/16/24
+ * date           : 2/18/24
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 2/16/24        minsu11       최초 생성
+ * 2/18/24        minsu11       최초 생성
  */
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderDetailStatusRequest {
+public class OrderDetailStatusCreateResponse {
     private String id;
+
 }
