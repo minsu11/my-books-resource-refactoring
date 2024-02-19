@@ -1,4 +1,4 @@
-package store.mybooks.resource.user_grade.enumeration;
+package store.mybooks.resource.user_grade_name.enumeration;
 
 /**
  * packageName    : store.mybooks.resource.user_grade.enumeration
@@ -11,7 +11,7 @@ package store.mybooks.resource.user_grade.enumeration;
  * -----------------------------------------------------------
  * 2/16/24        masiljangajji       최초 생성
  */
-public enum UserGradeEnum {
+public enum UserGradeNameEnum {
 
     NORMAL("일반"),
 
@@ -23,7 +23,7 @@ public enum UserGradeEnum {
 
     private final String name;
 
-    UserGradeEnum(String name) {
+    UserGradeNameEnum(String name) {
         this.name = name;
     }
 
