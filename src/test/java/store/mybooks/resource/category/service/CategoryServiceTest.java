@@ -87,7 +87,7 @@ class CategoryServiceTest {
 
     @Test
     @DisplayName("getCategoriesByPArentCategoryId 메서드 ParentCategoryId 로 Category 들을 가져온다")
-    void givenGetCategoriesByParentCategoryId_whenFindCategoryListByParentCategoryId_thenReturnCategoryGetResponseList() {
+    void givenGetCategoriesByParentCategoryId_whenNormalCase_thenReturnCategoryGetResponseList() {
         List<CategoryGetResponse> categoryGetResponseList = new ArrayList<>();
         categoryGetResponseList.add(new CategoryGetResponse() {
             @Override
