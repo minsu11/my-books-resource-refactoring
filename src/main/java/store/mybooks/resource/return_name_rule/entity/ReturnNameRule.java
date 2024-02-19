@@ -5,7 +5,6 @@ import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * packageName    : store.mybooks.resource.return_name_rule.entity
@@ -20,7 +19,6 @@ import lombok.Setter;
  */
 
 @Getter
-@Setter
 @Entity
 @Table(name = "return_name_rule")
 @NoArgsConstructor
