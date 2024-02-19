@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -49,6 +50,7 @@ class PublisherServiceTest {
     private PublisherService publisherService;
 
     @Test
+    @DisplayName("전체 출판사 조회")
     void givenPublisherList_whenFindAllPublishers_thenReturnAllPublishersGetResponseList() {
         List<PublisherGetResponse> publisherGetResponseList = new ArrayList<>();
         publisherGetResponseList.add( new PublisherGetResponse() {
@@ -81,6 +83,7 @@ class PublisherServiceTest {
 
 
     @Test
+    @DisplayName("출판사 등록")
     void givenPublisherCreateRequest_whenCreatePublisher_thenSavePublisherAndReturnPublisherCreateResponse() {
         String name = "publisherName";
         PublisherCreateRequest request = new PublisherCreateRequest(name);
@@ -97,6 +100,7 @@ class PublisherServiceTest {
     }
 
     @Test
+    @DisplayName("이미 존재하는 출판사 이름을 등록")
     void givenPublisherCreateRequest_whenAlreadyExistPublisherNameCreate_thenThrowPublisherAlreadyExistException() {
         PublisherCreateRequest request = new PublisherCreateRequest("publisherName");
         when(publisherRepository.existsByName(request.getName())).thenReturn(true);
@@ -104,6 +108,7 @@ class PublisherServiceTest {
     }
 
     @Test
+    @DisplayName("출판사 수정")
     void givenPublisherIdAndPublisherModifyRequest_whenModifyPublisher_thenModifyPublisherAndReturnPublisherModifyResponse() {
         Integer publisherId = 1;
         Publisher publisher = new Publisher(publisherId, "publisherName", LocalDate.now());
@@ -111,21 +116,40 @@ class PublisherServiceTest {
         PublisherModifyRequest modifyRequest= new PublisherModifyRequest("publisherNameChange");
 
         when(publisherRepository.findById(eq(publisherId))).thenReturn(Optional.of(publisher));
+        when(publisherRepository.existsByName(modifyRequest.getChangeName())).thenReturn(false);
 
         PublisherModifyResponse response = publisherService.modifyPublisher(publisherId, modifyRequest);
         assertThat(response.getName()).isEqualTo(modifyRequest.getChangeName());
     }
 
     @Test
+    @DisplayName("존재하지 않는 출판사 수정")
     void givenPublisherId_whenNotExistPublisherModify_thenThrowPublisherNotExistException() {
         Integer publisherId = 1;
         PublisherModifyRequest modifyRequest= new PublisherModifyRequest("publisherNameChange");
 
         when(publisherRepository.findById(eq(publisherId))).thenReturn(Optional.empty());
+
         assertThrows(PublisherNotExistException.class, () -> publisherService.modifyPublisher(publisherId, modifyRequest));
     }
+    @Test
+    @DisplayName("이미 존재하는 출판사 이름으로 수정")
+    void givenPublisherIdAndPublisherModifyRequest_whenAlreadyExistPublisherNameModify_thenThrowPublisherAlreadyExistException() {
+        Integer publisherId = 1;
+        Publisher publisher = new Publisher(publisherId, "publisherName", LocalDate.now());
+
+        PublisherModifyRequest modifyRequest= new PublisherModifyRequest("publisherNameChange");
+
+        when(publisherRepository.findById(eq(publisherId))).thenReturn(Optional.of(publisher));
+
+        when(publisherRepository.existsByName(modifyRequest.getChangeName())).thenReturn(true);
+
+        assertThrows(PublisherAlreadyExistException.class, () -> publisherService.modifyPublisher(publisherId, modifyRequest));
+    }
+
 
     @Test
+    @DisplayName("출판사 삭제")
     void givenPublisherId_whenDeletePublisher_thenDeletePublisherAndReturnPublisherDeleteResponse() {
         Integer publisherId = 1;
         Publisher publisher = new Publisher(publisherId, "publisherName", LocalDate.now());
@@ -139,6 +163,7 @@ class PublisherServiceTest {
     }
 
     @Test
+    @DisplayName("존재하지 않는 출판사 삭제")
     void givenPublisherId_whenNotExistPublisherDelete_thenThrowPublisherNotExistException() {
         Integer publisherId = 1;
         when(publisherRepository.findById(eq(publisherId))).thenReturn(Optional.empty());

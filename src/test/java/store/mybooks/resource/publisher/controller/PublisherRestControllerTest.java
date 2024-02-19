@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -58,7 +59,8 @@ class PublisherRestControllerTest {
     private final String url = "/api/publishers";
 
     @Test
-    void getAllPublishers() throws Exception {
+    @DisplayName("전체 출판사 조회")
+    void givenPublisherList_whenFindAllPublishers_thenReturnAllPublishersGetResponseList() throws Exception {
         Integer id1 = 1;
         Integer id2 =2;
         String name1 = "publisher1";
@@ -98,7 +100,8 @@ class PublisherRestControllerTest {
     }
 
     @Test
-    void createPublisher() throws Exception{
+    @DisplayName("출판사 등록")
+    void givenPublisherCreateRequest_whenCreatePublisher_thenSavePublisherAndReturnPublisherCreateResponse() throws Exception{
         String name = "publisherName";
         PublisherCreateRequest request = new PublisherCreateRequest(name);
         Publisher publisher = new Publisher(name);
@@ -115,7 +118,8 @@ class PublisherRestControllerTest {
     }
 
     @Test
-    void modifyPublisher() throws Exception {
+    @DisplayName("출판사 수정")
+    void givenPublisherIdAndPublisherModifyRequest_whenModifyPublisher_thenModifyPublisherAndReturnPublisherModifyResponse() throws Exception {
         Integer publisherId = 1;
         String nameToChange = "nameToChange";
         Publisher publisher = new Publisher(nameToChange);
@@ -136,7 +140,8 @@ class PublisherRestControllerTest {
     }
 
     @Test
-    void deletePublisher() throws Exception {
+    @DisplayName("출판사 삭제")
+    void givenPublisherId_whenDeletePublisher_thenDeletePublisherAndReturnPublisherDeleteResponse() throws Exception {
         Integer publisherId = 1;
         Publisher publisher = new Publisher("publisherName1");
         PublisherDeleteResponse response= PublisherMapper.INSTANCE.deleteResponse(publisher);
