@@ -1,6 +1,7 @@
 package store.mybooks.resource.user_grade.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.user_grade.dto.request.UserGradeCreateRequest;
 import store.mybooks.resource.user_grade.dto.response.UserGradeCreateResponse;
@@ -36,7 +38,7 @@ public class UserGradeRestController {
     private final UserGradeService userGradeService;
 
     @PostMapping
-    public ResponseEntity<UserGradeCreateResponse> createUser(
+    public ResponseEntity<UserGradeCreateResponse> createUserGrade(
             @RequestBody UserGradeCreateRequest createRequest) {
 
 
@@ -46,7 +48,7 @@ public class UserGradeRestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<UserGradeDeleteResponse> deleteUser(@PathVariable(name = "id") String id) {
+    public ResponseEntity<UserGradeDeleteResponse> deleteUserGradeById(@PathVariable(name = "id") String id) {
 
         UserGradeDeleteResponse deleteResponse = userGradeService.deleteUserGrade(Integer.parseInt(id));
 
@@ -54,11 +56,20 @@ public class UserGradeRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserGradeGetResponse> findUserByEmail(@PathVariable(name = "id") String id) {
+    public ResponseEntity<UserGradeGetResponse> findUserGradeById(@PathVariable(name = "id") String id) {
 
         UserGradeGetResponse getResponse = userGradeService.findUserGradeById(Integer.parseInt(id));
 
         return new ResponseEntity<>(getResponse, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<UserGradeGetResponse>> findAllUserGrade(@RequestParam(defaultValue = "0") Integer page,
+                                                                       @RequestParam(defaultValue = "10")
+                                                                       Integer size) {
+
+        Page<UserGradeGetResponse> paginationUserGrade = userGradeService.findAllUserGrade(page, size);
+        return new ResponseEntity<>(paginationUserGrade, HttpStatus.OK);
     }
 
 
