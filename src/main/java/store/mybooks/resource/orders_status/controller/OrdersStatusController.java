@@ -41,13 +41,6 @@ public class OrdersStatusController {
         return new ResponseEntity<>(ordersStatusResponseList, HttpStatus.OK);
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<String> test(
-    ) {
-        List<OrdersStatusResponse> ordersStatusResponseList = ordersStatusService.getOrdersStatusList();
-        return new ResponseEntity<>("OK", HttpStatus.OK);
-    }
-
     @PostMapping
     public ResponseEntity<OrdersStatusResponse> createOrdersStatus(
             @RequestBody OrdersStatusRequest request
