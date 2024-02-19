@@ -40,6 +40,16 @@ public class UserGradeService {
 
     private final UserGradeNameRepository userGradeNameRepository;
 
+
+    /**
+     * Create user grade user grade create response.
+     *
+     * UserGrade 생성
+     * UserGradeName이 존재하지않는다면 UserGradeNameNotExistException
+     *
+     * @param createRequest the create request
+     * @return the user grade create response
+     */
     @Transactional
     public UserGradeCreateResponse createUserGrade(UserGradeCreateRequest createRequest) {
 
@@ -61,6 +71,16 @@ public class UserGradeService {
         return UserGradeMapper.INSTANCE.toUserGradeCreateResponse(userGrade);
     }
 
+    /**
+     * Delete user grade user grade delete response.
+     *
+     * UserGrade를 id를 이용해 삭제함
+     * 강 삭제가 아닌 isAvailable Field를 flase로 변경하는 약삭제를 제공
+     * 삭제하려는 UserGradeId가 존재하지 않는다면 UserGradeIdNotExistException
+     *
+     * @param id the id
+     * @return the user grade delete response
+     */
     @Transactional
     public UserGradeDeleteResponse deleteUserGrade(Integer id) {
 
@@ -70,6 +90,15 @@ public class UserGradeService {
         return new UserGradeDeleteResponse("UserGrade 삭제완료");
     }
 
+    /**
+     * Find user grade by id user grade get response.
+     *
+     * UserGrade를 id를 이용해 찾음
+     * 찾으려는 UserGradeId가 존재하지 않는다면 UserGradeIdNotExistException
+     *
+     * @param id the id
+     * @return the user grade get response
+     */
     public UserGradeGetResponse findUserGradeById(Integer id) {
 
         userGradeRepository.findById(id).orElseThrow(UserGradeIdNotExistException::new);
@@ -78,6 +107,15 @@ public class UserGradeService {
     }
 
 
+    /**
+     * Find all user grade page.
+     *
+     * UserGrade를 Pagination 해서 보여줌
+     *
+     * @param page the page
+     * @param size the size
+     * @return the page
+     */
     public Page<UserGradeGetResponse> findAllUserGrade(int page, int size) {
         Pageable pageable = PageRequest.of(page,size);
         return userGradeRepository.queryAllBy(pageable);
