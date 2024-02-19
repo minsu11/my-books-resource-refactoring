@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import store.mybooks.resource.publisher.dto.response.PublisherDeleteResponse;
+import store.mybooks.resource.publisher.exception.PublisherAlreadyExistException;
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
 
 /**
@@ -22,9 +22,15 @@ import store.mybooks.resource.publisher.exception.PublisherNotExistException;
 public class PublisherExceptionHandler {
 
     @ExceptionHandler(PublisherNotExistException.class)
-    public ResponseEntity<PublisherDeleteResponse> notExistException(){
+    public ResponseEntity<String> notExistException(PublisherNotExistException exception){
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(new PublisherDeleteResponse("존재하지 않는 출판사"));
+                .body(exception.getMessage());
+    }
+    @ExceptionHandler(PublisherAlreadyExistException.class)
+    public ResponseEntity<String> alreadyExistException(PublisherAlreadyExistException exception){
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
     }
 }
