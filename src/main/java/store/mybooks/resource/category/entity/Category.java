@@ -60,8 +60,8 @@ public class Category {
      *
      * @param categoryCreateRequest 카테고리 생성 request
      */
-    public Category(Category parentCategory, CategoryCreateRequest categoryCreateRequest) {
-        this.parentCategory = parentCategory;
+    public Category(CategoryCreateRequest categoryCreateRequest) {
+        this.parentCategory = categoryCreateRequest.getParentCategory();
         this.name = categoryCreateRequest.getName();
         this.createdDate = LocalDate.now();
         this.childCategoryList = new ArrayList<>();
