@@ -2,6 +2,7 @@ package store.mybooks.resource.tag.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * packageName    : store.mybooks.resource.tag.dto.request
@@ -16,6 +17,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class TagCreateRequest {
     private String name;
 }
