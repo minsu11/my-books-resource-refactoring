@@ -38,7 +38,6 @@ import store.mybooks.resource.user.service.UserService;
  * -----------------------------------------------------------
  * 2/13/24        masiljangajji       최초 생성
  */
-
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/users")
@@ -48,6 +47,13 @@ public class UserRestController {
     private final UserService userService;
 
 
+    /**
+     * Create user response entity.
+     *
+     * User를 생성하는 api
+     * @param createRequest the create request
+     * @return the response entity
+     */
     @PostMapping
     public ResponseEntity<UserCreateResponse> createUser(
             @RequestBody UserCreateRequest createRequest) {
@@ -59,6 +65,15 @@ public class UserRestController {
         return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
     }
 
+    /**
+     * Modify user response entity.
+     *
+     * email로 찾은 User의 정보를 수정하는 api
+     *
+     * @param email         the email
+     * @param modifyRequest the modify request
+     * @return the response entity
+     */
     @PutMapping("/{email}")
     public ResponseEntity<UserModifyResponse> modifyUser(@PathVariable(name = "email") String email,
                                                          @RequestBody UserModifyRequest modifyRequest) {
@@ -68,6 +83,15 @@ public class UserRestController {
         return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
     }
 
+    /**
+     * Delete user response entity.
+     *
+     * email로 찾은 User를 삭제하는 api
+     * 강삭제가 아닌 약삭제를 제공함
+     *
+     * @param email the email
+     * @return the response entity
+     */
     @DeleteMapping("/{email}")
     public ResponseEntity<UserDeleteResponse> deleteUser(@PathVariable(name = "email") String email) {
         UserDeleteResponse deleteResponse = userService.deleteUser(email);
@@ -75,6 +99,14 @@ public class UserRestController {
         return new ResponseEntity<>(deleteResponse, HttpStatus.ACCEPTED);
     }
 
+    /**
+     * Find user by email response entity.
+     *
+     * email로 찾은 User를 반환함
+     *
+     * @param email the email
+     * @return the response entity
+     */
     @GetMapping("/{email}")
     public ResponseEntity<UserGetResponse> findUserByEmail(@PathVariable(name = "email") String email) {
 
@@ -84,6 +116,15 @@ public class UserRestController {
         return new ResponseEntity<>(getResponse, HttpStatus.OK);
     }
 
+    /**
+     * Find all user response entity.
+     *
+     * 모든 User를 Pagination해서 반환함
+     *
+     * @param page the page
+     * @param size the size
+     * @return the response entity
+     */
     @GetMapping
     public ResponseEntity<Page<UserGetResponse>> findAllUser(@RequestParam(defaultValue = "0") Integer page,
                                                              @RequestParam(defaultValue = "10") Integer size) {
