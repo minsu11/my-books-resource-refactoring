@@ -1,9 +1,12 @@
 package store.mybooks.resource.tag.controller;
 
 import java.util.List;
+import javax.validation.Valid;
+import javax.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -63,7 +66,12 @@ public class TagRestController {
      * @return response entity
      */
     @PostMapping
-    public ResponseEntity<TagCreateResponse> createTag(@RequestBody TagCreateRequest tagCreateRequest) {
+    public ResponseEntity<TagCreateResponse> createTag(@Valid @RequestBody TagCreateRequest tagCreateRequest,
+                                                       BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException("Tag 이름은 1글자 이상 10글자 이하여야 합니다.");
+        }
+        
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(tagService.createTag(tagCreateRequest));
@@ -80,7 +88,12 @@ public class TagRestController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<TagModifyResponse> modifyTag(@PathVariable("id") int id,
-                                                       @RequestBody TagModifyRequest tagModifyRequest) {
+                                                       @Valid @RequestBody TagModifyRequest tagModifyRequest,
+                                                       BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException("Tag 이름은 1글자 이상 10글자 이하여야 합니다.");
+        }
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(tagService.modifyTag(id, tagModifyRequest));
