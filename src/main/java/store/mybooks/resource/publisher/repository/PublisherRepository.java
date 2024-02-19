@@ -1,6 +1,7 @@
 package store.mybooks.resource.publisher.repository;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
 import store.mybooks.resource.publisher.entity.Publisher;
@@ -17,6 +18,6 @@ import store.mybooks.resource.publisher.entity.Publisher;
  * 2/14/24        newjaehun       최초 생성
  */
 public interface PublisherRepository extends JpaRepository<Publisher, Integer>{
-    List<PublisherGetResponse> findAllBy();
+    Page<PublisherGetResponse> findAllBy(Pageable pageable);
     Boolean existsByName(String name);
 }

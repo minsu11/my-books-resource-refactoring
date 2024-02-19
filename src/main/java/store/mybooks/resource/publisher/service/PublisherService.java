@@ -1,7 +1,8 @@
 package store.mybooks.resource.publisher.service;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.publisher.dto.request.PublisherCreateRequest;
@@ -31,16 +32,18 @@ import store.mybooks.resource.publisher.repository.PublisherRepository;
 @RequiredArgsConstructor
 public class PublisherService {
     private final PublisherRepository publisherRepository;
+
     /**
      * methodName : getAllPublisher
      * author : newjaehun
      * description : 전체 출판사 리스트 반환
      *
+     * @param pageable
      * @return list
      */
     @Transactional(readOnly = true)
-    public List<PublisherGetResponse> getAllPublisher() {
-        return publisherRepository.findAllBy();
+    public Page<PublisherGetResponse> getAllPublisher(Pageable pageable) {
+        return publisherRepository.findAllBy(pageable);
     }
 
     /**
@@ -60,7 +63,12 @@ public class PublisherService {
         }
 
         Publisher resultPublisher = publisherRepository.save(publisher);
-        return PublisherMapper.INSTANCE.createResponse(resultPublisher);
+        return new PublisherCreateResponse() {
+            @Override
+            public String getName() {
+                return resultPublisher.getName();
+            }
+        };
     }
 
     /**

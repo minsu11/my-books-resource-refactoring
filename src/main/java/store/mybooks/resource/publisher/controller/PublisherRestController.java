@@ -1,7 +1,9 @@
 package store.mybooks.resource.publisher.controller;
 
-import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,11 +44,12 @@ public class PublisherRestController {
      * author : newjaehun
      * description : 전체 출판사 리스트 반환
      *
-     * @return ResponseEntity
+     * @param pageable
+     * @return ResponseEntity entity
      */
     @GetMapping
-    public ResponseEntity<List<PublisherGetResponse>> getAllPublishers() {
-        List<PublisherGetResponse> publishers = publisherService.getAllPublisher();
+    public ResponseEntity<Page<PublisherGetResponse>> getAllPublishers(Pageable pageable) {
+        Page<PublisherGetResponse> publishers = publisherService.getAllPublisher(pageable);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(publishers);
@@ -62,7 +65,7 @@ public class PublisherRestController {
      */
     @PostMapping
     public ResponseEntity<PublisherCreateResponse> createPublisher(
-            @RequestBody PublisherCreateRequest createRequest) {
+            @RequestBody @Valid PublisherCreateRequest createRequest) {
         PublisherCreateResponse createPublisher = publisherService.createPublisher(createRequest);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -79,7 +82,7 @@ public class PublisherRestController {
      * @return ResponseEntity
      */
     @PutMapping("/{id}")
-    public ResponseEntity<PublisherModifyResponse> modifyPublisher(@PathVariable("id") Integer publisherId, @RequestBody PublisherModifyRequest modifyRequest) {
+    public ResponseEntity<PublisherModifyResponse> modifyPublisher(@PathVariable("id") Integer publisherId, @RequestBody @Valid PublisherModifyRequest modifyRequest) {
         PublisherModifyResponse modifyPublisher = publisherService.modifyPublisher(publisherId, modifyRequest);
         return ResponseEntity
                 .status(HttpStatus.OK)
