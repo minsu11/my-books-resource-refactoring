@@ -14,5 +14,5 @@ package store.mybooks.resource.cart.dto;
 public interface CartDto {
     Long getId();
 
-    Long getUserId();
+    Long getUser();
 }
