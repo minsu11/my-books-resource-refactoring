@@ -9,6 +9,8 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import store.mybooks.resource.user_status.dto.request.UserStatusCreateRequest;
+import store.mybooks.resource.user_status.dto.response.UserStatusCreateResponse;
 
 /**
  * packageName    : store.mybooks.resource.user.entity
@@ -31,6 +33,13 @@ public class UserStatus {
     @Id
     @Column(name = "user_status_id")
     private String id;
+
+
+    public UserStatus(UserStatusCreateRequest createRequest) {
+        this.id = createRequest.getId();
+    }
+
+
 
 
 
