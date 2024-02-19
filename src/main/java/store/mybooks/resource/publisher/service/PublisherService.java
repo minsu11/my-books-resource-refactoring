@@ -56,7 +56,7 @@ public class PublisherService {
         Publisher publisher = new Publisher(createRequest.getName());
 
         if(Boolean.TRUE.equals(publisherRepository.existsByName(createRequest.getName()))){
-            throw new PublisherAlreadyExistException();
+            throw new PublisherAlreadyExistException(createRequest.getName());
         }
 
         Publisher resultPublisher = publisherRepository.save(publisher);
@@ -75,10 +75,11 @@ public class PublisherService {
     @Transactional
      public PublisherModifyResponse modifyPublisher(Integer publisherId, PublisherModifyRequest modifyRequest) {
         Publisher publisher =
-                publisherRepository.findById(publisherId).orElseThrow(PublisherNotExistException::new);
+                publisherRepository.findById(publisherId)
+                        .orElseThrow(() -> new PublisherNotExistException(publisherId));
 
         if(publisherRepository.existsByName(modifyRequest.getChangeName())){
-            throw new PublisherAlreadyExistException();
+            throw new PublisherAlreadyExistException(publisher.getName());
         }
         publisher.setByModifyRequest(modifyRequest);
         return PublisherMapper.INSTANCE.modifyResponse(publisher);
@@ -95,7 +96,7 @@ public class PublisherService {
     @Transactional
     public PublisherDeleteResponse deletePublisher(Integer publisherId) {
         Publisher publisher =
-                publisherRepository.findById(publisherId).orElseThrow(PublisherNotExistException::new);
+                publisherRepository.findById(publisherId) .orElseThrow(() -> new PublisherNotExistException(publisherId));
 
         publisherRepository.deleteById(publisherId);
         return PublisherMapper.INSTANCE.deleteResponse(publisher);
