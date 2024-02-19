@@ -16,8 +16,6 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
-import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 
 /**
  * packageName    : store.mybooks.resource.category.entity
@@ -68,19 +66,6 @@ public class Category {
     }
 
     /**
-     * methodName : convertToCategoryCreateResponse
-     * author : damho-lee
-     * description : Category Entity 를 CategoryCreateResponse 로 변경하는 메서드.
-     *
-     * @return CategoryCreateResponse
-     */
-    public CategoryCreateResponse convertToCategoryCreateResponse() {
-        return CategoryCreateResponse.builder()
-                .name(this.name)
-                .build();
-    }
-
-    /**
      * methodName : modifyCategory
      * author : damho-lee
      * description : 카테고리 수정.
@@ -89,14 +74,10 @@ public class Category {
      * @param name           카테고리 이름.
      * @return CategoryModifyResponse
      */
-    public CategoryModifyResponse modifyCategory(Category parentCategory, String name) {
+    public Category modifyCategory(Category parentCategory, String name) {
         this.parentCategory = parentCategory;
         this.name = name;
 
-        return CategoryModifyResponse.builder()
-                .parentCategoryId(this.parentCategory.getId())
-                .parentCategoryName(this.parentCategory.getName())
-                .name(this.name)
-                .build();
+        return this;
     }
 }
