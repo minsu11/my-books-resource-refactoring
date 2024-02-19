@@ -13,6 +13,7 @@ import store.mybooks.resource.publisher.dto.response.PublisherModifyResponse;
 import store.mybooks.resource.publisher.entity.Publisher;
 import store.mybooks.resource.publisher.exception.PublisherAlreadyExistException;
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
+import store.mybooks.resource.publisher.mapper.PublisherMapper;
 import store.mybooks.resource.publisher.repository.PublisherRepository;
 
 /**
@@ -52,14 +53,14 @@ public class PublisherService {
      */
     @Transactional
     public PublisherCreateResponse createPublisher(PublisherCreateRequest createRequest) {
-        Publisher publisher = new Publisher(createRequest);
+        Publisher publisher = new Publisher(createRequest.getName());
 
         if(Boolean.TRUE.equals(publisherRepository.existsByName(createRequest.getName()))){
             throw new PublisherAlreadyExistException();
         }
 
         Publisher resultPublisher = publisherRepository.save(publisher);
-        return resultPublisher.convertToCreateResponse();
+        return PublisherMapper.INSTANCE.createResponse(resultPublisher);
     }
 
     /**
@@ -75,8 +76,12 @@ public class PublisherService {
      public PublisherModifyResponse modifyPublisher(Integer publisherId, PublisherModifyRequest modifyRequest) {
         Publisher publisher =
                 publisherRepository.findById(publisherId).orElseThrow(PublisherNotExistException::new);
+
+        if(Boolean.TRUE.equals(publisherRepository.existsByName(modifyRequest.getChangeName()))){
+            throw new PublisherAlreadyExistException();
+        }
         publisher.setByModifyRequest(modifyRequest);
-        return publisher.convertToModifyResponse();
+        return PublisherMapper.INSTANCE.modifyResponse(publisher);
     }
 
     /**
@@ -93,7 +98,7 @@ public class PublisherService {
                 publisherRepository.findById(publisherId).orElseThrow(PublisherNotExistException::new);
 
         publisherRepository.deleteById(publisherId);
-        return new PublisherDeleteResponse(publisher.getName());
+        return PublisherMapper.INSTANCE.deleteResponse(publisher);
     }
 
 }
