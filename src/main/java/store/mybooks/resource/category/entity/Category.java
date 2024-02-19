@@ -57,12 +57,6 @@ public class Category {
     /**
      * Category 생성자.
      *
-     * @param categoryCreateRequest 카테고리 생성 request
-     */
-
-    /**
-     * Category 생성자.
-     *
      * @param parentCategory the parent category
      * @param name           the name
      */
