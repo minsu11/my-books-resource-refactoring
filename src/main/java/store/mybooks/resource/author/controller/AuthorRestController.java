@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,6 +39,14 @@ import store.mybooks.resource.author.service.AuthorService;
 public class AuthorRestController {
     private final AuthorService authorService;
 
+    /**
+     * methodName : getAllAuthors
+     * author : newjaehun
+     * description : 전체 저자 리스트 반환
+     *
+     * @param pageable
+     * @return ResponseEntity
+     */
     @GetMapping
     public ResponseEntity<Page<AuthorGetResponse>> getAllAuthors(Pageable pageable) {
         Page<AuthorGetResponse> authors = authorService.getAllAuthors(pageable);
@@ -48,23 +55,48 @@ public class AuthorRestController {
                 .body(authors);
     }
 
+    /**
+     * methodName : createAuthor
+     * author : newjaehun
+     * description :
+     *
+     * @param createRequest: 추가할 name, content 포함
+     * @return ResponseEntity
+     */
     @PostMapping
     public ResponseEntity<AuthorCreateResponse> createAuthor(
-            @Valid @RequestBody AuthorCreateRequest createRequest, BindingResult bindingResult) {
+            @Valid @RequestBody AuthorCreateRequest createRequest) {
         AuthorCreateResponse createResponse = authorService.createAuthor(createRequest);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(createResponse);
     }
 
+    /**
+     * methodName : modifyAuthor
+     * author : newjaehun
+     * description : 저자 수정
+     *
+     * @param authorId: 수정하려는 author 의 id
+     * @param modifyRequest: 수정할 namem, content 포함
+     * @return ResponseEntity
+     */
     @PutMapping("/{id}")
     public ResponseEntity<AuthorModifyResponse> modifyAuthor(@PathVariable("id") Integer authorId, @Valid @RequestBody
-    AuthorModifyRequest modifyRequest, BindingResult bindingResult) {
+    AuthorModifyRequest modifyRequest) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(authorService.modifyAuthor(authorId, modifyRequest));
     }
 
+    /**
+     * methodName : deleteAuthor
+     * author : newjaehun
+     * description : 저자 삭제
+     *
+     * @param authorId: 삭제하려는 author 의 id
+     * @return ResponseEntity
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<AuthorDeleteResponse> deleteAuthor(@PathVariable("id") Integer authorId) {
         return ResponseEntity
