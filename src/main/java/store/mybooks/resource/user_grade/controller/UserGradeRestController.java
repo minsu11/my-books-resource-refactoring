@@ -57,9 +57,8 @@ public class UserGradeRestController {
 
     /**
      * Delete user grade by id response entity.
-     *
      * id로 찾은 UserGrade를 삭제하는 api
-     * 강삭제가 아닌 약삭제로 isAvailable Field를 변경한다
+     * 강삭제가 아닌 약삭제로 isAvailable 를 false 로 변경한다
      *
      * @param id the id
      * @return the response entity
@@ -74,7 +73,6 @@ public class UserGradeRestController {
 
     /**
      * Find user grade by id response entity.
-     * <p>
      * UserGrade를 id를 이용해 찾음
      *
      * @param id the id
@@ -88,13 +86,11 @@ public class UserGradeRestController {
         return new ResponseEntity<>(getResponse, HttpStatus.OK);
     }
 
+
     /**
      * Find all user grade response entity.
-     *
      * 모든 UserGrade를 Pagination해서 보여줌
-     *
-     * @param page the page
-     * @param size the size
+     * @param pageable the pageable
      * @return the response entity
      */
     @GetMapping

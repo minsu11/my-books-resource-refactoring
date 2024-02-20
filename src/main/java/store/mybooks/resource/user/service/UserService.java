@@ -163,12 +163,11 @@ public class UserService {
         return userRepository.queryById(id).orElseThrow(() -> new UserNotExistException(id));
     }
 
+
     /**
      * Find all user page.
      * 모든 User를 Pagination 해서 반환함
-     *
-     * @param page the page
-     * @param size the size
+     * @param pageable the pageable
      * @return the page
      */
     public Page<UserGetResponse> findAllUser(Pageable pageable) {

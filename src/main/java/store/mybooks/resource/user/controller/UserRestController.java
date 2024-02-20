@@ -49,8 +49,9 @@ public class UserRestController {
 
     /**
      * Create user response entity.
-     *
+     * <p>
      * User를 생성하는 api
+     *
      * @param createRequest the create request
      * @return the response entity
      */
@@ -67,10 +68,10 @@ public class UserRestController {
 
     /**
      * Modify user response entity.
-     *
+     * <p>
      * id로 찾은 User의 정보를 수정하는 api
      *
-     * @param id         the id
+     * @param id            the id
      * @param modifyRequest the modify request
      * @return the response entity
      */
@@ -85,7 +86,7 @@ public class UserRestController {
 
     /**
      * Delete user response entity.
-     *
+     * <p>
      * id로 찾은 User를 삭제하는 api
      * 강삭제가 아닌 약삭제를 제공함
      *
@@ -101,7 +102,7 @@ public class UserRestController {
 
     /**
      * Find user by email response entity.
-     *
+     * <p>
      * id로 찾은 User를 반환함
      *
      * @param id the id
@@ -116,13 +117,11 @@ public class UserRestController {
         return new ResponseEntity<>(getResponse, HttpStatus.OK);
     }
 
+
     /**
      * Find all user response entity.
-     *
-     * 모든 User를 Pagination해서 반환함
-     *
-     * @param page the page
-     * @param size the size
+     * 모든 User를 Pagination 해서 반환함
+     * @param pageable the pageable
      * @return the response entity
      */
     @GetMapping
