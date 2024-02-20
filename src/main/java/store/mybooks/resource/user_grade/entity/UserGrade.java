@@ -5,6 +5,7 @@ import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import store.mybooks.resource.user_grade.dto.request.UserGradeCreateRequest;
 
 /**
  * packageName    : store.mybooks.resource.user.entity
@@ -46,6 +47,15 @@ public class UserGrade {
 
     @Column(name = "user_grade_created_date")
     private LocalDate createdDate;
+
+
+    public UserGrade(UserGradeCreateRequest createRequest) {
+        this.name = createRequest.getName();
+        this.minCost = createRequest.getMinCost();
+        this.maxCost = createRequest.getMaxCost();
+        this.rate = createRequest.getRate();
+        this.createdDate = createRequest.getCreatedDate();
+    }
 
 
 }

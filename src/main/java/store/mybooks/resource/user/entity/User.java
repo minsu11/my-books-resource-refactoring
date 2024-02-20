@@ -4,6 +4,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.mapping.Bag;
+import store.mybooks.resource.user.dto.request.UserCreateRequest;
+import store.mybooks.resource.user.dto.request.UserModifyRequest;
+import store.mybooks.resource.user.dto.response.UserCreateResponse;
+import store.mybooks.resource.user.dto.response.UserDeleteResponse;
+import store.mybooks.resource.user.dto.response.UserGetResponse;
+import store.mybooks.resource.user.dto.response.UserModifyResponse;
 import store.mybooks.resource.user_grade.entity.UserGrade;
 import store.mybooks.resource.user_status.entity.UserStatus;
 
@@ -20,6 +28,7 @@ import store.mybooks.resource.user_status.entity.UserStatus;
  */
 @Entity
 @Getter
+@NoArgsConstructor
 @Table(name = "user")
 public class User {
 
@@ -29,16 +38,15 @@ public class User {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_status_id")
+    @JoinColumn(name = "user_grade_id")
     private UserGrade userGrade;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_grade_id")
+    @JoinColumn(name = "user_status_id")
     private UserStatus userStatus;
 
     @Column(name = "user_name")
     private String name;
-
 
     @Column(name = "user_password")
     private String password;
@@ -61,13 +69,50 @@ public class User {
     private LocalDateTime createdAt;
 
 
-    @Column(name = "user_lastest_login")
-    private LocalDateTime lastestLogin;
+    @Column(name = "user_latest_login_at")
+    private LocalDateTime latestLogin;
 
-    @Column(name = "user_delete_at")
-    private LocalDateTime deleteAt;
+    @Column(name = "user_deleted_at")
+    private LocalDateTime deletedAt;
 
     @Column(name = "user_grade_changed_date")
     private LocalDate gradeChangedDate;
+
+
+    public User(UserCreateRequest createRequest, UserStatus userStatus, UserGrade userGrade) {
+        this.email = createRequest.getEmail();
+        this.birth = createRequest.getBirth();
+        this.password = createRequest.getPassword();
+        this.phoneNumber = createRequest.getPhoneNumber();
+        this.isAdmin = createRequest.getIsAdmin();
+        this.name = createRequest.getName();
+        this.userStatus = userStatus;
+        this.userGrade = userGrade;
+
+        this.createdAt = LocalDateTime.now();
+        this.gradeChangedDate = null;
+        this.deletedAt = null;
+        this.latestLogin = null;
+    }
+
+
+    public void setByModifyRequest(UserModifyRequest modifyRequest, UserStatus userStatus,
+                                   UserGrade userGrade) {
+
+        this.name = modifyRequest.getName();
+        this.password = modifyRequest.getPassword();
+        this.latestLogin = modifyRequest.getLatestLogin();
+        this.deletedAt = modifyRequest.getDeletedAt();
+        this.gradeChangedDate = modifyRequest.getGradeChangeDate();
+        this.phoneNumber = modifyRequest.getPhoneNumber();
+
+        this.userGrade = userGrade;
+        this.userStatus = userStatus;
+    }
+
+    public void modifyUserStatus(UserStatus userStatus) {
+        this.userStatus = userStatus;
+    }
+
 
 }
