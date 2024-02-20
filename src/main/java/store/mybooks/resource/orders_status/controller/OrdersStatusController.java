@@ -38,8 +38,9 @@ public class OrdersStatusController {
      */
     @GetMapping("/{ordersStatusId}")
     public ResponseEntity<OrdersStatusResponse> getOrdersStatus(
-            @PathVariable String ordersStatusId
+            @PathVariable(name = "ordersStatusId") String ordersStatusId
     ) {
+
         OrdersStatusResponse response = ordersStatusService.getOrdersStatusById(ordersStatusId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
