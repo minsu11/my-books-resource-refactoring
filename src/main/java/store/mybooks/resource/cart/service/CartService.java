@@ -3,6 +3,7 @@ package store.mybooks.resource.cart.service;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.cart.dto.CartDto;
 import store.mybooks.resource.cart.dto.CartMapper;
 import store.mybooks.resource.cart.dto.CartRegisterRequest;
@@ -27,21 +28,19 @@ import store.mybooks.resource.user.entity.UserRepository;
  */
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CartService {
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
     private final CartMapper cartMapper;
 
 
+    @Transactional
     public CartResponse registerCart(CartRegisterRequest cartRegisterRequest) {
-        Optional<User> optionalUser = userRepository.findById(cartRegisterRequest.getUserId());
-
-        if (optionalUser.isEmpty()) {
-            throw new RuntimeException("");
-        } else if (cartRepository.existsCartByUserId(cartRegisterRequest.getUserId())) {
-            throw new CartAlreadyExistException("");
+        User user = userRepository.findById(cartRegisterRequest.getUserId()).orElseThrow();
+        if (cartRepository.existsCartByUserId(cartRegisterRequest.getUserId())) {
+            throw new CartAlreadyExistException("카트가 이미 존재합니다");
         } else {
-            User user = optionalUser.get();
             Cart cart = new Cart(user);
             Cart saveCart = cartRepository.save(cart);
             return cartMapper.mapToResponse(saveCart);
@@ -51,10 +50,6 @@ public class CartService {
 
     public CartDto getCart(Long userId) {
         Optional<CartDto> optionalCart = cartRepository.findCartByUserId(userId);
-        if (optionalCart.isPresent()) {
-            return optionalCart.get();
-        } else {
-            throw new CartNotFoundException("");
-        }
+        return optionalCart.orElseThrow(() -> new CartNotFoundException(""));
     }
 }
