@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,16 +50,10 @@ class AuthorServiceTest {
     private AuthorService authorService;
 
     private Author author;
-    private static Integer id;
-    private static String name;
-    private static String content;
+    private static final Integer id = 1;
+    private static final String name = "author";
+    private static final String content = "author_content";
 
-    @BeforeAll
-    static void beforeAll() {
-        id =1;
-        name = "author";
-        content = "author_content";
-    }
     @BeforeEach
     void setUp(){
         author = new Author(id, name, content, LocalDate.now());
