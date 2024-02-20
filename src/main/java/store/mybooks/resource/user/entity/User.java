@@ -98,8 +98,7 @@ public class User {
 
 
     public void modifyUser(String name, String password, LocalDateTime latestLogin, LocalDateTime deletedAt,
-                           LocalDate gradeChangedDate, String phoneNumber, UserStatus userStatus,
-                           UserGrade userGrade) {
+                           LocalDate gradeChangedDate, String phoneNumber) {
 
         this.name = name;
         this.password = password;
@@ -108,13 +107,19 @@ public class User {
         this.gradeChangedDate = gradeChangedDate;
         this.phoneNumber = phoneNumber;
 
-        this.userGrade = userGrade;
+    }
+
+    public void modifyUserStatus(UserStatus userStatus) {
         this.userStatus = userStatus;
+    }
+
+    public void modifyUserGrade(UserGrade userGrade) {
+        this.userGrade = userGrade;
     }
 
     public void modifyByDeleteRequest(UserStatus userStatus) {
         this.userStatus = userStatus;
-        this.deletedAt=LocalDateTime.now();
+        this.deletedAt = LocalDateTime.now();
     }
 
 

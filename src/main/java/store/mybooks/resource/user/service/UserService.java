@@ -54,15 +54,16 @@ public class UserService {
 
     /**
      * Create user user create response.
-     * <p>
      * User를 생성함
-     * <p>
      * User의 email이 중복되는 경우 UserAlreadyExistException
      * UserStatus가 존재하지 않는 경우 UserStatusNotExistException
      * 사용중인 UserGrade가 존재하지 않는 경우 UserGradeNameNotExistException
      *
      * @param createRequest the create request
      * @return the user create response
+     * @throws UserAlreadyExistException
+     * @throws UserStatusNotExistException
+     * @throws UserGradeNameNotExistException
      */
     @Transactional
     public UserCreateResponse createUser(UserCreateRequest createRequest) {
@@ -93,16 +94,16 @@ public class UserService {
 
     /**
      * Modify user user modify response.
-     * <p>
      * id 찾은 User를 수정함 , 이름 ,비밀번호,핸드폰번호 등 변경될 수 있는 모든 Field에 대해서 변경처리를 함
      * (후에 세분화 예정)
-     * <p>
      * UserStatus가 존재하지 않는 경우 UserStatusNotExistException
      * 사용중인 UserGrade가 존재하지 않는 경우 UserGradeNameNotExistException
      *
      * @param id            the id
      * @param modifyRequest the modify request
      * @return the user modify response
+     * @throws UserStatusNotExistException
+     * @throws UserGradeNameNotExistException
      */
     @Transactional
     public UserModifyResponse modifyUser(Long id, UserModifyRequest modifyRequest) {
@@ -120,8 +121,10 @@ public class UserService {
                 UserGradeIdNotExistException::new);
 
         user.modifyUser(modifyRequest.getUserGradeName(), modifyRequest.getPassword(), modifyRequest.getLatestLogin(),
-                modifyRequest.getDeletedAt(), modifyRequest.getGradeChangeDate(), modifyRequest.getPhoneNumber(),
-                userStatus, userGrade);
+                modifyRequest.getDeletedAt(), modifyRequest.getGradeChangeDate(), modifyRequest.getPhoneNumber());
+
+        user.modifyUserStatus(userStatus);
+        user.modifyUserGrade(userGrade);
 
         return UserMapper.INSTANCE.toUserModifyResponse(user);
 
@@ -129,7 +132,6 @@ public class UserService {
 
     /**
      * Delete user user delete response.
-     * <p>
      * id로 찾은 User를 삭제함
      * 강삭제가 아닌 약삭제로 User의 상태를 "탈퇴"로 변경함
      *
@@ -151,7 +153,6 @@ public class UserService {
 
     /**
      * Find by email user get response.
-     * <p>
      * id를 이용해 User를 반환함
      *
      * @param id the id
@@ -164,15 +165,14 @@ public class UserService {
 
     /**
      * Find all user page.
-     * <p>
      * 모든 User를 Pagination 해서 반환함
      *
      * @param page the page
      * @param size the size
      * @return the page
      */
-    public Page<UserGetResponse> findAllUser(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<UserGetResponse> findAllUser(Pageable pageable) {
+
         return userRepository.queryAllBy(pageable);
     }
 
