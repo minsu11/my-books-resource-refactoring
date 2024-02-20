@@ -6,16 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import store.mybooks.resource.user.dto.response.UserCreateResponse;
-import store.mybooks.resource.user.dto.response.UserGetResponse;
-import store.mybooks.resource.user_status.dto.request.UserStatusCreateRequest;
-import store.mybooks.resource.user_status.dto.response.UserStatusCreateResponse;
 import store.mybooks.resource.user_status.dto.response.UserStatusGetResponse;
-import store.mybooks.resource.user_status.entity.UserStatus;
 import store.mybooks.resource.user_status.service.UserStatusService;
 
 /**
