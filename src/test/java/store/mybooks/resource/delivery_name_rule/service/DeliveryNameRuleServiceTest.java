@@ -10,18 +10,19 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryNameRuleDto;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryNameRuleModifyRequest;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryNameRuleRegisterRequest;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryNameRuleResponse;
-import store.mybooks.resource.delivery_name_rule.entity.DeliveryNameRule;
-import store.mybooks.resource.delivery_name_rule.exception.DeliveryNameRuleNotFoundException;
-import store.mybooks.resource.delivery_name_rule.repository.DeliveryNameRuleRepository;
-import store.mybooks.resource.delivery_rule.dto.DeliveryRuleMapper;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameDto;
+import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameMapper;
+import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameRegisterRequest;
+import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameResponse;
+import store.mybooks.resource.delivery_name_rule.exception.DeliveryRuleNameNotFoundException;
+import store.mybooks.resource.delivery_name_rule.repository.DeliveryRuleNameRepository;
+import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
 /**
  * packageName    : store.mybooks.resource.delivery_name_rule.service
@@ -34,49 +35,46 @@ import store.mybooks.resource.delivery_rule.dto.DeliveryRuleMapper;
  * -----------------------------------------------------------
  * 2/18/24        Fiat_lux       최초 생성
  */
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class DeliveryNameRuleServiceTest {
-    @Autowired
-    DeliveryNameRuleService deliveryNameRuleService;
+    @InjectMocks
+    DeliveryRuleNameService deliveryRuleNameService;
 
-    @MockBean
-    DeliveryNameRuleRepository deliveryNameRuleRepository;
+    @Mock
+    DeliveryRuleNameRepository deliveryRuleNameRepository;
 
-    @MockBean
-    DeliveryRuleMapper deliveryRuleMapper;
+    @Mock
+    DeliveryRuleNameMapper deliveryRuleMapper;
 
 
     @Test
-    void registerDeliveryNameRuleTest() {
-        DeliveryNameRule deliveryNameRule = new DeliveryNameRule(1, "test", LocalDate.now());
+    @DisplayName("DeliveryRuleName 등록 테스트")
+    void givenDeliveryRuleNameRegisterRequest_whenNormalCase_thenCreateAndSaveDeliveryRuleNameReturnDeliveryRuleNameResponse() {
+        DeliveryRuleName deliveryNameRule = new DeliveryRuleName("test");
 
-        DeliveryNameRuleResponse expectedDeliveryNameRuleResponse = new DeliveryNameRuleResponse();
-        expectedDeliveryNameRuleResponse.setId(1);
-        expectedDeliveryNameRuleResponse.setName("test");
-        expectedDeliveryNameRuleResponse.setCreatedDate(LocalDate.now());
+        DeliveryRuleNameResponse expectedDeliveryRuleNameResponse = new DeliveryRuleNameResponse();
+        expectedDeliveryRuleNameResponse.setId("test");
+        expectedDeliveryRuleNameResponse.setCreatedDate(LocalDate.now());
 
-        DeliveryNameRuleRegisterRequest deliveryNameRuleRegisterRequest = new DeliveryNameRuleRegisterRequest("test");
-        when(deliveryNameRuleRepository.save(any())).thenReturn(deliveryNameRule);
+        DeliveryRuleNameRegisterRequest deliveryRuleNameRegisterRequest = new DeliveryRuleNameRegisterRequest("test");
+        when(deliveryRuleNameRepository.save(any())).thenReturn(deliveryNameRule);
 
-        DeliveryNameRuleResponse result =
-                deliveryNameRuleService.registerDeliveryNameRule(deliveryNameRuleRegisterRequest);
+        when(deliveryRuleMapper.mapToResponse(any())).thenReturn(expectedDeliveryRuleNameResponse);
 
-        assertEquals(expectedDeliveryNameRuleResponse.getId(), result.getId());
-        assertEquals(expectedDeliveryNameRuleResponse.getName(), result.getName());
-        assertEquals(expectedDeliveryNameRuleResponse.getCreatedDate(), result.getCreatedDate());
+        DeliveryRuleNameResponse result =
+                deliveryRuleNameService.registerDeliveryNameRule(deliveryRuleNameRegisterRequest);
+
+        assertEquals(expectedDeliveryRuleNameResponse.getId(), result.getId());
+        assertEquals(expectedDeliveryRuleNameResponse.getCreatedDate(), result.getCreatedDate());
 
     }
 
     @Test
-    void getDeliveryNameRule() {
-        DeliveryNameRuleDto expectedDeliveryNameRuleDto = new DeliveryNameRuleDto() {
+    @DisplayName("DeliveryRuleName read 테스트")
+    void givenDeliveryRuleNameId_whenFindDeliveryRUleNameById_thenReturnDeliveryRuleNameDto() {
+        DeliveryRuleNameDto expectedDeliveryNameRuleDto = new DeliveryRuleNameDto() {
             @Override
-            public Integer getId() {
-                return 1;
-            }
-
-            @Override
-            public String getName() {
+            public String getId() {
                 return "test";
             }
 
@@ -86,77 +84,49 @@ class DeliveryNameRuleServiceTest {
             }
         };
 
-        Integer id = 1;
-
-        when(deliveryNameRuleRepository.findDeliveryNameRuleById(id)).thenReturn(
+        when(deliveryRuleNameRepository.findDeliveryRuleNameById("test")).thenReturn(
                 Optional.of(expectedDeliveryNameRuleDto));
 
-        DeliveryNameRuleDto result = deliveryNameRuleService.getDeliveryNameRule(id);
+        DeliveryRuleNameDto result = deliveryRuleNameService.getDeliveryNameRule("test");
 
         assertEquals(expectedDeliveryNameRuleDto.getId(), result.getId());
-        assertEquals(expectedDeliveryNameRuleDto.getName(), result.getName());
         assertEquals(expectedDeliveryNameRuleDto.getCreatedDate(), result.getCreatedDate());
     }
 
     @Test
-    void getDeliveryNameRuleNotFoundTest() {
+    @DisplayName("DeliveryRuleName 없을 경우 예외 테스트")
+    void givenNotDeliveryRuleNameId_whenFindDeliveryRuleNameById_thenThrowDeliveryRuleNameNotFoundException() {
         Integer id = 1;
-        when(deliveryNameRuleRepository.findDeliveryNameRuleById(id)).thenReturn(Optional.empty());
-        assertThrows(DeliveryNameRuleNotFoundException.class, () -> deliveryNameRuleService.getDeliveryNameRule(id));
+        when(deliveryRuleNameRepository.findDeliveryRuleNameById("test")).thenReturn(Optional.empty());
+        assertThrows(DeliveryRuleNameNotFoundException.class,
+                () -> deliveryRuleNameService.getDeliveryNameRule("test"));
     }
 
-    @Test
-    void modifyDeliveryNameRuleTest() {
-        Integer deliveryNameRuleId = 1;
-        DeliveryNameRuleModifyRequest deliveryNameRuleModifyRequest = new DeliveryNameRuleModifyRequest("update");
-        DeliveryNameRule deliveryNameRule = new DeliveryNameRule(deliveryNameRuleId, "test", LocalDate.now());
-
-        DeliveryNameRuleResponse expected = new DeliveryNameRuleResponse();
-        expected.setId(deliveryNameRuleId);
-        expected.setName("update");
-        expected.setCreatedDate(deliveryNameRule.getCreatedDate());
-
-        when(deliveryNameRuleRepository.findById(any())).thenReturn(Optional.of(deliveryNameRule));
-        DeliveryNameRuleResponse result =
-                deliveryNameRuleService.modifyDeliveryNameRule(deliveryNameRuleId, deliveryNameRuleModifyRequest);
-
-        assertEquals(expected.getId(), result.getId());
-        assertEquals(expected.getName(), result.getName());
-        assertEquals(expected.getCreatedDate(), result.getCreatedDate());
-    }
 
     @Test
-    void modifyDeliveryNameRuleNotFoundTest() {
-        Integer deliveryNameRuleId = 1;
-        DeliveryNameRuleModifyRequest deliveryNameRuleModifyRequest = new DeliveryNameRuleModifyRequest("update");
-        when(deliveryNameRuleRepository.findById(any())).thenReturn(Optional.empty());
-        assertThrows(DeliveryNameRuleNotFoundException.class,
-                () -> deliveryNameRuleService.modifyDeliveryNameRule(deliveryNameRuleId,
-                        deliveryNameRuleModifyRequest));
-    }
+    @DisplayName("DeliveryRuleName 삭제 테스트")
+    void givenDeliveryRuleNameId_whenExistsByIdTrueAndDeleteDeliveryNameRule_thenDeleteDeliveryRuleNameReturnNothing() {
+        String id = "test";
 
-    @Test
-    void deleteDeliveryNameRuleTest() {
-        Integer id = 1;
-
-        when(deliveryNameRuleRepository.existsById(id)).thenReturn(true);
-        deliveryNameRuleService.deleteDeliveryNameRule(id);
+        when(deliveryRuleNameRepository.existsById(id)).thenReturn(true);
+        deliveryRuleNameService.deleteDeliveryNameRule(id);
 
 
-        verify(deliveryNameRuleRepository, times(1)).existsById(id);
+        verify(deliveryRuleNameRepository, times(1)).existsById(id);
 
-        verify(deliveryNameRuleRepository, times(1)).deleteById(id);
+        verify(deliveryRuleNameRepository, times(1)).deleteById(id);
 
     }
 
     @Test
-    void deleteDeliveryNameRuleNotFoundTest() {
-        Integer id = 1;
-        when(deliveryNameRuleRepository.existsById(id)).thenReturn(false);
+    @DisplayName("DeliveryRuleName 이 없을 경우 예외 테스트")
+    void givenNotDeliveryRuleNameId_whenExistsByIdFalse_thenThrowDeliveryRuleNameNotFoundException() {
+        String id = "test";
+        when(deliveryRuleNameRepository.existsById(id)).thenReturn(false);
 
-        assertThrows(DeliveryNameRuleNotFoundException.class, () -> deliveryNameRuleService.deleteDeliveryNameRule(id));
-        verify(deliveryNameRuleRepository, times(1)).existsById(id);
-        verify(deliveryNameRuleRepository, never()).deleteById(id);
+        assertThrows(DeliveryRuleNameNotFoundException.class, () -> deliveryRuleNameService.deleteDeliveryNameRule(id));
+        verify(deliveryRuleNameRepository, times(1)).existsById(id);
+        verify(deliveryRuleNameRepository, never()).deleteById(id);
     }
 
 
