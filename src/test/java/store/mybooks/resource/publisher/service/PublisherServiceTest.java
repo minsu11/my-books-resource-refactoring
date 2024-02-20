@@ -55,7 +55,7 @@ class PublisherServiceTest {
 
     @Test
     @DisplayName("전체 출판사 조회")
-    void givenPublisherListAndPagable_whenFindAllPublishers_thenReturnPagePublishersGetResponseList() {
+    void givenPublisherListAndPageable_whenFindAllPublishers_thenReturnPagePublishersGetResponseList() {
         Pageable pageable = PageRequest.of(0, 2);
         List<PublisherGetResponse> publisherGetResponseList = Arrays.asList(
                 new PublisherGetResponse() {
@@ -171,7 +171,7 @@ class PublisherServiceTest {
 
     @Test
     @DisplayName("존재하지 않는 출판사 삭제")
-    void givenPublisherId_whenNotExistPublisherDelete_thenThrowPublisherNotExistException() {
+    void givenPublisherId_whenNotExistsPublisherDelete_thenThrowPublisherNotExistException() {
         Integer publisherId = 1;
         when(publisherRepository.findById(eq(publisherId))).thenReturn(Optional.empty());
         assertThrows(PublisherNotExistException.class, () -> publisherService.deletePublisher(publisherId));
