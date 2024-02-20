@@ -1,4 +1,4 @@
-package store.mybooks.resource.return_name_rule.dto.request;
+package store.mybooks.resource.return_rule_name.dto.request;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -16,7 +16,7 @@ import lombok.Getter;
  * 2/20/24        minsu11       최초 생성<br>
  */
 @Getter
-public class ReturnNameRuleRequest {
+public class ReturnRuleNameRequest {
     @NotNull
     @Size(min = 5, max = 25)
     private String name;

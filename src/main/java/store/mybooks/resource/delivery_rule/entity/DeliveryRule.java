@@ -5,7 +5,7 @@ import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import store.mybooks.resource.delivery_name_rule.entity.DeliveryNameRule;
+import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
 /**
  * packageName    : store.mybooks.resource.delivery_rule.entity
@@ -31,8 +31,8 @@ public class DeliveryRule {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "delivery_name_rule_id")
-    private DeliveryNameRule deliveryNameRule;
+    @JoinColumn(name = "delivery_rule_name_id")
+    private DeliveryRuleName deliveryRuleName;
 
     @Column(name = "delivery_company_name")
     private String companyName;

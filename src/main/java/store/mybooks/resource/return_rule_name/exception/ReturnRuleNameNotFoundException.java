@@ -1,4 +1,4 @@
-package store.mybooks.resource.return_name_rule.exception;
+package store.mybooks.resource.return_rule_name.exception;
 
 /**
  * packageName    : store.mybooks.resource.return_name_rule.exception<br>
@@ -11,11 +11,11 @@ package store.mybooks.resource.return_name_rule.exception;
  * -----------------------------------------------------------
  * 2/20/24        minsu11       최초 생성
  */
-public class ReturnNameRuleNotFoundException extends RuntimeException {
-    public ReturnNameRuleNotFoundException() {
+public class ReturnRuleNameNotFoundException extends RuntimeException {
+    public ReturnRuleNameNotFoundException() {
     }
 
-    public ReturnNameRuleNotFoundException(String message) {
+    public ReturnRuleNameNotFoundException(String message) {
         super(message);
     }
 }

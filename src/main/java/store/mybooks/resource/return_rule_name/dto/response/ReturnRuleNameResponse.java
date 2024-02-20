@@ -1,4 +1,4 @@
-package store.mybooks.resource.return_name_rule.dto.response;
+package store.mybooks.resource.return_rule_name.dto.response;
 
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReturnNameRuleResponse {
+public class ReturnRuleNameResponse {
     private String name;
     private LocalDate localDate;
 }

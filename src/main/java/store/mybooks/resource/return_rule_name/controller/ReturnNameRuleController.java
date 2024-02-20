@@ -1,4 +1,4 @@
-package store.mybooks.resource.return_name_rule.controller;
+package store.mybooks.resource.return_rule_name.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import store.mybooks.resource.return_name_rule.dto.response.ReturnNameRuleResponse;
-import store.mybooks.resource.return_name_rule.service.ReturnNameRuleService;
+import store.mybooks.resource.return_rule_name.dto.response.ReturnRuleNameResponse;
+import store.mybooks.resource.return_rule_name.service.ReturnRuleNameService;
 
 /**
  * packageName    : store.mybooks.resource.return_name_rule.controller<br>
@@ -25,7 +25,7 @@ import store.mybooks.resource.return_name_rule.service.ReturnNameRuleService;
 @RequestMapping("/api/return-name-rule")
 @RequiredArgsConstructor
 public class ReturnNameRuleController {
-    private final ReturnNameRuleService returnNameRuleService;
+    private final ReturnRuleNameService returnRuleNameService;
 
     /**
      * methodName : getReturnNameRule<br>
@@ -36,8 +36,8 @@ public class ReturnNameRuleController {
      * @return response entity
      */
     @GetMapping("/{name}")
-    public ResponseEntity<ReturnNameRuleResponse> getReturnNameRule(@PathVariable(name = "name") String name) {
-        ReturnNameRuleResponse response = returnNameRuleService.getReturnNameRule(name);
+    public ResponseEntity<ReturnRuleNameResponse> getReturnNameRule(@PathVariable(name = "name") String name) {
+        ReturnRuleNameResponse response = returnRuleNameService.getReturnNameRule(name);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

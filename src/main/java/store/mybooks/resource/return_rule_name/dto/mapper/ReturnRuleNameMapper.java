@@ -1,8 +1,8 @@
-package store.mybooks.resource.return_name_rule.dto.mapper;
+package store.mybooks.resource.return_rule_name.dto.mapper;
 
 import org.mapstruct.Mapper;
-import store.mybooks.resource.return_name_rule.dto.response.ReturnNameRuleResponse;
-import store.mybooks.resource.return_name_rule.entity.ReturnNameRule;
+import store.mybooks.resource.return_rule_name.dto.response.ReturnRuleNameResponse;
+import store.mybooks.resource.return_rule_name.entity.ReturnRuleName;
 
 /**
  * packageName    : store.mybooks.resource.return_name_rule.dto.mapper<br>
@@ -16,6 +16,6 @@ import store.mybooks.resource.return_name_rule.entity.ReturnNameRule;
  * 2/20/24        minsu11       최초 생성<br>
  */
 @Mapper(componentModel = "spring")
-public interface ReturnNameRuleMapper {
-    ReturnNameRuleResponse mapToReturnNameRuleResponse(ReturnNameRule returnNameRule);
+public interface ReturnRuleNameMapper {
+    ReturnRuleNameResponse mapToReturnRuleNameResponse(ReturnRuleName returnNameRule);
 }

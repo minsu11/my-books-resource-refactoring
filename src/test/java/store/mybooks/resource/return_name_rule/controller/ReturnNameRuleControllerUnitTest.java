@@ -15,10 +15,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import store.mybooks.resource.return_name_rule.dto.mapper.ReturnNameRuleMapper;
-import store.mybooks.resource.return_name_rule.dto.response.ReturnNameRuleResponse;
-import store.mybooks.resource.return_name_rule.entity.ReturnNameRule;
-import store.mybooks.resource.return_name_rule.service.ReturnNameRuleService;
+import store.mybooks.resource.return_rule_name.controller.ReturnNameRuleController;
+import store.mybooks.resource.return_rule_name.dto.mapper.ReturnRuleNameMapper;
+import store.mybooks.resource.return_rule_name.dto.response.ReturnRuleNameResponse;
+import store.mybooks.resource.return_rule_name.entity.ReturnRuleName;
+import store.mybooks.resource.return_rule_name.service.ReturnRuleNameService;
 
 /**
  * packageName    : store.mybooks.resource.return_name_rule.controller<br>
@@ -38,7 +39,7 @@ class ReturnNameRuleControllerUnitTest {
     ReturnNameRuleController returnNameRuleController;
 
     @Mock
-    ReturnNameRuleService returnNameRuleService;
+    ReturnRuleNameService returnRuleNameService;
 
     MockMvc mockMvc;
 
@@ -50,14 +51,15 @@ class ReturnNameRuleControllerUnitTest {
     @Test
     void givenStringName_whenCallGetReturnNameRule_thenReturnReturnNameRuleResponse() throws Exception {
 
-        ReturnNameRuleResponse response = new ReturnNameRuleMapper() {
+        ReturnRuleNameResponse response = new ReturnRuleNameMapper() {
             @Override
-            public ReturnNameRuleResponse mapToReturnNameRuleResponse(ReturnNameRule returnNameRule) {
-                return new ReturnNameRuleResponse(returnNameRule.getName(), returnNameRule.getCreatedDate());
+            public ReturnRuleNameResponse mapToReturnRuleNameResponse(ReturnRuleName returnNameRule) {
+                return new ReturnRuleNameResponse(returnNameRule.getId(), returnNameRule.getCreatedDate());
             }
-        }.mapToReturnNameRuleResponse(new ReturnNameRule(1, "test123", LocalDate.now()));
 
-        when(returnNameRuleService.getReturnNameRule("test123")).thenReturn(response);
+        }.mapToReturnRuleNameResponse(new ReturnRuleName("test123", LocalDate.now()));
+
+        when(returnRuleNameService.getReturnNameRule("test123")).thenReturn(response);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/return-name-rule/{name}", "test123"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
