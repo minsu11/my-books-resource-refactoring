@@ -16,7 +16,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -67,14 +66,8 @@ class PublisherRestControllerTest {
     private final String url = "/api/publishers";
 
     private Publisher publisher;
-    private static Integer id;
-    private static String name;
-
-    @BeforeAll
-    static void beforeAll() {
-        id = 1;
-        name = "publisherName1";
-    }
+    private static final Integer id = 1;
+    private static final String name = "publisherName1";
 
     @BeforeEach
     void setUp() {
