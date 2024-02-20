@@ -2,7 +2,6 @@ package store.mybooks.resource.category.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import store.mybooks.resource.category.entity.Category;
 
 /**
  * packageName    : store.mybooks.resource.category.dto.request
@@ -18,6 +17,6 @@ import store.mybooks.resource.category.entity.Category;
 @Getter
 @AllArgsConstructor
 public class CategoryCreateRequest {
-    private Category parentCategory;
+    private Integer parentCategoryId;
     private String name;
 }
