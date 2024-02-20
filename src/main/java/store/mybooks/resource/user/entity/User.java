@@ -78,13 +78,15 @@ public class User {
     @Column(name = "user_grade_changed_date")
     private LocalDate gradeChangedDate;
 
-    public User(UserCreateRequest createRequest, UserStatus userStatus, UserGrade userGrade) {
-        this.email = createRequest.getEmail();
-        this.birth = createRequest.getBirth();
-        this.password = createRequest.getPassword();
-        this.phoneNumber = createRequest.getPhoneNumber();
-        this.isAdmin = createRequest.getIsAdmin();
-        this.name = createRequest.getName();
+    public User(String email, LocalDate birth, String password, String phoneNumber, Boolean isAdmin, String name,
+                UserStatus userStatus,
+                UserGrade userGrade) {
+        this.email = email;
+        this.birth = birth;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.isAdmin = isAdmin;
+        this.name = name;
         this.userStatus = userStatus;
         this.userGrade = userGrade;
 
@@ -95,22 +97,24 @@ public class User {
     }
 
 
-    public void setByModifyRequest(UserModifyRequest modifyRequest, UserStatus userStatus,
-                                   UserGrade userGrade) {
+    public void modifyUser(String name, String password, LocalDateTime latestLogin, LocalDateTime deletedAt,
+                           LocalDate gradeChangedDate, String phoneNumber, UserStatus userStatus,
+                           UserGrade userGrade) {
 
-        this.name = modifyRequest.getName();
-        this.password = modifyRequest.getPassword();
-        this.latestLogin = modifyRequest.getLatestLogin();
-        this.deletedAt = modifyRequest.getDeletedAt();
-        this.gradeChangedDate = modifyRequest.getGradeChangeDate();
-        this.phoneNumber = modifyRequest.getPhoneNumber();
+        this.name = name;
+        this.password = password;
+        this.latestLogin = latestLogin;
+        this.deletedAt = deletedAt;
+        this.gradeChangedDate = gradeChangedDate;
+        this.phoneNumber = phoneNumber;
 
         this.userGrade = userGrade;
         this.userStatus = userStatus;
     }
 
-    public void modifyUserStatus(UserStatus userStatus) {
+    public void modifyByDeleteRequest(UserStatus userStatus) {
         this.userStatus = userStatus;
+        this.deletedAt=LocalDateTime.now();
     }
 
 
