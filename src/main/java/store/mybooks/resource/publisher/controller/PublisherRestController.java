@@ -43,7 +43,6 @@ public class PublisherRestController {
      * methodName : getAllPublishers
      * author : newjaehun
      * description : 전체 출판사 리스트 반환
-     *
      * @param pageable
      * @return ResponseEntity
      */

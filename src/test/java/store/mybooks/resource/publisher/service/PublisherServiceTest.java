@@ -67,7 +67,7 @@ class PublisherServiceTest {
     }
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         publisher = new Publisher(id, name, LocalDate.now());
     }
 
@@ -119,8 +119,7 @@ class PublisherServiceTest {
 
         PublisherCreateResponse response = publisherService.createPublisher(request);
 
-        assertThat(response.getName()).isEqualTo(request.getName() );
-
+        assertThat(response.getName()).isEqualTo(request.getName());
         verify(publisherRepository, times(1)).existsByName(request.getName());
         verify(publisherRepository, times(1)).save(any(Publisher.class));
 
@@ -140,7 +139,7 @@ class PublisherServiceTest {
     @Test
     @DisplayName("출판사 수정")
     void givenPublisherIdAndPublisherModifyRequest_whenModifyPublisher_thenModifyPublisherAndReturnPublisherModifyResponse() {
-        PublisherModifyRequest modifyRequest= new PublisherModifyRequest("publisherNameChange");
+        PublisherModifyRequest modifyRequest = new PublisherModifyRequest("publisherNameChange");
 
         given(publisherRepository.findById(eq(id))).willReturn(Optional.of(publisher));
 
@@ -158,7 +157,7 @@ class PublisherServiceTest {
     @Test
     @DisplayName("존재하지 않는 출판사 수정")
     void givenPublisherId_whenNotExistPublisherModify_thenThrowPublisherNotExistException() {
-        PublisherModifyRequest modifyRequest= new PublisherModifyRequest("publisherNameChange");
+        PublisherModifyRequest modifyRequest = new PublisherModifyRequest("publisherNameChange");
 
         given(publisherRepository.findById(eq(id))).willReturn(Optional.empty());
 
@@ -167,10 +166,11 @@ class PublisherServiceTest {
         verify(publisherRepository, times(1)).findById(eq(id));
 
     }
+
     @Test
     @DisplayName("이미 존재하는 출판사 이름으로 수정")
     void givenPublisherIdAndPublisherModifyRequest_whenAlreadyExistPublisherNameModify_thenThrowPublisherAlreadyExistException() {
-        PublisherModifyRequest modifyRequest= new PublisherModifyRequest("publisherNameChange");
+        PublisherModifyRequest modifyRequest = new PublisherModifyRequest("publisherNameChange");
 
         given(publisherRepository.findById(eq(id))).willReturn(Optional.of(publisher));
 

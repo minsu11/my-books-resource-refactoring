@@ -75,6 +75,7 @@ class PublisherRestControllerTest {
         id = 1;
         name = "publisherName1";
     }
+
     @BeforeEach
     void setUp() {
         publisher = new Publisher(1, name, LocalDate.now());
@@ -83,7 +84,7 @@ class PublisherRestControllerTest {
     @Test
     @DisplayName("전체 출판사 조회")
     void givenPublisherList_whenFindAllPublishers_thenReturnAllPublishersGetResponseList() throws Exception {
-        Integer id2 =2;
+        Integer id2 = 2;
         String name2 = "publisher2";
         Integer page = 0;
         Integer size = 2;
@@ -112,11 +113,12 @@ class PublisherRestControllerTest {
                     }
                 });
 
-        Page<PublisherGetResponse> publisherGetResponsePage = new PageImpl<>(publisherList, pageable,publisherList.size());
+        Page<PublisherGetResponse> publisherGetResponsePage =
+                new PageImpl<>(publisherList, pageable, publisherList.size());
 
         when(publisherService.getAllPublisher(pageable)).thenReturn(publisherGetResponsePage);
 
-        mockMvc.perform(get(url+"?page="+page+"&size="+ size)
+        mockMvc.perform(get(url + "?page=" + page + "&size=" + size)
                         .accept("application/json"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].id").value(id))
@@ -129,7 +131,7 @@ class PublisherRestControllerTest {
 
     @Test
     @DisplayName("출판사 등록")
-    void givenPublisherCreateRequest_whenCreatePublisher_thenSavePublisherAndReturnPublisherCreateResponse() throws Exception{
+    void givenPublisherCreateRequest_whenCreatePublisher_thenSavePublisherAndReturnPublisherCreateResponse() throws Exception {
         PublisherCreateRequest request = new PublisherCreateRequest(name);
         PublisherCreateResponse response = PublisherMapper.INSTANCE.createResponse(publisher);
 
@@ -167,11 +169,11 @@ class PublisherRestControllerTest {
     @Test
     @DisplayName("출판사 삭제")
     void givenPublisherId_whenDeletePublisher_thenDeletePublisherAndReturnPublisherDeleteResponse() throws Exception {
-        PublisherDeleteResponse response= PublisherMapper.INSTANCE.deleteResponse(publisher);
+        PublisherDeleteResponse response = PublisherMapper.INSTANCE.deleteResponse(publisher);
 
         when(publisherService.deletePublisher(eq(id))).thenReturn(response);
 
-        mockMvc.perform(delete(url+"/{id}", id)
+        mockMvc.perform(delete(url + "/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(response.getName()));

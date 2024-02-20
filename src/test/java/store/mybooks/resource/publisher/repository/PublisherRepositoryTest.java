@@ -38,7 +38,7 @@ class PublisherRepositoryTest {
     private Publisher publisher2;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         publisher1 = new Publisher(1, "publisherName1", LocalDate.now());
         publisher2 = new Publisher(2, "publisherName2", LocalDate.now());
         publisherRepository.save(publisher1);
@@ -67,12 +67,13 @@ class PublisherRepositoryTest {
         Publisher publisher = new Publisher(1, "publisherName1", LocalDate.now());
         publisherRepository.save(publisher);
 
-        Assertions.assertEquals(publisherRepository.existsByName(publisher.getName()), true);
+        Assertions.assertTrue(publisherRepository.existsByName(publisher.getName()));
     }
+
     @Test
     @Order(3)
     @DisplayName("출판사명 중복이 아닐 경우")
     void givenNotExistPublisherName_whenExistsByName_thenReturnFalse() {
-        Assertions.assertEquals(publisherRepository.existsByName("test"), false);
+        Assertions.assertFalse(publisherRepository.existsByName("test"));
     }
 }
