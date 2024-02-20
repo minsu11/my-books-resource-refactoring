@@ -23,11 +23,12 @@ import store.mybooks.resource.user.entity.User;
 public interface UserRepository extends JpaRepository<User, Long> {
 
 
-    // 받오오는 경우 기본적으로 Optional로 감싸서 받아오기
-    // 이렇게 하는경우 중복체크 , Empty체크 등이 유의하며 filer , map 등의 Stream API 기능을 사용 가능함
+
     Optional<User> findByEmail(String email);
 
     UserGetResponse queryByEmail(String email);
+
+    Optional<UserGetResponse> queryById(Long id);
 
     Page<UserGetResponse> queryAllBy(Pageable pageable);
 

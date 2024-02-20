@@ -54,9 +54,9 @@ public class UserService {
 
     /**
      * Create user user create response.
-     *
+     * <p>
      * User를 생성함
-     *
+     * <p>
      * User의 email이 중복되는 경우 UserAlreadyExistException
      * UserStatus가 존재하지 않는 경우 UserStatusNotExistException
      * 사용중인 UserGrade가 존재하지 않는 경우 UserGradeNameNotExistException
@@ -82,7 +82,9 @@ public class UserService {
                 .orElseThrow(() -> new UserGradeNameNotExistException(userGradeName));
 
 
-        User user = new User(createRequest, userStatus, userGrade);
+        User user = new User(createRequest.getEmail(), createRequest.getBirth(), createRequest.getPassword(),
+                createRequest.getPhoneNumber(), createRequest.getIsAdmin(), createRequest.getName(), userStatus,
+                userGrade);
 
         userRepository.save(user);
 
@@ -91,23 +93,23 @@ public class UserService {
 
     /**
      * Modify user user modify response.
-     *
-     * email로 찾은 User를 수정함 , 이름 ,비밀번호,핸드폰번호 등 변경될 수 있는 모든 Field에 대해서 변경처리를 함
+     * <p>
+     * id 찾은 User를 수정함 , 이름 ,비밀번호,핸드폰번호 등 변경될 수 있는 모든 Field에 대해서 변경처리를 함
      * (후에 세분화 예정)
-     *
+     * <p>
      * UserStatus가 존재하지 않는 경우 UserStatusNotExistException
      * 사용중인 UserGrade가 존재하지 않는 경우 UserGradeNameNotExistException
      *
-     * @param email         the email
+     * @param id            the id
      * @param modifyRequest the modify request
      * @return the user modify response
      */
     @Transactional
-    public UserModifyResponse modifyUser(String email, UserModifyRequest modifyRequest) {
+    public UserModifyResponse modifyUser(Long id, UserModifyRequest modifyRequest) {
 
         // 없으면 예외처리
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotExistException(email));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotExistException(id));
 
         String userStatusName = modifyRequest.getUserStatusName();
         String userGradeName = modifyRequest.getUserGradeName();
@@ -117,7 +119,9 @@ public class UserService {
         UserGrade userGrade = userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(userGradeName).orElseThrow(
                 UserGradeIdNotExistException::new);
 
-        user.setByModifyRequest(modifyRequest, userStatus, userGrade);
+        user.modifyUser(modifyRequest.getUserGradeName(), modifyRequest.getPassword(), modifyRequest.getLatestLogin(),
+                modifyRequest.getDeletedAt(), modifyRequest.getGradeChangeDate(), modifyRequest.getPhoneNumber(),
+                userStatus, userGrade);
 
         return UserMapper.INSTANCE.toUserModifyResponse(user);
 
@@ -125,44 +129,42 @@ public class UserService {
 
     /**
      * Delete user user delete response.
-     *
-     * email로 찾은 User를 삭제함
+     * <p>
+     * id로 찾은 User를 삭제함
      * 강삭제가 아닌 약삭제로 User의 상태를 "탈퇴"로 변경함
      *
-     * @param email the email
+     * @param id the id
      * @return the user delete response
      */
     @Transactional
-    public UserDeleteResponse deleteUser(String email) {
+    public UserDeleteResponse deleteUser(Long id) {
 
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistException(email));
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotExistException(id));
 
-        String userStatusName = UserStatusEnum.INACTIVE.toString();
+        String userStatusName = UserStatusEnum.RESIGN.toString();
         UserStatus userStatus = userStatusRepository.findById(userStatusName)
                 .orElseThrow(() -> new UserStatusNotExistException(userStatusName));
 
-        user.modifyUserStatus(userStatus);
-        return new UserDeleteResponse(String.format("[%s] 유저 삭제완료", email));
+        user.modifyByDeleteRequest(userStatus);
+        return new UserDeleteResponse(String.format("[%s] 유저 삭제완료", user.getEmail()));
     }
 
     /**
      * Find by email user get response.
+     * <p>
+     * id를 이용해 User를 반환함
      *
-     * email를 이용해 User를 반환함
-     *
-     * @param email the email
+     * @param id the id
      * @return the user get response
      */
-    public UserGetResponse findByEmail(String email) {
+    public UserGetResponse findById(Long id) {
 
-        userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistException(email));
-
-        return userRepository.queryByEmail(email);
+        return userRepository.queryById(id).orElseThrow(() -> new UserNotExistException(id));
     }
 
     /**
      * Find all user page.
-     *
+     * <p>
      * 모든 User를 Pagination 해서 반환함
      *
      * @param page the page

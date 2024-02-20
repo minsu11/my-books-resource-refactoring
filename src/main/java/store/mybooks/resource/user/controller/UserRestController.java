@@ -68,17 +68,17 @@ public class UserRestController {
     /**
      * Modify user response entity.
      *
-     * email로 찾은 User의 정보를 수정하는 api
+     * id로 찾은 User의 정보를 수정하는 api
      *
-     * @param email         the email
+     * @param id         the id
      * @param modifyRequest the modify request
      * @return the response entity
      */
-    @PutMapping("/{email}")
-    public ResponseEntity<UserModifyResponse> modifyUser(@PathVariable(name = "email") String email,
+    @PutMapping("/{id}")
+    public ResponseEntity<UserModifyResponse> modifyUser(@PathVariable(name = "id") Long id,
                                                          @RequestBody UserModifyRequest modifyRequest) {
 
-        UserModifyResponse modifyResponse = userService.modifyUser(email,modifyRequest);
+        UserModifyResponse modifyResponse = userService.modifyUser(id,modifyRequest);
 
         return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
     }
@@ -86,15 +86,15 @@ public class UserRestController {
     /**
      * Delete user response entity.
      *
-     * email로 찾은 User를 삭제하는 api
+     * id로 찾은 User를 삭제하는 api
      * 강삭제가 아닌 약삭제를 제공함
      *
-     * @param email the email
+     * @param id the id
      * @return the response entity
      */
-    @DeleteMapping("/{email}")
-    public ResponseEntity<UserDeleteResponse> deleteUser(@PathVariable(name = "email") String email) {
-        UserDeleteResponse deleteResponse = userService.deleteUser(email);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<UserDeleteResponse> deleteUser(@PathVariable(name = "id") Long id) {
+        UserDeleteResponse deleteResponse = userService.deleteUser(id);
 
         return new ResponseEntity<>(deleteResponse, HttpStatus.ACCEPTED);
     }
@@ -102,16 +102,16 @@ public class UserRestController {
     /**
      * Find user by email response entity.
      *
-     * email로 찾은 User를 반환함
+     * id로 찾은 User를 반환함
      *
-     * @param email the email
+     * @param id the id
      * @return the response entity
      */
-    @GetMapping("/{email}")
-    public ResponseEntity<UserGetResponse> findUserByEmail(@PathVariable(name = "email") String email) {
+    @GetMapping("/{id}")
+    public ResponseEntity<UserGetResponse> findUserByEmail(@PathVariable(name = "id") Long id) {
 
 
-        UserGetResponse getResponse = userService.findByEmail(email);
+        UserGetResponse getResponse = userService.findById(id);
 
         return new ResponseEntity<>(getResponse, HttpStatus.OK);
     }
