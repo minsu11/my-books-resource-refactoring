@@ -10,7 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +19,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import store.mybooks.resource.publisher.dto.request.PublisherCreateRequest;
 import store.mybooks.resource.publisher.dto.request.PublisherModifyRequest;
 import store.mybooks.resource.publisher.dto.response.PublisherCreateResponse;
@@ -51,9 +55,10 @@ class PublisherServiceTest {
 
     @Test
     @DisplayName("전체 출판사 조회")
-    void givenPublisherList_whenFindAllPublishers_thenReturnAllPublishersGetResponseList() {
-        List<PublisherGetResponse> publisherGetResponseList = new ArrayList<>();
-        publisherGetResponseList.add( new PublisherGetResponse() {
+    void givenPublisherListAndPagable_whenFindAllPublishers_thenReturnPagePublishersGetResponseList() {
+        Pageable pageable = PageRequest.of(0, 2);
+        List<PublisherGetResponse> publisherGetResponseList = Arrays.asList(
+                new PublisherGetResponse() {
                     @Override
                     public Integer getId() {
                         return 1;
@@ -63,9 +68,8 @@ class PublisherServiceTest {
                     public String getName() {
                         return "publisher1";
                     }
-                }
-        );
-        publisherGetResponseList.add( new PublisherGetResponse() {
+                },
+                new PublisherGetResponse() {
                     @Override
                     public Integer getId() {
                         return 2;
@@ -73,12 +77,15 @@ class PublisherServiceTest {
 
                     @Override
                     public String getName() {
-                        return "publisher2";
+                        return "publisher1";
                     }
-                }
-        );
-        when(publisherRepository.findAllBy()).thenReturn(publisherGetResponseList);
-        assertThat(publisherService.getAllPublisher()).isEqualTo(publisherGetResponseList);
+                });
+
+        Page<PublisherGetResponse> pageGetResponse =
+                new PageImpl<>(publisherGetResponseList, pageable, publisherGetResponseList.size());
+        when(publisherRepository.findAllBy(pageable)).thenReturn(pageGetResponse);
+
+        assertThat(publisherService.getAllPublisher(pageable)).isEqualTo(pageGetResponse);
     }
 
 
