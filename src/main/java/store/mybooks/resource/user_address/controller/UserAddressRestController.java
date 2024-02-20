@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -45,18 +46,18 @@ import store.mybooks.resource.user_address.service.UserAddressService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/users/addresses")
+@RequestMapping("/api/users-addresses")
 public class UserAddressRestController {
 
     private final UserAddressService userAddressService;
 
     @PostMapping("/{userId}")
     public ResponseEntity<UserAddressCreateResponse> createUserAddress(
-            @PathVariable(name = "userId") String userId,
+            @PathVariable(name = "userId") Long userId,
             @RequestBody UserAddressCreateRequest createRequest) {
 
         UserAddressCreateResponse createResponse =
-                userAddressService.createUserAddress(Long.parseLong(userId), createRequest);
+                userAddressService.createUserAddress(userId, createRequest);
 
         return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
     }
@@ -64,23 +65,23 @@ public class UserAddressRestController {
 
     @PutMapping("/{userId}/{addressId}")
     public ResponseEntity<UserAddressModifyResponse> modifyUserAddress(
-            @PathVariable(name = "userId") String userId,
-            @PathVariable(name = "addressId") String addressId,
+            @PathVariable(name = "userId") Long userId,
+            @PathVariable(name = "addressId") Long addressId,
             @RequestBody UserAddressModifyRequest modifyRequest) {
 
         UserAddressModifyResponse modifyResponse =
-                userAddressService.modifyUserAddress(Long.parseLong(userId), Long.parseLong(addressId), modifyRequest);
+                userAddressService.modifyUserAddress(userId, addressId, modifyRequest);
 
         return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{userId}/{addressId}")
     public ResponseEntity<UserAddressDeleteResponse> deleteUserAddress(
-            @PathVariable(name = "userId") String userId,
-            @PathVariable(name = "addressId") String addressId) {
+            @PathVariable(name = "userId") Long userId,
+            @PathVariable(name = "addressId") Long addressId) {
 
         UserAddressDeleteResponse deleteResponse =
-                userAddressService.deleteUserAddress(Long.parseLong(userId), Long.parseLong(addressId));
+                userAddressService.deleteUserAddress(userId, addressId);
 
         return new ResponseEntity<>(deleteResponse, HttpStatus.OK);
     }
@@ -88,30 +89,28 @@ public class UserAddressRestController {
 
     @GetMapping("/{userId}/{addressId}")
     public ResponseEntity<UserAddressGetResponse> findUserAddressByAddressId(
-            @PathVariable(name = "userId") String userId,
-            @PathVariable(name = "addressId") String addressId) {
+            @PathVariable(name = "userId") Long userId,
+            @PathVariable(name = "addressId") Long addressId) {
 
         UserAddressGetResponse getResponse =
-                userAddressService.findByAddressId(Long.parseLong(userId), Long.parseLong(addressId));
+                userAddressService.findByAddressId(userId, addressId);
         return new ResponseEntity<>(getResponse, HttpStatus.OK);
     }
 
 
     @GetMapping
-    public ResponseEntity<Page<UserAddressGetResponse>> findAllUserAddress(
-            @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "10") Integer size) {
+    public ResponseEntity<Page<UserAddressGetResponse>> findAllUserAddress(Pageable pageable) {
 
-        Page<UserAddressGetResponse> paginationUserAddress = userAddressService.findByAllUserAddress(page, size);
+        Page<UserAddressGetResponse> paginationUserAddress = userAddressService.findByAllUserAddress(pageable);
         return new ResponseEntity<>(paginationUserAddress, HttpStatus.OK);
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<List<UserAddressGetResponse>> findAllAddressByUserId(@PathVariable(name = "userId") String
+    public ResponseEntity<List<UserAddressGetResponse>> findAllAddressByUserId(@PathVariable(name = "userId") Long
                                                                                        userId) {
 
         List<UserAddressGetResponse> userGetResponseList =
-                userAddressService.findAllAddressByUserId(Long.parseLong(userId));
+                userAddressService.findAllAddressByUserId(userId);
 
         return new ResponseEntity<>(userGetResponseList, HttpStatus.OK);
     }

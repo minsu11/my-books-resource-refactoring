@@ -15,4 +15,5 @@ import store.mybooks.resource.user_grade_name.entity.UserGradeName;
  * 2/19/24        masiljangajji       최초 생성
  */
 public interface UserGradeNameRepository extends JpaRepository<UserGradeName, String> {
+
 }

@@ -26,8 +26,6 @@ public interface UserGradeRepository extends JpaRepository<UserGrade, Integer> {
 
     Optional<UserGrade> findByUserGradeNameIdAndIsAvailableIsTrue(String userGradeName);
 
-    Optional<UserGrade> findByUserGradeNameId(String userGradeName);
-
     Page<UserGradeGetResponse> queryAllBy(Pageable pageable);
 
 
