@@ -2,7 +2,7 @@ package store.mybooks.resource.point_rule.entity;
 
 import java.time.LocalDate;
 import javax.persistence.*;
-import store.mybooks.resource.point_name_rule.entity.PointNameRule;
+import store.mybooks.resource.point_rule_name.entity.PointRuleName;
 
 /**
  * packageName    : store.mybooks.resource.point_rule.entity
@@ -24,8 +24,8 @@ public class PointRule {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "point_name_id")
-    private PointNameRule pointNameRule;
+    @JoinColumn(name = "point_rule_name_id")
+    private PointRuleName pointNameRule;
 
     @Column(name = "point_rule_rate")
     private Integer rate;
