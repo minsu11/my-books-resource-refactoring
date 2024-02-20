@@ -1,9 +1,8 @@
 package store.mybooks.resource.cart.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * packageName    : store.mybooks.resource.cart.dto
@@ -16,10 +15,9 @@ import lombok.NoArgsConstructor;
  * -----------------------------------------------------------
  * 2/15/24        Fiat_lux       최초 생성
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class CartRegisterRequest {
     private Long userId;
 }
