@@ -21,6 +21,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import store.mybooks.resource.publisher.dto.request.PublisherCreateRequest;
@@ -65,6 +69,9 @@ class PublisherRestControllerTest {
         Integer id2 =2;
         String name1 = "publisher1";
         String name2 = "publisher2";
+        Integer page = 0;
+        Integer size = 2;
+        Pageable pageable = PageRequest.of(page, size);
         List<PublisherGetResponse> publisherList = Arrays.asList(
                 new PublisherGetResponse() {
                     @Override
@@ -88,15 +95,15 @@ class PublisherRestControllerTest {
                         return name2;
                     }
                 });
-
-        when(publisherService.getAllPublisher()).thenReturn(publisherList);
-        mockMvc.perform(get(url)
+        Page<PublisherGetResponse> publisherGetResponsePage = new PageImpl<>(publisherList, pageable,publisherList.size());
+        when(publisherService.getAllPublisher(pageable)).thenReturn(publisherGetResponsePage);
+        mockMvc.perform(get(url+"?page="+page+"&size="+ size)
                         .accept("application/json"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(id1))
-                .andExpect(jsonPath("$[0].name").value(name1))
-                .andExpect(jsonPath("$[1].id").value(id2))
-                .andExpect(jsonPath("$[1].name").value(name2));
+                .andExpect(jsonPath("$.content[0].id").value(id1))
+                .andExpect(jsonPath("$.content[0].name").value(name1))
+                .andExpect(jsonPath("$.content[1].id").value(id2))
+                .andExpect(jsonPath("$.content[1].name").value(name2));
     }
 
     @Test
@@ -105,7 +112,7 @@ class PublisherRestControllerTest {
         String name = "publisherName";
         PublisherCreateRequest request = new PublisherCreateRequest(name);
         Publisher publisher = new Publisher(name);
-        PublisherCreateResponse response=PublisherMapper.INSTANCE.createResponse(publisher);
+        PublisherCreateResponse response = PublisherMapper.INSTANCE.createResponse(publisher);
         when(publisherService.createPublisher(any(PublisherCreateRequest.class))).thenReturn(response);
 
         mockMvc.perform(post(url)

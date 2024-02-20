@@ -16,9 +16,6 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import store.mybooks.resource.category.dto.request.CategoryCreateRequest;
-import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
-import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 
 /**
  * packageName    : store.mybooks.resource.category.entity
@@ -58,26 +55,14 @@ public class Category {
     /**
      * Category 생성자.
      *
-     * @param categoryCreateRequest 카테고리 생성 request
+     * @param parentCategory the parent category
+     * @param name           the name
      */
-    public Category(CategoryCreateRequest categoryCreateRequest) {
-        this.parentCategory = categoryCreateRequest.getParentCategory();
-        this.name = categoryCreateRequest.getName();
+    public Category(Category parentCategory, String name) {
+        this.parentCategory = parentCategory;
+        this.name = name;
         this.createdDate = LocalDate.now();
         this.childCategoryList = new ArrayList<>();
-    }
-
-    /**
-     * methodName : convertToCategoryCreateResponse
-     * author : damho-lee
-     * description : Category Entity 를 CategoryCreateResponse 로 변경하는 메서드.
-     *
-     * @return CategoryCreateResponse
-     */
-    public CategoryCreateResponse convertToCategoryCreateResponse() {
-        return CategoryCreateResponse.builder()
-                .name(this.name)
-                .build();
     }
 
     /**
@@ -89,14 +74,10 @@ public class Category {
      * @param name           카테고리 이름.
      * @return CategoryModifyResponse
      */
-    public CategoryModifyResponse modifyCategory(Category parentCategory, String name) {
+    public Category modifyCategory(Category parentCategory, String name) {
         this.parentCategory = parentCategory;
         this.name = name;
 
-        return CategoryModifyResponse.builder()
-                .parentCategoryId(this.parentCategory.getId())
-                .parentCategoryName(this.parentCategory.getName())
-                .name(this.name)
-                .build();
+        return this;
     }
 }
