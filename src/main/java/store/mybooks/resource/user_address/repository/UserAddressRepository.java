@@ -30,5 +30,7 @@ public interface UserAddressRepository extends JpaRepository<UserAddress, Long> 
 
     Page<UserAddressGetResponse> queryAllBy(Pageable pageable);
 
+    Integer countByUserId(Long userId);
+
 
 }

@@ -19,8 +19,10 @@ import store.mybooks.resource.user_address.dto.response.UserAddressGetResponse;
 import store.mybooks.resource.user_address.dto.response.UserAddressModifyResponse;
 import store.mybooks.resource.user_address.entity.UserAddress;
 import store.mybooks.resource.user_address.exception.UserAddressAlreadyExistException;
+import store.mybooks.resource.user_address.exception.UserAddressFullException;
 import store.mybooks.resource.user_address.exception.UserAddressNotExistException;
 import store.mybooks.resource.user_address.repository.UserAddressRepository;
+import store.mybooks.resource.user_grade.exception.UserGradeAlreadyUsedException;
 
 /**
  * packageName    : store.mybooks.resource.user_address.service
@@ -48,6 +50,10 @@ public class UserAddressService {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
 
+
+        if (userAddressRepository.countByUserId(userId) > 10) {
+            throw new UserAddressFullException(userId);
+        }
 
         UserAddress userAddress =
                 new UserAddress(user, createRequest.getAlias(), createRequest.getRoadName(), createRequest.getDetail(),
