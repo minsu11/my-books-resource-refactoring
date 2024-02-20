@@ -49,10 +49,9 @@ public class PublisherRestController {
      */
     @GetMapping
     public ResponseEntity<Page<PublisherGetResponse>> getAllPublishers(Pageable pageable) {
-        Page<PublisherGetResponse> publishers = publisherService.getAllPublisher(pageable);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(publishers);
+                .body(publisherService.getAllPublisher(pageable));
     }
 
     /**
@@ -66,10 +65,9 @@ public class PublisherRestController {
     @PostMapping
     public ResponseEntity<PublisherCreateResponse> createPublisher(
             @Valid @RequestBody PublisherCreateRequest createRequest) {
-        PublisherCreateResponse createPublisher = publisherService.createPublisher(createRequest);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(createPublisher);
+                .body(publisherService.createPublisher(createRequest));
     }
 
     /**
@@ -83,10 +81,9 @@ public class PublisherRestController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<PublisherModifyResponse> modifyPublisher(@PathVariable("id") Integer publisherId, @Valid @RequestBody PublisherModifyRequest modifyRequest) {
-        PublisherModifyResponse modifyPublisher = publisherService.modifyPublisher(publisherId, modifyRequest);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(modifyPublisher);
+                .body(publisherService.modifyPublisher(publisherId, modifyRequest));
     }
 
 
@@ -100,9 +97,8 @@ public class PublisherRestController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<PublisherDeleteResponse> deletePublisher(@PathVariable("id") Integer publisherId) {
-        PublisherDeleteResponse deleteResponse = publisherService.deletePublisher(publisherId);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(deleteResponse);
+                .body(publisherService.deletePublisher(publisherId));
     }
 }
