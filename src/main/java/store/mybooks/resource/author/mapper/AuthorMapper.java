@@ -1,6 +1,7 @@
 package store.mybooks.resource.author.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 import store.mybooks.resource.author.dto.response.AuthorCreateResponse;
@@ -23,6 +24,8 @@ import store.mybooks.resource.author.entity.Author;
 public interface AuthorMapper {
     AuthorMapper INSTANCE = Mappers.getMapper(AuthorMapper.class);
     AuthorCreateResponse createResponse(Author author);
+    @Mapping(source = "name", target = "changeName")
+    @Mapping(source = "content", target = "changeContent")
     AuthorModifyResponse modifyResponse(Author author);
     AuthorDeleteResponse deleteResponse(Author author);
 

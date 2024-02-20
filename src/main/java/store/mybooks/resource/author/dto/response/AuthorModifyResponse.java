@@ -1,5 +1,8 @@
 package store.mybooks.resource.author.dto.response;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * packageName    : store.mybooks.resource.author.dto.response
  * fileName       : AuthorModifyResponse
@@ -11,5 +14,9 @@ package store.mybooks.resource.author.dto.response;
  * -----------------------------------------------------------
  * 2/20/24        newjaehun       최초 생성
  */
+@Getter
+@Setter
 public class AuthorModifyResponse {
+    private String changeName;
+    private String changeContent;
 }
