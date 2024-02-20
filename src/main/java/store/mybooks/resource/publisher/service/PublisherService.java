@@ -61,10 +61,7 @@ public class PublisherService {
         if(Boolean.TRUE.equals(publisherRepository.existsByName(createRequest.getName()))){
             throw new PublisherAlreadyExistException(createRequest.getName());
         }
-
-        Publisher resultPublisher = publisherRepository.save(publisher);
-
-        return PublisherMapper.INSTANCE.createResponse(resultPublisher);
+        return PublisherMapper.INSTANCE.createResponse(publisherRepository.save(publisher));
     }
 
     /**
