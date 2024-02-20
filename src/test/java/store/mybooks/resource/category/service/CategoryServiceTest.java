@@ -152,7 +152,7 @@ class CategoryServiceTest {
         String name = "categoryName";
         CategoryCreateRequest categoryCreateRequest = new CategoryCreateRequest(null, name);
 
-        when(categoryRepository.save(any())).thenReturn(new Category(categoryCreateRequest));
+        when(categoryRepository.save(any())).thenReturn(new Category(null, name));
 
         CategoryCreateResponse response = categoryService.createCategory(categoryCreateRequest);
 

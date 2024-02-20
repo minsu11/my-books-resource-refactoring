@@ -1,12 +1,11 @@
-package store.mybooks.resource.order_detail_status.dto.request;
+package store.mybooks.resource.orders_status.dto.request;
 
-import lombok.AllArgsConstructor;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 /**
- * packageName    : store.mybooks.resource.order_detail_status.dto.request
- * fileName       : OrderDetailStatusRequest
+ * packageName    : store.mybooks.resource.orders_status.dto.request
+ * fileName       : OrdersStatusCreateRequest
  * author         : minsu11
  * date           : 2/16/24
  * description    :
@@ -16,8 +15,7 @@ import lombok.NoArgsConstructor;
  * 2/16/24        minsu11       최초 생성
  */
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-public class OrderDetailStatusRequest {
+public class OrdersStatusCreateRequest {
+    @NotNull
     private String id;
 }
