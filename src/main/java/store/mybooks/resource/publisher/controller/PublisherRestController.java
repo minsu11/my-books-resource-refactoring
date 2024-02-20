@@ -45,7 +45,7 @@ public class PublisherRestController {
      * description : 전체 출판사 리스트 반환
      *
      * @param pageable
-     * @return ResponseEntity entity
+     * @return ResponseEntity
      */
     @GetMapping
     public ResponseEntity<Page<PublisherGetResponse>> getAllPublishers(Pageable pageable) {
