@@ -13,8 +13,8 @@ import store.mybooks.resource.cart.exception.CartAlreadyExistException;
 import store.mybooks.resource.cart.exception.CartNotFoundException;
 import store.mybooks.resource.cart.repository.CartRepository;
 import store.mybooks.resource.user.entity.User;
-import store.mybooks.resource.user.entity.UserRepository;
 import store.mybooks.resource.user.exception.UserNotExistException;
+import store.mybooks.resource.user.repository.UserRepository;
 
 /**
  * packageName    : store.mybooks.resource.cart.service
@@ -46,6 +46,7 @@ public class CartService {
     public CartResponse registerCart(CartRegisterRequest cartRegisterRequest) {
         User user = userRepository.findById(cartRegisterRequest.getUserId())
                 .orElseThrow(() -> new UserNotExistException("유저가 존재하지 않습니다"));
+
         if (cartRepository.existsCartByUserId(cartRegisterRequest.getUserId())) {
             throw new CartAlreadyExistException("카트가 이미 존재합니다");
         } else {
@@ -64,6 +65,6 @@ public class CartService {
      */
     public CartDto getCart(Long userId) {
         Optional<CartDto> optionalCart = cartRepository.findCartByUserId(userId);
-        return optionalCart.orElseThrow(() -> new CartNotFoundException(""));
+        return optionalCart.orElseThrow(() -> new CartNotFoundException("카트 id를 찾을수 없습니다"));
     }
 }
