@@ -39,7 +39,7 @@ public class PublisherService {
      * description : 전체 출판사 리스트 반환
      *
      * @param pageable
-     * @return list
+     * @return Page
      */
     @Transactional(readOnly = true)
     public Page<PublisherGetResponse> getAllPublisher(Pageable pageable) {
@@ -58,7 +58,7 @@ public class PublisherService {
     public PublisherCreateResponse createPublisher(PublisherCreateRequest createRequest) {
         Publisher publisher = new Publisher(createRequest.getName());
 
-        if(Boolean.TRUE.equals(publisherRepository.existsByName(createRequest.getName()))){
+        if(publisherRepository.existsByName(createRequest.getName())){
             throw new PublisherAlreadyExistException(createRequest.getName());
         }
         return PublisherMapper.INSTANCE.createResponse(publisherRepository.save(publisher));
