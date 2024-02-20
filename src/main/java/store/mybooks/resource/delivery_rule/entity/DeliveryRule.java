@@ -1,11 +1,21 @@
 package store.mybooks.resource.delivery_rule.entity;
 
 import java.time.LocalDate;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
+
 
 /**
  * packageName    : store.mybooks.resource.delivery_rule.entity
@@ -21,6 +31,7 @@ import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 @Entity
 @Table(name = "delivery_rule")
 public class DeliveryRule {
@@ -47,5 +58,13 @@ public class DeliveryRule {
     private LocalDate createdDate;
 
     @Column(name = "is_available")
-    private Boolean isAvailable;
+    private Integer isAvailable;
+
+    public DeliveryRule(DeliveryRuleName deliveryRuleName, String companyName, Integer cost, Integer ruleCost) {
+        this.deliveryRuleName = deliveryRuleName;
+        this.companyName = companyName;
+        this.cost = cost;
+        this.ruleCost = ruleCost;
+        this.createdDate = LocalDate.now();
+    }
 }
