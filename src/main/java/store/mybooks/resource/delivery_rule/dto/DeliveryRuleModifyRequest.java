@@ -21,7 +21,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DeliveryRuleModifyRequest {
-    private Integer deliveryNameRuleId;
+    private String deliveryNameRuleId;
     private String deliveryRuleCompanyName;
     private Integer deliveryCost;
     private Integer deliveryRuleCost;

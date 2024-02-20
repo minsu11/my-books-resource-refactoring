@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public interface DeliveryRuleDto {
     Integer getId();
 
-     Integer getDeliveryNameRuleId();
+    String getDeliveryRuleName();
 
     String getCompanyName();
 
@@ -26,5 +26,5 @@ public interface DeliveryRuleDto {
 
     LocalDate getCreatedDate();
 
-    Boolean getIsAvailable();
+    Integer getIsAvailable();
 }

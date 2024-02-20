@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import store.mybooks.resource.delivery_name_rule.entity.DeliveryNameRule;
+import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
 
 /**
@@ -25,12 +25,9 @@ import store.mybooks.resource.delivery_name_rule.entity.DeliveryNameRule;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties({"deliveryNameRule"})
 public class DeliveryRuleResponse {
 
     private Integer id;
-
-    private DeliveryNameRule deliveryNameRule;
 
     private String companyName;
 
@@ -40,5 +37,5 @@ public class DeliveryRuleResponse {
 
     private LocalDate createdDate;
 
-    private Boolean isAvailable;
+    private Integer isAvailable;
 }

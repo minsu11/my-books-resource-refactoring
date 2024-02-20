@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DeliveryRuleRegisterRequest {
-    private Integer deliveryNameRuleId;
+    private String deliveryNameRuleId;
     private String deliveryCompanyName;
     private Integer deliveryCost;
     private Integer deliveryRuleCost;

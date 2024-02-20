@@ -1,12 +1,10 @@
 package store.mybooks.resource.delivery_rule.service;
 
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import store.mybooks.resource.delivery_name_rule.entity.DeliveryNameRule;
-import store.mybooks.resource.delivery_name_rule.exception.DeliveryNameRuleNotFoundException;
-import store.mybooks.resource.delivery_name_rule.repository.DeliveryNameRuleRepository;
+import store.mybooks.resource.delivery_name_rule.exception.DeliveryRuleNameNotFoundException;
+import store.mybooks.resource.delivery_name_rule.repository.DeliveryRuleNameRepository;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleDto;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleMapper;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleModifyRequest;
@@ -15,6 +13,7 @@ import store.mybooks.resource.delivery_rule.dto.DeliveryRuleResponse;
 import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
 import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotFoundException;
 import store.mybooks.resource.delivery_rule.repository.DeliveryRuleRepository;
+import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
 /**
  * packageName    : store.mybooks.resource.delivery_rule.service
@@ -32,57 +31,73 @@ import store.mybooks.resource.delivery_rule.repository.DeliveryRuleRepository;
 public class DeliveryRuleService {
 
     private final DeliveryRuleRepository deliveryRuleRepository;
-    private final DeliveryNameRuleRepository deliveryNameRuleRepository;
+    private final DeliveryRuleNameRepository deliveryRuleNameRepository;
     private final DeliveryRuleMapper deliveryRuleMapper;
 
+    /**
+     * Register delivery rule delivery rule response.
+     *
+     * @param deliveryRuleRegisterRequest the delivery rule register request
+     * @return the delivery rule response
+     */
     @Transactional
     public DeliveryRuleResponse registerDeliveryRule(DeliveryRuleRegisterRequest deliveryRuleRegisterRequest) {
-        Optional<DeliveryNameRule> optionalDeliveryNameRule =
-                deliveryNameRuleRepository.findById(deliveryRuleRegisterRequest.getDeliveryNameRuleId());
 
-        if (optionalDeliveryNameRule.isPresent()) {
-            DeliveryNameRule deliveryNameRule = optionalDeliveryNameRule.get();
-            DeliveryRule deliveryRule = new DeliveryRule(deliveryRuleRegisterRequest, deliveryNameRule);
+        DeliveryRuleName deliveryRuleName =
+                deliveryRuleNameRepository.findById(deliveryRuleRegisterRequest.getDeliveryNameRuleId())
+                        .orElseThrow(() -> new DeliveryRuleNameNotFoundException("배송 이름 규칙이 존재하지 않습니다."));
 
-            DeliveryRule saveDeliveryRule = deliveryRuleRepository.save(deliveryRule);
-            return deliveryRuleMapper.mapToResponse(saveDeliveryRule);
-        } else {
-            throw new DeliveryNameRuleNotFoundException("배송 이름 규칙이 존재하지 않습니다.");
-        }
+        DeliveryRule deliveryRule = new DeliveryRule(deliveryRuleName,
+                deliveryRuleRegisterRequest.getDeliveryCompanyName(), deliveryRuleRegisterRequest.getDeliveryCost(),
+                deliveryRuleRegisterRequest.getDeliveryRuleCost());
+
+        DeliveryRule saveDeliveryRule = deliveryRuleRepository.save(deliveryRule);
+        return deliveryRuleMapper.mapToResponse(saveDeliveryRule);
+
     }
 
+    /**
+     * Gets delivery rule.
+     *
+     * @param id the id
+     * @return the delivery rule
+     */
     @Transactional(readOnly = true)
     public DeliveryRuleDto getDeliveryRule(Integer id) {
-        Optional<DeliveryRuleDto> optionalDeliveryRule = deliveryRuleRepository.findDeliveryRuleById(id);
 
-        if (optionalDeliveryRule.isPresent()) {
-
-            return optionalDeliveryRule.get();
-        } else {
-            throw new DeliveryRuleNotFoundException("배송 규칙이 존재하지 않습니다");
-        }
+        return deliveryRuleRepository.findDeliveryRuleById(id)
+                .orElseThrow(() -> new DeliveryRuleNotFoundException("배송 규칙이 존재하지 않습니다"));
     }
 
+    /**
+     * Modify delivery rule delivery rule response.
+     *
+     * @param id                        the id
+     * @param deliveryRuleModifyRequest the delivery rule modify request
+     * @return the delivery rule response
+     */
     @Transactional
     public DeliveryRuleResponse modifyDeliveryRule(Integer id, DeliveryRuleModifyRequest deliveryRuleModifyRequest) {
-        Optional<DeliveryRule> optionalDeliveryRule = deliveryRuleRepository.findById(id);
-        Optional<DeliveryNameRule> optionalDeliveryNameRule =
-                deliveryNameRuleRepository.findById(deliveryRuleModifyRequest.getDeliveryNameRuleId());
-        if (optionalDeliveryRule.isEmpty()) {
-            throw new DeliveryRuleNotFoundException("배송 규칙이 존재하지 않습니다");
-        } else if (optionalDeliveryNameRule.isEmpty()) {
-            throw new DeliveryRuleNotFoundException("배송 규칙이 존재하지 않습니다");
-        } else {
-            DeliveryRule deliveryRule = optionalDeliveryRule.get();
-            DeliveryNameRule deliveryNameRule = optionalDeliveryNameRule.get();
-            deliveryRule.setDeliveryNameRule(deliveryNameRule);
-            deliveryRule.setCompanyName(deliveryRuleModifyRequest.getDeliveryRuleCompanyName());
-            deliveryRule.setCost(deliveryRuleModifyRequest.getDeliveryCost());
-            deliveryRule.setRuleCost(deliveryRuleModifyRequest.getDeliveryRuleCost());
-            return deliveryRuleMapper.mapToResponse(deliveryRule);
-        }
+        DeliveryRule deliveryRule = deliveryRuleRepository.findById(id)
+                .orElseThrow(() -> new DeliveryRuleNotFoundException("배송 규칙이 존재하지 않습니다."));
+
+        DeliveryRuleName deliveryRuleName =
+                deliveryRuleNameRepository.findById(deliveryRuleModifyRequest.getDeliveryNameRuleId())
+                        .orElseThrow(() -> new DeliveryRuleNameNotFoundException("배송 규칙이 존재하지 않습니다"));
+
+        deliveryRule.setDeliveryRuleName(deliveryRuleName);
+        deliveryRule.setCompanyName(deliveryRuleModifyRequest.getDeliveryRuleCompanyName());
+        deliveryRule.setCost(deliveryRuleModifyRequest.getDeliveryCost());
+        deliveryRule.setRuleCost(deliveryRuleModifyRequest.getDeliveryRuleCost());
+        return deliveryRuleMapper.mapToResponse(deliveryRule);
     }
 
+
+    /**
+     * Delete delivery rule.
+     *
+     * @param id the id
+     */
     @Transactional
     public void deleteDeliveryRule(Integer id) {
         if (deliveryRuleRepository.existsById(id)) {

@@ -14,8 +14,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import store.mybooks.resource.delivery_name_rule.entity.DeliveryNameRule;
-import store.mybooks.resource.delivery_rule.dto.DeliveryRuleRegisterRequest;
+import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
+
 
 /**
  * packageName    : store.mybooks.resource.delivery_rule.entity
@@ -42,8 +42,8 @@ public class DeliveryRule {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "delivery_name_rule_id")
-    private DeliveryNameRule deliveryNameRule;
+    @JoinColumn(name = "delivery_rule_name_id")
+    private DeliveryRuleName deliveryRuleName;
 
     @Column(name = "delivery_company_name")
     private String companyName;
@@ -58,15 +58,13 @@ public class DeliveryRule {
     private LocalDate createdDate;
 
     @Column(name = "is_available")
-    private Boolean isAvailable;
+    private Integer isAvailable;
 
-    public DeliveryRule(DeliveryRuleRegisterRequest deliveryRuleRegisterRequest, DeliveryNameRule deliveryNameRule) {
-        this.deliveryNameRule = deliveryNameRule;
-        this.companyName = deliveryRuleRegisterRequest.getDeliveryCompanyName();
-        this.cost = deliveryRuleRegisterRequest.getDeliveryCost();
-        this.ruleCost = deliveryRuleRegisterRequest.getDeliveryRuleCost();
+    public DeliveryRule(DeliveryRuleName deliveryRuleName, String companyName, Integer cost, Integer ruleCost) {
+        this.deliveryRuleName = deliveryRuleName;
+        this.companyName = companyName;
+        this.cost = cost;
+        this.ruleCost = ruleCost;
         this.createdDate = LocalDate.now();
-        this.isAvailable = true;
     }
-
 }

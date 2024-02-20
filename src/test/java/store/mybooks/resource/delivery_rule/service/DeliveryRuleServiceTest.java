@@ -12,13 +12,14 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import store.mybooks.resource.delivery_name_rule.entity.DeliveryNameRule;
-import store.mybooks.resource.delivery_name_rule.exception.DeliveryNameRuleNotFoundException;
-import store.mybooks.resource.delivery_name_rule.repository.DeliveryNameRuleRepository;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import store.mybooks.resource.delivery_name_rule.exception.DeliveryRuleNameNotFoundException;
+import store.mybooks.resource.delivery_name_rule.repository.DeliveryRuleNameRepository;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleDto;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleMapper;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleModifyRequest;
@@ -27,6 +28,7 @@ import store.mybooks.resource.delivery_rule.dto.DeliveryRuleResponse;
 import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
 import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotFoundException;
 import store.mybooks.resource.delivery_rule.repository.DeliveryRuleRepository;
+import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
 /**
  * packageName    : store.mybooks.resource.delivery_rule.service
@@ -39,35 +41,36 @@ import store.mybooks.resource.delivery_rule.repository.DeliveryRuleRepository;
  * -----------------------------------------------------------
  * 2/18/24        Fiat_lux       최초 생성
  */
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class DeliveryRuleServiceTest {
-    @Autowired
+    @InjectMocks
     DeliveryRuleService deliveryRuleService;
-    @MockBean
+    @Mock
     DeliveryRuleRepository deliveryRuleRepository;
-    @MockBean
-    DeliveryNameRuleRepository deliveryNameRuleRepository;
-    @MockBean
+    @Mock
+    DeliveryRuleNameRepository deliveryRuleNameRepository;
+    @Mock
     DeliveryRuleMapper deliveryRuleMapper;
 
-    static DeliveryNameRule deliveryNameRule;
+    static DeliveryRuleName deliveryNameRule;
     static DeliveryRule deliveryRule;
 
     @BeforeEach
     void setUp() {
-        deliveryNameRule = new DeliveryNameRule(1, "test", LocalDate.now());
-        deliveryRule = new DeliveryRule(1, deliveryNameRule, "test", 1000, 1000, LocalDate.now(), true);
+        deliveryNameRule = new DeliveryRuleName("test");
+        deliveryRule = new DeliveryRule(1, deliveryNameRule, "test", 1000, 1000, LocalDate.now(), 1);
     }
 
     @Test
-    void registerDeliveryRuleTest() {
+    @DisplayName("DeliveryRule 등록하는 테스트")
+    void givenDeliveryRuleRegisterRequest_whenFindByIdAndSaveAndMapToResponse_thenCreateDeliveryRuleReturnDeliveryRuleResponse() {
         DeliveryRuleRegisterRequest deliveryRuleRegisterRequest =
-                new DeliveryRuleRegisterRequest(1, "test2", 2000, 2000);
+                new DeliveryRuleRegisterRequest("test", "test2", 2000, 2000);
         DeliveryRuleResponse expected =
-                new DeliveryRuleResponse(1, deliveryNameRule, "test2", 2000, 2000, deliveryRule.getCreatedDate(),
+                new DeliveryRuleResponse(1, "test2", 2000, 2000, deliveryRule.getCreatedDate(),
                         deliveryRule.getIsAvailable());
 
-        when(deliveryNameRuleRepository.findById(any())).thenReturn(Optional.of(deliveryNameRule));
+        when(deliveryRuleNameRepository.findById(any())).thenReturn(Optional.of(deliveryNameRule));
         when(deliveryRuleRepository.save(any())).thenReturn(deliveryRule);
         when(deliveryRuleMapper.mapToResponse(any())).thenReturn(expected);
         DeliveryRuleResponse result =
@@ -75,34 +78,35 @@ class DeliveryRuleServiceTest {
 
         assertNotNull(result);
         assertEquals(expected.getId(), result.getId());
-        assertEquals(expected.getDeliveryNameRule(), result.getDeliveryNameRule());
         assertEquals(expected.getCompanyName(), result.getCompanyName());
         assertEquals(expected.getCost(), result.getCost());
         assertEquals(expected.getRuleCost(), result.getRuleCost());
         assertEquals(expected.getCreatedDate(), result.getCreatedDate());
         assertEquals(expected.getIsAvailable(), result.getIsAvailable());
 
-        verify(deliveryNameRuleRepository, times(1)).findById(any());
+        verify(deliveryRuleNameRepository, times(1)).findById(any());
         verify(deliveryRuleRepository, times(1)).save(any());
         verify(deliveryRuleMapper, times(1)).mapToResponse(any());
     }
 
     @Test
-    void registerDeliveryRuleNotFoundTest() {
+    @DisplayName("DeliveryRuleName 이 없을 경우 예외 테스트")
+    void givenDeliveryRuleRegister_whenFindByIdNull_thenThrowDeliveryRuleNameNotFoundException() {
         DeliveryRuleRegisterRequest deliveryRuleRegisterRequest =
-                new DeliveryRuleRegisterRequest(1, "test2", 2000, 2000);
-        when(deliveryNameRuleRepository.findById(any())).thenReturn(Optional.empty());
+                new DeliveryRuleRegisterRequest("test", "test2", 2000, 2000);
+        when(deliveryRuleNameRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThrows(DeliveryNameRuleNotFoundException.class,
+        assertThrows(DeliveryRuleNameNotFoundException.class,
                 () -> deliveryRuleService.registerDeliveryRule(deliveryRuleRegisterRequest));
 
-        verify(deliveryNameRuleRepository, times(1)).findById(any());
+        verify(deliveryRuleNameRepository, times(1)).findById(any());
         verify(deliveryRuleRepository, never()).save(any());
         verify(deliveryRuleMapper, never()).mapToResponse(any());
     }
 
     @Test
-    void getDeliveryRuleTest() {
+    @DisplayName("DeliveryRule read 테스트")
+    void givenDeliveryRuleId_whenGetDeliveryRule_thenReturnDeliveryRuleDto() {
         DeliveryRuleDto expected = new DeliveryRuleDto() {
             @Override
             public Integer getId() {
@@ -110,8 +114,8 @@ class DeliveryRuleServiceTest {
             }
 
             @Override
-            public Integer getDeliveryNameRuleId() {
-                return 1;
+            public String getDeliveryRuleName() {
+                return "test";
             }
 
             @Override
@@ -135,8 +139,8 @@ class DeliveryRuleServiceTest {
             }
 
             @Override
-            public Boolean getIsAvailable() {
-                return true;
+            public Integer getIsAvailable() {
+                return 1;
             }
         };
 
@@ -145,7 +149,7 @@ class DeliveryRuleServiceTest {
 
         assertNotNull(result);
         assertEquals(expected.getId(), result.getId());
-        assertEquals(expected.getDeliveryNameRuleId(), result.getDeliveryNameRuleId());
+        assertEquals(expected.getDeliveryRuleName(), result.getDeliveryRuleName());
         assertEquals(expected.getCompanyName(), result.getCompanyName());
         assertEquals(expected.getCost(), result.getCost());
         assertEquals(expected.getRuleCost(), result.getRuleCost());
@@ -156,7 +160,8 @@ class DeliveryRuleServiceTest {
     }
 
     @Test
-    void getDeliveryRuleNotFoundTest() {
+    @DisplayName("DeliveryRule 가 없을 경우 예외 테스트")
+    void givenNotDeliveryRuleId_whenGetDeliveryRule_thenThrowDeliveryRuleNotFoundException() {
         DeliveryRuleDto deliveryRuleDto = new DeliveryRuleDto() {
             @Override
             public Integer getId() {
@@ -164,8 +169,8 @@ class DeliveryRuleServiceTest {
             }
 
             @Override
-            public Integer getDeliveryNameRuleId() {
-                return 1;
+            public String getDeliveryRuleName() {
+                return "test";
             }
 
             @Override
@@ -189,8 +194,8 @@ class DeliveryRuleServiceTest {
             }
 
             @Override
-            public Boolean getIsAvailable() {
-                return true;
+            public Integer getIsAvailable() {
+                return 1;
             }
         };
 
@@ -203,15 +208,17 @@ class DeliveryRuleServiceTest {
     }
 
     @Test
-    void modifyDeliveryRuleTest() {
+    @DisplayName("DeliveryRule 수정 정상 테스트")
+    void givenDeliveryRuleIdAndDeliveryRuleModifyRequest_whenFindById_thenModifyDeliveryRuleReturnDeliveryRuleResponse() {
         int deliveryRuleId = 1;
-        DeliveryRuleModifyRequest deliveryRuleModifyRequest = new DeliveryRuleModifyRequest(1, "test2", 2000, 2000);
+        DeliveryRuleModifyRequest deliveryRuleModifyRequest =
+                new DeliveryRuleModifyRequest("test", "test2", 2000, 2000);
         DeliveryRuleResponse expected =
-                new DeliveryRuleResponse(1, deliveryNameRule, "test2", 2000, 2000, deliveryRule.getCreatedDate(),
+                new DeliveryRuleResponse(1, "test2", 2000, 2000, deliveryRule.getCreatedDate(),
                         deliveryRule.getIsAvailable());
 
         when(deliveryRuleRepository.findById(deliveryRuleId)).thenReturn(Optional.of(deliveryRule));
-        when(deliveryNameRuleRepository.findById(deliveryRuleModifyRequest.getDeliveryNameRuleId())).thenReturn(
+        when(deliveryRuleNameRepository.findById(deliveryRuleModifyRequest.getDeliveryNameRuleId())).thenReturn(
                 Optional.of(deliveryNameRule));
         when(deliveryRuleMapper.mapToResponse(deliveryRule)).thenReturn(expected);
 
@@ -220,7 +227,6 @@ class DeliveryRuleServiceTest {
 
         assertNotNull(result);
         assertEquals(expected.getId(), result.getId());
-        assertEquals(expected.getDeliveryNameRule(), result.getDeliveryNameRule());
         assertEquals(expected.getCompanyName(), result.getCompanyName());
         assertEquals(expected.getCost(), result.getCost());
         assertEquals(expected.getRuleCost(), result.getRuleCost());
@@ -228,42 +234,47 @@ class DeliveryRuleServiceTest {
         assertEquals(expected.getIsAvailable(), result.getIsAvailable());
 
         verify(deliveryRuleRepository, times(1)).findById(deliveryRuleId);
-        verify(deliveryNameRuleRepository, times(1)).findById(deliveryRuleModifyRequest.getDeliveryNameRuleId());
+        verify(deliveryRuleNameRepository, times(1)).findById(deliveryRuleModifyRequest.getDeliveryNameRuleId());
         verify(deliveryRuleMapper, times(1)).mapToResponse(deliveryRule);
     }
 
     @Test
-    void modifyDeliveryRuleNotFoundDeliveryRuleTest() {
+    @DisplayName("DeliveryRule 이 없을 경우 예외 테스트")
+    void givenNotDeliveryRuleModifyRequestAndDeliveryRuleId_whenModifyDeliveryRule_thenThrowDeliveryRuleNotFoundException() {
         int deliveryRuleId = 1;
-        DeliveryRuleModifyRequest deliveryRuleModifyRequest = new DeliveryRuleModifyRequest(1, "test2", 2000, 2000);
+        DeliveryRuleModifyRequest deliveryRuleModifyRequest =
+                new DeliveryRuleModifyRequest("test", "test2", 2000, 2000);
         when(deliveryRuleRepository.findById(deliveryRuleId)).thenReturn(Optional.empty());
 
         assertThrows(DeliveryRuleNotFoundException.class,
                 () -> deliveryRuleService.modifyDeliveryRule(deliveryRuleId, deliveryRuleModifyRequest));
 
         verify(deliveryRuleRepository, times(1)).findById(deliveryRuleId);
-        verify(deliveryNameRuleRepository, times(1)).findById(any());
+        verify(deliveryRuleNameRepository, never()).findById(any());
         verify(deliveryRuleMapper, never()).mapToResponse(any());
     }
 
     @Test
-    void modifyDeliveryRuleNotFoundDeliveryNameRuleTest() {
+    @DisplayName("DeliveryRuleName 이 없을 경우 예외 테스트")
+    void givenNotDeliveryRuleModifyRequestAndDeliveryRuleId_whenModifyDeliveryRule_thenThrowDeliveryRuleNameNotFoundException() {
         int deliveryRuleId = 1;
-        DeliveryRuleModifyRequest deliveryRuleModifyRequest = new DeliveryRuleModifyRequest(1, "test2", 2000, 2000);
+        DeliveryRuleModifyRequest deliveryRuleModifyRequest =
+                new DeliveryRuleModifyRequest("test", "test2", 2000, 2000);
 
         when(deliveryRuleRepository.findById(deliveryRuleId)).thenReturn(Optional.of(deliveryRule));
-        when(deliveryNameRuleRepository.findById(any())).thenReturn(Optional.empty());
+        when(deliveryRuleNameRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThrows(DeliveryRuleNotFoundException.class,
+        assertThrows(DeliveryRuleNameNotFoundException.class,
                 () -> deliveryRuleService.modifyDeliveryRule(deliveryRuleId, deliveryRuleModifyRequest));
 
         verify(deliveryRuleRepository, times(1)).findById(deliveryRuleId);
-        verify(deliveryNameRuleRepository, times(1)).findById(any());
+        verify(deliveryRuleNameRepository, times(1)).findById(any());
         verify(deliveryRuleMapper, never()).mapToResponse(any());
     }
 
     @Test
-    void deleteDeliveryRuleTest() {
+    @DisplayName("DeliveryRule 삭제 테스트")
+    void givenDeliveryRuleId_whenDeleteDeliveryRule_thenDeleteDeliveryRuleReturnNothing() {
         Integer deliveryRuleId = 1;
         when(deliveryRuleRepository.existsById(deliveryRuleId)).thenReturn(true);
         deliveryRuleService.deleteDeliveryRule(deliveryRuleId);
@@ -273,7 +284,8 @@ class DeliveryRuleServiceTest {
     }
 
     @Test
-    void deleteDeliveryRuleNotFoundTest() {
+    @DisplayName("DeliveryRule가 없을 경우 테스트")
+    void givenNotDeliveryRuleId_whenDeleteDeliveryRule_thenThrowDeliveryRuleNotFoundException() {
         Integer deliveryRuleId = 1;
         when(deliveryRuleRepository.existsById(deliveryRuleId)).thenReturn(false);
         assertThrows(DeliveryRuleNotFoundException.class, () -> deliveryRuleService.deleteDeliveryRule(deliveryRuleId));

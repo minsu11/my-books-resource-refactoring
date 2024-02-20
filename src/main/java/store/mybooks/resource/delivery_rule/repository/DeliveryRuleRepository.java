@@ -17,5 +17,11 @@ import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
  * 2/15/24        Fiat_lux       최초 생성
  */
 public interface DeliveryRuleRepository extends JpaRepository<DeliveryRule, Integer> {
-    Optional<DeliveryRuleDto> findDeliveryRuleById(Integer deliveryRuleId);
+    /**
+     * Find delivery rule by id optional.
+     *
+     * @param id the id
+     * @return the optional
+     */
+    Optional<DeliveryRuleDto> findDeliveryRuleById(Integer id);
 }

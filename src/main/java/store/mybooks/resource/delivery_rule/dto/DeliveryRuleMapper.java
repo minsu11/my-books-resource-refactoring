@@ -17,8 +17,11 @@ import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
  */
 @Mapper(componentModel = "spring")
 public interface DeliveryRuleMapper {
-    DeliveryRuleMapper INSTANCE = Mappers.getMapper(DeliveryRuleMapper.class);
-
-
+    /**
+     * Map to response delivery rule response.
+     *
+     * @param deliveryRule the delivery rule
+     * @return the delivery rule response
+     */
     DeliveryRuleResponse mapToResponse(DeliveryRule deliveryRule);
 }
