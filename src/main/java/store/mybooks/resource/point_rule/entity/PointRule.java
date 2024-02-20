@@ -32,7 +32,7 @@ public class PointRule {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "point_name_id")
+    @JoinColumn(name = "point_rule_name_id")
     private PointRuleName pointRuleName;
 
     @Column(name = "point_rule_rate")
