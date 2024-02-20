@@ -92,7 +92,7 @@ public class PublisherRestController {
      * author : newjaehun
      * description : 출판사 삭제
      *
-     * @param publisherId: 수정하려는 publisher 의 id
+     * @param publisherId: 삭제하려는 publisher 의 id
      * @return ResponseEntity
      */
     @DeleteMapping("/{id}")
