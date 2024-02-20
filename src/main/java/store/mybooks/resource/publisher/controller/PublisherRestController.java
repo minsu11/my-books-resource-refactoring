@@ -65,7 +65,7 @@ public class PublisherRestController {
      */
     @PostMapping
     public ResponseEntity<PublisherCreateResponse> createPublisher(
-            @RequestBody @Valid PublisherCreateRequest createRequest) {
+            @Valid @RequestBody PublisherCreateRequest createRequest) {
         PublisherCreateResponse createPublisher = publisherService.createPublisher(createRequest);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -82,7 +82,7 @@ public class PublisherRestController {
      * @return ResponseEntity
      */
     @PutMapping("/{id}")
-    public ResponseEntity<PublisherModifyResponse> modifyPublisher(@PathVariable("id") Integer publisherId, @RequestBody @Valid PublisherModifyRequest modifyRequest) {
+    public ResponseEntity<PublisherModifyResponse> modifyPublisher(@PathVariable("id") Integer publisherId, @Valid @RequestBody PublisherModifyRequest modifyRequest) {
         PublisherModifyResponse modifyPublisher = publisherService.modifyPublisher(publisherId, modifyRequest);
         return ResponseEntity
                 .status(HttpStatus.OK)
