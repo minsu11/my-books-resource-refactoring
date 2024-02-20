@@ -7,7 +7,6 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import store.mybooks.resource.order_detail_status.dto.request.OrderDetailStatusRequest;
 
 /**
  * packageName    : store.mybooks.resource.order_detail_status.entity
@@ -30,10 +29,4 @@ public class OrderDetailStatus {
     @Id
     @Column(name = "order_detail_status_id")
     private String id;
-
-    public OrderDetailStatus(OrderDetailStatusRequest request) {
-        this.id = request.getId();
-    }
-
-
 }
