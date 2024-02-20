@@ -14,18 +14,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import store.mybooks.resource.delivery_name_rule.entity.DeliveryNameRule;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleDto;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleModifyRequest;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleRegisterRequest;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleResponse;
 import store.mybooks.resource.delivery_rule.service.DeliveryRuleService;
+import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
 /**
  * packageName    : store.mybooks.resource.delivery_rule.controller
@@ -47,7 +48,8 @@ class DeliveryRuleControllerTest {
     private DeliveryRuleService deliveryRuleService;
 
     @Test
-    void getDeliveryRuleTest() throws Exception {
+    @DisplayName("DeliveryRule read 테스트")
+    void givenDeliveryRule_whenGetDeliveryRule_thenReturnDeliveryRuleDto() throws Exception {
         DeliveryRuleDto deliveryRuleDto = new DeliveryRuleDto() {
             @Override
             public Integer getId() {
@@ -55,8 +57,8 @@ class DeliveryRuleControllerTest {
             }
 
             @Override
-            public Integer getDeliveryNameRuleId() {
-                return 1;
+            public String getDeliveryRuleName() {
+                return "test";
             }
 
             @Override
@@ -80,18 +82,17 @@ class DeliveryRuleControllerTest {
             }
 
             @Override
-            public Boolean getIsAvailable() {
-                return true;
+            public Integer getIsAvailable() {
+                return 1;
             }
         };
 
         when(deliveryRuleService.getDeliveryRule(1)).thenReturn(deliveryRuleDto);
 
-        mockMvc.perform(get("/api/deliveryRules/1"))
+        mockMvc.perform(get("/api/delivery-rules/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(deliveryRuleDto.getId()))
-                .andExpect(jsonPath("$.deliveryNameRuleId").value(deliveryRuleDto.getDeliveryNameRuleId()))
                 .andExpect(jsonPath("$.companyName").value(deliveryRuleDto.getCompanyName()))
                 .andExpect(jsonPath("$.cost").value(deliveryRuleDto.getCost()))
                 .andExpect(jsonPath("$.ruleCost").value(deliveryRuleDto.getRuleCost()))
@@ -102,15 +103,18 @@ class DeliveryRuleControllerTest {
     }
 
     @Test
-    void createDeliveryRuleTest() throws Exception {
-        DeliveryNameRule deliveryNameRule = new DeliveryNameRule(1, "test", LocalDate.now());
+    @DisplayName("DeliveryRule 등록하는 테스트")
+    void givenDeliveryRuleRegisterRequest_whenRegisterDeliveryRule_thenCreateDeliveryRuleReturnDeliveryRuleResponse()
+            throws Exception {
+        DeliveryRuleName deliveryNameRule = new DeliveryRuleName("test");
         DeliveryRuleResponse deliveryRuleResponse =
-                new DeliveryRuleResponse(1, deliveryNameRule, "test2", 123, 123, LocalDate.now(), true);
-        DeliveryRuleRegisterRequest deliveryRuleRegisterRequest = new DeliveryRuleRegisterRequest(1, "test2", 123, 123);
+                new DeliveryRuleResponse(1, "test2", 123, 123, LocalDate.now(), 1);
+        DeliveryRuleRegisterRequest deliveryRuleRegisterRequest =
+                new DeliveryRuleRegisterRequest("test", "test2", 123, 123);
         when(deliveryRuleService.registerDeliveryRule(any())).thenReturn(deliveryRuleResponse);
 
         mockMvc.perform(
-                        post("/api/deliveryRules").content(new ObjectMapper().writeValueAsString(deliveryRuleRegisterRequest))
+                        post("/api/delivery-rules").content(new ObjectMapper().writeValueAsString(deliveryRuleRegisterRequest))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -124,16 +128,19 @@ class DeliveryRuleControllerTest {
     }
 
     @Test
-    void modifyDeliveryRuleTest() throws Exception {
+    @DisplayName("DeliveryRule 수정 테스트")
+    void givenDeliveryRuleIdAndDeliveryRuleModifyRequest_whenModifyDeliveryRule_thenModifyDeliveryRuleReturnDeliveryRuleResponse()
+            throws Exception {
 
-        DeliveryNameRule deliveryNameRule = new DeliveryNameRule(1, "test", LocalDate.now());
+        DeliveryRuleName deliveryNameRule = new DeliveryRuleName("test");
         DeliveryRuleResponse deliveryRuleResponse =
-                new DeliveryRuleResponse(1, deliveryNameRule, "test2", 123, 123, LocalDate.now(), true);
-        DeliveryRuleModifyRequest deliveryRuleModifyRequest = new DeliveryRuleModifyRequest(1, "test2", 123, 123);
+                new DeliveryRuleResponse(1, "test2", 123, 123, LocalDate.now(), 1);
+        DeliveryRuleModifyRequest deliveryRuleModifyRequest = new DeliveryRuleModifyRequest("test", "test2", 123, 123);
         when(deliveryRuleService.modifyDeliveryRule(any(), any())).thenReturn(deliveryRuleResponse);
 
         mockMvc.perform(
-                        put("/api/deliveryRules/1").content(new ObjectMapper().writeValueAsString(deliveryRuleModifyRequest))
+                        put("/api/delivery-rules/{id}", 1).content(
+                                        new ObjectMapper().writeValueAsString(deliveryRuleModifyRequest))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -148,8 +155,10 @@ class DeliveryRuleControllerTest {
     }
 
     @Test
-    void deleteDeliveryRuleTest() throws Exception {
-        mockMvc.perform(delete("/api/deliveryRules/1")).andExpect(status().isOk());
+    @DisplayName("DeliveryRule 삭제 테스트")
+    void givenDeliveryId_whenDeleteDeliveryRule_thenDeleteDeliveryRuleReturnNothing() throws Exception {
+        mockMvc.perform(delete("/api/delivery-rules/{id}", 1))
+                .andExpect(status().isOk());
 
         verify(deliveryRuleService, times(1)).deleteDeliveryRule(any());
     }
