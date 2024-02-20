@@ -6,14 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.transaction.annotation.Transactional;
-import store.mybooks.resource.delivery_name_rule.entity.DeliveryNameRule;
+import store.mybooks.resource.delivery_name_rule.repository.DeliveryRuleNameRepository;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleDto;
 import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
+import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
 /**
  * packageName    : store.mybooks.resource.delivery_rule.repository
@@ -27,19 +27,22 @@ import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
  * 2/18/24        Fiat_lux       최초 생성
  */
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class DeliveryRuleRepositoryTest {
 
     @Autowired
     private DeliveryRuleRepository deliveryRuleRepository;
+
+    @Autowired
+    private DeliveryRuleNameRepository deliveryRuleNameRepository;
 
     private static DeliveryRuleDto expected;
 
 
     @BeforeEach
     void setUp() {
-        DeliveryNameRule deliveryNameRule = new DeliveryNameRule(1, "test", LocalDate.now());
-        DeliveryRule deliveryRule = new DeliveryRule(1, deliveryNameRule, "test", 1000, 1000, LocalDate.now(), true);
+        DeliveryRuleName deliveryNameRule = new DeliveryRuleName("test");
+        DeliveryRule deliveryRule = new DeliveryRule(1, deliveryNameRule, "test", 1000, 1000, LocalDate.now(), 1);
+        deliveryRuleNameRepository.save(deliveryNameRule);
 
         expected = new DeliveryRuleDto() {
             @Override
@@ -48,8 +51,8 @@ class DeliveryRuleRepositoryTest {
             }
 
             @Override
-            public Integer getDeliveryNameRuleId() {
-                return 1;
+            public String getDeliveryRuleName() {
+                return "test";
             }
 
             @Override
@@ -73,8 +76,8 @@ class DeliveryRuleRepositoryTest {
             }
 
             @Override
-            public Boolean getIsAvailable() {
-                return true;
+            public Integer getIsAvailable() {
+                return 1;
             }
         };
 
@@ -82,8 +85,8 @@ class DeliveryRuleRepositoryTest {
     }
 
     @Test
-    @Transactional
-    void findDeliveryRuleByIdTest() {
+    @DisplayName("DeliveryRule 찾는 테스트")
+    void givenDeliveryRuleId_whenFindDeliveryRuleById_thenReturnDeliveryRuleDto() {
         Optional<DeliveryRuleDto> optionalResult =
                 deliveryRuleRepository.findDeliveryRuleById(expected.getId());
 
@@ -91,7 +94,6 @@ class DeliveryRuleRepositoryTest {
         DeliveryRuleDto result = optionalResult.get();
 
         assertEquals(expected.getId(), result.getId());
-        assertEquals(expected.getDeliveryNameRuleId(), result.getDeliveryNameRuleId());
         assertEquals(expected.getCompanyName(), result.getCompanyName());
         assertEquals(expected.getCost(), result.getCost());
         assertEquals(expected.getRuleCost(), result.getRuleCost());
