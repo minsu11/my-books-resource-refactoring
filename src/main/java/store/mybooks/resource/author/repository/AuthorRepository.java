@@ -18,7 +18,6 @@ import store.mybooks.resource.author.entity.Author;
  * 2/20/24        newjaehun       최초 생성
  */
 public interface AuthorRepository extends JpaRepository<Author,Integer> {
-    Page<AuthorGetResponse> findByAll(Pageable pageable);
+    Page<AuthorGetResponse> findAllBy(Pageable pageable);
     Boolean existsByName(String name);
-
 }
