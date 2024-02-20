@@ -66,8 +66,8 @@ public class UserGrade {
         this.isAvailable = true;
     }
 
-    public void modifyIsAvailable(boolean flag) {
-        this.isAvailable = flag;
+    public void deleteUserGrade() {
+        this.isAvailable = false;
     }
 
 

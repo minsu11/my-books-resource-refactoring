@@ -56,6 +56,7 @@ public class UserGradeService {
         String userGradeNameRequest = createRequest.getName();
 
         UserGradeName userGradeName = userGradeNameRepository.findById(userGradeNameRequest)
+                // todo 이미 사용중인 UserGrade가 있다면 사용중인 등급의 isAvailable 을 false 로 변경하고 새로운 등급을 넣는거 고민해보기
                 .orElseThrow(() -> new UserGradeNameNotExistException(userGradeNameRequest));
 
         UserGrade userGrade =
@@ -88,7 +89,7 @@ public class UserGradeService {
 
         UserGrade userGrade = userGradeRepository.findById(id).orElseThrow(UserGradeIdNotExistException::new);
 
-        userGrade.modifyIsAvailable(false);
+        userGrade.deleteUserGrade();
         return new UserGradeDeleteResponse("UserGrade 삭제완료");
     }
 
@@ -118,8 +119,7 @@ public class UserGradeService {
      * @param size the size
      * @return the page
      */
-    public Page<UserGradeGetResponse> findAllUserGrade(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<UserGradeGetResponse> findAllUserGrade(Pageable pageable) {
         return userGradeRepository.queryAllBy(pageable);
     }
 
