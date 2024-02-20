@@ -45,7 +45,7 @@ public class CartService {
     @Transactional
     public CartResponse registerCart(CartRegisterRequest cartRegisterRequest) {
         User user = userRepository.findById(cartRegisterRequest.getUserId())
-                .orElseThrow(() -> new UserNotExistException("유저가 존재하지 않습니다"));
+                .orElseThrow(() -> new UserNotExistException(cartRegisterRequest.getUserId()));
 
         if (cartRepository.existsCartByUserId(cartRegisterRequest.getUserId())) {
             throw new CartAlreadyExistException("카트가 이미 존재합니다");
