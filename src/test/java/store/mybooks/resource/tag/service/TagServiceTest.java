@@ -70,10 +70,11 @@ class TagServiceTest {
     @Test
     @DisplayName("createTag 메서드 정상적인 경우 테스트")
     void givenCreateTag_whenNormalCase_thenReturnTagCreateResponse() {
-        TagCreateRequest tagCreateRequest = new TagCreateRequest("IT");
+        String name = "IT";
+        TagCreateRequest tagCreateRequest = new TagCreateRequest(name);
 
         when(tagRepository.existsByName(anyString())).thenReturn(false);
-        when(tagRepository.save(any())).thenReturn(new Tag(tagCreateRequest));
+        when(tagRepository.save(any())).thenReturn(new Tag(name));
 
         TagCreateResponse tagCreateResponse = tagService.createTag(tagCreateRequest);
 
@@ -95,8 +96,7 @@ class TagServiceTest {
     @Test
     @DisplayName("modifyTag 메서드 정상적인 경우 테스트")
     void givenModifyTag_whenNormalCase_thenReturnTagModifyResponse() {
-        TagCreateRequest tagCreateRequest = new TagCreateRequest("IT");
-        Tag tag = new Tag(tagCreateRequest);
+        Tag tag = new Tag("IT");
 
         when(tagRepository.findById(anyInt())).thenReturn(Optional.of(tag));
         when(tagRepository.existsByName(anyString())).thenReturn(false);
@@ -122,8 +122,7 @@ class TagServiceTest {
     @DisplayName("modifyTag 메서드 수정하려는 태그 이름이 이미 존재하는 경우 테스트")
     void givenModifyTag_whenDuplicateTagName_thenThrowTagNameAlreadyExistsException() {
         TagModifyRequest modifyRequest = new TagModifyRequest("Education");
-        TagCreateRequest tagCreateRequest = new TagCreateRequest("IT");
-        Tag tag = new Tag(tagCreateRequest);
+        Tag tag = new Tag("IT");
 
         when(tagRepository.findById(anyInt())).thenReturn(Optional.of(tag));
         when(tagRepository.existsByName(anyString())).thenReturn(true);
@@ -134,7 +133,7 @@ class TagServiceTest {
     @Test
     @DisplayName("deleteTag 메서드 정상적인 경우 테스트")
     void givenDeleteTag_whenNormalCase_thenReturnTagDeleteResponse() {
-        Tag tag = new Tag(new TagCreateRequest("IT"));
+        Tag tag = new Tag("IT");
         when(tagRepository.findById(anyInt())).thenReturn(Optional.of(tag));
 
         TagDeleteResponse tagDeleteResponse = tagService.deleteTag(1);

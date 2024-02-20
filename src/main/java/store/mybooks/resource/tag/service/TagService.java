@@ -13,6 +13,7 @@ import store.mybooks.resource.tag.dto.response.TagModifyResponse;
 import store.mybooks.resource.tag.entity.Tag;
 import store.mybooks.resource.tag.exception.TagNameAlreadyExistsException;
 import store.mybooks.resource.tag.exception.TagNotExistsException;
+import store.mybooks.resource.tag.mapper.TagMapper;
 import store.mybooks.resource.tag.repository.TagRepository;
 
 /**
@@ -50,7 +51,7 @@ public class TagService {
             throw new TagNameAlreadyExistsException(tagCreateRequest.getName());
         }
 
-        return tagRepository.save(new Tag(tagCreateRequest)).convertToCreateResponse();
+        return TagMapper.INSTANCE.createResponse(tagRepository.save(new Tag(tagCreateRequest.getName())));
     }
 
     /**
@@ -73,9 +74,7 @@ public class TagService {
 
         tag.setByTagModifyRequest(tagModifyRequest);
 
-        return TagModifyResponse.builder()
-                .name(tag.getName())
-                .build();
+        return TagMapper.INSTANCE.modifyResponse(tag);
     }
 
     /**
@@ -91,8 +90,6 @@ public class TagService {
 
         tagRepository.deleteById(id);
 
-        return TagDeleteResponse.builder()
-                .name(tag.getName())
-                .build();
+        return TagMapper.INSTANCE.deleteResponse(tag);
     }
 }
