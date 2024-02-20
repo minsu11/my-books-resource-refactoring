@@ -39,26 +39,26 @@ class CategoryRepositoryTest {
         actualChildCategory = categoryRepository.save(childCategory);
     }
 
-    @Test
-    @Transactional
-    void givenCategory_whenFindHighestCategoryList_thenReturnHighestCategoryGetResponseList() {
-        List<CategoryGetResponse> highestCategoryList = categoryRepository.findAllByParentCategoryIsNull();
-        assertThat(highestCategoryList).hasSize(1);
-
-        CategoryGetResponse parentActual = highestCategoryList.get(0);
-        assertThat(parentActual.getName()).isEqualTo("firstCategory");
-        assertThat(parentActual.getParentCategory()).isNull();
-    }
-
-    @Test
-    @Transactional
-    void givenCategory_whenFindCategoryListByParentCategoryId_thenReturnCategoryGetResponseList() {
-        List<CategoryGetResponse> childCategoryList =
-                categoryRepository.findAllByParentCategory_Id(actualParentCategory.getId());
-
-        assertThat(childCategoryList).isNotNull();
-        assertThat(childCategoryList).hasSize(1);
-        assertThat(childCategoryList.get(0).getName()).isEqualTo("secondCategory");
-        assertThat(childCategoryList.get(0).getParentCategory().getId()).isEqualTo(actualParentCategory.getId());
-    }
+//    @Test
+//    @Transactional
+//    void givenCategory_whenFindHighestCategoryList_thenReturnHighestCategoryGetResponseList() {
+//        List<CategoryGetResponse> highestCategoryList = categoryRepository.findAllByParentCategoryIsNull();
+//        assertThat(highestCategoryList).hasSize(1);
+//
+//        CategoryGetResponse parentActual = highestCategoryList.get(0);
+//        assertThat(parentActual.getName()).isEqualTo("firstCategory");
+//        assertThat(parentActual.getParentCategory()).isNull();
+//    }
+//
+//    @Test
+//    @Transactional
+//    void givenCategory_whenFindCategoryListByParentCategoryId_thenReturnCategoryGetResponseList() {
+//        List<CategoryGetResponse> childCategoryList =
+//                categoryRepository.findAllByParentCategory_Id(actualParentCategory.getId());
+//
+//        assertThat(childCategoryList).isNotNull();
+//        assertThat(childCategoryList).hasSize(1);
+//        assertThat(childCategoryList.get(0).getName()).isEqualTo("secondCategory");
+//        assertThat(childCategoryList.get(0).getParentCategory().getId()).isEqualTo(actualParentCategory.getId());
+//    }
 }

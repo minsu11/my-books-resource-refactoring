@@ -47,7 +47,7 @@ public class OrdersStatusService {
     public OrdersStatusResponse getOrdersStatusById(String ordersStatusId) {
 
         OrdersStatus ordersStatus = ordersStatusRepository.findById(
-                ordersStatusId).orElseThrow(OrdersStatusNotFoundException::new);
+                ordersStatusId).orElseThrow(() -> new OrdersStatusNotFoundException("주문 상태를 찾을 수 없음"));
         return mapper.mapToResponse(ordersStatus);
     }
 
