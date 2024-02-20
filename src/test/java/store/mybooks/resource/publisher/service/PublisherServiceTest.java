@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -94,7 +95,7 @@ class PublisherServiceTest {
     void givenPublisherCreateRequest_whenCreatePublisher_thenSavePublisherAndReturnPublisherCreateResponse() {
         String name = "publisherName";
         PublisherCreateRequest request = new PublisherCreateRequest(name);
-        when(publisherRepository.existsByName(request.getName())).thenReturn(false);
+        given(publisherRepository.existsByName(request.getName())).willReturn(false);
 
         Publisher resultPublisher = new Publisher(1, name, LocalDate.now());
 
@@ -110,7 +111,7 @@ class PublisherServiceTest {
     @DisplayName("이미 존재하는 출판사 이름을 등록")
     void givenPublisherCreateRequest_whenAlreadyExistPublisherNameCreate_thenThrowPublisherAlreadyExistException() {
         PublisherCreateRequest request = new PublisherCreateRequest("publisherName");
-        when(publisherRepository.existsByName(request.getName())).thenReturn(true);
+        given(publisherRepository.existsByName(request.getName())).willReturn(true);
         assertThrows(PublisherAlreadyExistException.class, () -> publisherService.createPublisher(request));
     }
 
@@ -122,7 +123,7 @@ class PublisherServiceTest {
 
         PublisherModifyRequest modifyRequest= new PublisherModifyRequest("publisherNameChange");
 
-        when(publisherRepository.findById(eq(publisherId))).thenReturn(Optional.of(publisher));
+        given(publisherRepository.findById(eq(publisherId))).willReturn(Optional.of(publisher));
         when(publisherRepository.existsByName(modifyRequest.getChangeName())).thenReturn(false);
 
         PublisherModifyResponse response = publisherService.modifyPublisher(publisherId, modifyRequest);
@@ -135,7 +136,7 @@ class PublisherServiceTest {
         Integer publisherId = 1;
         PublisherModifyRequest modifyRequest= new PublisherModifyRequest("publisherNameChange");
 
-        when(publisherRepository.findById(eq(publisherId))).thenReturn(Optional.empty());
+        given(publisherRepository.findById(eq(publisherId))).willReturn(Optional.empty());
 
         assertThrows(PublisherNotExistException.class, () -> publisherService.modifyPublisher(publisherId, modifyRequest));
     }
@@ -147,7 +148,7 @@ class PublisherServiceTest {
 
         PublisherModifyRequest modifyRequest= new PublisherModifyRequest("publisherNameChange");
 
-        when(publisherRepository.findById(eq(publisherId))).thenReturn(Optional.of(publisher));
+        given(publisherRepository.findById(eq(publisherId))).willReturn(Optional.of(publisher));
 
         when(publisherRepository.existsByName(modifyRequest.getChangeName())).thenReturn(true);
 
@@ -161,7 +162,7 @@ class PublisherServiceTest {
         Integer publisherId = 1;
         Publisher publisher = new Publisher(publisherId, "publisherName", LocalDate.now());
 
-        when(publisherRepository.findById(eq(publisherId))).thenReturn(Optional.of(publisher));
+        given(publisherRepository.findById(eq(publisherId))).willReturn(Optional.of(publisher));
         doNothing().when(publisherRepository).deleteById(publisherId);
 
         PublisherDeleteResponse response = publisherService.deletePublisher(publisherId);
@@ -173,7 +174,7 @@ class PublisherServiceTest {
     @DisplayName("존재하지 않는 출판사 삭제")
     void givenPublisherId_whenNotExistsPublisherDelete_thenThrowPublisherNotExistException() {
         Integer publisherId = 1;
-        when(publisherRepository.findById(eq(publisherId))).thenReturn(Optional.empty());
+        given(publisherRepository.findById(eq(publisherId))).willReturn(Optional.empty());
         assertThrows(PublisherNotExistException.class, () -> publisherService.deletePublisher(publisherId));
     }
 }
