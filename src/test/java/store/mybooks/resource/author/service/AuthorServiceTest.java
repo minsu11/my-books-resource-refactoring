@@ -124,8 +124,8 @@ class AuthorServiceTest {
         AuthorModifyResponse modifyResponse = authorService.modifyAuthor(author.getId(), modifyRequest);
 
 
-        assertThat(modifyResponse.getChangeName()).isEqualTo(modifyRequest.getChangeName());
-        assertThat(modifyResponse.getChangeContent()).isEqualTo(modifyRequest.getChangeContent());
+        assertThat(modifyResponse.getChangedName()).isEqualTo(modifyRequest.getChangeName());
+        assertThat(modifyResponse.getChangedContent()).isEqualTo(modifyRequest.getChangeContent());
 
         verify(authorRepository,times(1)).findById(author.getId());
     }
