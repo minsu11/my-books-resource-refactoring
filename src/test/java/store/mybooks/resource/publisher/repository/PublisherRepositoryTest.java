@@ -48,7 +48,7 @@ class PublisherRepositoryTest {
     @Test
     @Order(1)
     @DisplayName("전체 출판사 조회")
-    void whenPagedFindAllBy_thenReturnPublisherGetResponsePage() {
+    void givenPageable_whenPagedFindAllBy_thenReturnPublisherGetResponsePage() {
         Pageable pageable = PageRequest.of(0, 2);
 
         Page<PublisherGetResponse> result = publisherRepository.findAllBy(pageable);
