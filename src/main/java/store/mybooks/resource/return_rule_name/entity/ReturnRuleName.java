@@ -1,11 +1,10 @@
-package store.mybooks.resource.return_name_rule.entity;
+package store.mybooks.resource.return_rule_name.entity;
 
 import java.time.LocalDate;
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * packageName    : store.mybooks.resource.return_name_rule.entity
@@ -20,21 +19,17 @@ import lombok.Setter;
  */
 
 @Getter
-@Setter
 @Entity
-@Table(name = "return_name_rule")
+@Table(name = "return_rule_name")
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReturnNameRule {
+public class ReturnRuleName {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "return_name_rule_id")
-    private Integer id;
+    @Column(name = "return_rule_name_id")
+    private String id;
 
-    @Column(name = "return_name")
-    private String name;
-
-    @Column(name = "return_name_created_date")
+    @Column(name = "return_rule_name_created_date")
     private LocalDate createdDate;
 
 }
