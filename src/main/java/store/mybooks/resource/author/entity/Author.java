@@ -5,6 +5,7 @@ import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import store.mybooks.resource.author.dto.request.AuthorModifyRequest;
 
 /**
  * packageName    : store.mybooks.resource.author.entity
@@ -36,4 +37,15 @@ public class Author {
 
     @Column(name = "author_created_date")
     private LocalDate createdDate;
+
+    public Author(String name, String content) {
+        this.name = name;
+        this.content = content;
+        createdDate = LocalDate.now();
+    }
+
+    public void setByModifyRequest(AuthorModifyRequest modifyRequest) {
+        this.name = modifyRequest.getChangeName();
+        this.content = modifyRequest.getChangeContent();
+    }
 }
