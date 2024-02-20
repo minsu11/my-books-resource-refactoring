@@ -22,7 +22,7 @@ public class DatabaseProperties {
     private String url;
     private String userName;
     private String password;
-    private String initialSize;
+    private Integer initialSize;
     private Integer maxTotal;
     private Integer minIdle;
     private Integer maxIdle;
