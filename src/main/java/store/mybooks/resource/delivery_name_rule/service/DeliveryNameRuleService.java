@@ -26,12 +26,19 @@ import store.mybooks.resource.delivery_name_rule.repository.DeliveryNameRuleRepo
  */
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class DeliveryNameRuleService {
 
     private final DeliveryNameRuleRepository deliveryNameRuleRepository;
     private final DeliveryNameRuleMapper deliveryNameRuleMapper;
 
 
+    /**
+     * Register delivery name rule delivery name rule response.
+     *
+     * @param deliveryNameRuleRegisterRequest the delivery name rule register request
+     * @return the delivery name rule response
+     */
     @Transactional
     public DeliveryNameRuleResponse registerDeliveryNameRule(
             DeliveryNameRuleRegisterRequest deliveryNameRuleRegisterRequest) {
@@ -40,18 +47,24 @@ public class DeliveryNameRuleService {
         return deliveryNameRuleMapper.mapToResponse(saveDeliveryNameRule);
     }
 
-    @Transactional(readOnly = true)
+    /**
+     * Gets delivery name rule.
+     *
+     * @param id the id
+     * @return the delivery name rule
+     */
     public DeliveryNameRuleDto getDeliveryNameRule(Integer id) {
-        Optional<DeliveryNameRuleDto> optionalDeliveryNameRule =
-                this.deliveryNameRuleRepository.findDeliveryNameRuleById(id);
-
-        if (optionalDeliveryNameRule.isPresent()) {
-            return optionalDeliveryNameRule.get();
-        } else {
-            throw new DeliveryNameRuleNotFoundException("배송 이름 규칙이 존재하지 않습니다.");
-        }
+        return this.deliveryNameRuleRepository.findDeliveryNameRuleById(id)
+                .orElseThrow(() -> new DeliveryNameRuleNotFoundException("배송 이름 규칙이 존재하지 않습니다"));
     }
 
+    /**
+     * Modify delivery name rule delivery name rule response.
+     *
+     * @param deliveryNameRuleId            the delivery name rule id
+     * @param deliveryNameRuleModifyRequest the delivery name rule modify request
+     * @return the delivery name rule response
+     */
     @Transactional
     public DeliveryNameRuleResponse modifyDeliveryNameRule(Integer deliveryNameRuleId,
                                                            DeliveryNameRuleModifyRequest deliveryNameRuleModifyRequest) {
@@ -67,6 +80,11 @@ public class DeliveryNameRuleService {
         }
     }
 
+    /**
+     * Delete delivery name rule.
+     *
+     * @param id the id
+     */
     @Transactional
     public void deleteDeliveryNameRule(Integer id) {
         if (this.deliveryNameRuleRepository.existsById(id)) {
