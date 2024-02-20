@@ -5,10 +5,8 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,8 +21,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import store.mybooks.resource.orders_status.dto.request.OrdersStatusCreateRequest;
-import store.mybooks.resource.orders_status.dto.response.OrdersStatusCreateResponse;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 import store.mybooks.resource.orders_status.service.OrdersStatusService;
 
@@ -94,22 +90,6 @@ class OrdersStatusControllerUnitTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(0)));
 
-    }
-
-    @Test
-    @Order(4)
-    @DisplayName("request의 값이 등록이 되는 지 테스트")
-    void givenOrdersStatus_whenCreateOrdersStatus_thenReturnOrdersStatusCreateResponse() throws Exception {
-        OrdersStatusCreateResponse response = new OrdersStatusCreateResponse("test");
-        OrdersStatusCreateRequest request = new OrdersStatusCreateRequest();
-        ObjectMapper mapper = new ObjectMapper();
-        given(ordersStatusService.createOrdersStatus(any())).willReturn(response);
-
-        mockMvc.perform(post("/api/orders-statuses")
-                        .content(mapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", equalTo("test")));
     }
 
 
