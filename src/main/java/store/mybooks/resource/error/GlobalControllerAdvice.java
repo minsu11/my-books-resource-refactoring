@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import store.mybooks.resource.author.exception.AuthorNotExistException;
 import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
 import store.mybooks.resource.tag.exception.TagNameAlreadyExistsException;
@@ -30,7 +31,7 @@ public class GlobalControllerAdvice {
      * @param exception exception.
      * @return response entity
      */
-    @ExceptionHandler({CategoryNotExistsException.class, TagNotExistsException.class})
+    @ExceptionHandler({CategoryNotExistsException.class, TagNotExistsException.class, AuthorNotExistException.class})
     public ResponseEntity<String> xxxNotExistsException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
