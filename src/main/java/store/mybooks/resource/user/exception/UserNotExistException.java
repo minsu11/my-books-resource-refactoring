@@ -14,8 +14,8 @@ package store.mybooks.resource.user.exception;
 public class UserNotExistException extends RuntimeException {
 
 
-    public UserNotExistException(String email) {
-        super(String.format("[%s]는 존재하지 않는 email입니다", email));
+    public UserNotExistException(Long id) {
+        super(String.format("[%d]번째 유저는 존재하지 않습니다", id));
     }
 
 }
