@@ -1,7 +1,6 @@
 package store.mybooks.resource.tag.service;
 
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +28,7 @@ import store.mybooks.resource.tag.repository.TagRepository;
  */
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TagService {
     private final TagRepository tagRepository;
 
@@ -45,7 +45,6 @@ public class TagService {
      * @param tagCreateRequest name 을 포함. TagName 이 이미 존재하는 경우 TagNameAlreadyExistsException.
      * @return TagCreateResponse
      */
-    @Transactional
     public TagCreateResponse createTag(TagCreateRequest tagCreateRequest) {
         if (tagRepository.existsByName(tagCreateRequest.getName())) {
             throw new TagNameAlreadyExistsException(tagCreateRequest.getName());
@@ -65,18 +64,13 @@ public class TagService {
      *                         이미 존재하는 name 인 경우 TagNameAlreadyExistsException.
      * @return TagModifyResponse
      */
-    @Transactional
     public TagModifyResponse modifyTag(int id, TagModifyRequest tagModifyRequest) {
-        Optional<Tag> optionalTag = tagRepository.findById(id);
-        if (optionalTag.isEmpty()) {
-            throw new TagNotExistsException(id);
-        }
+        Tag tag = tagRepository.findById(id).orElseThrow(() -> new TagNotExistsException(id));
 
         if (tagRepository.existsByName(tagModifyRequest.getName())) {
             throw new TagNameAlreadyExistsException(tagModifyRequest.getName());
         }
 
-        Tag tag = optionalTag.get();
         tag.setByTagModifyRequest(tagModifyRequest);
 
         return TagModifyResponse.builder()
@@ -92,7 +86,6 @@ public class TagService {
      * @param id 삭제하려는 Tag 의 id.
      * @return TagDeleteResponse
      */
-    @Transactional
     public TagDeleteResponse deleteTag(int id) {
         Tag tag = tagRepository.findById(id).orElseThrow(() -> new TagNotExistsException(id));
 
