@@ -18,9 +18,7 @@ import store.mybooks.resource.user_status.entity.UserStatus;
  */
 public interface UserStatusRepository extends JpaRepository<UserStatus, String> {
 
-
     UserStatusGetResponse queryById(String id);
-
     List<UserStatusGetResponse> queryAllBy();
 
 }

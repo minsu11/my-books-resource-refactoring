@@ -24,7 +24,7 @@ import store.mybooks.resource.user_status.service.UserStatusService;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/users/statuses")
+@RequestMapping("/api/users-statuses")
 public class UserStatusRestController {
 
     private final UserStatusService userStatusService;
