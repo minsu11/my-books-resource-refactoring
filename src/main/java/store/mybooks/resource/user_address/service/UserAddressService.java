@@ -3,7 +3,6 @@ package store.mybooks.resource.user_address.service;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,11 +17,9 @@ import store.mybooks.resource.user_address.dto.response.UserAddressDeleteRespons
 import store.mybooks.resource.user_address.dto.response.UserAddressGetResponse;
 import store.mybooks.resource.user_address.dto.response.UserAddressModifyResponse;
 import store.mybooks.resource.user_address.entity.UserAddress;
-import store.mybooks.resource.user_address.exception.UserAddressAlreadyExistException;
 import store.mybooks.resource.user_address.exception.UserAddressFullException;
 import store.mybooks.resource.user_address.exception.UserAddressNotExistException;
 import store.mybooks.resource.user_address.repository.UserAddressRepository;
-import store.mybooks.resource.user_grade.exception.UserGradeAlreadyUsedException;
 
 /**
  * packageName    : store.mybooks.resource.user_address.service

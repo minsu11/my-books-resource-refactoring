@@ -1,8 +1,8 @@
 package store.mybooks.resource.user_grade.service;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +13,6 @@ import store.mybooks.resource.user_grade.dto.response.UserGradeDeleteResponse;
 import store.mybooks.resource.user_grade.dto.response.UserGradeGetResponse;
 import store.mybooks.resource.user_grade.entity.UserGrade;
 import store.mybooks.resource.user_grade.exception.UserGradeIdNotExistException;
-import store.mybooks.resource.user_grade.exception.UserGradeAlreadyUsedException;
 import store.mybooks.resource.user_grade.repository.UserGradeRepository;
 import store.mybooks.resource.user_grade_name.entity.UserGradeName;
 import store.mybooks.resource.user_grade_name.exception.UserGradeNameNotExistException;
@@ -54,7 +53,6 @@ public class UserGradeService {
         String userGradeNameRequest = createRequest.getName();
 
         UserGradeName userGradeName = userGradeNameRepository.findById(userGradeNameRequest)
-                // todo 이미 사용중인 UserGrade가 있다면 사용중인 등급의 isAvailable 을 false 로 변경하고 새로운 등급을 넣는거 고민해보기
                 .orElseThrow(() -> new UserGradeNameNotExistException(userGradeNameRequest));
 
         UserGrade userGrade =
@@ -62,10 +60,10 @@ public class UserGradeService {
                         createRequest.getCreatedDate(), userGradeName);
 
 
-        // 이미사용중인거 있으면 에러
-        if (userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(userGradeNameRequest).isPresent()) {
-            throw new UserGradeAlreadyUsedException(userGradeNameRequest);
-        }
+        // todo 이미 사용중인 UserGrade가 있다면 사용중인 등급의 isAvailable 을 false 로 변경하고 새로운 등급을 넣는걸로 변경
+
+        Optional<UserGrade> optionalUserGrade = userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(userGradeNameRequest);
+        optionalUserGrade.ifPresent(UserGrade::deleteUserGrade);
 
         userGradeRepository.save(userGrade);
 

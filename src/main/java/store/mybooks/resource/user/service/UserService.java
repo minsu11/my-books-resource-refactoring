@@ -18,7 +18,6 @@ import store.mybooks.resource.user.exception.UserAlreadyExistException;
 import store.mybooks.resource.user.exception.UserNotExistException;
 import store.mybooks.resource.user.repository.UserRepository;
 import store.mybooks.resource.user_grade.entity.UserGrade;
-import store.mybooks.resource.user_grade.exception.UserGradeAlreadyUsedException;
 import store.mybooks.resource.user_grade.exception.UserGradeIdNotExistException;
 import store.mybooks.resource.user_grade.repository.UserGradeRepository;
 import store.mybooks.resource.user_grade_name.enumeration.UserGradeNameEnum;
