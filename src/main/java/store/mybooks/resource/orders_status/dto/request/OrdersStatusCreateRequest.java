@@ -1,6 +1,6 @@
 package store.mybooks.resource.orders_status.dto.request;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 
 /**
@@ -16,6 +16,6 @@ import lombok.Getter;
  */
 @Getter
 public class OrdersStatusCreateRequest {
-    @NotNull
+    @NotBlank
     private String id;
 }

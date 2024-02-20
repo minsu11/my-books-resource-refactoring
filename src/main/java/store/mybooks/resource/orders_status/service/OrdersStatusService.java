@@ -81,7 +81,7 @@ public class OrdersStatusService {
         if (ordersStatusRepository.existsById(request.getId())) {
             throw new OrdersStatusAlreadyExistException("아이디가 이미 존재");
         }
-        OrdersStatus ordersStatus = new OrdersStatus(request);
+        OrdersStatus ordersStatus = new OrdersStatus(request.getId());
         ordersStatusRepository.save(ordersStatus);
         return mapper.mapToCreateResponse(ordersStatus);
     }
