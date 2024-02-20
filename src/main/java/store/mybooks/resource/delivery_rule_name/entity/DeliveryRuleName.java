@@ -1,7 +1,10 @@
-package store.mybooks.resource.delivery_name_rule.entity;
+package store.mybooks.resource.delivery_rule_name.entity;
 
 import java.time.LocalDate;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,18 +24,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @Entity
-@Table(name = "delivery_name_rule")
-public class DeliveryNameRule {
+@Table(name = "delivery_rule_name")
+public class DeliveryRuleName {
 
     @Id
-    @Column(name = "delivery_name_rule_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "delivery_rule_name_id")
+    private String id;
 
-    @Column(name = "delivery_name")
-    private String name;
-
-    @Column(name = "delivery_name_created_date")
+    @Column(name = "delivery_rule_name_created_date")
     private LocalDate createdDate;
 
 }

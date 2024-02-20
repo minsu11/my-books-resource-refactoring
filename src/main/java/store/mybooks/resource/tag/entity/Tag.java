@@ -9,9 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import store.mybooks.resource.tag.dto.request.TagCreateRequest;
 import store.mybooks.resource.tag.dto.request.TagModifyRequest;
-import store.mybooks.resource.tag.dto.response.TagCreateResponse;
 
 /**
  * packageName    : store.mybooks.resource.domain.entity
@@ -40,22 +38,9 @@ public class Tag {
     @Column(name = "tag_created_date")
     private LocalDate createdDate;
 
-    public Tag(TagCreateRequest tagCreateRequest) {
-        this.name = tagCreateRequest.getName();
+    public Tag(String name) {
+        this.name = name;
         this.createdDate = LocalDate.now();
-    }
-
-    /**
-     * methodName : convertToCreateResponse
-     * author : damho-lee
-     * description : Tag 를 TagCreateResponse 로 변환시켜주는 메서드.
-     *
-     * @return TagCreateResponse
-     */
-    public TagCreateResponse convertToCreateResponse() {
-        return TagCreateResponse.builder()
-                .name(this.name)
-                .build();
     }
 
     public void setByTagModifyRequest(TagModifyRequest tagModifyRequest) {
