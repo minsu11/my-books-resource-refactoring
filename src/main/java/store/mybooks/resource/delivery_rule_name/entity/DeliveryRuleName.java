@@ -34,4 +34,8 @@ public class DeliveryRuleName {
     @Column(name = "delivery_rule_name_created_date")
     private LocalDate createdDate;
 
+    public DeliveryRuleName(String id) {
+        this.id = id;
+        this.createdDate = LocalDate.now();
+    }
 }

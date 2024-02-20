@@ -40,4 +40,8 @@ public class Cart {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public Cart(User user) {
+        this.user = user;
+    }
 }

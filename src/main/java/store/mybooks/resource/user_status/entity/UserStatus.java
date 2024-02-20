@@ -2,15 +2,11 @@ package store.mybooks.resource.user_status.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import store.mybooks.resource.user_status.dto.request.UserStatusCreateRequest;
-import store.mybooks.resource.user_status.dto.response.UserStatusCreateResponse;
 
 /**
  * packageName    : store.mybooks.resource.user.entity
@@ -33,14 +29,6 @@ public class UserStatus {
     @Id
     @Column(name = "user_status_id")
     private String id;
-
-
-    public UserStatus(UserStatusCreateRequest createRequest) {
-        this.id = createRequest.getId();
-    }
-
-
-
 
 
 }
