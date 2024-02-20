@@ -15,7 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import store.mybooks.resource.return_rule_name.controller.ReturnNameRuleController;
+import store.mybooks.resource.return_rule_name.controller.ReturnRuleNameRestController;
 import store.mybooks.resource.return_rule_name.dto.mapper.ReturnRuleNameMapper;
 import store.mybooks.resource.return_rule_name.dto.response.ReturnRuleNameResponse;
 import store.mybooks.resource.return_rule_name.entity.ReturnRuleName;
@@ -36,7 +36,7 @@ import store.mybooks.resource.return_rule_name.service.ReturnRuleNameService;
 class ReturnNameRuleControllerUnitTest {
 
     @InjectMocks
-    ReturnNameRuleController returnNameRuleController;
+    ReturnRuleNameRestController returnRuleNameRestController;
 
     @Mock
     ReturnRuleNameService returnRuleNameService;
@@ -45,7 +45,7 @@ class ReturnNameRuleControllerUnitTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(returnNameRuleController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(returnRuleNameRestController).build();
     }
 
     @Test

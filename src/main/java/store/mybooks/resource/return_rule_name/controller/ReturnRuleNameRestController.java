@@ -24,7 +24,7 @@ import store.mybooks.resource.return_rule_name.service.ReturnRuleNameService;
 @RestController
 @RequestMapping("/api/return-name-rule")
 @RequiredArgsConstructor
-public class ReturnNameRuleRestController {
+public class ReturnRuleNameRestController {
     private final ReturnRuleNameService returnRuleNameService;
 
     /**
