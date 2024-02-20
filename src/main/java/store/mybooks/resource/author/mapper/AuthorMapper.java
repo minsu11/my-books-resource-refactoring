@@ -23,10 +23,14 @@ import store.mybooks.resource.author.entity.Author;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface AuthorMapper {
     AuthorMapper INSTANCE = Mappers.getMapper(AuthorMapper.class);
+
     AuthorCreateResponse createResponse(Author author);
-    @Mapping(source = "name", target = "changeName")
-    @Mapping(source = "content", target = "changeContent")
+
+
+    @Mapping(source = "name", target = "changedName")
+    @Mapping(source = "content", target = "changedContent")
     AuthorModifyResponse modifyResponse(Author author);
+
     AuthorDeleteResponse deleteResponse(Author author);
 
 }
