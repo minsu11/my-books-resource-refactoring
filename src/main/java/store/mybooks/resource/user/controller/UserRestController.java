@@ -96,7 +96,7 @@ public class UserRestController {
     public ResponseEntity<UserDeleteResponse> deleteUser(@PathVariable(name = "id") Long id) {
         UserDeleteResponse deleteResponse = userService.deleteUser(id);
 
-        return new ResponseEntity<>(deleteResponse, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(deleteResponse, HttpStatus.OK);
     }
 
     /**
@@ -126,10 +126,9 @@ public class UserRestController {
      * @return the response entity
      */
     @GetMapping
-    public ResponseEntity<Page<UserGetResponse>> findAllUser(@RequestParam(defaultValue = "0") Integer page,
-                                                             @RequestParam(defaultValue = "10") Integer size) {
+    public ResponseEntity<Page<UserGetResponse>> findAllUser(Pageable pageable) {
 
-        Page<UserGetResponse> paginationUsr = userService.findAllUser(page, size);
+        Page<UserGetResponse> paginationUsr = userService.findAllUser(pageable);
         return new ResponseEntity<>(paginationUsr,HttpStatus.OK);
     }
 

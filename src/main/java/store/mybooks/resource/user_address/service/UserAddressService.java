@@ -51,7 +51,7 @@ public class UserAddressService {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
 
 
-        if (userAddressRepository.countByUserId(userId) > 10) {
+        if (userAddressRepository.countByUserId(userId) >= 10) {
             throw new UserAddressFullException(userId);
         }
 
@@ -101,9 +101,8 @@ public class UserAddressService {
                 .orElseThrow(() -> new UserAddressNotExistException(addressId));
     }
 
-    public Page<UserAddressGetResponse> findByAllUserAddress(Integer page, Integer size) {
+    public Page<UserAddressGetResponse> findByAllUserAddress(Pageable pageable) {
 
-        Pageable pageable = PageRequest.of(page, size);
         return userAddressRepository.queryAllBy(pageable);
     }
 
