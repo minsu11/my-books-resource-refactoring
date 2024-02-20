@@ -1,4 +1,4 @@
-package store.mybooks.resource.user_status.entity;
+package store.mybooks.resource.user_grade_name.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,26 +9,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * packageName    : store.mybooks.resource.user.entity
- * fileName       : UserStatus
+ * packageName    : store.mybooks.resource.user_grade_name.entity
+ * fileName       : UserGradeName
  * author         : masiljangajji
- * date           : 2/13/24
+ * date           : 2/19/24
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 2/13/24        masiljangajji       최초 생성
+ * 2/19/24        masiljangajji       최초 생성
  */
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Table(name = "user_status")
-public class UserStatus {
+@Table(name="user_grade_name")
+public class UserGradeName {
+
 
     @Id
-    @Column(name = "user_status_id")
-    private String id;
-
+    @Column(name = "user_grade_name_id")
+    String id;
 
 }

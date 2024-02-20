@@ -38,7 +38,6 @@ import store.mybooks.resource.user.service.UserService;
  * -----------------------------------------------------------
  * 2/13/24        masiljangajji       최초 생성
  */
-
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/users")
@@ -48,6 +47,14 @@ public class UserRestController {
     private final UserService userService;
 
 
+    /**
+     * Create user response entity.
+     * <p>
+     * User를 생성하는 api
+     *
+     * @param createRequest the create request
+     * @return the response entity
+     */
     @PostMapping
     public ResponseEntity<UserCreateResponse> createUser(
             @RequestBody UserCreateRequest createRequest) {
@@ -59,36 +66,68 @@ public class UserRestController {
         return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{email}")
-    public ResponseEntity<UserModifyResponse> modifyUser(@PathVariable(name = "email") String email,
+    /**
+     * Modify user response entity.
+     * <p>
+     * id로 찾은 User의 정보를 수정하는 api
+     *
+     * @param id            the id
+     * @param modifyRequest the modify request
+     * @return the response entity
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<UserModifyResponse> modifyUser(@PathVariable(name = "id") Long id,
                                                          @RequestBody UserModifyRequest modifyRequest) {
 
-        UserModifyResponse modifyResponse = userService.modifyUser(email,modifyRequest);
+        UserModifyResponse modifyResponse = userService.modifyUser(id,modifyRequest);
 
         return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{email}")
-    public ResponseEntity<UserDeleteResponse> deleteUser(@PathVariable(name = "email") String email) {
-        UserDeleteResponse deleteResponse = userService.deleteUser(email);
+    /**
+     * Delete user response entity.
+     * <p>
+     * id로 찾은 User를 삭제하는 api
+     * 강삭제가 아닌 약삭제를 제공함
+     *
+     * @param id the id
+     * @return the response entity
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<UserDeleteResponse> deleteUser(@PathVariable(name = "id") Long id) {
+        UserDeleteResponse deleteResponse = userService.deleteUser(id);
 
-        return new ResponseEntity<>(deleteResponse, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(deleteResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/{email}")
-    public ResponseEntity<UserGetResponse> findUserByEmail(@PathVariable(name = "email") String email) {
+    /**
+     * Find user by email response entity.
+     * <p>
+     * id로 찾은 User를 반환함
+     *
+     * @param id the id
+     * @return the response entity
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<UserGetResponse> findUserByEmail(@PathVariable(name = "id") Long id) {
 
 
-        UserGetResponse getResponse = userService.findByEmail(email);
+        UserGetResponse getResponse = userService.findById(id);
 
         return new ResponseEntity<>(getResponse, HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<Page<UserGetResponse>> findAllUser(@RequestParam(defaultValue = "0") int page,
-                                                             @RequestParam(defaultValue = "10") int size) {
 
-        Page<UserGetResponse> paginationUsr = userService.findAllUser(page, size);
+    /**
+     * Find all user response entity.
+     * 모든 User를 Pagination 해서 반환함
+     * @param pageable the pageable
+     * @return the response entity
+     */
+    @GetMapping
+    public ResponseEntity<Page<UserGetResponse>> findAllUser(Pageable pageable) {
+
+        Page<UserGetResponse> paginationUsr = userService.findAllUser(pageable);
         return new ResponseEntity<>(paginationUsr,HttpStatus.OK);
     }
 
