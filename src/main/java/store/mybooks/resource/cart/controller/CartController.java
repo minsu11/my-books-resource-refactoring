@@ -33,6 +33,12 @@ public class CartController {
         this.cartService = cartService;
     }
 
+    /**
+     * Register cart response entity.
+     *
+     * @param cartRegisterRequest the cart register request
+     * @return the response entity
+     */
     @PostMapping
     public ResponseEntity<CartResponse> registerCart(@RequestBody CartRegisterRequest cartRegisterRequest) {
         CartResponse cartResponse = cartService.registerCart(cartRegisterRequest);
@@ -41,6 +47,12 @@ public class CartController {
                 .body(cartResponse);
     }
 
+    /**
+     * Gets cart.
+     *
+     * @param cartId the cart id
+     * @return the cart
+     */
     @GetMapping("/{cartId}")
     public ResponseEntity<CartDto> getCart(@PathVariable Long cartId) {
         CartDto cartDto = cartService.getCart(cartId);
