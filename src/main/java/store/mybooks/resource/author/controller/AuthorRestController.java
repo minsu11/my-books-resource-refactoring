@@ -68,7 +68,7 @@ public class AuthorRestController {
             @Valid @RequestBody AuthorCreateRequest createRequest) {
         AuthorCreateResponse createResponse = authorService.createAuthor(createRequest);
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(HttpStatus.CREATED)
                 .body(createResponse);
     }
 
