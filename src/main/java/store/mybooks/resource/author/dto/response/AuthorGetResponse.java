@@ -12,4 +12,7 @@ package store.mybooks.resource.author.dto.response;
  * 2/20/24        newjaehun       최초 생성
  */
 public interface AuthorGetResponse {
+    Integer getId();
+    String getName();
+    String getContent();
 }
