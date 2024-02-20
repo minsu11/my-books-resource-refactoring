@@ -3,12 +3,8 @@ package store.mybooks.resource.user_status.service;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import store.mybooks.resource.user_status.dto.mapper.UserStatusCreateMapper;
-import store.mybooks.resource.user_status.dto.request.UserStatusCreateRequest;
-import store.mybooks.resource.user_status.dto.response.UserStatusCreateResponse;
+import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.user_status.dto.response.UserStatusGetResponse;
-import store.mybooks.resource.user_status.entity.UserStatus;
-import store.mybooks.resource.user_status.exception.UserStatusAlreadyExistException;
 import store.mybooks.resource.user_status.exception.UserStatusNotExistException;
 import store.mybooks.resource.user_status.repository.UserStatusRepository;
 
@@ -25,6 +21,7 @@ import store.mybooks.resource.user_status.repository.UserStatusRepository;
  */
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserStatusService {
 
     private final UserStatusRepository userStatusRepository;
