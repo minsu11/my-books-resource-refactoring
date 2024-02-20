@@ -17,5 +17,11 @@ import store.mybooks.resource.cart.entity.Cart;
  */
 @Mapper(componentModel = "spring")
 public interface CartMapper {
+    /**
+     * Map to response cart response.
+     *
+     * @param cart the cart
+     * @return the cart response
+     */
     CartResponse mapToResponse(Cart cart);
 }
