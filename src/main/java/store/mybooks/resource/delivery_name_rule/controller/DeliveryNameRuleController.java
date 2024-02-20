@@ -33,10 +33,21 @@ public class DeliveryNameRuleController {
 
     private final DeliveryNameRuleService deliveryNameRuleService;
 
+    /**
+     * Instantiates a new Delivery name rule controller.
+     *
+     * @param deliveryNameRuleService the delivery name rule service
+     */
     public DeliveryNameRuleController(DeliveryNameRuleService deliveryNameRuleService) {
         this.deliveryNameRuleService = deliveryNameRuleService;
     }
 
+    /**
+     * Gets delivery name rule.
+     *
+     * @param deliveryNameRuleId the delivery name rule id
+     * @return the delivery name rule
+     */
     @GetMapping("/{deliveryNameRuleId}")
     public ResponseEntity<DeliveryNameRuleDto> getDeliveryNameRule(
             @PathVariable("deliveryNameRuleId") Integer deliveryNameRuleId) {
@@ -44,6 +55,12 @@ public class DeliveryNameRuleController {
         return ResponseEntity.ok().body(deliveryNameRule);
     }
 
+    /**
+     * Create delivery name rule response entity.
+     *
+     * @param deliveryNameRuleRegisterRequest the delivery name rule register request
+     * @return the response entity
+     */
     @PostMapping
     public ResponseEntity<DeliveryNameRuleResponse> createDeliveryNameRule(
             @RequestBody DeliveryNameRuleRegisterRequest deliveryNameRuleRegisterRequest) {
@@ -53,6 +70,13 @@ public class DeliveryNameRuleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(deliveryNameRuleResponse);
     }
 
+    /**
+     * Modify delivery name rule response entity.
+     *
+     * @param deliveryNameRuleId            the delivery name rule id
+     * @param deliveryNameRuleModifyRequest the delivery name rule modify request
+     * @return the response entity
+     */
     @PutMapping("/{deliveryNameRuleId}")
     public ResponseEntity<DeliveryNameRuleResponse> modifyDeliveryNameRule(
             @PathVariable("deliveryNameRuleId") Integer deliveryNameRuleId,
@@ -62,6 +86,12 @@ public class DeliveryNameRuleController {
         return ResponseEntity.status(HttpStatus.OK).body(deliveryNameRuleResponse);
     }
 
+    /**
+     * Delete delivery name rule response entity.
+     *
+     * @param deliveryNameRuleId the delivery name rule id
+     * @return the response entity
+     */
     @DeleteMapping("/{deliveryNameRuleId}")
     public ResponseEntity<Void> deleteDeliveryNameRule(@PathVariable("deliveryNameRuleId") Integer deliveryNameRuleId) {
         deliveryNameRuleService.deleteDeliveryNameRule(deliveryNameRuleId);
