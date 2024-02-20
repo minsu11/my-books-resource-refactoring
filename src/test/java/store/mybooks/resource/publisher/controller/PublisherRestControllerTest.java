@@ -112,12 +112,7 @@ class PublisherRestControllerTest {
         String name = "publisherName";
         PublisherCreateRequest request = new PublisherCreateRequest(name);
         Publisher publisher = new Publisher(name);
-        PublisherCreateResponse response=new PublisherCreateResponse() {
-            @Override
-            public String getName() {
-                return publisher.getName();
-            }
-        };
+        PublisherCreateResponse response = PublisherMapper.INSTANCE.createResponse(publisher);
         when(publisherService.createPublisher(any(PublisherCreateRequest.class))).thenReturn(response);
 
         mockMvc.perform(post(url)

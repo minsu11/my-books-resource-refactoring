@@ -1,5 +1,8 @@
 package store.mybooks.resource.publisher.dto.response;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * packageName    : store.mybooks.resource.publisher.dto.response
  * fileName       : PublisherCreateResponse
@@ -12,7 +15,8 @@ package store.mybooks.resource.publisher.dto.response;
  * 2/15/24        newjaehun       최초 생성
  */
 
-public interface PublisherCreateResponse {
-    String getName();
-
+@Getter
+@Setter
+public class PublisherCreateResponse {
+    private String name;
 }

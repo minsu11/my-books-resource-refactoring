@@ -63,12 +63,8 @@ public class PublisherService {
         }
 
         Publisher resultPublisher = publisherRepository.save(publisher);
-        return new PublisherCreateResponse() {
-            @Override
-            public String getName() {
-                return resultPublisher.getName();
-            }
-        };
+
+        return PublisherMapper.INSTANCE.createResponse(resultPublisher);
     }
 
     /**
