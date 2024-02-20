@@ -1,10 +1,16 @@
 package store.mybooks.resource.publisher.entity;
 
 import java.time.LocalDate;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import store.mybooks.resource.publisher.dto.request.PublisherModifyRequest;
 
 /**
  * packageName    : store.mybooks.resource.publisher.entity
@@ -34,4 +40,13 @@ public class Publisher {
 
     @Column(name = "publisher_created_date")
     private LocalDate createdDate;
+
+    public Publisher(String name) {
+        this.name = name;
+        this.createdDate = LocalDate.now();
+    }
+
+    public void setByModifyRequest(PublisherModifyRequest modifyRequest) {
+        this.name = modifyRequest.getChangeName();
+    }
 }

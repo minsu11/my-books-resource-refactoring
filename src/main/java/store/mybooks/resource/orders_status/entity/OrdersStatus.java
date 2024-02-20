@@ -5,8 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Getter;
+import store.mybooks.resource.orders_status.dto.request.OrdersStatusCreateRequest;
 import store.mybooks.resource.orders_status.dto.request.OrdersStatusRequest;
-import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 
 /**
  * packageName    : store.mybooks.resource.ordersstatus.entity
@@ -31,9 +31,13 @@ public class OrdersStatus {
         this.id = request.getId();
     }
 
-    public OrdersStatusResponse convertToOrdersStatusResponse() {
-        return OrdersStatusResponse.builder()
-                .id(this.id)
-                .build();
+    public OrdersStatus(OrdersStatusCreateRequest request) {
+        this.id = request.getId();
     }
+
+    public OrdersStatus() {
+
+    }
+
+
 }

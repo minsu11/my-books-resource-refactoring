@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import store.mybooks.resource.order_detail_status.dto.request.OrderDetailStatusRequest;
-import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusResponse;
 
 /**
  * packageName    : store.mybooks.resource.order_detail_status.entity
@@ -36,9 +35,5 @@ public class OrderDetailStatus {
         this.id = request.getId();
     }
 
-    public OrderDetailStatusResponse convertToOrderDetailStatusResponse() {
-        return OrderDetailStatusResponse.builder()
-                .id(this.id)
-                .build();
-    }
+
 }
