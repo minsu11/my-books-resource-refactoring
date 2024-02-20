@@ -14,6 +14,8 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,6 +56,21 @@ class PublisherServiceTest {
     @InjectMocks
     private PublisherService publisherService;
 
+    private Publisher publisher;
+    private static Integer id;
+    private static String name;
+
+    @BeforeAll
+    static void beforeAll() {
+        id = 1;
+        name = "authorName1";
+    }
+
+    @BeforeEach
+    void setUp(){
+        publisher = new Publisher(id, name, LocalDate.now());
+    }
+
     @Test
     @DisplayName("전체 출판사 조회")
     void givenPublisherListAndPageable_whenFindAllPublishers_thenReturnPagePublishersGetResponseList() {
@@ -62,12 +79,12 @@ class PublisherServiceTest {
                 new PublisherGetResponse() {
                     @Override
                     public Integer getId() {
-                        return 1;
+                        return id;
                     }
 
                     @Override
                     public String getName() {
-                        return "publisher1";
+                        return name;
                     }
                 },
                 new PublisherGetResponse() {
@@ -87,94 +104,108 @@ class PublisherServiceTest {
         when(publisherRepository.findAllBy(pageable)).thenReturn(pageGetResponse);
 
         assertThat(publisherService.getAllPublisher(pageable)).isEqualTo(pageGetResponse);
+
+        verify(publisherRepository, times(1)).findAllBy(pageable);
     }
 
 
     @Test
     @DisplayName("출판사 등록")
     void givenPublisherCreateRequest_whenCreatePublisher_thenSavePublisherAndReturnPublisherCreateResponse() {
-        String name = "publisherName";
         PublisherCreateRequest request = new PublisherCreateRequest(name);
         given(publisherRepository.existsByName(request.getName())).willReturn(false);
 
-        Publisher resultPublisher = new Publisher(1, name, LocalDate.now());
-
-        when(publisherRepository.save(any(Publisher.class))).thenReturn(resultPublisher);
+        when(publisherRepository.save(any(Publisher.class))).thenReturn(publisher);
 
         PublisherCreateResponse response = publisherService.createPublisher(request);
 
-        assertThat(response.getName()).isEqualTo(name);
+        assertThat(response.getName()).isEqualTo(request.getName() );
+
+        verify(publisherRepository, times(1)).existsByName(request.getName());
+        verify(publisherRepository, times(1)).save(any(Publisher.class));
 
     }
 
     @Test
     @DisplayName("이미 존재하는 출판사 이름을 등록")
     void givenPublisherCreateRequest_whenAlreadyExistPublisherNameCreate_thenThrowPublisherAlreadyExistException() {
-        PublisherCreateRequest request = new PublisherCreateRequest("publisherName");
+        PublisherCreateRequest request = new PublisherCreateRequest(name);
         given(publisherRepository.existsByName(request.getName())).willReturn(true);
+
         assertThrows(PublisherAlreadyExistException.class, () -> publisherService.createPublisher(request));
+
+        verify(publisherRepository, times(1)).existsByName(request.getName());
     }
 
     @Test
     @DisplayName("출판사 수정")
     void givenPublisherIdAndPublisherModifyRequest_whenModifyPublisher_thenModifyPublisherAndReturnPublisherModifyResponse() {
-        Integer publisherId = 1;
-        Publisher publisher = new Publisher(publisherId, "publisherName", LocalDate.now());
-
         PublisherModifyRequest modifyRequest= new PublisherModifyRequest("publisherNameChange");
 
-        given(publisherRepository.findById(eq(publisherId))).willReturn(Optional.of(publisher));
+        given(publisherRepository.findById(eq(id))).willReturn(Optional.of(publisher));
+
         when(publisherRepository.existsByName(modifyRequest.getChangeName())).thenReturn(false);
 
-        PublisherModifyResponse response = publisherService.modifyPublisher(publisherId, modifyRequest);
+        PublisherModifyResponse response = publisherService.modifyPublisher(id, modifyRequest);
+
         assertThat(response.getName()).isEqualTo(modifyRequest.getChangeName());
+
+        verify(publisherRepository, times(1)).findById(eq(id));
+        verify(publisherRepository, times(1)).existsByName(modifyRequest.getChangeName());
+
     }
 
     @Test
     @DisplayName("존재하지 않는 출판사 수정")
     void givenPublisherId_whenNotExistPublisherModify_thenThrowPublisherNotExistException() {
-        Integer publisherId = 1;
         PublisherModifyRequest modifyRequest= new PublisherModifyRequest("publisherNameChange");
 
-        given(publisherRepository.findById(eq(publisherId))).willReturn(Optional.empty());
+        given(publisherRepository.findById(eq(id))).willReturn(Optional.empty());
 
-        assertThrows(PublisherNotExistException.class, () -> publisherService.modifyPublisher(publisherId, modifyRequest));
+        assertThrows(PublisherNotExistException.class, () -> publisherService.modifyPublisher(id, modifyRequest));
+
+        verify(publisherRepository, times(1)).findById(eq(id));
+
     }
     @Test
     @DisplayName("이미 존재하는 출판사 이름으로 수정")
     void givenPublisherIdAndPublisherModifyRequest_whenAlreadyExistPublisherNameModify_thenThrowPublisherAlreadyExistException() {
-        Integer publisherId = 1;
-        Publisher publisher = new Publisher(publisherId, "publisherName", LocalDate.now());
-
         PublisherModifyRequest modifyRequest= new PublisherModifyRequest("publisherNameChange");
 
-        given(publisherRepository.findById(eq(publisherId))).willReturn(Optional.of(publisher));
+        given(publisherRepository.findById(eq(id))).willReturn(Optional.of(publisher));
 
         when(publisherRepository.existsByName(modifyRequest.getChangeName())).thenReturn(true);
 
-        assertThrows(PublisherAlreadyExistException.class, () -> publisherService.modifyPublisher(publisherId, modifyRequest));
+        assertThrows(PublisherAlreadyExistException.class, () -> publisherService.modifyPublisher(id, modifyRequest));
+
+        verify(publisherRepository, times(1)).findById(eq(id));
+        verify(publisherRepository, times(1)).existsByName(modifyRequest.getChangeName());
+
     }
 
 
     @Test
     @DisplayName("출판사 삭제")
     void givenPublisherId_whenDeletePublisher_thenDeletePublisherAndReturnPublisherDeleteResponse() {
-        Integer publisherId = 1;
-        Publisher publisher = new Publisher(publisherId, "publisherName", LocalDate.now());
+        given(publisherRepository.findById(eq(id))).willReturn(Optional.of(publisher));
+        doNothing().when(publisherRepository).deleteById(id);
 
-        given(publisherRepository.findById(eq(publisherId))).willReturn(Optional.of(publisher));
-        doNothing().when(publisherRepository).deleteById(publisherId);
+        PublisherDeleteResponse response = publisherService.deletePublisher(id);
 
-        PublisherDeleteResponse response = publisherService.deletePublisher(publisherId);
         assertThat(response.getName()).isEqualTo(publisher.getName());
-        verify(publisherRepository, times(1)).deleteById(publisherId);
+
+        verify(publisherRepository, times(1)).findById(eq(id));
+        verify(publisherRepository, times(1)).deleteById(id);
     }
 
     @Test
     @DisplayName("존재하지 않는 출판사 삭제")
     void givenPublisherId_whenNotExistsPublisherDelete_thenThrowPublisherNotExistException() {
-        Integer publisherId = 1;
-        given(publisherRepository.findById(eq(publisherId))).willReturn(Optional.empty());
-        assertThrows(PublisherNotExistException.class, () -> publisherService.deletePublisher(publisherId));
+        given(publisherRepository.findById(eq(id))).willReturn(Optional.empty());
+
+        assertThrows(PublisherNotExistException.class, () -> publisherService.deletePublisher(id));
+
+        verify(publisherRepository, times(1)).findById(eq(id));
+
     }
 }
