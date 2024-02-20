@@ -56,12 +56,13 @@ public class UserGrade {
     private Boolean isAvailable;
 
 
-    public UserGrade(UserGradeCreateRequest createRequest, UserGradeName userGradeName) {
+    public UserGrade(Integer minCost, Integer maxCost, Integer rate, LocalDate createdDate,
+                     UserGradeName userGradeName) {
         this.userGradeName = userGradeName;
-        this.minCost = createRequest.getMinCost();
-        this.maxCost = createRequest.getMaxCost();
-        this.rate = createRequest.getRate();
-        this.createdDate = createRequest.getCreatedDate();
+        this.minCost = minCost;
+        this.maxCost = maxCost;
+        this.rate = rate;
+        this.createdDate = createdDate;
         this.isAvailable = true;
     }
 
