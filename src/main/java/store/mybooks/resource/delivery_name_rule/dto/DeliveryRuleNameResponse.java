@@ -1,10 +1,13 @@
 package store.mybooks.resource.delivery_name_rule.dto;
 
 import java.time.LocalDate;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * packageName    : store.mybooks.resource.delivery_name_rule.dto
- * fileName       : DeliveryNameRuleDto
+ * fileName       : DeliveryNameRuleReadResponse
  * author         : Fiat_lux
  * date           : 2/16/24
  * description    :
@@ -13,10 +16,11 @@ import java.time.LocalDate;
  * -----------------------------------------------------------
  * 2/16/24        Fiat_lux       최초 생성
  */
-public interface DeliveryNameRuleDto {
-    Integer getId();
 
-    String getName();
-
-    LocalDate getCreatedDate();
+@Getter
+@Setter
+@NoArgsConstructor
+public class DeliveryRuleNameResponse {
+    private String id;
+    private LocalDate createdDate;
 }

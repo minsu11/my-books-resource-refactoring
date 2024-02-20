@@ -2,8 +2,8 @@ package store.mybooks.resource.delivery_name_rule.repository;
 
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryNameRuleDto;
-import store.mybooks.resource.delivery_name_rule.entity.DeliveryNameRule;
+import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameDto;
+import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
 /**
  * packageName    : store.mybooks.resource.delivery_name_rule.repository
@@ -16,6 +16,12 @@ import store.mybooks.resource.delivery_name_rule.entity.DeliveryNameRule;
  * -----------------------------------------------------------
  * 2/15/24        Fiat_lux       최초 생성
  */
-public interface DeliveryNameRuleRepository extends JpaRepository<DeliveryNameRule, Integer> {
-    Optional<DeliveryNameRuleDto> findDeliveryNameRuleById(Integer deliveryNameRuleId);
+public interface DeliveryRuleNameRepository extends JpaRepository<DeliveryRuleName, String> {
+    /**
+     * Find delivery rule name by id optional.
+     *
+     * @param id the id
+     * @return the optional
+     */
+    Optional<DeliveryRuleNameDto> findDeliveryRuleNameById(String id);
 }

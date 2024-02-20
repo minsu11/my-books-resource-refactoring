@@ -18,6 +18,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DeliveryNameRuleRegisterRequest {
-    private String deliveryName;
+public class DeliveryRuleNameRegisterRequest {
+    private String id;
 }

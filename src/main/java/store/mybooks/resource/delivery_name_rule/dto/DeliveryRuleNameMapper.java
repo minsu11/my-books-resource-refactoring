@@ -1,8 +1,7 @@
 package store.mybooks.resource.delivery_name_rule.dto;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import store.mybooks.resource.delivery_name_rule.entity.DeliveryNameRule;
+import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
 /**
  * packageName    : store.mybooks.resource.delivery_name_rule.dto
@@ -17,8 +16,13 @@ import store.mybooks.resource.delivery_name_rule.entity.DeliveryNameRule;
  */
 
 @Mapper(componentModel = "spring")
-public interface DeliveryNameRuleMapper {
-    DeliveryNameRuleMapper INSTANCE = Mappers.getMapper(DeliveryNameRuleMapper.class);
+public interface DeliveryRuleNameMapper {
 
-    DeliveryNameRuleResponse mapToResponse(DeliveryNameRule deliveryNameRule);
+    /**
+     * Map to response delivery rule name response.
+     *
+     * @param deliveryRuleName the delivery rule name
+     * @return the delivery rule name response
+     */
+    DeliveryRuleNameResponse mapToResponse(DeliveryRuleName deliveryRuleName);
 }
