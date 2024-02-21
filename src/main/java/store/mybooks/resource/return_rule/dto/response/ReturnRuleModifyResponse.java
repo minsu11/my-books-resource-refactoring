@@ -1,5 +1,9 @@
 package store.mybooks.resource.return_rule.dto.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * packageName    : store.mybooks.resource.return_rule.dto.response<br>
  * fileName       : ReturnRuleModifyResponse<br>
@@ -11,5 +15,13 @@ package store.mybooks.resource.return_rule.dto.response;
  * -----------------------------------------------------------<br>
  * 2/22/24        minsu11       최초 생성<br>
  */
+@Getter
+@Setter
+@AllArgsConstructor
 public class ReturnRuleModifyResponse {
+    private String returnRuleNameId;
+    private Integer deliveryFee;
+    private Integer term;
+    private Boolean isAvailable;
+
 }
