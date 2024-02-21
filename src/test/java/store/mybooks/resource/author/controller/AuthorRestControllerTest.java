@@ -208,7 +208,7 @@ class AuthorRestControllerTest {
 
     @Test
     @DisplayName("저자 수정(검증 실패)")
-    void givenAuthorIdAndInvalidAuthorModifyRequest_whenModifyAuthor_thenModifyAuthorAndReturnAuthorModifyResponse() throws Exception {
+    void givenAuthorIdAndInvalidAuthorModifyRequest_whenModifyAuthor_thenThrowBindException() throws Exception {
         AuthorModifyRequest modifyRequest = new AuthorModifyRequest("", content2);
         AuthorModifyResponse modifyResponse = new AuthorModifyResponse();
 
