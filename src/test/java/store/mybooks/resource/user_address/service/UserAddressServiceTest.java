@@ -15,6 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user.exception.UserNotExistException;
 import store.mybooks.resource.user.repository.UserRepository;
@@ -181,9 +183,56 @@ class UserAddressServiceTest {
         assertThrows(UserAddressNotExistException.class, () -> userAddressService.deleteUserAddress(1L, 1L));
     }
 
-   
+    @Test
+    @DisplayName("UserId , AddressId 로 findByAddressId 실행시 동작테스트")
+    void givenUserIdAndAddressId_whenCallFindByAddressId_thenReturnUserAddressGetResponse(
+            @Mock UserAddressGetResponse userAddressGetResponse
+    ) {
+        when(userAddressRepository.queryByIdAndUserId(anyLong(), anyLong())).thenReturn(
+                Optional.of(userAddressGetResponse));
 
+        userAddressService.findByAddressId(1L, 1L);
+        verify(userAddressRepository, times(1)).queryByIdAndUserId(anyLong(), anyLong());
+    }
 
+    @Test
+    @DisplayName("유저가 주소를 갖고있지 않을 때 UserId , AddressId 로 findByAddressId 실행시 UserAddressNotExistException")
+    void givenUserIdAndAddressId_whenCallFindByAddressId_thenThrowUserAddressNotExistException(
+    ) {
+        assertThrows(UserAddressNotExistException.class, () -> userAddressService.findByAddressId(1L, 1L));
+    }
 
+    @Test
+    @DisplayName("Pageable 로 findByAllUserAddress 실행시 동작테스트")
+    void givenPageable_whenCallFindByAllUserAddress_thenReturnUserAddressGetResponsePage(
+            @Mock Pageable pageable,
+            @Mock Page<UserAddressGetResponse> page
+    ) {
+
+        when(userAddressService.findByAllUserAddress(any(Pageable.class))).thenReturn(page);
+
+        userAddressService.findByAllUserAddress(pageable);
+        verify(userAddressRepository, times(1)).queryAllBy(any(Pageable.class));
+    }
+
+    @Test
+    @DisplayName("UserId 로 findAllUserAddressByUserId 실행시 동작테스트")
+    void givenUserId_whenCallFindAllUserAddressByUserId_thenReturnUserAddressGetResponseList(
+            @Mock User user
+    ) {
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        userAddressService.findAllAddressByUserId(anyLong());
+
+        verify(userRepository, times(1)).findById(anyLong());
+        verify(userAddressRepository, times(1)).queryAllByUserId(anyLong());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 UserId 로 findAllUserAddressByUserId 실행시 UserNotExistException")
+    void givenUserId_whenCallFindAllUserAddressByUserId_thenThrowUserNotExistException(
+    ) {
+        assertThrows(UserNotExistException.class,()->userAddressService.findAllAddressByUserId(anyLong()));
+    }
 
 }
