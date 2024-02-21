@@ -32,6 +32,7 @@ import store.mybooks.resource.publisher.repository.PublisherRepository;
 @RequiredArgsConstructor
 public class PublisherService {
     private final PublisherRepository publisherRepository;
+    private final PublisherMapper publisherMapper;
 
     /**
      * methodName : getAllPublisher
@@ -61,7 +62,7 @@ public class PublisherService {
         if (publisherRepository.existsByName(createRequest.getName())) {
             throw new PublisherAlreadyExistException(createRequest.getName());
         }
-        return PublisherMapper.INSTANCE.createResponse(publisherRepository.save(publisher));
+        return publisherMapper.createResponse(publisherRepository.save(publisher));
     }
 
     /**
@@ -83,7 +84,7 @@ public class PublisherService {
             throw new PublisherAlreadyExistException(publisher.getName());
         }
         publisher.setByModifyRequest(modifyRequest);
-        return PublisherMapper.INSTANCE.modifyResponse(publisher);
+        return publisherMapper.modifyResponse(publisher);
     }
 
     /**
@@ -98,9 +99,8 @@ public class PublisherService {
     public PublisherDeleteResponse deletePublisher(Integer publisherId) {
         Publisher publisher =
                 publisherRepository.findById(publisherId).orElseThrow(() -> new PublisherNotExistException(publisherId));
-
         publisherRepository.deleteById(publisherId);
-        return PublisherMapper.INSTANCE.deleteResponse(publisher);
+        return publisherMapper.deleteResponse(publisher);
     }
 
 }

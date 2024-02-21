@@ -37,7 +37,6 @@ import store.mybooks.resource.publisher.dto.response.PublisherDeleteResponse;
 import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
 import store.mybooks.resource.publisher.dto.response.PublisherModifyResponse;
 import store.mybooks.resource.publisher.entity.Publisher;
-import store.mybooks.resource.publisher.mapper.PublisherMapper;
 import store.mybooks.resource.publisher.service.PublisherService;
 
 /**
@@ -118,7 +117,6 @@ class PublisherRestControllerTest {
                 .andExpect(jsonPath("$.content[0].name").value(name))
                 .andExpect(jsonPath("$.content[1].id").value(id2))
                 .andExpect(jsonPath("$.content[1].name").value(name2));
-
         verify(publisherService, times(1)).getAllPublisher(pageable);
     }
 
@@ -126,7 +124,8 @@ class PublisherRestControllerTest {
     @DisplayName("출판사 등록(검증 성공)")
     void givenValidPublisherCreateRequest_whenCreatePublisher_thenSavePublisherAndReturnPublisherCreateResponse() throws Exception {
         PublisherCreateRequest request = new PublisherCreateRequest(name);
-        PublisherCreateResponse response = PublisherMapper.INSTANCE.createResponse(publisher);
+        PublisherCreateResponse response = new PublisherCreateResponse();
+        response.setName(request.getName());
 
         when(publisherService.createPublisher(any(PublisherCreateRequest.class))).thenReturn(response);
 
@@ -136,14 +135,14 @@ class PublisherRestControllerTest {
                         .content(new ObjectMapper().writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value(response.getName()));
-
         verify(publisherService, times(1)).createPublisher(any(PublisherCreateRequest.class));
     }
     @Test
     @DisplayName("출판사 등록(검증 실패)")
     void givenInvalidPublisherCreateRequest_whenCreatePublisher_thenThrowBindException() throws Exception {
         PublisherCreateRequest request = new PublisherCreateRequest("");
-        PublisherCreateResponse response = PublisherMapper.INSTANCE.createResponse(publisher);
+        PublisherCreateResponse response = new PublisherCreateResponse();
+        response.setName(request.getName());
 
         when(publisherService.createPublisher(any(PublisherCreateRequest.class))).thenReturn(response);
 
@@ -153,6 +152,7 @@ class PublisherRestControllerTest {
                         .content(new ObjectMapper().writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
 
+
         verify(publisherService, times(0)).createPublisher(any(PublisherCreateRequest.class));
     }
 
@@ -160,9 +160,9 @@ class PublisherRestControllerTest {
     @DisplayName("출판사 수정(검증 통과)")
     void givenPublisherIdAndValidPublisherModifyRequest_whenModifyPublisher_thenModifyPublisherAndReturnPublisherModifyResponse() throws Exception {
         String nameToChange = "nameToChange";
-        Publisher publisher = new Publisher(nameToChange);
         PublisherModifyRequest request = new PublisherModifyRequest(nameToChange);
-        PublisherModifyResponse response = PublisherMapper.INSTANCE.modifyResponse(publisher);
+        PublisherModifyResponse response = new PublisherModifyResponse();
+        response.setName(request.getChangeName());
 
         when(publisherService.modifyPublisher(eq(id), any(PublisherModifyRequest.class))).thenReturn(response);
 
@@ -171,16 +171,15 @@ class PublisherRestControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("$.name").value(response.getName()));
-
         verify(publisherService, times(1)).modifyPublisher(eq(id), any(PublisherModifyRequest.class));
     }
     @Test
     @DisplayName("출판사 수정(검증 실패)")
     void givenPublisherIdAndInvalidPublisherModifyRequest_whenModifyPublisher_thenThrowBindException() throws Exception {
         String nameToChange = "";
-        Publisher publisher = new Publisher(nameToChange);
         PublisherModifyRequest request = new PublisherModifyRequest(nameToChange);
-        PublisherModifyResponse response = PublisherMapper.INSTANCE.modifyResponse(publisher);
+        PublisherModifyResponse response = new PublisherModifyResponse();
+        response.setName(request.getChangeName());
 
         when(publisherService.modifyPublisher(eq(id), any(PublisherModifyRequest.class))).thenReturn(response);
 
@@ -195,8 +194,8 @@ class PublisherRestControllerTest {
     @Test
     @DisplayName("출판사 삭제")
     void givenPublisherId_whenDeletePublisher_thenDeletePublisherAndReturnPublisherDeleteResponse() throws Exception {
-        PublisherDeleteResponse response = PublisherMapper.INSTANCE.deleteResponse(publisher);
-
+        PublisherDeleteResponse response = new PublisherDeleteResponse();
+        response.setName(name);
         when(publisherService.deletePublisher(id)).thenReturn(response);
 
         mockMvc.perform(delete(url + "/{id}", id)
