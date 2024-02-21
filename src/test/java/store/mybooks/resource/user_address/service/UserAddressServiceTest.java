@@ -1,6 +1,33 @@
 package store.mybooks.resource.user_address.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import store.mybooks.resource.user.entity.User;
+import store.mybooks.resource.user.exception.UserNotExistException;
+import store.mybooks.resource.user.repository.UserRepository;
+import store.mybooks.resource.user_address.dto.mapper.UserAddressMapper;
+import store.mybooks.resource.user_address.dto.request.UserAddressCreateRequest;
+import store.mybooks.resource.user_address.dto.request.UserAddressModifyRequest;
+import store.mybooks.resource.user_address.dto.response.UserAddressCreateResponse;
+import store.mybooks.resource.user_address.dto.response.UserAddressGetResponse;
+import store.mybooks.resource.user_address.dto.response.UserAddressModifyResponse;
+import store.mybooks.resource.user_address.entity.UserAddress;
+import store.mybooks.resource.user_address.exception.UserAddressFullException;
+import store.mybooks.resource.user_address.exception.UserAddressNotExistException;
+import store.mybooks.resource.user_address.repository.UserAddressRepository;
 
 /**
  * packageName    : store.mybooks.resource.user_address.service
@@ -13,6 +40,72 @@ import static org.junit.jupiter.api.Assertions.*;
  * -----------------------------------------------------------
  * 2/21/24        masiljangajji       최초 생성
  */
+
+@ExtendWith(MockitoExtension.class)
 class UserAddressServiceTest {
+
+    @InjectMocks
+    UserAddressService userAddressService;
+
+    @Mock
+    UserAddressRepository userAddressRepository;
+
+    @Mock
+    UserRepository userRepository;
+
+    @Mock
+    UserAddressMapper userAddressMapper;
+
+
+    @Test
+    @DisplayName("UserId , UserAddressCreateRequest 로 createUserAddress 실행시 동작 테스트")
+    void givenUserIdAndUserAddressCreateRequest_whenCallCreateUserAddress_thenReturnUserAddressCreateResponse(
+            @Mock User user,
+            @Mock UserAddress userAddress,
+            @Mock UserAddressCreateResponse userAddressCreateResponse,
+            @Mock UserAddressCreateRequest userAddressCreateRequest
+    ) {
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userAddressRepository.save(any(UserAddress.class))).thenReturn(userAddress);
+        when(userAddressRepository.countByUserId(anyLong())).thenReturn(1);
+        when(userAddressMapper.toUserAddressCreateResponse(any(UserAddress.class))).thenReturn(
+                userAddressCreateResponse);
+
+        userAddressService.createUserAddress(1L, userAddressCreateRequest);
+
+        verify(userRepository, times(1)).findById(anyLong());
+        verify(userAddressRepository, times(1)).save(any(UserAddress.class));
+        verify(userAddressRepository, times(1)).countByUserId(anyLong());
+        verify(userAddressMapper, times(1)).toUserAddressCreateResponse(any(UserAddress.class));
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 UserId , UserAddressCreateRequest 로 createUserAddress 실행시 UserNotExistException")
+    void givenNotExistUserIdAndUserAddressCreateRequest_whenCallCreateUserAddress_thenThrowUserNotExistException(
+            @Mock UserAddressCreateRequest userAddressCreateRequest
+    ) {
+        assertThrows(UserNotExistException.class,
+                () -> userAddressService.createUserAddress(1L, userAddressCreateRequest));
+    }
+
+    @Test
+    @DisplayName("11개 이상의 주소를 갖는 UserId , UserAddressCreateRequest 로 createUserAddress 실행시 UserAddressFullException")
+    void givenUserIdAndUserAddressCreateRequest_whenCallCreateUserAddressAndMoreThenTenAddress_thenThrowUserAddressFullException(
+            @Mock User user,
+            @Mock UserAddressCreateRequest userAddressCreateRequest
+    ) {
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userAddressRepository.countByUserId(anyLong())).thenReturn(11);
+
+        assertThrows(UserAddressFullException.class,
+                () -> userAddressService.createUserAddress(anyLong(), userAddressCreateRequest));
+    }
+
+   
+
+
+
 
 }
