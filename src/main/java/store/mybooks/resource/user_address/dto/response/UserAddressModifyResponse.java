@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import store.mybooks.resource.user.entity.User;
@@ -25,6 +26,7 @@ import store.mybooks.resource.user.entity.User;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class UserAddressModifyResponse {
 
     private String alias;
