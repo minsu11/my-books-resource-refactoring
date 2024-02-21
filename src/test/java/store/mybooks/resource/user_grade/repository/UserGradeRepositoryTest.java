@@ -65,11 +65,10 @@ class UserGradeRepositoryTest {
         userGradeRepository.save(userGrade2);
         userGradeRepository.save(userGrade3);
 
-
     }
 
     @Test
-    @DisplayName("id로 유저등급 조회시 올바르게 조회되는지 테스트")
+    @DisplayName("UserGradeId 로 QueryById 실행시 UserGradeGetResponse 반환")
     void givenUserGradeId_whenCallQueryById_thenReturnUserGradeGetResponse() {
 
         UserGradeGetResponse userGradeGetResponse = userGradeRepository.queryById(userGradeId);
@@ -82,7 +81,7 @@ class UserGradeRepositoryTest {
     }
 
     @Test
-    @DisplayName("UserGradeName으로 사용가능한 UserGrade를 조회시 올바르게 조회되는지 테스트")
+    @DisplayName("사용가능한 UserGradeName 으로 findByUserGradeNameIdAndIsAvailableIsTrue 실행시 UserGrade 반환")
     void givenUserGradeName_whenCallFindByUserGradeNameIdAndIsAvailableIsTrue_thenReturnOptionalUserGrade() {
 
         UserGrade userGrade = userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue("일반").get();
@@ -92,6 +91,7 @@ class UserGradeRepositoryTest {
     }
 
     @Test
+    @DisplayName("Pageable 로 queryAllBy 실행시 Page<UserGradeGetResponse> 반환")
     void givenPageable_whenQueryAllBy_thenReturnUserGradeGetResponsePage() {
 
         Page<UserGradeGetResponse> page = userGradeRepository.queryAllBy(PageRequest.of(0, 10));
