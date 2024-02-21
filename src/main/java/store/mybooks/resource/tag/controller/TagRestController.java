@@ -69,9 +69,9 @@ public class TagRestController {
     public ResponseEntity<TagCreateResponse> createTag(@Valid @RequestBody TagCreateRequest tagCreateRequest,
                                                        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException("Tag 이름은 1글자 이상 10글자 이하여야 합니다.");
+            throw new ValidationException("Tag 이름은 1글자 이상 10글자 이하여야 합니다. Tag 이름은 공백일 수 없습니다.");
         }
-        
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(tagService.createTag(tagCreateRequest));
@@ -91,7 +91,7 @@ public class TagRestController {
                                                        @Valid @RequestBody TagModifyRequest tagModifyRequest,
                                                        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException("Tag 이름은 1글자 이상 10글자 이하여야 합니다.");
+            throw new ValidationException("Tag 이름은 1글자 이상 10글자 이하여야 합니다. Tag 이름은 공백일 수 없습니다.");
         }
 
         return ResponseEntity
