@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusResponse;
 import store.mybooks.resource.order_detail_status.entity.OrderDetailStatus;
 import store.mybooks.resource.orders_status.exception.OrdersStatusNotFoundException;
@@ -22,7 +21,6 @@ import store.mybooks.resource.orders_status.exception.OrdersStatusNotFoundExcept
  * 2/21/24        minsu11       최초 생성<br>
  */
 @DataJpaTest
-@Transactional
 class OrderDetailStatusRepositoryTest {
     @Autowired
     OrderDetailStatusRepository orderDetailStatusRepository;
