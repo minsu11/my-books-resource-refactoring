@@ -32,6 +32,7 @@ import store.mybooks.resource.tag.repository.TagRepository;
 @Transactional
 public class TagService {
     private final TagRepository tagRepository;
+    private final TagMapper tagMapper;
 
     @Transactional(readOnly = true)
     public List<TagGetResponse> getTags() {
@@ -51,7 +52,7 @@ public class TagService {
             throw new TagNameAlreadyExistsException(tagCreateRequest.getName());
         }
 
-        return TagMapper.INSTANCE.createResponse(tagRepository.save(new Tag(tagCreateRequest.getName())));
+        return tagMapper.createResponse(tagRepository.save(new Tag(tagCreateRequest.getName())));
     }
 
     /**
@@ -74,7 +75,7 @@ public class TagService {
 
         tag.setByTagModifyRequest(tagModifyRequest);
 
-        return TagMapper.INSTANCE.modifyResponse(tag);
+        return tagMapper.modifyResponse(tag);
     }
 
     /**
@@ -90,6 +91,6 @@ public class TagService {
 
         tagRepository.deleteById(id);
 
-        return TagMapper.INSTANCE.deleteResponse(tag);
+        return tagMapper.deleteResponse(tag);
     }
 }
