@@ -29,6 +29,7 @@ import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 import store.mybooks.resource.category.entity.Category;
 import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
+import store.mybooks.resource.category.mapper.CategoryMapper;
 import store.mybooks.resource.category.repository.CategoryRepository;
 
 /**
@@ -43,10 +44,13 @@ import store.mybooks.resource.category.repository.CategoryRepository;
  * 2/16/24          damho-lee          최초 생성
  */
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class})
 class CategoryServiceTest {
     @Mock
     CategoryRepository categoryRepository;
+
+    @Mock
+    CategoryMapper categoryMapper;
 
     @InjectMocks
     CategoryService categoryService;
@@ -150,14 +154,18 @@ class CategoryServiceTest {
     @DisplayName("createCategory 메서드 정상적인 경우")
     void givenCreateCategory_whenNormalCase_thenSaveCategoryAndReturnCategoryCreateResponse() {
         String name = "categoryName";
-        CategoryCreateRequest categoryCreateRequest = new CategoryCreateRequest(null, name);
+        CategoryCreateResponse expectedResponse = new CategoryCreateResponse();
+        expectedResponse.setParentCategory(null);
+        expectedResponse.setName(name);
 
+        when(categoryMapper.createResponse(any())).thenReturn(expectedResponse);
         when(categoryRepository.save(any())).thenReturn(new Category(null, name));
 
-        CategoryCreateResponse response = categoryService.createCategory(categoryCreateRequest);
+        CategoryCreateRequest categoryCreateRequest = new CategoryCreateRequest(null, name);
+        CategoryCreateResponse actualResponse = categoryService.createCategory(categoryCreateRequest);
 
-        assertThat(response.getParentCategory()).isNull();
-        assertThat(response.getName()).isEqualTo(name);
+        assertThat(actualResponse.getParentCategory()).isNull();
+        assertThat(actualResponse.getName()).isEqualTo(name);
     }
 
     @Test
@@ -174,17 +182,23 @@ class CategoryServiceTest {
     void givenModifyCategory_whenNormalCase_thenReturnCategoryModifyResponse() {
         Category parentCategory = new Category(1, null, null, "parentCategory", LocalDate.now());
         Category childCategory = new Category(2, null, null, "childCategory", LocalDate.now());
+        CategoryModifyResponse expectedResponse = new CategoryModifyResponse();
+        expectedResponse.setParentCategoryId(parentCategory.getId());
+        expectedResponse.setParentCategoryName(childCategory.getName());
 
         when(categoryRepository.findById(parentCategory.getId())).thenReturn(Optional.of(parentCategory));
         when(categoryRepository.findById(childCategory.getId())).thenReturn(Optional.of(childCategory));
+        when(categoryMapper.modifyResponse(any())).thenReturn(expectedResponse);
 
         CategoryModifyRequest categoryModifyRequest =
                 new CategoryModifyRequest(parentCategory.getId(), "newChildCategory");
-        CategoryModifyResponse response = categoryService.modifyCategory(childCategory.getId(), categoryModifyRequest);
+        expectedResponse.setName(categoryModifyRequest.getName());
+        CategoryModifyResponse actualResponse =
+                categoryService.modifyCategory(childCategory.getId(), categoryModifyRequest);
 
-        assertThat(response).isNotNull();
-        assertThat(response.getName()).isEqualTo("newChildCategory");
-        assertThat(response.getParentCategoryId()).isEqualTo(parentCategory.getId());
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.getParentCategoryId()).isEqualTo(expectedResponse.getParentCategoryId());
+        assertThat(actualResponse.getName()).isEqualTo(categoryModifyRequest.getName());
     }
 
     @Test
@@ -228,12 +242,15 @@ class CategoryServiceTest {
     @DisplayName("deleteCategory 메서드 정상적인 경우")
     void givenDeleteCategory_whenExistsCategoryId_thenReturnCategoryDeleteResponse() {
         Category category = new Category(1, null, null, "categoryName", null);
+        CategoryDeleteResponse expectedResponse = new CategoryDeleteResponse();
+        expectedResponse.setName(category.getName());
 
         when(categoryRepository.findById(anyInt())).thenReturn(Optional.of(category));
+        when(categoryMapper.deleteResponse(any())).thenReturn(expectedResponse);
         doNothing().when(categoryRepository).deleteById(anyInt());
 
-        CategoryDeleteResponse response = categoryService.deleteCategory(category.getId());
-        assertThat(response.getName()).isEqualTo(category.getName());
+        CategoryDeleteResponse actualResponse = categoryService.deleteCategory(category.getId());
+        assertThat(actualResponse.getName()).isEqualTo(category.getName());
         verify(categoryRepository, times(1)).deleteById(category.getId());
     }
 
