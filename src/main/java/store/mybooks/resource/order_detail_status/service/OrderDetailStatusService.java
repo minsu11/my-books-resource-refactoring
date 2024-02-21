@@ -4,12 +4,9 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import store.mybooks.resource.order_detail_status.dto.request.OrderDetailStatusRequest;
-import store.mybooks.resource.order_detail_status.dto.response.OrderDetailMapper;
-import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusCreateResponse;
+import store.mybooks.resource.order_detail_status.dto.mapper.OrderDetailMapper;
 import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusResponse;
 import store.mybooks.resource.order_detail_status.entity.OrderDetailStatus;
-import store.mybooks.resource.order_detail_status.exception.OrderDetailStatusAlreadyExistException;
 import store.mybooks.resource.order_detail_status.exception.OrderDetailStatusNotFoundException;
 import store.mybooks.resource.order_detail_status.repository.OrderDetailStatusRepository;
 
@@ -64,24 +61,5 @@ public class OrderDetailStatusService {
         return orderDetailStatusRepository.getOrderDetailStatusResponseList();
     }
 
-    /**
-     * methodName : createOrderDetailStatus
-     * author : minsu11
-     * description : 상세 주문 데이터를 생성. 데이터 베이스에 이미 있는 데이터면 throw를 던짐
-     *
-     * @param request
-     * @return order detail status create response
-     * @throws OrderDetailStatusAlreadyExistException database 안에 데이터가 있는 경우
-     */
-    @Transactional
-    public OrderDetailStatusCreateResponse createOrderDetailStatus(OrderDetailStatusRequest request) {
-        if (orderDetailStatusRepository.findById(request.getId()).isPresent()) {
-            throw new OrderDetailStatusAlreadyExistException("이미 존재한 상태");
-        }
-        OrderDetailStatus orderDetailStatus = new OrderDetailStatus(request.getId());
-        orderDetailStatusRepository.save(orderDetailStatus);
-
-        return mapper.mapToOrderDetailStatusCreateResponse(orderDetailStatus);
-    }
 
 }
