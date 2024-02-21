@@ -20,6 +20,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import store.mybooks.resource.category.dto.request.CategoryCreateRequest;
 import store.mybooks.resource.category.dto.request.CategoryModifyRequest;
 import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
@@ -54,6 +58,85 @@ class CategoryServiceTest {
 
     @InjectMocks
     CategoryService categoryService;
+
+    @Test
+    @DisplayName("getCategoriesOrderByParentCategoryId 메서드 ParentCategoryId 를 기준으로 Category 를 오름차순으로 반환")
+    void givenGetCategoriesOrderByParentCategoryId_whenNormalCase_thenReturnListOfCategory() {
+        List<CategoryGetResponse> categoryGetResponseList = new ArrayList<>();
+        CategoryGetResponse firstCategory = new CategoryGetResponse() {
+            @Override
+            public Integer getId() {
+                return 1;
+            }
+
+            @Override
+            public CategoryGetResponse getParentCategory() {
+                return null;
+            }
+
+            @Override
+            public String getName() {
+                return "firstCategory";
+            }
+        };
+
+        CategoryGetResponse secondCategory = new CategoryGetResponse() {
+            @Override
+            public Integer getId() {
+                return 2;
+            }
+
+            @Override
+            public CategoryGetResponse getParentCategory() {
+                return firstCategory;
+            }
+
+            @Override
+            public String getName() {
+                return "secondCategory";
+            }
+        };
+
+        CategoryGetResponse thirdCategory = new CategoryGetResponse() {
+            @Override
+            public Integer getId() {
+                return 3;
+            }
+
+            @Override
+            public CategoryGetResponse getParentCategory() {
+                return secondCategory;
+            }
+
+            @Override
+            public String getName() {
+                return "thirdCategory";
+            }
+        };
+
+        categoryGetResponseList.add(thirdCategory);
+        categoryGetResponseList.add(secondCategory);
+        categoryGetResponseList.add(firstCategory);
+        categoryGetResponseList.sort((c1, c2) -> {
+            if (c1.getParentCategory() == null) {
+                return -1;
+            } else if (c2.getParentCategory() == null) {
+                return 1;
+            }
+
+            return c1.getParentCategory().getId() - c2.getParentCategory().getId();
+        });
+
+        Pageable pageable = PageRequest.of(0, 2);
+        Page<CategoryGetResponse> expectedPage =
+                new PageImpl<>(categoryGetResponseList.subList(0, 2), pageable, categoryGetResponseList.size());
+        when(categoryRepository.findByOrderByParentCategory_Id(any())).thenReturn(expectedPage);
+        Page<CategoryGetResponse> actualPage = categoryService.getCategoriesOrderByParentCategoryId(pageable);
+        assertThat(actualPage.getContent().size()).isEqualTo(2);
+        assertThat(actualPage.getContent().get(0).getId()).isEqualTo(firstCategory.getId());
+        assertThat(actualPage.getContent().get(1).getId()).isEqualTo(secondCategory.getId());
+        assertThat(actualPage.getTotalPages()).isEqualTo(2);
+    }
 
     @Test
     @DisplayName("getHighestCategories 메서드 최상위 카테고리들만 가져온다")
