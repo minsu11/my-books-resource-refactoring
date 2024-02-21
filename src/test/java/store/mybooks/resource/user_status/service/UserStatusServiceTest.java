@@ -46,7 +46,7 @@ class UserStatusServiceTest {
     UserStatusGetResponse userStatusGetResponse;
 
     @Test
-    @DisplayName("findUserStatusById 메서드를 성공하는 경우")
+    @DisplayName("UserStatus 로 findUserStatusById 메서드 실행시 동작이 올바른지 테스트")
     void givenUserStatusId_whenCallFindUserStatusById_thenReturnUserStatusGetResponse(@Mock UserStatus userStatus) {
 
 
@@ -68,12 +68,11 @@ class UserStatusServiceTest {
 
 
         assertThrows(UserStatusNotExistException.class, () -> userStatusService.findUserStatusById("wrong_id"));
-
         verify(userStatusRepository, times(1)).findById(anyString());
     }
 
     @Test
-    @DisplayName("findAllUserStatus 메서드를 불렀을때 Empty List를 반환하는 경우")
+    @DisplayName("findAllUserStatus 메서드를 실행시 Empty List 를 반환")
     void givenNothing_whenCallFindAllUserStatus_thenReturnEmptyList() {
 
         assertTrue(userStatusService.findAllUserStatus().isEmpty());
@@ -81,7 +80,7 @@ class UserStatusServiceTest {
     }
 
     @Test
-    @DisplayName("findAllUserStatus 메서드를 불렀을때 Not Empty List를 반환하는 경우")
+    @DisplayName("findAllUserStatus 메서드를 불렀을때 Not Empty List 를 반환")
     void givenUserStatus_whenCallFindAllUserStatus_thenReturnNotEmptyList() {
 
         when(userStatusService.findAllUserStatus()).thenReturn(List.of(userStatusGetResponse));
