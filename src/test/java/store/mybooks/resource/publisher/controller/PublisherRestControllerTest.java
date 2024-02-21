@@ -2,18 +2,21 @@ package store.mybooks.resource.publisher.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,12 +65,19 @@ class PublisherRestControllerTest {
 
     private final String url = "/api/publishers";
 
+    private Publisher publisher;
+    private static final Integer id = 1;
+    private static final String name = "publisherName1";
+
+    @BeforeEach
+    void setUp() {
+        publisher = new Publisher(1, name, LocalDate.now());
+    }
+
     @Test
     @DisplayName("전체 출판사 조회")
     void givenPublisherList_whenFindAllPublishers_thenReturnAllPublishersGetResponseList() throws Exception {
-        Integer id1 = 1;
-        Integer id2 =2;
-        String name1 = "publisher1";
+        Integer id2 = 2;
         String name2 = "publisher2";
         Integer page = 0;
         Integer size = 2;
@@ -76,12 +86,12 @@ class PublisherRestControllerTest {
                 new PublisherGetResponse() {
                     @Override
                     public Integer getId() {
-                        return id1;
+                        return id;
                     }
 
                     @Override
                     public String getName() {
-                        return name1;
+                        return name;
                     }
                 },
                 new PublisherGetResponse() {
@@ -95,24 +105,29 @@ class PublisherRestControllerTest {
                         return name2;
                     }
                 });
-        Page<PublisherGetResponse> publisherGetResponsePage = new PageImpl<>(publisherList, pageable,publisherList.size());
+
+        Page<PublisherGetResponse> publisherGetResponsePage =
+                new PageImpl<>(publisherList, pageable, publisherList.size());
+
         when(publisherService.getAllPublisher(pageable)).thenReturn(publisherGetResponsePage);
-        mockMvc.perform(get(url+"?page="+page+"&size="+ size)
+
+        mockMvc.perform(get(url + "?page=" + page + "&size=" + size)
                         .accept("application/json"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].id").value(id1))
-                .andExpect(jsonPath("$.content[0].name").value(name1))
+                .andExpect(jsonPath("$.content[0].id").value(id))
+                .andExpect(jsonPath("$.content[0].name").value(name))
                 .andExpect(jsonPath("$.content[1].id").value(id2))
                 .andExpect(jsonPath("$.content[1].name").value(name2));
+
+        verify(publisherService, times(1)).getAllPublisher(pageable);
     }
 
     @Test
     @DisplayName("출판사 등록")
-    void givenPublisherCreateRequest_whenCreatePublisher_thenSavePublisherAndReturnPublisherCreateResponse() throws Exception{
-        String name = "publisherName";
+    void givenPublisherCreateRequest_whenCreatePublisher_thenSavePublisherAndReturnPublisherCreateResponse() throws Exception {
         PublisherCreateRequest request = new PublisherCreateRequest(name);
-        Publisher publisher = new Publisher(name);
         PublisherCreateResponse response = PublisherMapper.INSTANCE.createResponse(publisher);
+
         when(publisherService.createPublisher(any(PublisherCreateRequest.class))).thenReturn(response);
 
         mockMvc.perform(post(url)
@@ -122,42 +137,41 @@ class PublisherRestControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value(response.getName()));
 
+        verify(publisherService, times(1)).createPublisher(any(PublisherCreateRequest.class));
     }
 
     @Test
     @DisplayName("출판사 수정")
     void givenPublisherIdAndPublisherModifyRequest_whenModifyPublisher_thenModifyPublisherAndReturnPublisherModifyResponse() throws Exception {
-        Integer publisherId = 1;
         String nameToChange = "nameToChange";
         Publisher publisher = new Publisher(nameToChange);
         PublisherModifyRequest request = new PublisherModifyRequest(nameToChange);
         PublisherModifyResponse response = PublisherMapper.INSTANCE.modifyResponse(publisher);
 
-        when(publisherService.modifyPublisher(eq(publisherId), any(PublisherModifyRequest.class)))
-                .thenReturn(response);
+        when(publisherService.modifyPublisher(eq(id), any(PublisherModifyRequest.class))).thenReturn(response);
 
-        mockMvc.perform(put(url + "/{id}", publisherId)
+        mockMvc.perform(put(url + "/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                         .andExpect(status().isOk())
-                        .andExpect(jsonPath("$.name").value(response.getName()))
-                .andDo(print())
+                        .andExpect(jsonPath("$.name").value(response.getName()));
 
-        ;
+        verify(publisherService, times(1)).modifyPublisher(eq(id), any(PublisherModifyRequest.class));
     }
 
     @Test
     @DisplayName("출판사 삭제")
     void givenPublisherId_whenDeletePublisher_thenDeletePublisherAndReturnPublisherDeleteResponse() throws Exception {
-        Integer publisherId = 1;
-        Publisher publisher = new Publisher("publisherName1");
-        PublisherDeleteResponse response= PublisherMapper.INSTANCE.deleteResponse(publisher);
+        PublisherDeleteResponse response = PublisherMapper.INSTANCE.deleteResponse(publisher);
 
-        when(publisherService.deletePublisher(eq(publisherId))).thenReturn(response);
+        when(publisherService.deletePublisher(eq(id))).thenReturn(response);
 
-        mockMvc.perform(delete(url+"/{id}", publisherId)
+        mockMvc.perform(delete(url + "/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("publisherName1"));
+                .andExpect(jsonPath("$.name").value(response.getName()));
+
+        verify(publisherService, times(1)).deletePublisher(eq(id));
+
     }
 }

@@ -22,8 +22,10 @@ import store.mybooks.resource.publisher.entity.Publisher;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface PublisherMapper {
     PublisherMapper INSTANCE = Mappers.getMapper(PublisherMapper.class);
-    PublisherCreateResponse createResponse(Publisher publisher);
-    PublisherModifyResponse modifyResponse(Publisher publisher);
-    PublisherDeleteResponse deleteResponse(Publisher publisher);
 
+    PublisherCreateResponse createResponse(Publisher publisher);
+
+    PublisherModifyResponse modifyResponse(Publisher publisher);
+
+    PublisherDeleteResponse deleteResponse(Publisher publisher);
 }

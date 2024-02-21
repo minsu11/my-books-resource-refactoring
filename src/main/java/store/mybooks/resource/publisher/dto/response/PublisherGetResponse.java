@@ -14,5 +14,6 @@ package store.mybooks.resource.publisher.dto.response;
 
 public interface PublisherGetResponse {
     Integer getId();
+
     String getName();
 }
