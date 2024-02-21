@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.category.entity.Category;
 
@@ -30,7 +29,6 @@ class CategoryRepositoryTest {
     Category actualChildCategory;
 
     @BeforeEach
-    @Transactional
     void setup() {
         Category parentCategory = new Category(null, "firstCategory");
         actualParentCategory = categoryRepository.save(parentCategory);
@@ -40,7 +38,6 @@ class CategoryRepositoryTest {
     }
 
     @Test
-    @Transactional
     void givenCategory_whenFindHighestCategoryList_thenReturnHighestCategoryGetResponseList() {
         List<CategoryGetResponse> highestCategoryList = categoryRepository.findAllByParentCategoryIsNull();
         assertThat(highestCategoryList).hasSize(1);
@@ -51,7 +48,6 @@ class CategoryRepositoryTest {
     }
 
     @Test
-    @Transactional
     void givenCategory_whenFindCategoryListByParentCategoryId_thenReturnCategoryGetResponseList() {
         List<CategoryGetResponse> childCategoryList =
                 categoryRepository.findAllByParentCategory_Id(actualParentCategory.getId());
