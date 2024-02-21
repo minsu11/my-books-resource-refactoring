@@ -27,6 +27,7 @@ import store.mybooks.resource.tag.dto.response.TagModifyResponse;
 import store.mybooks.resource.tag.entity.Tag;
 import store.mybooks.resource.tag.exception.TagNameAlreadyExistsException;
 import store.mybooks.resource.tag.exception.TagNotExistsException;
+import store.mybooks.resource.tag.mapper.TagMapper;
 import store.mybooks.resource.tag.repository.TagRepository;
 
 /**
@@ -44,6 +45,9 @@ import store.mybooks.resource.tag.repository.TagRepository;
 class TagServiceTest {
     @Mock
     TagRepository tagRepository;
+
+    @Mock
+    TagMapper tagMapper;
 
     @InjectMocks
     TagService tagService;
@@ -72,14 +76,17 @@ class TagServiceTest {
     void givenCreateTag_whenNormalCase_thenReturnTagCreateResponse() {
         String name = "IT";
         TagCreateRequest tagCreateRequest = new TagCreateRequest(name);
+        TagCreateResponse tagCreateResponse = new TagCreateResponse();
+        tagCreateResponse.setName(tagCreateRequest.getName());
 
         when(tagRepository.existsByName(anyString())).thenReturn(false);
         when(tagRepository.save(any())).thenReturn(new Tag(name));
+        when(tagMapper.createResponse(any())).thenReturn(tagCreateResponse);
 
-        TagCreateResponse tagCreateResponse = tagService.createTag(tagCreateRequest);
+        TagCreateResponse actualResponse = tagService.createTag(tagCreateRequest);
 
-        assertThat(tagCreateResponse).isNotNull();
-        assertThat(tagCreateResponse.getName()).isEqualTo(tagCreateRequest.getName());
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.getName()).isEqualTo(tagCreateRequest.getName());
         verify(tagRepository, times(1)).save(any());
     }
 
@@ -98,14 +105,19 @@ class TagServiceTest {
     void givenModifyTag_whenNormalCase_thenReturnTagModifyResponse() {
         Tag tag = new Tag("IT");
 
+        TagModifyRequest tagModifyRequest = new TagModifyRequest("Education");
+        TagModifyResponse tagModifyResponse = new TagModifyResponse();
+        tagModifyResponse.setName(tagModifyRequest.getName());
+
         when(tagRepository.findById(anyInt())).thenReturn(Optional.of(tag));
         when(tagRepository.existsByName(anyString())).thenReturn(false);
+        when(tagMapper.modifyResponse(any())).thenReturn(tagModifyResponse);
 
-        TagModifyRequest tagModifyRequest = new TagModifyRequest("Education");
-        TagModifyResponse tagModifyResponse = tagService.modifyTag(1, tagModifyRequest);
+        TagModifyResponse actualResponse = tagService.modifyTag(1, tagModifyRequest);
 
-        assertThat(tagModifyResponse).isNotNull();
-        assertThat(tagModifyResponse.getName()).isEqualTo(tagModifyRequest.getName());
+
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.getName()).isEqualTo(tagModifyRequest.getName());
     }
 
     @Test
@@ -134,12 +146,16 @@ class TagServiceTest {
     @DisplayName("deleteTag 메서드 정상적인 경우 테스트")
     void givenDeleteTag_whenNormalCase_thenReturnTagDeleteResponse() {
         Tag tag = new Tag("IT");
+        TagDeleteResponse tagDeleteResponse = new TagDeleteResponse();
+        tagDeleteResponse.setName(tag.getName());
+
         when(tagRepository.findById(anyInt())).thenReturn(Optional.of(tag));
+        when(tagMapper.deleteResponse(any())).thenReturn(tagDeleteResponse);
 
-        TagDeleteResponse tagDeleteResponse = tagService.deleteTag(1);
+        TagDeleteResponse actualResponse = tagService.deleteTag(1);
 
-        assertThat(tagDeleteResponse).isNotNull();
-        assertThat(tagDeleteResponse.getName()).isEqualTo(tag.getName());
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.getName()).isEqualTo(tag.getName());
         verify(tagRepository, times(1)).deleteById(1);
     }
 
