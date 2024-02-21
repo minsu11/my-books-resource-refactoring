@@ -11,11 +11,11 @@ package store.mybooks.resource.return_rule_name.exception;
  * -----------------------------------------------------------
  * 2/20/24        minsu11       최초 생성
  */
-public class ReturnRuleNameNotFoundException extends RuntimeException {
-    public ReturnRuleNameNotFoundException() {
+public class ReturnRuleNameNotExistException extends RuntimeException {
+    public ReturnRuleNameNotExistException() {
     }
 
-    public ReturnRuleNameNotFoundException(String message) {
+    public ReturnRuleNameNotExistException(String message) {
         super(message);
     }
 }

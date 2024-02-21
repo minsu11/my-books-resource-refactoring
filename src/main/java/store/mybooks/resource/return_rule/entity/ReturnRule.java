@@ -5,6 +5,7 @@ import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import store.mybooks.resource.return_rule.dto.request.ReturnRuleModifyRequest;
 import store.mybooks.resource.return_rule_name.entity.ReturnRuleName;
 
 /**
@@ -44,5 +45,13 @@ public class ReturnRule {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "return_rule_name_id")
     private ReturnRuleName returnRuleName;
+
+    public void modifyByReturnRule(ReturnRuleModifyRequest request, ReturnRuleName returnRuleName) {
+        this.deliveryFee = request.getDeliveryFee();
+        this.term = request.getTerm();
+        this.isAvailable = request.getIsAvailable();
+        this.returnRuleName = returnRuleName;
+
+    }
 
 }

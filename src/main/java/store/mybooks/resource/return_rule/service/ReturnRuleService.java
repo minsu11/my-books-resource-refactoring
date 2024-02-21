@@ -4,9 +4,12 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.return_rule.dto.mapper.ReturnRuleMapper;
 import store.mybooks.resource.return_rule.dto.request.ReturnRuleCreateRequest;
+import store.mybooks.resource.return_rule.dto.request.ReturnRuleModifyRequest;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleCreateResponse;
+import store.mybooks.resource.return_rule.dto.response.ReturnRuleModifyResponse;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleResponse;
 import store.mybooks.resource.return_rule.entity.ReturnRule;
 import store.mybooks.resource.return_rule.exception.ReturnRuleAlreadyExistException;
@@ -14,6 +17,7 @@ import store.mybooks.resource.return_rule.exception.ReturnRuleNotExistException;
 import store.mybooks.resource.return_rule.repository.ReturnRuleRepository;
 import store.mybooks.resource.return_rule_name.entity.ReturnRuleName;
 import store.mybooks.resource.return_rule_name.exception.ReturnRuleNameAlreadyExistException;
+import store.mybooks.resource.return_rule_name.exception.ReturnRuleNameNotExistException;
 import store.mybooks.resource.return_rule_name.repository.ReturnRuleNameRepository;
 
 /**
@@ -29,6 +33,7 @@ import store.mybooks.resource.return_rule_name.repository.ReturnRuleNameReposito
  */
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ReturnRuleService {
     private final ReturnRuleRepository returnRuleRepository;
     private final ReturnRuleNameRepository returnRuleNameRepository;
@@ -48,6 +53,7 @@ public class ReturnRuleService {
      * @return returnRuleResponse dto로 반환
      * @throws ReturnRuleNotExistException {@code returnRuleName}의 데이터를 조회 할 수 없는 경우
      */
+    @Transactional(readOnly = true)
     public ReturnRuleResponse getReturnRuleResponseByReturnRuleName(String returnRuleName) {
         return returnRuleRepository.findByReturnRuleName(returnRuleName).orElseThrow(() -> new ReturnRuleNotExistException("반품 규정이 존재하지 않음"));
     }
@@ -60,6 +66,7 @@ public class ReturnRuleService {
      *
      * @return list
      */
+    @Transactional(readOnly = true)
     public List<ReturnRuleResponse> getReturnRuleResponseList() {
         return returnRuleRepository.getReturnRuleResponseList();
     }
@@ -91,6 +98,17 @@ public class ReturnRuleService {
         returnRuleNameRepository.save(returnRuleName);
 
         return returnRuleMapper.mapToReturnRuleCreateResponse(returnRule);
+    }
+
+    public ReturnRuleModifyResponse modifyReturnRule(ReturnRuleModifyRequest request) {
+
+        ReturnRuleName returnRuleNameResponse =
+                returnRuleNameRepository.findById(request.getReturnRuleNameId()).orElseThrow(() -> new ReturnRuleNameNotExistException("반품 정책이 존재하지 않음"));
+        ReturnRule returnRule =
+                returnRuleRepository.findByReturnRuleNameId(returnRuleNameResponse.getId()).orElseThrow(() -> new ReturnRuleNotExistException("존재하지 않음"));
+
+        returnRule.modifyByReturnRule(request, returnRuleNameResponse);
+        return returnRuleMapper.mapToReturnRuleModifyResponse(returnRule);
     }
 
 

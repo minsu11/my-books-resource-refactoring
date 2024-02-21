@@ -2,6 +2,7 @@ package store.mybooks.resource.return_rule.dto.mapper;
 
 import org.mapstruct.Mapper;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleCreateResponse;
+import store.mybooks.resource.return_rule.dto.response.ReturnRuleModifyResponse;
 import store.mybooks.resource.return_rule.entity.ReturnRule;
 
 /**
@@ -19,5 +20,6 @@ import store.mybooks.resource.return_rule.entity.ReturnRule;
 public interface ReturnRuleMapper {
     ReturnRuleCreateResponse mapToReturnRuleCreateResponse(ReturnRule returnRule);
 
+    ReturnRuleModifyResponse mapToReturnRuleModifyResponse(ReturnRule returnRule);
 
 }

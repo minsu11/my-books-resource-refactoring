@@ -11,7 +11,7 @@ import store.mybooks.resource.return_rule_name.dto.response.ReturnRuleNameCreate
 import store.mybooks.resource.return_rule_name.dto.response.ReturnRuleNameResponse;
 import store.mybooks.resource.return_rule_name.entity.ReturnRuleName;
 import store.mybooks.resource.return_rule_name.exception.ReturnRuleNameAlreadyExistException;
-import store.mybooks.resource.return_rule_name.exception.ReturnRuleNameNotFoundException;
+import store.mybooks.resource.return_rule_name.exception.ReturnRuleNameNotExistException;
 import store.mybooks.resource.return_rule_name.repository.ReturnRuleNameRepository;
 
 /**
@@ -39,12 +39,12 @@ public class ReturnRuleNameService {
      *
      * @param name 요청된 name
      * @return return name rule response
-     * @throws ReturnRuleNameNotFoundException name 값과 동일한 데이터를 찾지 못한 경우
+     * @throws ReturnRuleNameNotExistException name 값과 동일한 데이터를 찾지 못한 경우
      */
     @Transactional(readOnly = true)
     public ReturnRuleNameResponse getReturnRuleName(String name) {
         ReturnRuleName returnNameRule = returnRuleNameRepository.findById(name)
-                .orElseThrow(() -> new ReturnRuleNameNotFoundException("반품 규정 명 규칙에 대한 데이터가 없음"));
+                .orElseThrow(() -> new ReturnRuleNameNotExistException("반품 규정 명 규칙에 대한 데이터가 없음"));
         return returnRuleNameMapper.mapToReturnRuleNameResponse(returnNameRule);
     }
 

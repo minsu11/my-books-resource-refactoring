@@ -1,5 +1,6 @@
 package store.mybooks.resource.return_rule.repository;
 
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import store.mybooks.resource.return_rule.entity.ReturnRule;
 
@@ -16,4 +17,5 @@ import store.mybooks.resource.return_rule.entity.ReturnRule;
  */
 public interface ReturnRuleRepository extends JpaRepository<ReturnRule, Integer>, ReturnRuleRepositoryCustom {
 
+    Optional<ReturnRule> findByReturnRuleNameId(String id);
 }

@@ -8,7 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import store.mybooks.resource.return_rule.dto.request.ReturnRuleCreateRequest;
+import store.mybooks.resource.return_rule.dto.request.ReturnRuleModifyRequest;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleCreateResponse;
+import store.mybooks.resource.return_rule.dto.response.ReturnRuleModifyResponse;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleResponse;
 import store.mybooks.resource.return_rule.exception.ReturnRuleValidationFailedException;
 import store.mybooks.resource.return_rule.service.ReturnRuleService;
@@ -85,5 +87,18 @@ public class ReturnRuleRestController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @PutMapping("/{name}")
+    public ResponseEntity<ReturnRuleModifyResponse> modifyReturnRule(
+            @PathVariable String id,
+            @Valid @RequestBody ReturnRuleModifyRequest modifyRequest,
+            BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
+            throw new ReturnRuleValidationFailedException(bindingResult);
+        }
+        ReturnRuleModifyResponse modifyResponse =
+                returnRuleService.modifyReturnRule(modifyRequest);
 
+        return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
+    }
 }
