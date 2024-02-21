@@ -17,7 +17,8 @@ import store.mybooks.resource.publisher.entity.Publisher;
  * -----------------------------------------------------------
  * 2/14/24        newjaehun       최초 생성
  */
-public interface PublisherRepository extends JpaRepository<Publisher, Integer>{
+public interface PublisherRepository extends JpaRepository<Publisher, Integer> {
     Page<PublisherGetResponse> findAllBy(Pageable pageable);
+
     Boolean existsByName(String name);
 }
