@@ -1,6 +1,9 @@
 package store.mybooks.resource.user_grade_name.enumeration;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.convert.DataSizeUnit;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -18,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class UserGradeNameEnumTest {
 
     @Test
+    @DisplayName("UserGradeName Enum 값 테스트")
     public void testUserGradeNameEnumToString() {
         assertEquals("일반", UserGradeNameEnum.NORMAL.toString());
         assertEquals("골드", UserGradeNameEnum.GOLD.toString());

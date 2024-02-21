@@ -1,6 +1,7 @@
 package store.mybooks.resource.user_status.enumeration;
 
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class UserStatusEnumTest {
 
     @Test
+    @DisplayName("userStatusEnum 값 테스트")
     public void testUserStatusEnumToString() {
         assertEquals("활성", UserStatusEnum.ACTIVE.toString());
         assertEquals("휴면", UserStatusEnum.INACTIVE.toString());
