@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,14 +60,17 @@ public class AuthorRestController {
     /**
      * methodName : createAuthor
      * author : newjaehun
-     * description :
+     * description : 저자 추가
      *
      * @param createRequest: 추가할 name, content 포함
      * @return ResponseEntity
      */
     @PostMapping
     public ResponseEntity<AuthorCreateResponse> createAuthor(
-            @Valid @RequestBody AuthorCreateRequest createRequest) {
+            @Valid @RequestBody AuthorCreateRequest createRequest, BindingResult bindingResult) throws BindException {
+        if (bindingResult.hasErrors()) {
+            throw new BindException(bindingResult);
+        }
         AuthorCreateResponse createResponse = authorService.createAuthor(createRequest);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -83,7 +88,10 @@ public class AuthorRestController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<AuthorModifyResponse> modifyAuthor(@PathVariable("id") Integer authorId, @Valid @RequestBody
-    AuthorModifyRequest modifyRequest) {
+    AuthorModifyRequest modifyRequest, BindingResult bindingResult) throws BindException {
+        if (bindingResult.hasErrors()) {
+            throw new BindException(bindingResult);
+        }
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(authorService.modifyAuthor(authorId, modifyRequest));

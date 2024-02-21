@@ -132,8 +132,8 @@ class AuthorRestControllerTest {
     }
 
     @Test
-    @DisplayName("저자 등록")
-    void givenAuthorCreateRequest_whenCreateAuthor_thenSaveAuthorAndReturnAuthorCreateResponse()
+    @DisplayName("저자 등록(검증 통과)")
+    void givenValidAuthorCreateRequest_whenCreateAuthor_thenSaveAuthorAndReturnAuthorCreateResponse()
             throws Exception {
         AuthorCreateRequest createRequest = new AuthorCreateRequest(name, content);
         AuthorCreateResponse createResponse = AuthorMapper.INSTANCE.createResponse(author);
@@ -153,13 +153,33 @@ class AuthorRestControllerTest {
     }
 
     @Test
-    @DisplayName("저자 수정")
-    void givenAuthorIdAndAuthorModifyRequest_whenModifyAuthor_thenModifyAuthorAndReturnAuthorModifyResponse() throws Exception {
+    @DisplayName("저자 등록(검증 실패)")
+    void givenInvalidAuthorCreateRequest_whenCreateAuthor_thenThrowBindException()
+            throws Exception {
+        AuthorCreateRequest createRequest = new AuthorCreateRequest("", content);
+        AuthorCreateResponse createResponse = AuthorMapper.INSTANCE.createResponse(author);
+
+        when(authorService.createAuthor(any(AuthorCreateRequest.class))).thenReturn(createResponse);
+
+        mockMvc.perform(post(url)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createRequest)))
+                .andExpect(status().isBadRequest());
+
+        verify(authorService, times(0)).createAuthor(any(AuthorCreateRequest.class));
+    }
+
+    @Test
+    @DisplayName("저자 수정(검증 성공)")
+    void givenAuthorIdAndValidAuthorModifyRequest_whenModifyAuthor_thenModifyAuthorAndReturnAuthorModifyResponse() throws Exception {
         AuthorModifyRequest modifyRequest = new AuthorModifyRequest(name2, content2);
         Author resultAuthor = new Author(modifyRequest.getChangeName(), modifyRequest.getChangeContent());
         AuthorModifyResponse modifyResponse = AuthorMapper.INSTANCE.modifyResponse(resultAuthor);
 
         when(authorService.modifyAuthor(eq(id), any(AuthorModifyRequest.class))).thenReturn(modifyResponse);
+
+
 
         mockMvc.perform(put(url + "/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -168,6 +188,23 @@ class AuthorRestControllerTest {
                 .andExpect(jsonPath("$.changedName").value(modifyResponse.getChangedName()))
                 .andExpect(jsonPath("$.changedContent").value(modifyResponse.getChangedContent()));
         verify(authorService, times(1)).modifyAuthor(eq(id), any(AuthorModifyRequest.class));
+    }
+
+    @Test
+    @DisplayName("저자 수정(검증 실패)")
+    void givenAuthorIdAndInvalidAuthorModifyRequest_whenModifyAuthor_thenModifyAuthorAndReturnAuthorModifyResponse() throws Exception {
+        AuthorModifyRequest modifyRequest = new AuthorModifyRequest("", content2);
+        Author resultAuthor = new Author(modifyRequest.getChangeName(), modifyRequest.getChangeContent());
+        AuthorModifyResponse modifyResponse = AuthorMapper.INSTANCE.modifyResponse(resultAuthor);
+
+        when(authorService.modifyAuthor(eq(id), any(AuthorModifyRequest.class))).thenReturn(modifyResponse);
+
+        mockMvc.perform(put(url + "/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(modifyRequest)))
+                .andExpect(status().isBadRequest());
+
+        verify(authorService, times(0)).modifyAuthor(eq(id), any(AuthorModifyRequest.class));
     }
 
     @Test
