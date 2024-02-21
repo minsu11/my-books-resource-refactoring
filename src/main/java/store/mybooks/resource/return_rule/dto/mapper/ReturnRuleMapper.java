@@ -19,4 +19,5 @@ import store.mybooks.resource.return_rule.entity.ReturnRule;
 public interface ReturnRuleMapper {
     ReturnRuleCreateResponse mapToReturnRuleCreateResponse(ReturnRule returnRule);
 
+
 }
