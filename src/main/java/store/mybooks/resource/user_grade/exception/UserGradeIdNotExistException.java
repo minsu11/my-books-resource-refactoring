@@ -11,8 +11,8 @@ package store.mybooks.resource.user_grade.exception;
  * -----------------------------------------------------------
  * 2/16/24        masiljangajji       최초 생성
  */
-public class UserGradeNotExistException extends RuntimeException {
-    public UserGradeNotExistException(Integer userGradeName) {
-        super(String.format("[%d]는 존재하지 않는 User Grade 입니다.", userGradeName));
+public class UserGradeIdNotExistException extends RuntimeException {
+    public UserGradeIdNotExistException() {
+        super("존재하지 않는 User Grade 입니다.");
     }
 }

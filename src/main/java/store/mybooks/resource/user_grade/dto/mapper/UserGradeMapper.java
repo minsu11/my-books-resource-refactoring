@@ -4,9 +4,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
-import store.mybooks.resource.user.dto.mapper.UserModifyMapper;
-import store.mybooks.resource.user.dto.response.UserModifyResponse;
-import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user_grade.dto.response.UserGradeCreateResponse;
 import store.mybooks.resource.user_grade.entity.UserGrade;
 
@@ -21,15 +18,14 @@ import store.mybooks.resource.user_grade.entity.UserGrade;
  * -----------------------------------------------------------
  * 2/19/24        masiljangajji       최초 생성
  */
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface UserGradeCreateMapper {
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
+public interface UserGradeMapper {
 
 
-    UserGradeCreateMapper INSTANCE = Mappers.getMapper(UserGradeCreateMapper.class);
+    UserGradeMapper INSTANCE = Mappers.getMapper(UserGradeMapper.class);
 
+    @Mapping(source = "userGradeName.id", target = "name")
     UserGradeCreateResponse toUserGradeCreateResponse(UserGrade userGrade);
-
-
 
 
 }
