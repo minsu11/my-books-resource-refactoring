@@ -34,7 +34,7 @@ public class ReturnRuleNameRestController {
      * author : minsu11<br>
      * description : get 요청 시 name 값에 맞는 데이터를 응답
      *
-     * @param name url 경로로 들어온 요청 데이터
+     * @param id url 경로로 들어온 요청 데이터
      * @return response entity
      */
     @GetMapping("/{id}")
@@ -44,7 +44,9 @@ public class ReturnRuleNameRestController {
     }
 
     /**
-     * .
+     * methodName : getReturnRuleNameList<br>
+     * author : minsu11<br>
+     * description : 요청 시 모든 반품 규정 명을 DTO List 응답
      *
      * @return the return rule name list
      */
@@ -53,5 +55,6 @@ public class ReturnRuleNameRestController {
         List<ReturnRuleNameResponse> returnRuleNameResponseList = returnRuleNameService.getReturnRuleNameList();
         return new ResponseEntity<>(returnRuleNameResponseList, HttpStatus.OK);
     }
+
 
 }
