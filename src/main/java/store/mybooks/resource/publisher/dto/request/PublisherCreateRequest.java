@@ -22,6 +22,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PublisherCreateRequest {
     @NotBlank
-    @Size(min = 0, max = 50)
+    @Size(min = 1, max = 50)
     private String name;
 }
