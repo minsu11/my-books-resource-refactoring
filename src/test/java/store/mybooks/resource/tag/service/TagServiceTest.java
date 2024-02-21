@@ -41,7 +41,7 @@ import store.mybooks.resource.tag.repository.TagRepository;
  * 2/17/24          damho-lee          최초 생성
  */
 @ExtendWith(MockitoExtension.class)
-class 턴TagServiceTest {
+class TagServiceTest {
     @Mock
     TagRepository tagRepository;
 
