@@ -45,12 +45,12 @@ public class DatabaseConfig {
         dataSource.setUsername(keyConfig.keyStore(databaseProperties.getUserName()));
         dataSource.setPassword(keyConfig.keyStore(databaseProperties.getPassword()));
 
-        dataSource.setInitialSize(10);
-        dataSource.setMaxTotal(10);
-        dataSource.setMinIdle(10);
-        dataSource.setMaxIdle(10);
+        dataSource.setInitialSize(databaseProperties.getInitialSize());
+        dataSource.setMaxTotal(databaseProperties.getMaxTotal());
+        dataSource.setMinIdle(databaseProperties.getMinIdle());
+        dataSource.setMaxIdle(databaseProperties.getMaxIdle());
 
-        dataSource.setMaxWaitMillis(1000);
+        dataSource.setMaxWaitMillis(databaseProperties.getMaxWait());
 
         dataSource.setTestOnBorrow(true);
         dataSource.setTestOnReturn(true);
