@@ -42,6 +42,8 @@ public class UserAddressService {
 
     private final UserRepository userRepository;
 
+    private final UserAddressMapper userAddressMapper;
+
     @Transactional
     public UserAddressCreateResponse createUserAddress(Long userId, UserAddressCreateRequest createRequest) {
 
@@ -59,7 +61,7 @@ public class UserAddressService {
         userAddressRepository.save(userAddress);
 
 
-        return UserAddressMapper.INSTANCE.toUserAddressCreateResponse(userAddress);
+        return userAddressMapper.toUserAddressCreateResponse(userAddress);
     }
 
 
@@ -76,7 +78,7 @@ public class UserAddressService {
                 modifyRequest.getDetail(),
                 modifyRequest.getNumber(), modifyRequest.getReference());
 
-        return UserAddressMapper.INSTANCE.toUserAddressModifyResponse(userAddress);
+        return userAddressMapper.toUserAddressModifyResponse(userAddress);
 
     }
 
