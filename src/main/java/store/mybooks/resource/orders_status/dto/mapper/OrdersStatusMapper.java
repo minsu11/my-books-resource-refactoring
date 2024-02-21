@@ -1,7 +1,6 @@
 package store.mybooks.resource.orders_status.dto.mapper;
 
 import org.mapstruct.Mapper;
-import store.mybooks.resource.orders_status.dto.response.OrdersStatusCreateResponse;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 import store.mybooks.resource.orders_status.entity.OrdersStatus;
 
@@ -20,5 +19,4 @@ import store.mybooks.resource.orders_status.entity.OrdersStatus;
 public interface OrdersStatusMapper {
     OrdersStatusResponse mapToResponse(OrdersStatus ordersStatus);
 
-    OrdersStatusCreateResponse mapToCreateResponse(OrdersStatus ordersStatus);
 }

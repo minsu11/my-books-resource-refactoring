@@ -47,10 +47,11 @@ class OrderDetailStatusServiceUnitTest {
     void givenOrderDetailStatusId_whenFindById_thenReturnOrderDetailStatusResponse() {
         String orderDetailStatusId = "test";
         when(orderDetailStatusRepository.findById(orderDetailStatusId)).thenReturn(Optional.of(new OrderDetailStatus(orderDetailStatusId)));
+        when(mapper.mapToOrderDetailStatusResponse(any())).thenReturn(new OrderDetailStatusResponse(orderDetailStatusId));
 
         OrderDetailStatus orderDetailStatus = orderDetailStatusRepository.findById(orderDetailStatusId).orElseThrow(OrderDetailStatusNotFoundException::new);
         OrderDetailStatusResponse actual = mapper.mapToOrderDetailStatusResponse(orderDetailStatus);
-        OrderDetailStatusResponse expected = new OrderDetailStatusResponse("test");
+        OrderDetailStatusResponse expected = new OrderDetailStatusResponse(orderDetailStatusId);
 
         Assertions.assertEquals(expected.getId(), actual.getId());
 
@@ -79,6 +80,7 @@ class OrderDetailStatusServiceUnitTest {
         Assertions.assertEquals(expected.get(0).getId(), actual.get(0).getId());
         Assertions.assertEquals(expected.size(), actual.size());
         verify(orderDetailStatusRepository, times(1)).getOrderDetailStatusResponseList();
+
     }
 
     @Test

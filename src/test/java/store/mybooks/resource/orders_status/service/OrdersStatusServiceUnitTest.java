@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import store.mybooks.resource.orders_status.dto.mapper.OrdersStatusMapper;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 import store.mybooks.resource.orders_status.entity.OrdersStatus;
 import store.mybooks.resource.orders_status.exception.OrdersStatusNotFoundException;
@@ -36,6 +37,8 @@ class OrdersStatusServiceUnitTest {
 
     @Mock
     OrdersStatusRepository repository;
+    @Mock
+    OrdersStatusMapper mapper;
 
     @Test
     @Order(1)
@@ -44,14 +47,17 @@ class OrdersStatusServiceUnitTest {
         //given
         String ordersStatusId = "test";
         when(repository.findById(ordersStatusId)).thenReturn(Optional.of(new OrdersStatus("test")));
-        OrdersStatus expected = new OrdersStatus(ordersStatusId);
+        when(mapper.mapToResponse(any())).thenReturn(new OrdersStatusResponse(ordersStatusId));
 
         //when
-        OrdersStatus actual = repository.findById("test").orElseThrow(OrdersStatusNotFoundException::new);
+        OrdersStatus ordersStatus = repository.findById("test").orElseThrow(OrdersStatusNotFoundException::new);
+        OrdersStatusResponse actual = mapper.mapToResponse(ordersStatus);
+        OrdersStatusResponse expected = new OrdersStatusResponse(ordersStatusId);
 
         //then
         Assertions.assertEquals(expected.getId(), actual.getId());
         verify(repository, times(1)).findById(anyString());
+        verify(mapper, times(1)).mapToResponse(any());
     }
 
     @Test
