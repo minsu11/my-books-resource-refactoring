@@ -103,7 +103,49 @@ class UserAddressServiceTest {
                 () -> userAddressService.createUserAddress(anyLong(), userAddressCreateRequest));
     }
 
-   
+    @Test
+    @DisplayName("UserId , AddressId , UserAddressModifyRequest 로 modifyUserAddress 실행시 동작 테스트")
+    void givenUserIdAndAddressIdAndUserAddressModifyRequest_whenCallModifyUserAddress_thenReturnUserAddressModifyResponse(
+            @Mock User user,
+            @Mock UserAddress userAddress,
+            @Mock UserAddressModifyResponse userAddressModifyResponse,
+            @Mock UserAddressModifyRequest userAddressModifyRequest
+    ) {
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userAddressRepository.findById(anyLong())).thenReturn(Optional.of(userAddress));
+        when(userAddressMapper.toUserAddressModifyResponse(any(UserAddress.class))).thenReturn(
+                userAddressModifyResponse);
+
+        userAddressService.modifyUserAddress(1L, 1L, userAddressModifyRequest);
+
+        verify(userRepository, times(1)).findById(anyLong());
+        verify(userAddressRepository, times(1)).findById(anyLong());
+        verify(userAddressMapper, times(1)).toUserAddressModifyResponse(any(UserAddress.class));
+    }
+
+    @Test
+    @DisplayName("존재하지않는 UserId , AddressId , UserAddressModifyRequest 로 modifyUserAddress 실행시 UserNotExistException")
+    void givenNotExistUserIdAndAddressIdAndUserAddressModifyRequest_whenCallModifyUserAddress_thenThrowUserNotExistException(
+            @Mock UserAddressModifyRequest userAddressModifyRequest
+    ) {
+        assertThrows(UserNotExistException.class,
+                () -> userAddressService.modifyUserAddress(1L, 1L, userAddressModifyRequest));
+    }
+
+    @Test
+    @DisplayName("UserId , 존재하지 않는 AddressId , UserAddressModifyRequest 로 modifyUserAddress 실행시 UserAddressNotExistException")
+    void givenUserIdAndNotExistAddressIdAndUserAddressModifyRequest_whenCallModifyUserAddress_thenThrowUserAddressNotExistException(
+            @Mock User user,
+            @Mock UserAddressModifyRequest userAddressModifyRequest
+    ) {
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        assertThrows(UserAddressNotExistException.class,
+                () -> userAddressService.modifyUserAddress(1L, 1L, userAddressModifyRequest));
+    }
+
+    
 
 
 
