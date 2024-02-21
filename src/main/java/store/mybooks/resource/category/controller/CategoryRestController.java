@@ -2,6 +2,7 @@ package store.mybooks.resource.category.controller;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -48,7 +49,7 @@ public class CategoryRestController {
      * @return ResponseEntity
      */
     @GetMapping
-    public ResponseEntity<List<CategoryGetResponse>> getCategoriesOrderByParentCategoryId(
+    public ResponseEntity<Page<CategoryGetResponse>> getCategoriesOrderByParentCategoryId(
             @PageableDefault Pageable pageable) {
         return ResponseEntity
                 .status(HttpStatus.OK)
