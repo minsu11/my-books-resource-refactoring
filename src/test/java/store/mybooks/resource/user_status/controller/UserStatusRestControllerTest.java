@@ -10,6 +10,7 @@ import static org.mockito.Mockito.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.convert.DataSizeUnit;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +53,7 @@ class UserStatusRestControllerTest {
     UserStatusService userStatusService;
 
     @Test
+    @DisplayName("UserId 로 getUSerStatus 실행시 UserStatus 를 조회")
     void givenUserStatusId_whenCallGetUserStatus_thenReturnUserStatusGetResponse() throws Exception {
 
         UserStatusGetResponse userStatusGetResponse = new UserStatusGetResponse() {
@@ -71,6 +74,7 @@ class UserStatusRestControllerTest {
 
 
     @Test
+    @DisplayName("getAllUserStatus 실행시 모든 UserStatus 를 Pagination 해서 조회")
     void whenCallGetAllUserStatus_thenReturnUstStatusList() throws Exception {
 
         UserStatusGetResponse userStatusGetResponse1 = new UserStatusGetResponse() {
