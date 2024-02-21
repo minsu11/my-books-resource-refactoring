@@ -7,17 +7,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Collections;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusResponse;
 import store.mybooks.resource.order_detail_status.service.OrderDetailStatusService;
 
@@ -33,19 +32,15 @@ import store.mybooks.resource.order_detail_status.service.OrderDetailStatusServi
  * 2/20/24        minsu11       최초 생성<br>
  */
 @ExtendWith(MockitoExtension.class)
+@WebMvcTest(OrderDetailStatusController.class)
 class OrderDetailStatusControllerUnitTest {
+    @Autowired
     MockMvc mockMvc;
 
-    @InjectMocks
-    OrderDetailStatusController orderDetailStatusController;
 
-    @Mock
+    @MockBean
     OrderDetailStatusService orderDetailStatusService;
 
-    @BeforeEach
-    void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(orderDetailStatusController).build();
-    }
 
     @Test
     @Order(1)
