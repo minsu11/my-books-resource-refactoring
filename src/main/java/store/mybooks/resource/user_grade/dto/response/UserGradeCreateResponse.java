@@ -1,7 +1,10 @@
 package store.mybooks.resource.user_grade.dto.response;
 
 import java.time.LocalDate;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * packageName    : store.mybooks.resource.user_grade.dto.response
@@ -14,7 +17,9 @@ import lombok.Data;
  * -----------------------------------------------------------
  * 2/19/24        masiljangajji       최초 생성
  */
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 public class UserGradeCreateResponse {
 
     private String name;

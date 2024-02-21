@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import store.mybooks.resource.user_grade.entity.UserGrade;
 import store.mybooks.resource.user_status.entity.UserStatus;
 
@@ -27,6 +28,8 @@ import store.mybooks.resource.user_status.entity.UserStatus;
  */
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserModifyRequest {
 
     private String name;

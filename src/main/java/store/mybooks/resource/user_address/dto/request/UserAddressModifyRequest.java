@@ -1,6 +1,8 @@
 package store.mybooks.resource.user_address.dto.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * packageName    : store.mybooks.resource.user_address.dto.request
@@ -15,6 +17,8 @@ import lombok.Getter;
  */
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserAddressModifyRequest {
 
     private String alias;
