@@ -31,6 +31,7 @@ import store.mybooks.resource.author.repository.AuthorRepository;
 @RequiredArgsConstructor
 public class AuthorService {
     private final AuthorRepository authorRepository;
+    private final AuthorMapper authorMapper;
 
     /**
      * methodName : getAllAuthors
@@ -55,7 +56,7 @@ public class AuthorService {
      */
     @Transactional
     public AuthorCreateResponse createAuthor(AuthorCreateRequest createRequest) {
-        return AuthorMapper.INSTANCE.createResponse(authorRepository.save(new Author(createRequest.getName(), createRequest.getContent())));
+        return authorMapper.createResponse(authorRepository.save(new Author(createRequest.getName(), createRequest.getContent())));
     }
 
     /**
@@ -73,7 +74,7 @@ public class AuthorService {
                 authorRepository.findById(authorId).orElseThrow(() -> new AuthorNotExistException(authorId));
 
         author.setByModifyRequest(modifyRequest);
-        return AuthorMapper.INSTANCE.modifyResponse(author);
+        return authorMapper.modifyResponse(author);
     }
 
     /**
@@ -89,6 +90,6 @@ public class AuthorService {
         Author author =
                 authorRepository.findById(authorId).orElseThrow(() -> new AuthorNotExistException(authorId));
         authorRepository.deleteById(authorId);
-        return AuthorMapper.INSTANCE.deleteResponse(author);
+        return authorMapper.deleteResponse(author);
     }
 }
