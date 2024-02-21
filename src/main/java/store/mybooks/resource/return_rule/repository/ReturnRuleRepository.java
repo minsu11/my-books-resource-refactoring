@@ -14,6 +14,6 @@ import store.mybooks.resource.return_rule.entity.ReturnRule;
  * -----------------------------------------------------------<br>
  * 2/21/24        minsu11       최초 생성<br>
  */
-public interface ReturnRuleRespository extends JpaRepository<ReturnRule, Integer> {
+public interface ReturnRuleRepository extends JpaRepository<ReturnRule, Integer>, ReturnRuleRepositoryCustom {
 
 }

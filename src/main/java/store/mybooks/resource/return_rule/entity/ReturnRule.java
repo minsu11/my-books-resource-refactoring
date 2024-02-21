@@ -10,7 +10,7 @@ import store.mybooks.resource.return_rule_name.entity.ReturnRuleName;
 /**
  * packageName    : store.mybooks.resource.return_rule.entity
  * fileName       : ReturnRule
- * author         : minsu
+ * author         : minsu11
  * date           : 2/13/24
  * description    :
  * ===========================================================
