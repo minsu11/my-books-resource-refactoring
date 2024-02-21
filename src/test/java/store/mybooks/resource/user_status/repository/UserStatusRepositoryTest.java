@@ -46,7 +46,7 @@ class UserStatusRepositoryTest {
     }
 
     @Test
-    @DisplayName("id로 유저상태 조회시 올바르게 조회되는지 테스트")
+    @DisplayName("UserStatusId 를 이용해 queryById 실행시 UserStatusGetResponse 반환")
     void givenUserStatusId_whenCallQueryById_thenReturnUserStatusGetResponse() {
 
         UserStatusGetResponse userStatusGetResponse1 = userStatusRepository.queryById("test1");
@@ -59,7 +59,7 @@ class UserStatusRepositoryTest {
     }
 
     @Test
-    @DisplayName("UserStatus 전체 조회시 List<getResponse> 형태로 올바르게 조회되는지 테스트")
+    @DisplayName("QueryAllBy 실행시 List<UserStatusGetResponse> 반환")
     void whenCallQueryAllBy_thenReturnUserStatusGetResponseList() {
 
         assertEquals(userStatusRepository.queryAllBy().size(), 3);
