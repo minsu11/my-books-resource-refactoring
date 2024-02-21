@@ -43,6 +43,6 @@ public class ReturnRule {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "return_rule_name_id")
-    private ReturnRuleName returnNameRule;
+    private ReturnRuleName returnRuleName;
 
 }
