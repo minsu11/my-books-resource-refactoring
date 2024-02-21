@@ -145,7 +145,43 @@ class UserAddressServiceTest {
                 () -> userAddressService.modifyUserAddress(1L, 1L, userAddressModifyRequest));
     }
 
-    
+    @Test
+    @DisplayName("UserId , AddressId 로 deleteUserAddress 실행시 동작 테스트")
+    void givenUserIdAndAddressId_whenCallDeleteUserAddress_thenReturnUserAddressDeleteResponse(
+            @Mock User user,
+            @Mock UserAddress userAddress
+    ) {
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userAddressRepository.findById(anyLong())).thenReturn(Optional.of(userAddress));
+        doNothing().when(userAddressRepository).deleteById(anyLong());
+
+        userAddressService.deleteUserAddress(1L, 1L);
+
+        verify(userRepository, times(1)).findById(anyLong());
+        verify(userAddressRepository, times(1)).findById(anyLong());
+        verify(userAddressRepository, times(1)).deleteById(anyLong());
+
+    }
+
+    @Test
+    @DisplayName("존재하지않는 UserId , AddressId 로 deleteUserAddress 실행시 UserNotExistException")
+    void givenNotExistUserIdAndAddressId_whenCallDeleteUserAddress_thenThrowUserNotExistException(
+    ) {
+        assertThrows(UserNotExistException.class, () -> userAddressService.deleteUserAddress(1L, 1L));
+    }
+
+    @Test
+    @DisplayName("UserId , 존재하지않는 AddressId 로 deleteUserAddress 실행시 UserAddressNotExistException")
+    void givenUserIdAndNotExistAddressId_whenCallDeleteUserAddress_thenThrowUserAddressNotExistException(
+            @Mock User user
+    ) {
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        assertThrows(UserAddressNotExistException.class, () -> userAddressService.deleteUserAddress(1L, 1L));
+    }
+
+   
 
 
 
