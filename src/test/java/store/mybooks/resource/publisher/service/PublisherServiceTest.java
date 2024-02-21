@@ -108,19 +108,20 @@ class PublisherServiceTest {
     @Test
     @DisplayName("출판사 등록")
     void givenPublisherCreateRequest_whenCreatePublisher_thenSavePublisherAndReturnPublisherCreateResponse() {
-        PublisherCreateRequest request = new PublisherCreateRequest(name);
-        PublisherCreateResponse response = new PublisherCreateResponse();
-        response.setName(request.getName());
+        PublisherCreateRequest createRequest = new PublisherCreateRequest(name);
+        PublisherCreateResponse createResponse = new PublisherCreateResponse();
+        createResponse.setName(createRequest.getName());
 
 
-        given(publisherRepository.existsByName(request.getName())).willReturn(false);
+        given(publisherRepository.existsByName(createRequest.getName())).willReturn(false);
         given(publisherRepository.save(any(Publisher.class))).willReturn(publisher);
 
-        when(publisherMapper.createResponse(any(Publisher.class))).thenReturn(response);
+        when(publisherMapper.createResponse(any(Publisher.class))).thenReturn(createResponse);
 
-        publisherService.createPublisher(request);
+        publisherService.createPublisher(createRequest);
 
-        verify(publisherRepository, times(1)).existsByName(request.getName());
+        assertThat(createResponse.getName()).isEqualTo(createRequest.getName());
+        verify(publisherRepository, times(1)).existsByName(createRequest.getName());
         verify(publisherRepository, times(1)).save(any(Publisher.class));
         verify(publisherMapper, times(1)).createResponse(any(Publisher.class));
 
@@ -129,15 +130,15 @@ class PublisherServiceTest {
     @Test
     @DisplayName("이미 존재하는 출판사 이름을 등록")
     void givenPublisherCreateRequest_whenAlreadyExistPublisherNameCreate_thenThrowPublisherAlreadyExistException() {
-        PublisherCreateRequest request = new PublisherCreateRequest(name);
-        PublisherCreateResponse response = new PublisherCreateResponse();
-        response.setName(request.getName());
+        PublisherCreateRequest createRequest = new PublisherCreateRequest(name);
+        PublisherCreateResponse createResponse = new PublisherCreateResponse();
+        createResponse.setName(createRequest.getName());
 
-        given(publisherRepository.existsByName(request.getName())).willReturn(true);
+        given(publisherRepository.existsByName(createRequest.getName())).willReturn(true);
 
-        assertThrows(PublisherAlreadyExistException.class, () -> publisherService.createPublisher(request));
+        assertThrows(PublisherAlreadyExistException.class, () -> publisherService.createPublisher(createRequest));
 
-        verify(publisherRepository, times(1)).existsByName(request.getName());
+        verify(publisherRepository, times(1)).existsByName(createRequest.getName());
         verify(publisherMapper, times(0)).createResponse(any(Publisher.class));
 
     }
@@ -157,6 +158,8 @@ class PublisherServiceTest {
         when(publisherMapper.modifyResponse(any(Publisher.class))).thenReturn(modifyResponse);
 
         publisherService.modifyPublisher(id, modifyRequest);
+
+        assertThat(modifyResponse.getName()).isEqualTo(modifyRequest.getChangeName());
 
         verify(publisherRepository, times(1)).findById(eq(id));
         verify(publisherRepository, times(1)).existsByName(modifyRequest.getChangeName());
