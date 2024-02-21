@@ -25,7 +25,6 @@ import store.mybooks.resource.user_status.entity.UserStatus;
  */
 
 
-
 @Data
 public class UserModifyResponse {
 
@@ -34,7 +33,7 @@ public class UserModifyResponse {
     private String userGradeName;
     private LocalDateTime latestLogin;
     private LocalDateTime deletedAt;
-    private LocalDate gradeChangeDate;
+    private LocalDate gradeChangedDate;
 
 
 }

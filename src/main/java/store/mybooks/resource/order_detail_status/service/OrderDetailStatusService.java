@@ -45,7 +45,8 @@ public class OrderDetailStatusService {
      * @throws OrderDetailStatusNotFoundException id와 동일한 상세 주문 상태가 없는 경우
      */
     public OrderDetailStatusResponse getOrderDetailStatus(String id) {
-        OrderDetailStatus orderDetailStatus = orderDetailStatusRepository.findById(id).orElseThrow(() -> new OrderDetailStatusNotFoundException("order detail이 없음"));
+        OrderDetailStatus orderDetailStatus = orderDetailStatusRepository.findById(id)
+                .orElseThrow(() -> new OrderDetailStatusNotFoundException("상세 주문 상태 데이터 없음"));
         return mapper.mapToOrderDetailStatusResponse(orderDetailStatus);
     }
 
