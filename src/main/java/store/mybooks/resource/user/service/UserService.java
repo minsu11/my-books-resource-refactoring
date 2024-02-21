@@ -51,6 +51,8 @@ public class UserService {
 
     private final UserGradeRepository userGradeRepository;
 
+    private final UserMapper userMapper;
+
     /**
      * Create user user create response.
      * User를 생성함
@@ -88,7 +90,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        return UserMapper.INSTANCE.toUserCreateResponse(user);
+        return userMapper.toUserCreateResponse(user);
     }
 
     /**
@@ -119,13 +121,13 @@ public class UserService {
         UserGrade userGrade = userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(userGradeName).orElseThrow(
                 UserGradeIdNotExistException::new);
 
-        user.modifyUser(modifyRequest.getUserGradeName(), modifyRequest.getPassword(), modifyRequest.getLatestLogin(),
+        user.modifyUser(modifyRequest.getName(), modifyRequest.getPassword(), modifyRequest.getLatestLogin(),
                 modifyRequest.getDeletedAt(), modifyRequest.getGradeChangeDate(), modifyRequest.getPhoneNumber());
 
         user.modifyUserStatus(userStatus);
         user.modifyUserGrade(userGrade);
 
-        return UserMapper.INSTANCE.toUserModifyResponse(user);
+        return userMapper.toUserModifyResponse(user);
 
     }
 

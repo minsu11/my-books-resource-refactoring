@@ -22,8 +22,6 @@ import store.mybooks.resource.user_grade.entity.UserGrade;
 public interface UserGradeMapper {
 
 
-    UserGradeMapper INSTANCE = Mappers.getMapper(UserGradeMapper.class);
-
     @Mapping(source = "userGradeName.id", target = "name")
     UserGradeCreateResponse toUserGradeCreateResponse(UserGrade userGrade);
 

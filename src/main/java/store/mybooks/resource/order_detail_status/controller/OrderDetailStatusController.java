@@ -4,9 +4,10 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import store.mybooks.resource.order_detail_status.dto.request.OrderDetailStatusRequest;
-import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusCreateResponse;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusResponse;
 import store.mybooks.resource.order_detail_status.service.OrderDetailStatusService;
 
@@ -55,13 +56,6 @@ public class OrderDetailStatusController {
     public ResponseEntity<List<OrderDetailStatusResponse>> getOrderDetailStatusList() {
         List<OrderDetailStatusResponse> response = orderDetailStatusService.getOrderDetailStatusList();
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @PostMapping
-    public ResponseEntity<OrderDetailStatusCreateResponse> createOrderDetailStatus(
-            @RequestBody OrderDetailStatusRequest request) {
-        OrderDetailStatusCreateResponse createResponse = orderDetailStatusService.createOrderDetailStatus(request);
-        return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
     }
 
 }

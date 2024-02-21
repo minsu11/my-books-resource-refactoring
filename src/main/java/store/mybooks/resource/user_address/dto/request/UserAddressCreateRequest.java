@@ -4,7 +4,9 @@ import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import store.mybooks.resource.user.entity.User;
 
 /**
@@ -19,6 +21,8 @@ import store.mybooks.resource.user.entity.User;
  * 2/13/24        masiljangajji       최초 생성
  */
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserAddressCreateRequest {
 
     private String alias;
