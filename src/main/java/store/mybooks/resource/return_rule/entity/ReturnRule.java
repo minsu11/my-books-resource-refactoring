@@ -5,7 +5,7 @@ import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import store.mybooks.resource.return_name_rule.entity.ReturnNameRule;
+import store.mybooks.resource.return_rule_name.entity.ReturnRuleName;
 
 /**
  * packageName    : store.mybooks.resource.return_rule.entity
@@ -42,7 +42,7 @@ public class ReturnRule {
     private LocalDate createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "return_name_rule_id")
-    private ReturnNameRule returnNameRule;
+    @JoinColumn(name = "return_rule_name_id")
+    private ReturnRuleName returnNameRule;
 
 }

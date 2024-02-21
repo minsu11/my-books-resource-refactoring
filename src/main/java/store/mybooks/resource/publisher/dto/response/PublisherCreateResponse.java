@@ -14,8 +14,9 @@ import lombok.Setter;
  * -----------------------------------------------------------
  * 2/15/24        newjaehun       최초 생성
  */
-@Setter
+
 @Getter
+@Setter
 public class PublisherCreateResponse {
     private String name;
 }

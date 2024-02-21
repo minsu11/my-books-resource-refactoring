@@ -5,7 +5,9 @@ import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.user_grade.dto.request.UserGradeCreateRequest;
+import store.mybooks.resource.user_grade_name.entity.UserGradeName;
 
 /**
  * packageName    : store.mybooks.resource.user.entity
@@ -31,8 +33,10 @@ public class UserGrade {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "user_grade_name")
-    private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_grade_name_id")
+    private UserGradeName userGradeName;
 
 
     @Column(name = "user_grade_min")
@@ -48,13 +52,22 @@ public class UserGrade {
     @Column(name = "user_grade_created_date")
     private LocalDate createdDate;
 
+    @Column(name = "is_available")
+    private Boolean isAvailable;
 
-    public UserGrade(UserGradeCreateRequest createRequest) {
-        this.name = createRequest.getName();
-        this.minCost = createRequest.getMinCost();
-        this.maxCost = createRequest.getMaxCost();
-        this.rate = createRequest.getRate();
-        this.createdDate = createRequest.getCreatedDate();
+
+    public UserGrade(Integer minCost, Integer maxCost, Integer rate, LocalDate createdDate,
+                     UserGradeName userGradeName) {
+        this.userGradeName = userGradeName;
+        this.minCost = minCost;
+        this.maxCost = maxCost;
+        this.rate = rate;
+        this.createdDate = createdDate;
+        this.isAvailable = true;
+    }
+
+    public void deleteUserGrade() {
+        this.isAvailable = false;
     }
 
 

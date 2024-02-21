@@ -1,6 +1,13 @@
 package store.mybooks.resource.user_address.repository;
 
+import java.util.List;
+import java.util.Optional;
+import javax.swing.text.html.Option;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import store.mybooks.resource.user.dto.response.UserGetResponse;
+import store.mybooks.resource.user_address.dto.response.UserAddressGetResponse;
 import store.mybooks.resource.user_address.entity.UserAddress;
 
 /**
@@ -14,5 +21,16 @@ import store.mybooks.resource.user_address.entity.UserAddress;
  * -----------------------------------------------------------
  * 2/13/24        masiljangajji       최초 생성
  */
-public interface UserAddressRepository extends JpaRepository<UserAddress,Long> {
+public interface UserAddressRepository extends JpaRepository<UserAddress, Long> {
+
+
+    Optional<UserAddressGetResponse> queryByIdAndUserId(Long userAddressId, Long userId);
+
+    List<UserAddressGetResponse> queryAllByUserId(Long userId);
+
+    Page<UserAddressGetResponse> queryAllBy(Pageable pageable);
+
+    Integer countByUserId(Long userId);
+
+
 }

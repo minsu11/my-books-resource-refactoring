@@ -17,8 +17,7 @@ import javax.persistence.Column;
 public interface UserGradeGetResponse {
 
 
-    String getName();
-
+    String getUserGradeNameId();
 
     Integer getMinCost();
 

@@ -13,6 +13,7 @@ import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 import store.mybooks.resource.category.entity.Category;
 import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
+import store.mybooks.resource.category.mapper.CategoryMapper;
 import store.mybooks.resource.category.repository.CategoryRepository;
 
 /**
@@ -67,7 +68,16 @@ public class CategoryService {
             throw new CategoryNameAlreadyExistsException(categoryCreateRequest.getName());
         }
 
-        return categoryRepository.save(new Category(categoryCreateRequest)).convertToCategoryCreateResponse();
+        Category parentCategory = null;
+        Integer parentCategoryId = categoryCreateRequest.getParentCategoryId();
+        String name = categoryCreateRequest.getName();
+
+        if (parentCategoryId != null) {
+            parentCategory = categoryRepository.findById(parentCategoryId)
+                    .orElseThrow(() -> new CategoryNotExistsException(parentCategoryId));
+        }
+
+        return CategoryMapper.INSTANCE.createResponse(categoryRepository.save(new Category(parentCategory, name)));
     }
 
     /**
@@ -97,7 +107,8 @@ public class CategoryService {
                     categoryRepository.findById(parentCategoryId).orElseThrow(() -> new CategoryNotExistsException(id));
         }
 
-        return category.modifyCategory(parentCategory, categoryModifyRequest.getName());
+        return CategoryMapper.INSTANCE.modifyResponse(
+                category.modifyCategory(parentCategory, categoryModifyRequest.getName()));
     }
 
     /**
@@ -114,8 +125,6 @@ public class CategoryService {
 
         categoryRepository.deleteById(id);
 
-        return CategoryDeleteResponse.builder()
-                .name(category.getName())
-                .build();
+        return CategoryMapper.INSTANCE.deleteResponse(category);
     }
 }
