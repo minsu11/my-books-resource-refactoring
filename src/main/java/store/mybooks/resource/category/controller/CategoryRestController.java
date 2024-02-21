@@ -2,6 +2,8 @@ package store.mybooks.resource.category.controller;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,13 +40,29 @@ public class CategoryRestController {
     private final CategoryService categoryService;
 
     /**
+     * methodName : getCategories <br>
+     * author : damho-lee <br>
+     * description : ParentCategoryId 를 기준으로 Caetgory 를 오름차수으로 반환. null 인 값이 가장 먼저 반환. 즉, 최상위 카테고리부터 반환됨. <br>
+     *
+     * @param pageable pagination. (default: page = 0, size = 10)
+     * @return ResponseEntity
+     */
+    @GetMapping
+    public ResponseEntity<List<CategoryGetResponse>> getCategoriesOrderByParentCategoryId(
+            @PageableDefault Pageable pageable) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(categoryService.getCategoriesOrderByParentCategoryId(pageable));
+    }
+
+    /**
      * 메서드 이름 : getHighestCategories .
      * 작성자 : damho-lee
      * 설명 : 최상위 카테고리 리스트 반환
      *
      * @return ResponseEntity
      */
-    @GetMapping
+    @GetMapping("/highest")
     public ResponseEntity<List<CategoryGetResponse>> getHighestCategories() {
         return ResponseEntity
                 .status(HttpStatus.OK)
