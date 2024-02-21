@@ -23,7 +23,6 @@ import store.mybooks.resource.user.entity.User;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface UserMapper {
 
-    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     @Mapping(source = "userStatus.id", target = "userStatusName")
     @Mapping(source = "userGrade.userGradeName.id", target = "userGradeName")
