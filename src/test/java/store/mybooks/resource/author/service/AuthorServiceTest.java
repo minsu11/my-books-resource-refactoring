@@ -125,6 +125,9 @@ class AuthorServiceTest {
 
         authorService.createAuthor(createRequest);
 
+        assertThat(createResponse.getName()).isEqualTo(author.getName());
+        assertThat(createResponse.getContent()).isEqualTo(author.getContent());
+
         verify(authorRepository, times(1)).save(any(Author.class));
         verify(authorMapper, times(1)).createResponse(any(Author.class));
     }
@@ -142,6 +145,9 @@ class AuthorServiceTest {
 
         authorService.modifyAuthor(id, modifyRequest);
 
+        assertThat(modifyResponse.getChangedName()).isEqualTo(modifyRequest.getChangeName());
+        assertThat(modifyResponse.getChangedContent()).isEqualTo(modifyRequest.getChangeContent());
+
         verify(authorRepository, times(1)).findById(id);
         verify(authorMapper, times(1)).modifyResponse(any(Author.class));
     }
@@ -158,6 +164,8 @@ class AuthorServiceTest {
         when(authorMapper.deleteResponse(any(Author.class))).thenReturn(deleteResponse);
 
         authorService.deleteAuthor(id);
+
+        assertThat(deleteResponse.getName()).isEqualTo(author.getName());
 
         verify(authorRepository, times(1)).findById(id);
         verify(authorRepository, times(1)).deleteById(id);
