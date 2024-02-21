@@ -100,7 +100,7 @@ public class CategoryRestController {
             @Valid @RequestBody CategoryCreateRequest categoryCreateRequest,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException("CategoryName 은 1글자 이상 10글자 이하여야합니다.\nCategoryName 은 공백일 수 없습니다.");
+            throw new ValidationException("CategoryName 은 1글자 이상 10글자 이하여야합니다. CategoryName 은 공백일 수 없습니다.");
         }
 
         return ResponseEntity
@@ -123,7 +123,7 @@ public class CategoryRestController {
             @Valid @RequestBody CategoryModifyRequest categoryModifyRequest,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException("CategoryName 은 1글자 이상 10글자 이하여야합니다.\nCategoryName 은 공백일 수 없습니다.");
+            throw new ValidationException("CategoryName 은 1글자 이상 10글자 이하여야합니다. CategoryName 은 공백일 수 없습니다.");
         }
 
         return ResponseEntity
