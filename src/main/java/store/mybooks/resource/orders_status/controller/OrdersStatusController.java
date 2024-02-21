@@ -4,9 +4,10 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import store.mybooks.resource.orders_status.dto.request.OrdersStatusCreateRequest;
-import store.mybooks.resource.orders_status.dto.response.OrdersStatusCreateResponse;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 import store.mybooks.resource.orders_status.service.OrdersStatusService;
 
@@ -37,8 +38,9 @@ public class OrdersStatusController {
      */
     @GetMapping("/{ordersStatusId}")
     public ResponseEntity<OrdersStatusResponse> getOrdersStatus(
-            @PathVariable String ordersStatusId
+            @PathVariable(name = "ordersStatusId") String ordersStatusId
     ) {
+
         OrdersStatusResponse response = ordersStatusService.getOrdersStatusById(ordersStatusId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -57,20 +59,5 @@ public class OrdersStatusController {
         return new ResponseEntity<>(ordersStatusResponseList, HttpStatus.OK);
     }
 
-    /**
-     * methodName : createOrdersStatus<br>
-     * author : minsu11<br>
-     * description : post 요청으로 들어오는 데이터를 저장<br>
-     *
-     * @param request 등록을 요청한 데이터<br>
-     * @return 등록한 주문 상태 타입에 대한 response entity으로 반환<br>
-     */
-    @PostMapping
-    public ResponseEntity<OrdersStatusCreateResponse> createOrdersStatus(
-            @RequestBody OrdersStatusCreateRequest request
-    ) {
-        OrdersStatusCreateResponse response = ordersStatusService.createOrdersStatus(request);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
 
 }
