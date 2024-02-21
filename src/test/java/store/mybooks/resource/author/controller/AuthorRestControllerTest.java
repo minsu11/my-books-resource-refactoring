@@ -125,6 +125,7 @@ class AuthorRestControllerTest {
                 .andExpect(jsonPath("$.content[0].name").value(name))
                 .andExpect(jsonPath("$.content[0].content").value(content))
                 .andExpect(jsonPath("$.content[1].id").value(id2))
+                .andExpect(jsonPath("$.content[1].name").value(name2))
                 .andExpect(jsonPath("$.content[1].content").value(content2));
 
         verify(authorService, times(1)).getAllAuthors(pageable);
