@@ -50,7 +50,7 @@ public class UserAddressService {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
 
 
-        if (userAddressRepository.countByUserId(userId) >= 10) {
+        if (userAddressRepository.countByUserId(userId) >= 11) {
             throw new UserAddressFullException(userId);
         }
 
