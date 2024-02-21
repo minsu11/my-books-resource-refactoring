@@ -1,5 +1,6 @@
 package store.mybooks.resource.error;
 
+import javax.validation.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -52,6 +53,13 @@ public class GlobalControllerAdvice {
     public ResponseEntity<String> xxxAlreadyExistsException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
+    }
+
+    @ExceptionHandler({ValidationException.class})
+    public ResponseEntity<String> validationException(ValidationException exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());
     }
 }
