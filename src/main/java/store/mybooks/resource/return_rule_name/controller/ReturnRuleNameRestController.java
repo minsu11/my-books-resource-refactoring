@@ -35,9 +35,9 @@ public class ReturnRuleNameRestController {
      * @param name url 경로로 들어온 요청 데이터
      * @return response entity
      */
-    @GetMapping("/{name}")
-    public ResponseEntity<ReturnRuleNameResponse> getReturnNameRule(@PathVariable(name = "name") String name) {
-        ReturnRuleNameResponse response = returnRuleNameService.getReturnNameRule(name);
+    @GetMapping("/{id}")
+    public ResponseEntity<ReturnRuleNameResponse> getReturnNameRule(@PathVariable(name = "id") String id) {
+        ReturnRuleNameResponse response = returnRuleNameService.getReturnNameRule(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

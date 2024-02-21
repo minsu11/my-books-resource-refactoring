@@ -43,5 +43,4 @@ public class ReturnRuleNameService {
         return returnRuleNameMapper.mapToReturnRuleNameResponse(returnNameRule);
     }
 
-
 }

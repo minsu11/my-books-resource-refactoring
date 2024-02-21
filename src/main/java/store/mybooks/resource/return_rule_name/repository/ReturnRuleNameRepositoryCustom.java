@@ -1,5 +1,9 @@
-package store.mybooks.resource.return_rule_name.repository;/**
- *packageName    : store.mybooks.resource.return_rule_name.repository<br>
+package store.mybooks.resource.return_rule_name.repository;
+
+import org.springframework.data.repository.NoRepositoryBean;
+
+/**
+ * packageName    : store.mybooks.resource.return_rule_name.repository<br>
  * fileName       : ReturnRuleNameRepositoryCustom<br>
  * author         : minsu11<br>
  * date           : 2/21/24<br>
@@ -8,5 +12,7 @@ package store.mybooks.resource.return_rule_name.repository;/**
  * DATE              AUTHOR             NOTE<br>
  * -----------------------------------------------------------<br>
  * 2/21/24        minsu11       최초 생성<br>
- */public interface ReturnRuleNameRepositoryCustom {
+ */
+@NoRepositoryBean
+public interface ReturnRuleNameRepositoryCustom {
 }

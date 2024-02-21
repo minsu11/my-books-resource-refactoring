@@ -14,5 +14,5 @@ import store.mybooks.resource.return_rule_name.entity.ReturnRuleName;
  * -----------------------------------------------------------
  * 2/20/24        minsu11       최초 생성
  */
-public interface ReturnRuleNameRepository extends JpaRepository<ReturnRuleName, String> {
+public interface ReturnRuleNameRepository extends JpaRepository<ReturnRuleName, String>, ReturnRuleNameRepositoryCustom {
 }
