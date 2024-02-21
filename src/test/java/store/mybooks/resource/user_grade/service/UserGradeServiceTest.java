@@ -19,6 +19,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import store.mybooks.resource.user_grade.dto.mapper.UserGradeMapper;
 import store.mybooks.resource.user_grade.dto.request.UserGradeCreateRequest;
 import store.mybooks.resource.user_grade.dto.response.UserGradeCreateResponse;
 import store.mybooks.resource.user_grade.dto.response.UserGradeGetResponse;
@@ -53,14 +54,20 @@ class UserGradeServiceTest {
     @Mock
     UserGradeNameRepository userGradeNameRepository;
 
+    @Mock
+    UserGradeMapper userGradeMapper;
+
 
     @Test
-    @DisplayName("createUserGrade 메서드가 올바르게 동작하는 경우")
+    @DisplayName("UserGradeCreateRequest 로 createUserGrade 메서드 실행시 동작 테스트")
     void givenUserGradeRequest_whenCallCreateUserGrade_thenReturnUserGradeCreateResponse(
             @Mock UserGradeCreateRequest userGradeCreateRequest,
             @Mock UserGradeName userGradeName,
-            @Mock UserGrade userGrade) {
+            @Mock UserGrade userGrade,
+            @Mock UserGradeCreateResponse userGradeCreateResponse) {
 
+
+        when(userGradeMapper.toUserGradeCreateResponse(any(UserGrade.class))).thenReturn(userGradeCreateResponse);
         when(userGradeNameRepository.findById(anyString())).thenReturn(Optional.of(userGradeName));
         when(userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(anyString())).thenReturn(Optional.empty());
 
@@ -75,7 +82,7 @@ class UserGradeServiceTest {
     }
 
     @Test
-    @DisplayName("createUserGrade 메서드 호출시 UserGradeName 이 없는 경우 UserGradeNameNotExistException")
+    @DisplayName("UserGradeCreateRequest 로 createUserGrade 메서드 실행시 UserGradeName 이 없는 경우 UserGradeNameNotExistException")
     void givenNotExistUserGradeName_whenCallCreateUserGrade_thenThrowUserGradeNameNotExistException(
             @Mock UserGradeCreateRequest userGradeCreateRequest) {
 
@@ -87,7 +94,7 @@ class UserGradeServiceTest {
 
 
     @Test
-    @DisplayName("userGradeId 를 이용해 UserGrade 를 삭제 ")
+    @DisplayName("userGradeId 로 DeleteUserGrade 메서드 실행시 동작 테스트")
     void givenUserGradeId_whenCallDeleteUserGrade_thenReturnUserGradeDeleteResponse(@Mock UserGrade userGrade) {
 
         when(userGradeRepository.findById(any())).thenReturn(Optional.of(userGrade));
@@ -97,7 +104,7 @@ class UserGradeServiceTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 userGradeId 를 이용해 UserGrade 를 삭제할시 UserGradeIdNotExistException")
+    @DisplayName("존재하지 않는 userGradeId 로 DeleteUserGrade 메서드 실행시 UserGradeIdNotExistException")
     void givenNotExistUserGradeId_whenCallDeleteUserGrade_thenThrowUserGradeNotExistException(
             @Mock UserGrade userGrade) {
 
@@ -110,7 +117,7 @@ class UserGradeServiceTest {
     }
 
     @Test
-    @DisplayName("UserGradeId 를 이용해 UserGrade 를 조회")
+    @DisplayName("UserGradeId 로 findUserGradeById 메서드 실행시 동작 테스트")
     void givenUserGradeId_whenCallFindUserGradeById_thenReturnUserGradeGetResponse(
             @Mock UserGrade userGrade) {
 
@@ -120,9 +127,10 @@ class UserGradeServiceTest {
     }
 
     @Test
-    void givenPageable_whenCallFindAllUserGrade_thenReturnUserGradeGetResponsePage(@Mock Page pageable) {
+    @DisplayName("Pageable 로 findAllUserGrade 메서드 실행시 동작 테스트")
+    void givenPageable_whenCallFindAllUserGrade_thenReturnUserGradeGetResponsePage(@Mock Page page) {
 
-        when(userGradeRepository.queryAllBy(any())).thenReturn(pageable);
+        when(userGradeRepository.queryAllBy(any())).thenReturn(page);
 
         userGradeService.findAllUserGrade(any());
 
