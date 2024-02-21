@@ -41,7 +41,7 @@ public class Author {
     public Author(String name, String content) {
         this.name = name;
         this.content = content;
-        createdDate = LocalDate.now();
+        this. createdDate = LocalDate.now();
     }
 
     public void setByModifyRequest(AuthorModifyRequest modifyRequest) {
