@@ -4,12 +4,9 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import store.mybooks.resource.orders_status.dto.request.OrdersStatusCreateRequest;
-import store.mybooks.resource.orders_status.dto.response.OrdersStatusCreateResponse;
-import store.mybooks.resource.orders_status.dto.response.OrdersStatusMapper;
+import store.mybooks.resource.orders_status.dto.mapper.OrdersStatusMapper;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 import store.mybooks.resource.orders_status.entity.OrdersStatus;
-import store.mybooks.resource.orders_status.exception.OrdersStatusAlreadyExistException;
 import store.mybooks.resource.orders_status.exception.OrdersStatusNotFoundException;
 import store.mybooks.resource.orders_status.repository.OrdersStatusRepository;
 
@@ -28,6 +25,7 @@ import store.mybooks.resource.orders_status.repository.OrdersStatusRepository;
  * 2/19/24        minsu11       javadoc 최초 추가<br>
  */
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class OrdersStatusService {
     private final OrdersStatusRepository ordersStatusRepository;
@@ -43,7 +41,6 @@ public class OrdersStatusService {
      * @return orders status response<br>
      * @throws OrdersStatusNotFoundException id와 동일한 주문 상태 데이터가 없는 경우<br>
      */
-    @Transactional(readOnly = true)
     public OrdersStatusResponse getOrdersStatusById(String ordersStatusId) {
 
         OrdersStatus ordersStatus = ordersStatusRepository.findById(
@@ -60,30 +57,8 @@ public class OrdersStatusService {
      *
      * @return list
      */
-    @Transactional(readOnly = true)
     public List<OrdersStatusResponse> getOrdersStatusList() {
         return ordersStatusRepository.getOrdersStatusList();
-    }
-
-
-    /**
-     * methodName : createOrdersStatus<br>
-     * author : minsu11<br>
-     * description : 주문 상태 등록. 이미 존재하는 경우 예외처리 던짐.<br>
-     *
-     * @param request client의 요청 데이터<br>
-     * @return orders status create response
-     * @throws OrdersStatusAlreadyExistException 등록 시 동일한 아이디가 존재하는 경우
-     */
-    @Transactional
-    public OrdersStatusCreateResponse createOrdersStatus(OrdersStatusCreateRequest request) {
-
-        if (ordersStatusRepository.existsById(request.getId())) {
-            throw new OrdersStatusAlreadyExistException("아이디가 이미 존재");
-        }
-        OrdersStatus ordersStatus = new OrdersStatus(request);
-        ordersStatusRepository.save(ordersStatus);
-        return mapper.mapToCreateResponse(ordersStatus);
     }
 
 
