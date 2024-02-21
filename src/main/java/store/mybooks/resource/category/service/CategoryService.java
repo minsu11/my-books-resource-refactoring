@@ -28,9 +28,11 @@ import store.mybooks.resource.category.repository.CategoryRepository;
  * 2/16/24          damho-lee          최초 생성
  */
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
     @Transactional(readOnly = true)
     public List<CategoryGetResponse> getHighestCategories() {
@@ -62,7 +64,6 @@ public class CategoryService {
      * @param categoryCreateRequest ParentCategory, name 포함.
      * @return category create response
      */
-    @Transactional
     public CategoryCreateResponse createCategory(CategoryCreateRequest categoryCreateRequest) {
         if (categoryRepository.existsByName(categoryCreateRequest.getName())) {
             throw new CategoryNameAlreadyExistsException(categoryCreateRequest.getName());
@@ -77,7 +78,7 @@ public class CategoryService {
                     .orElseThrow(() -> new CategoryNotExistsException(parentCategoryId));
         }
 
-        return CategoryMapper.INSTANCE.createResponse(categoryRepository.save(new Category(parentCategory, name)));
+        return categoryMapper.createResponse(categoryRepository.save(new Category(parentCategory, name)));
     }
 
     /**
@@ -91,7 +92,6 @@ public class CategoryService {
      *                              name 이 이미 존재하는 경우 CategoryNameAlreadyExistsException.
      * @return category modify response
      */
-    @Transactional
     public CategoryModifyResponse modifyCategory(int id, CategoryModifyRequest categoryModifyRequest) {
         if (categoryRepository.existsByName(categoryModifyRequest.getName())) {
             throw new CategoryNameAlreadyExistsException(categoryModifyRequest.getName());
@@ -107,7 +107,7 @@ public class CategoryService {
                     categoryRepository.findById(parentCategoryId).orElseThrow(() -> new CategoryNotExistsException(id));
         }
 
-        return CategoryMapper.INSTANCE.modifyResponse(
+        return categoryMapper.modifyResponse(
                 category.modifyCategory(parentCategory, categoryModifyRequest.getName()));
     }
 
@@ -119,12 +119,11 @@ public class CategoryService {
      * @param id 삭제하고자 하는 카테고리의 id. id 에 해당하는 category 가 없는 경우 CategoryNotExistsException.
      * @return CategoryDeleteResponse
      */
-    @Transactional
     public CategoryDeleteResponse deleteCategory(int id) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotExistsException(id));
 
         categoryRepository.deleteById(id);
 
-        return CategoryMapper.INSTANCE.deleteResponse(category);
+        return categoryMapper.deleteResponse(category);
     }
 }
