@@ -17,5 +17,6 @@ import store.mybooks.resource.return_rule_name.dto.response.ReturnRuleNameRespon
  */
 @NoRepositoryBean
 public interface ReturnRuleNameRepositoryCustom {
+
     List<ReturnRuleNameResponse> getReturnRuleNameList();
 }

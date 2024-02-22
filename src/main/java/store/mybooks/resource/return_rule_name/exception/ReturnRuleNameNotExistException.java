@@ -13,6 +13,7 @@ package store.mybooks.resource.return_rule_name.exception;
  */
 public class ReturnRuleNameNotExistException extends RuntimeException {
     public ReturnRuleNameNotExistException() {
+        super("반품 규정 명이 존재 하지 않음");
     }
 
     public ReturnRuleNameNotExistException(String message) {

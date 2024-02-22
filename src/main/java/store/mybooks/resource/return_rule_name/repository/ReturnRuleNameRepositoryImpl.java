@@ -23,12 +23,25 @@ public class ReturnRuleNameRepositoryImpl extends QuerydslRepositorySupport impl
         super(ReturnRuleNameResponse.class);
     }
 
+    /**
+     * methodName : getReturnRuleNameList<br>
+     * author : minsu11<br>
+     * description : 모든 반품 규정 명을 조회해서 {@code ReturnRuleNameResponse}로 반환
+     * <br> *
+     *
+     * @return {@code ReturnRuleNameResponse List}로 반환
+     */
     @Override
     public List<ReturnRuleNameResponse> getReturnRuleNameList() {
-        QReturnRuleName qReturnRuleName = QReturnRuleName.returnRuleName;
+        QReturnRuleName returnRuleName = QReturnRuleName.returnRuleName;
 
-        return from(qReturnRuleName)
-                .select(Projections.constructor(ReturnRuleNameResponse.class, qReturnRuleName.id, qReturnRuleName.createdDate))
+        return from(returnRuleName)
+                .select(
+                        Projections.constructor(
+                                ReturnRuleNameResponse.class,
+                                returnRuleName.id,
+                                returnRuleName.createdDate)
+                )
                 .fetch();
     }
 }

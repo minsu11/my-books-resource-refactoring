@@ -44,7 +44,7 @@ public class ReturnRuleNameService {
     @Transactional(readOnly = true)
     public ReturnRuleNameResponse getReturnRuleName(String name) {
         ReturnRuleName returnNameRule = returnRuleNameRepository.findById(name)
-                .orElseThrow(() -> new ReturnRuleNameNotExistException("반품 규정 명 규칙에 대한 데이터가 없음"));
+                .orElseThrow(ReturnRuleNameNotExistException::new);
         return returnRuleNameMapper.mapToReturnRuleNameResponse(returnNameRule);
     }
 
@@ -73,7 +73,7 @@ public class ReturnRuleNameService {
      */
     public ReturnRuleNameCreateResponse createReturnRuleName(ReturnRuleNameCreateRequest request) {
         if (returnRuleNameRepository.existsById(request.getId())) {
-            throw new ReturnRuleNameAlreadyExistException("이미 존재하는 반품 규정 명");
+            throw new ReturnRuleNameAlreadyExistException();
         }
         ReturnRuleName returnRuleName = new ReturnRuleName(request.getId(), LocalDate.now());
         returnRuleNameRepository.save(returnRuleName);

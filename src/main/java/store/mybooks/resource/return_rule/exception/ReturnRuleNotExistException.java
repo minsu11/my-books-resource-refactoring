@@ -13,6 +13,7 @@ package store.mybooks.resource.return_rule.exception;
  */
 public class ReturnRuleNotExistException extends RuntimeException {
     public ReturnRuleNotExistException() {
+        super("반품 규정이 존재하지 않음");
     }
 
     public ReturnRuleNotExistException(String message) {

@@ -4,6 +4,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,10 +22,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.validation.BindingResult;
 import store.mybooks.resource.return_rule_name.dto.request.ReturnRuleNameCreateRequest;
 import store.mybooks.resource.return_rule_name.dto.response.ReturnRuleNameCreateResponse;
 import store.mybooks.resource.return_rule_name.dto.response.ReturnRuleNameResponse;
-import store.mybooks.resource.return_rule_name.exception.ReturnRuleNameRequestValidationFailedException;
 import store.mybooks.resource.return_rule_name.service.ReturnRuleNameService;
 
 /**
@@ -48,6 +49,8 @@ class ReturnRuleNameControllerUnitTest {
 
     @Autowired
     MockMvc mockMvc;
+    @MockBean
+    BindingResult bindingResult;
 
 
     @Test
@@ -122,12 +125,11 @@ class ReturnRuleNameControllerUnitTest {
     void givenReturnNameCreateRequest_whenCreateReturnRuleName_thenReturnReturnRuleNameCreateResponse() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         ReturnRuleNameCreateRequest request = new ReturnRuleNameCreateRequest("");
-        when(returnRuleNameService.createReturnRuleName(request)).thenThrow(ReturnRuleNameRequestValidationFailedException.class);
         mockMvc.perform(post("/api/return_rule_names")
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-
+                .andExpect(status().isNotFound())
+                .andDo(print());
     }
 
 }

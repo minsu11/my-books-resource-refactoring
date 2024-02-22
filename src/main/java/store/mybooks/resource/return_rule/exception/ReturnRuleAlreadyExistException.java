@@ -13,6 +13,7 @@ package store.mybooks.resource.return_rule.exception;
  */
 public class ReturnRuleAlreadyExistException extends RuntimeException {
     public ReturnRuleAlreadyExistException() {
+        super("이미 존재하는 반품 규정 명");
     }
 
     public ReturnRuleAlreadyExistException(String message) {

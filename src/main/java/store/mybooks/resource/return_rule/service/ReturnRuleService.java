@@ -57,7 +57,7 @@ public class ReturnRuleService {
     public ReturnRuleResponse getReturnRuleResponseByReturnRuleName(String returnRuleName) {
         return returnRuleRepository
                 .findByReturnRuleName(returnRuleName)
-                .orElseThrow(() -> new ReturnRuleNotExistException("반품 규정이 존재하지 않음"));
+                .orElseThrow(ReturnRuleNotExistException::new);
     }
 
     /**
@@ -88,13 +88,13 @@ public class ReturnRuleService {
      */
     public ReturnRuleCreateResponse createReturnRule(ReturnRuleCreateRequest request) {
         if (returnRuleRepository.findByReturnRuleName(request.getReturnName()).isPresent()) {
-            throw new ReturnRuleAlreadyExistException("해당하는 반품 규정 명 존재");
+            throw new ReturnRuleAlreadyExistException();
         }
 
         ReturnRuleName returnRuleName =
                 returnRuleNameRepository
                         .findById(request.getReturnName())
-                        .orElseThrow(() -> new ReturnRuleNameAlreadyExistException("이미 존재하는 반품 정책 명입니다."));
+                        .orElseThrow(ReturnRuleNameAlreadyExistException::new);
 
         ReturnRule returnRule =
                 new ReturnRule(1, request.getDeliveryFee(), request.getTerm(), true, LocalDate.now(), returnRuleName);
@@ -124,11 +124,11 @@ public class ReturnRuleService {
         ReturnRuleName returnRuleNameResponse =
                 returnRuleNameRepository
                         .findById(returnRuleName)
-                        .orElseThrow(() -> new ReturnRuleNameNotExistException("반품 정책 명이 존재하지 않음"));
+                        .orElseThrow(ReturnRuleNameNotExistException::new);
         ReturnRule returnRule =
                 returnRuleRepository
                         .findByReturnRuleNameId(returnRuleNameResponse.getId())
-                        .orElseThrow(() -> new ReturnRuleNotExistException("존재하지 않음"));
+                        .orElseThrow(ReturnRuleNotExistException::new);
 
         returnRule.modifyByReturnRule(request, returnRuleNameResponse);
         return returnRuleMapper.mapToReturnRuleModifyResponse(returnRule);
