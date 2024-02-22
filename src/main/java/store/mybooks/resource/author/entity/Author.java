@@ -44,7 +44,7 @@ public class Author {
     private LocalDate createdDate;
 
     /**
-     * Instantiates a new Author.
+     * Author 생성자 생성.
      *
      * @param name    the name
      * @param content the content
