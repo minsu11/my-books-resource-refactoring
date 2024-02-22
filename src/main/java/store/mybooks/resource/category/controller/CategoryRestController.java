@@ -2,7 +2,6 @@ package store.mybooks.resource.category.controller;
 
 import java.util.List;
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +23,7 @@ import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
+import store.mybooks.resource.category.exception.CategoryValidationException;
 import store.mybooks.resource.category.service.CategoryService;
 
 /**
@@ -100,7 +100,7 @@ public class CategoryRestController {
             @Valid @RequestBody CategoryCreateRequest categoryCreateRequest,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException("CategoryName 은 1글자 이상 10글자 이하여야합니다. CategoryName 은 공백일 수 없습니다.");
+            throw new CategoryValidationException(bindingResult);
         }
 
         return ResponseEntity
@@ -123,7 +123,7 @@ public class CategoryRestController {
             @Valid @RequestBody CategoryModifyRequest categoryModifyRequest,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException("CategoryName 은 1글자 이상 10글자 이하여야합니다. CategoryName 은 공백일 수 없습니다.");
+            throw new CategoryValidationException(bindingResult);
         }
 
         return ResponseEntity
