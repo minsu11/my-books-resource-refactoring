@@ -1,8 +1,8 @@
-package store.mybooks.resource.delivery_name_rule.repository;
+package store.mybooks.resource.delivery_rule_name.repository;
 
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameDto;
+import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameDto;
 import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
 /**

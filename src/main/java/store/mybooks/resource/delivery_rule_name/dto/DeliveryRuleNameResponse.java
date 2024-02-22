@@ -1,23 +1,26 @@
-package store.mybooks.resource.delivery_name_rule.dto;
+package store.mybooks.resource.delivery_rule_name.dto;
 
-import lombok.AllArgsConstructor;
+import java.time.LocalDate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * packageName    : store.mybooks.resource.delivery_name_rule.dto
- * fileName       : DeliveryNameRuleRegisterRequest
+ * fileName       : DeliveryNameRuleReadResponse
  * author         : Fiat_lux
- * date           : 2/15/24
+ * date           : 2/16/24
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 2/15/24        Fiat_lux       최초 생성
+ * 2/16/24        Fiat_lux       최초 생성
  */
+
 @Getter
-@AllArgsConstructor
+@Setter
 @NoArgsConstructor
-public class DeliveryRuleNameRegisterRequest {
+public class DeliveryRuleNameResponse {
     private String id;
+    private LocalDate createdDate;
 }

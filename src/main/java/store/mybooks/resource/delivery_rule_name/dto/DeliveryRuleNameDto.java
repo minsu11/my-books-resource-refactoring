@@ -1,4 +1,4 @@
-package store.mybooks.resource.delivery_name_rule.dto;
+package store.mybooks.resource.delivery_rule_name.dto;
 
 import java.time.LocalDate;
 

@@ -1,4 +1,4 @@
-package store.mybooks.resource.delivery_name_rule.controller;
+package store.mybooks.resource.delivery_rule_name.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -20,10 +20,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameDto;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameRegisterRequest;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameResponse;
-import store.mybooks.resource.delivery_name_rule.service.DeliveryRuleNameService;
+import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameDto;
+import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameRegisterRequest;
+import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameResponse;
+import store.mybooks.resource.delivery_rule_name.service.DeliveryRuleNameService;
+import store.mybooks.resource.delivery_rule_name.controller.DeliveryRuleNameController;
 
 /**
  * packageName    : store.mybooks.resource.delivery_name_rule.controller
