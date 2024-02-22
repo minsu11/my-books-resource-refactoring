@@ -34,7 +34,7 @@ import store.mybooks.resource.publisher.controller.PublisherRestController;
  * -----------------------------------------------------------<br/>
  * 2/23/24        newjaehun       최초 생성<br/>
  */
-@WebMvcTest(PublisherRestController.class)
+@WebMvcTest(BookStatusRestController.class)
 @ExtendWith(MockitoExtension.class)
 class BookStatusRestControllerTest {
     @Autowired
@@ -66,7 +66,7 @@ class BookStatusRestControllerTest {
         mockMvc.perform(get(url)
                         .accept("application/json"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].size()").value(2));
+                .andExpect(jsonPath("$.content.size()").value(2));
         verify(bookStatusService, times(1)).getAllBookStatus();
     }
 }
