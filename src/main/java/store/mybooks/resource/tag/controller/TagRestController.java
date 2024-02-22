@@ -2,7 +2,6 @@ package store.mybooks.resource.tag.controller;
 
 import java.util.List;
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +23,7 @@ import store.mybooks.resource.tag.dto.response.TagGetResponse;
 import store.mybooks.resource.tag.dto.response.TagModifyResponse;
 import store.mybooks.resource.tag.exception.TagNameAlreadyExistsException;
 import store.mybooks.resource.tag.exception.TagNotExistsException;
+import store.mybooks.resource.tag.exception.TagValidationException;
 import store.mybooks.resource.tag.service.TagService;
 
 /**
@@ -69,7 +69,7 @@ public class TagRestController {
     public ResponseEntity<TagCreateResponse> createTag(@Valid @RequestBody TagCreateRequest tagCreateRequest,
                                                        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException("Tag 이름은 1글자 이상 10글자 이하여야 합니다. Tag 이름은 공백일 수 없습니다.");
+            throw new TagValidationException(bindingResult);
         }
 
         return ResponseEntity
@@ -91,7 +91,7 @@ public class TagRestController {
                                                        @Valid @RequestBody TagModifyRequest tagModifyRequest,
                                                        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException("Tag 이름은 1글자 이상 10글자 이하여야 합니다. Tag 이름은 공백일 수 없습니다.");
+            throw new TagValidationException(bindingResult);
         }
 
         return ResponseEntity
