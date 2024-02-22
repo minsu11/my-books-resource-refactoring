@@ -64,8 +64,8 @@ public class GlobalControllerAdvice {
      * @param exception ValidationException.
      * @return ResponseEntity
      */
-    @ExceptionHandler({ValidationException.class})
-    public ResponseEntity<String> validationException(ValidationException exception) {
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<String> validationException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());
