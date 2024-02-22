@@ -1,5 +1,6 @@
 package store.mybooks.resource.category.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -26,12 +27,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import store.mybooks.resource.category.dto.request.CategoryCreateRequest;
 import store.mybooks.resource.category.dto.request.CategoryModifyRequest;
 import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
+import store.mybooks.resource.category.exception.CategoryValidationException;
 import store.mybooks.resource.category.service.CategoryService;
 
 /**
@@ -138,17 +141,19 @@ class CategoryRestControllerTest {
     }
 
     @Test
-    @DisplayName("카테고리 생성 Validation 실패")
+    @DisplayName("카테고리 생성 - Validation 실패")
     public void givenCreateCategory_whenValidationFailure_thenReturnBadRequest() throws Exception {
         CategoryCreateRequest categoryCreateRequest = new CategoryCreateRequest(null, null);
 
         String content = objectMapper.writeValueAsString(categoryCreateRequest);
 
-        mockMvc.perform(post("/api/categories")
+        MvcResult mvcResult = mockMvc.perform(post("/api/categories")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$").value("CategoryName 은 1글자 이상 10글자 이하여야합니다. CategoryName 은 공백일 수 없습니다."));
+                .andReturn();
+
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(CategoryValidationException.class);
     }
 
 
@@ -179,11 +184,13 @@ class CategoryRestControllerTest {
         CategoryModifyRequest categoryModifyRequest = new CategoryModifyRequest(null, "   ");
         String content = objectMapper.writeValueAsString(categoryModifyRequest);
 
-        mockMvc.perform(put("/api/categories/{id}", 1)
+        MvcResult mvcResult = mockMvc.perform(put("/api/categories/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$").value("CategoryName 은 1글자 이상 10글자 이하여야합니다. CategoryName 은 공백일 수 없습니다."));
+                .andReturn();
+
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(CategoryValidationException.class);
     }
 
     @Test
