@@ -70,6 +70,8 @@ public class GlobalControllerAdvice {
     public ResponseEntity<String> xxxValidationFailedException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
+    }
 
     /**
      * methodName : validationException <br>
