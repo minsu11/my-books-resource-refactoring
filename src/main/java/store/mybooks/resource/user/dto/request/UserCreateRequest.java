@@ -18,6 +18,8 @@ import lombok.NoArgsConstructor;
  */
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserCreateRequest {
 
     private String name;
