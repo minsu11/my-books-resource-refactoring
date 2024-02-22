@@ -109,7 +109,7 @@ public class ReturnRuleRestController {
             throw new ReturnRuleValidationFailedException(bindingResult);
         }
         ReturnRuleModifyResponse modifyResponse =
-                returnRuleService.modifyReturnRule(modifyRequest);
+                returnRuleService.modifyReturnRule(modifyRequest, name);
 
         return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
     }

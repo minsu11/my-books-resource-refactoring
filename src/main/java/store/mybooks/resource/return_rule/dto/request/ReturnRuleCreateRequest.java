@@ -9,7 +9,7 @@ import lombok.Getter;
  * fileName       : ReturnRuleCreateRequest<br>
  * author         : minsu11<br>
  * date           : 2/21/24<br>
- * description    :
+ * description    : 등록할 정보가 들어 있는 반품 규정 DTO
  * ===========================================================<br>
  * DATE              AUTHOR             NOTE<br>
  * -----------------------------------------------------------<br>

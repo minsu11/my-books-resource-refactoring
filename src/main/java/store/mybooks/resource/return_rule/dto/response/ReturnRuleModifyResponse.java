@@ -9,7 +9,7 @@ import lombok.Setter;
  * fileName       : ReturnRuleModifyResponse<br>
  * author         : minsu11<br>
  * date           : 2/22/24<br>
- * description    :
+ * description    : 수정 된 반품 규정 DTO
  * ===========================================================<br>
  * DATE              AUTHOR             NOTE<br>
  * -----------------------------------------------------------<br>

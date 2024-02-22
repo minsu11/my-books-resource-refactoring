@@ -11,7 +11,7 @@ import lombok.Getter;
  * fileName       : ReturnRuleModifyRequest<br>
  * author         : minsu11<br>
  * date           : 2/22/24<br>
- * description    :
+ * description    : 수정할 들어있는 반품 규정 DTO
  * ===========================================================<br>
  * DATE              AUTHOR             NOTE<br>
  * -----------------------------------------------------------<br>

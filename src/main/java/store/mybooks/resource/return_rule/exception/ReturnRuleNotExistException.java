@@ -5,7 +5,7 @@ package store.mybooks.resource.return_rule.exception;
  * fileName       : ReturnRuleNotExistException<br>
  * author         : minsu11<br>
  * date           : 2/21/24<br>
- * description    :
+ * description    : 반품 규정이 존재하지 않는 경우의 {@code exception}
  * ===========================================================<br>
  * DATE              AUTHOR             NOTE<br>
  * -----------------------------------------------------------<br>
