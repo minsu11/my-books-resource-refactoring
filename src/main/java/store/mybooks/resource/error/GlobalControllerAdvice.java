@@ -1,5 +1,6 @@
 package store.mybooks.resource.error;
 
+import javax.validation.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,7 +31,7 @@ public class GlobalControllerAdvice {
      * description : NotFoundException 을 처리하는 ExceptionHandler.
      *
      * @param exception exception.
-     * @return response entity
+     * @return ResponseEntity
      */
     @ExceptionHandler({CategoryNotExistsException.class, TagNotExistsException.class, PublisherNotExistException.class})
     public ResponseEntity<String> xxxNotExistsException(Exception exception) {
@@ -45,13 +46,28 @@ public class GlobalControllerAdvice {
      * description : AlreadyExistsException 을 처리하는 ExceptionHandler.
      *
      * @param exception exception.
-     * @return response entity
+     * @return ResponseEntity
      */
     @ExceptionHandler({CategoryNameAlreadyExistsException.class, TagNameAlreadyExistsException.class,
             PublisherAlreadyExistException.class})
     public ResponseEntity<String> xxxAlreadyExistsException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
+    }
+
+    /**
+     * methodName : validationException <br>
+     * author : damho-lee <br>
+     * description : ValidationException 을 처리하는 ExceptionHandler. <br>
+     *
+     * @param exception ValidationException.
+     * @return ResponseEntity
+     */
+    @ExceptionHandler({ValidationException.class})
+    public ResponseEntity<String> validationException(ValidationException exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());
     }
 }
