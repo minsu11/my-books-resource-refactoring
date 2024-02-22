@@ -87,9 +87,21 @@ public class ReturnRuleRestController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    /**
+     * methodName : modifyReturnRule<br>
+     * author : minsu11<br>
+     * description : put 요청으로 들어오는 {@code name}의 정보를 {@code modifyRequest} 정보로 수정.
+     * {@code modifyRequest}가 유효성 검사에 어긋난 경우 {@code ReturnRuleValidationFailedException}을 던짐.
+     * <br> *
+     *
+     * @param name          수정 할 정보의 name.
+     * @param modifyRequest 수정 할 정보의 {@code request body data}.
+     * @param bindingResult 유효성 검사 실패 시 에러의 정보가 담김.
+     * @return response entity
+     */
     @PutMapping("/{name}")
     public ResponseEntity<ReturnRuleModifyResponse> modifyReturnRule(
-            @PathVariable String id,
+            @PathVariable String name,
             @Valid @RequestBody ReturnRuleModifyRequest modifyRequest,
             BindingResult bindingResult
     ) {
