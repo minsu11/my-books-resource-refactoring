@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -38,6 +39,7 @@ class CategoryRepositoryTest {
     }
 
     @Test
+    @DisplayName("최상위 카테고리들 가져오기")
     void givenCategory_whenFindHighestCategoryList_thenReturnHighestCategoryGetResponseList() {
         List<CategoryGetResponse> highestCategoryList = categoryRepository.findAllByParentCategoryIsNull();
         assertThat(highestCategoryList).hasSize(1);
@@ -48,6 +50,7 @@ class CategoryRepositoryTest {
     }
 
     @Test
+    @DisplayName("부모 카테고리 id 로 카테고리들 가져오기")
     void givenCategory_whenFindCategoryListByParentCategoryId_thenReturnCategoryGetResponseList() {
         List<CategoryGetResponse> childCategoryList =
                 categoryRepository.findAllByParentCategory_Id(actualParentCategory.getId());
