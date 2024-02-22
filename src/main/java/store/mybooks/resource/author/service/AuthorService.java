@@ -36,9 +36,9 @@ public class AuthorService {
     /**
      * methodName : getAllAuthors
      * author : newjaehun
-     * description : 전체 저자 리스트 반환
+     * description : 전체 저자 리스트 반환.
      *
-     * @param pageable
+     * @param pageable pageable
      * @return page
      */
     @Transactional(readOnly = true)
@@ -49,23 +49,24 @@ public class AuthorService {
     /**
      * methodName : createAuthor
      * author : newjaehun
-     * description : 저자 추가하는 메서드
+     * description : 저자 추가하는 메서드.
      *
-     * @param createRequest: 추가할 name, content
+     * @param createRequest 추가할 name, content
      * @return AuthorCreateResponse
      */
     @Transactional
     public AuthorCreateResponse createAuthor(AuthorCreateRequest createRequest) {
-        return authorMapper.createResponse(authorRepository.save(new Author(createRequest.getName(), createRequest.getContent())));
+        return authorMapper.createResponse(
+                authorRepository.save(new Author(createRequest.getName(), createRequest.getContent())));
     }
 
     /**
      * methodName : modifyAuthor
      * author : newjaehun
-     * description : 저자 수정하는 메서드
+     * description : 저자 수정하는 메서드.
      *
-     * @param authorId
-     * @param modifyRequest
+     * @param authorId      저자 ID
+     * @param modifyRequest request
      * @return AuthorModifyResponse
      */
     @Transactional
@@ -80,9 +81,9 @@ public class AuthorService {
     /**
      * methodName : deleteAuthor
      * author : newjaehun
-     * description : 저자 삭제하는 메서드
+     * description : 저자 삭제하는 메서드.
      *
-     * @param authorId
+     * @param authorId 저자 ID
      * @return AuthorDeleteResponse
      */
     @Transactional

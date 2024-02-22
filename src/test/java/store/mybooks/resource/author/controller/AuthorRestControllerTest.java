@@ -154,9 +154,9 @@ class AuthorRestControllerTest {
         when(authorService.createAuthor(any(AuthorCreateRequest.class))).thenReturn(createResponse);
 
         mockMvc.perform(post(url)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(createRequest)))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value(createResponse.getName()))
                 .andExpect(jsonPath("$.content").value(createResponse.getContent()));
@@ -185,7 +185,8 @@ class AuthorRestControllerTest {
 
     @Test
     @DisplayName("저자 수정(검증 성공)")
-    void givenAuthorIdAndValidAuthorModifyRequest_whenModifyAuthor_thenModifyAuthorAndReturnAuthorModifyResponse() throws Exception {
+    void givenAuthorIdAndValidAuthorModifyRequest_whenModifyAuthor_thenModifyAuthorAndReturnAuthorModifyResponse()
+            throws Exception {
         AuthorModifyRequest modifyRequest = new AuthorModifyRequest(name2, content2);
         Author resultAuthor = new Author(modifyRequest.getChangeName(), modifyRequest.getChangeContent());
 

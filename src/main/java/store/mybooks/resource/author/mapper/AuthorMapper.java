@@ -23,7 +23,6 @@ import store.mybooks.resource.author.entity.Author;
 public interface AuthorMapper {
     AuthorCreateResponse createResponse(Author author);
 
-
     @Mapping(source = "name", target = "changedName")
     @Mapping(source = "content", target = "changedContent")
     AuthorModifyResponse modifyResponse(Author author);

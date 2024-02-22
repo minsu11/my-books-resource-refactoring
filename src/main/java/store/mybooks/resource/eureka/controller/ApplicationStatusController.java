@@ -27,7 +27,8 @@ public class ApplicationStatusController {
     private final ApplicationInfoManager applicationInfoManager;
     private final ApplicationStatus applicationStatus;
 
-    public ApplicationStatusController(ApplicationInfoManager applicationInfoManager, ApplicationStatus applicationStatus) {
+    public ApplicationStatusController(ApplicationInfoManager applicationInfoManager,
+                                       ApplicationStatus applicationStatus) {
         this.applicationInfoManager = applicationInfoManager;
         this.applicationStatus = applicationStatus;
     }
