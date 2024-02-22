@@ -38,6 +38,8 @@ public class UserGradeService {
 
     private final UserGradeNameRepository userGradeNameRepository;
 
+    private final UserGradeMapper userGradeMapper;
+
 
     /**
      * Create user grade user grade create response.
@@ -67,7 +69,7 @@ public class UserGradeService {
 
         userGradeRepository.save(userGrade);
 
-        return UserGradeMapper.INSTANCE.toUserGradeCreateResponse(userGrade);
+        return userGradeMapper.toUserGradeCreateResponse(userGrade);
     }
 
     /**

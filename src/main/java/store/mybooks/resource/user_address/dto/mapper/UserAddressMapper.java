@@ -22,7 +22,6 @@ import store.mybooks.resource.user_address.entity.UserAddress;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface UserAddressMapper {
 
-    UserAddressMapper INSTANCE = Mappers.getMapper(UserAddressMapper.class);
 
     UserAddressCreateResponse toUserAddressCreateResponse(UserAddress userAddress);
 

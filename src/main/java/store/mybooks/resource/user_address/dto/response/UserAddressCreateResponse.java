@@ -1,5 +1,6 @@
 package store.mybooks.resource.user_address.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,6 +18,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class UserAddressCreateResponse {
 
     private String alias;

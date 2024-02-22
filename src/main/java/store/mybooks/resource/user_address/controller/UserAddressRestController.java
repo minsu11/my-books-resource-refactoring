@@ -46,12 +46,12 @@ import store.mybooks.resource.user_address.service.UserAddressService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/users-addresses")
+@RequestMapping("/api/users")
 public class UserAddressRestController {
 
     private final UserAddressService userAddressService;
 
-    @PostMapping("/{userId}")
+    @PostMapping("/{userId}/addresses")
     public ResponseEntity<UserAddressCreateResponse> createUserAddress(
             @PathVariable(name = "userId") Long userId,
             @RequestBody UserAddressCreateRequest createRequest) {
@@ -63,7 +63,7 @@ public class UserAddressRestController {
     }
 
 
-    @PutMapping("/{userId}/{addressId}")
+    @PutMapping("/{userId}/addresses/{addressId}")
     public ResponseEntity<UserAddressModifyResponse> modifyUserAddress(
             @PathVariable(name = "userId") Long userId,
             @PathVariable(name = "addressId") Long addressId,
@@ -75,7 +75,7 @@ public class UserAddressRestController {
         return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{userId}/{addressId}")
+    @DeleteMapping("/{userId}/addresses/{addressId}")
     public ResponseEntity<UserAddressDeleteResponse> deleteUserAddress(
             @PathVariable(name = "userId") Long userId,
             @PathVariable(name = "addressId") Long addressId) {
@@ -87,7 +87,7 @@ public class UserAddressRestController {
     }
 
 
-    @GetMapping("/{userId}/{addressId}")
+    @GetMapping("/{userId}/addresses/{addressId}")
     public ResponseEntity<UserAddressGetResponse> findUserAddressByAddressId(
             @PathVariable(name = "userId") Long userId,
             @PathVariable(name = "addressId") Long addressId) {
@@ -98,14 +98,14 @@ public class UserAddressRestController {
     }
 
 
-    @GetMapping
+    @GetMapping("/addresses")
     public ResponseEntity<Page<UserAddressGetResponse>> findAllUserAddress(Pageable pageable) {
 
         Page<UserAddressGetResponse> paginationUserAddress = userAddressService.findByAllUserAddress(pageable);
         return new ResponseEntity<>(paginationUserAddress, HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/{userId}/addresses")
     public ResponseEntity<List<UserAddressGetResponse>> findAllAddressByUserId(@PathVariable(name = "userId") Long
                                                                                        userId) {
 
