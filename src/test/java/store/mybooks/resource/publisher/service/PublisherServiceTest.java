@@ -200,15 +200,15 @@ class PublisherServiceTest {
     @Test
     @DisplayName("출판사 삭제")
     void givenPublisherId_whenDeletePublisher_thenDeletePublisherAndReturnPublisherDeleteResponse() {
-        given(publisherRepository.findById(eq(id))).willReturn(Optional.of(publisher));
+        given(publisherRepository.findById(id)).willReturn(Optional.of(publisher));
         PublisherDeleteResponse deleteResponse = new PublisherDeleteResponse();
         deleteResponse.setName(name);
         doNothing().when(publisherRepository).deleteById(id);
         when(publisherMapper.deleteResponse(publisher)).thenReturn(deleteResponse);
 
-       publisherService.deletePublisher(id);
+        publisherService.deletePublisher(id);
 
-        verify(publisherRepository, times(1)).findById(eq(id));
+        verify(publisherRepository, times(1)).findById(id);
         verify(publisherRepository, times(1)).deleteById(id);
         verify(publisherMapper, times(1)).deleteResponse(any(Publisher.class));
 
@@ -217,11 +217,11 @@ class PublisherServiceTest {
     @Test
     @DisplayName("존재하지 않는 출판사 삭제")
     void givenPublisherId_whenNotExistsPublisherDelete_thenThrowPublisherNotExistException() {
-        given(publisherRepository.findById(eq(id))).willReturn(Optional.empty());
+        given(publisherRepository.findById(id)).willReturn(Optional.empty());
 
         assertThrows(PublisherNotExistException.class, () -> publisherService.deletePublisher(id));
 
-        verify(publisherRepository, times(1)).findById(eq(id));
+        verify(publisherRepository, times(1)).findById(id);
         verify(publisherRepository, times(0)).deleteById(id);
         verify(publisherMapper, times(0)).deleteResponse(any(Publisher.class));
     }
