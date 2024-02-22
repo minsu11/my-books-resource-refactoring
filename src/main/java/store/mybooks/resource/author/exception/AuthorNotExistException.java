@@ -11,7 +11,7 @@ package store.mybooks.resource.author.exception;
  * -----------------------------------------------------------
  * 2/20/24        newjaehun       최초 생성
  */
-public class AuthorNotExistException extends RuntimeException{
+public class AuthorNotExistException extends RuntimeException {
     public AuthorNotExistException(Integer authorId) {
         super("저자ID " + authorId + "는 존재하지 않는 저자 ID 입니다");
     }

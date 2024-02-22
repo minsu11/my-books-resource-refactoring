@@ -70,6 +70,7 @@ class AuthorRepositoryTest {
     void givenExistsAuthorName_whenExistsByName_thenReturnTrue() {
         Assertions.assertTrue(authorRepository.existsByName(author1.getName()));
     }
+
     @Test
     @Order(3)
     @DisplayName("저자명 중복이 아닐일 경우")

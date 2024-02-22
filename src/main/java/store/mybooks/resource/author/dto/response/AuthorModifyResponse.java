@@ -18,5 +18,6 @@ import lombok.Setter;
 @Setter
 public class AuthorModifyResponse {
     private String changedName;
+    
     private String changedContent;
 }

@@ -13,6 +13,8 @@ package store.mybooks.resource.author.dto.response;
  */
 public interface AuthorGetResponse {
     Integer getId();
+
     String getName();
+
     String getContent();
 }
