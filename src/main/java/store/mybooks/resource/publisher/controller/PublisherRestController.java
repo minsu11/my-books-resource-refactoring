@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,8 +44,9 @@ public class PublisherRestController {
     /**
      * methodName : getAllPublishers
      * author : newjaehun
-     * description : 전체 출판사 리스트 반환
-     * @param pageable
+     * description : 전체 출판사 리스트 반환.
+     *
+     * @param pageable pageable
      * @return ResponseEntity
      */
     @GetMapping
@@ -56,14 +59,18 @@ public class PublisherRestController {
     /**
      * methodName : createPublisher
      * author : newjaehun
-     * description : 출판사 추가
+     * description : 출판사 추가.
      *
-     * @param createRequest: 추가할 name 포함
+     * @param createRequest 추가할 name 포함
      * @return ResponseEntity
      */
     @PostMapping
     public ResponseEntity<PublisherCreateResponse> createPublisher(
-            @Valid @RequestBody PublisherCreateRequest createRequest) {
+            @Valid @RequestBody PublisherCreateRequest createRequest, BindingResult bindingResult)
+            throws BindException {
+        if (bindingResult.hasErrors()) {
+            throw new BindException(bindingResult);
+        }
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(publisherService.createPublisher(createRequest));
@@ -72,14 +79,20 @@ public class PublisherRestController {
     /**
      * methodName : modifyPublisher
      * author : newjaehun
-     * description : 출판사 수정
+     * description : 출판사 수정.
      *
-     * @param publisherId: 수정하려는 publisher 의 id
-     * @param modifyRequest: 수정할 name 포함
+     * @param publisherId   수정하려는 publisher 의 id
+     * @param modifyRequest 수정할 name 포함
      * @return ResponseEntity
      */
     @PutMapping("/{id}")
-    public ResponseEntity<PublisherModifyResponse> modifyPublisher(@PathVariable("id") Integer publisherId, @Valid @RequestBody PublisherModifyRequest modifyRequest) {
+    public ResponseEntity<PublisherModifyResponse> modifyPublisher(@PathVariable("id") Integer publisherId,
+                                                                   @Valid @RequestBody
+                                                                   PublisherModifyRequest modifyRequest,
+                                                                   BindingResult bindingResult) throws BindException {
+        if (bindingResult.hasErrors()) {
+            throw new BindException(bindingResult);
+        }
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(publisherService.modifyPublisher(publisherId, modifyRequest));
@@ -89,9 +102,9 @@ public class PublisherRestController {
     /**
      * methodName : deletePublisher
      * author : newjaehun
-     * description : 출판사 삭제
+     * description : 출판사 삭제.
      *
-     * @param publisherId: 삭제하려는 publisher 의 id
+     * @param publisherId 삭제하려는 publisher 의 id
      * @return ResponseEntity
      */
     @DeleteMapping("/{id}")

@@ -1,9 +1,11 @@
 package store.mybooks.resource.tag.controller;
 
 import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,7 @@ import store.mybooks.resource.tag.dto.response.TagGetResponse;
 import store.mybooks.resource.tag.dto.response.TagModifyResponse;
 import store.mybooks.resource.tag.exception.TagNameAlreadyExistsException;
 import store.mybooks.resource.tag.exception.TagNotExistsException;
+import store.mybooks.resource.tag.exception.TagValidationException;
 import store.mybooks.resource.tag.service.TagService;
 
 /**
@@ -63,7 +66,12 @@ public class TagRestController {
      * @return response entity
      */
     @PostMapping
-    public ResponseEntity<TagCreateResponse> createTag(@RequestBody TagCreateRequest tagCreateRequest) {
+    public ResponseEntity<TagCreateResponse> createTag(@Valid @RequestBody TagCreateRequest tagCreateRequest,
+                                                       BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new TagValidationException(bindingResult);
+        }
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(tagService.createTag(tagCreateRequest));
@@ -80,7 +88,12 @@ public class TagRestController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<TagModifyResponse> modifyTag(@PathVariable("id") int id,
-                                                       @RequestBody TagModifyRequest tagModifyRequest) {
+                                                       @Valid @RequestBody TagModifyRequest tagModifyRequest,
+                                                       BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new TagValidationException(bindingResult);
+        }
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(tagService.modifyTag(id, tagModifyRequest));

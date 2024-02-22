@@ -1,9 +1,14 @@
 package store.mybooks.resource.category.controller;
 
 import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +23,7 @@ import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
+import store.mybooks.resource.category.exception.CategoryValidationException;
 import store.mybooks.resource.category.service.CategoryService;
 
 /**
@@ -38,13 +44,29 @@ public class CategoryRestController {
     private final CategoryService categoryService;
 
     /**
+     * methodName : getCategories <br>
+     * author : damho-lee <br>
+     * description : ParentCategoryId 를 기준으로 Caetgory 를 오름차수으로 반환. null 인 값이 가장 먼저 반환. 즉, 최상위 카테고리부터 반환됨. <br>
+     *
+     * @param pageable pagination. (default: page = 0, size = 10)
+     * @return ResponseEntity
+     */
+    @GetMapping
+    public ResponseEntity<Page<CategoryGetResponse>> getCategoriesOrderByParentCategoryId(
+            @PageableDefault Pageable pageable) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(categoryService.getCategoriesOrderByParentCategoryId(pageable));
+    }
+
+    /**
      * 메서드 이름 : getHighestCategories .
      * 작성자 : damho-lee
      * 설명 : 최상위 카테고리 리스트 반환
      *
      * @return ResponseEntity
      */
-    @GetMapping
+    @GetMapping("/highest")
     public ResponseEntity<List<CategoryGetResponse>> getHighestCategories() {
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -75,7 +97,12 @@ public class CategoryRestController {
      */
     @PostMapping
     public ResponseEntity<CategoryCreateResponse> createCategory(
-            @RequestBody CategoryCreateRequest categoryCreateRequest) {
+            @Valid @RequestBody CategoryCreateRequest categoryCreateRequest,
+            BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new CategoryValidationException(bindingResult);
+        }
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(categoryService.createCategory(categoryCreateRequest));
@@ -93,7 +120,12 @@ public class CategoryRestController {
     @PutMapping("/{id}")
     public ResponseEntity<CategoryModifyResponse> modifyCategory(
             @PathVariable("id") int id,
-            @RequestBody CategoryModifyRequest categoryModifyRequest) {
+            @Valid @RequestBody CategoryModifyRequest categoryModifyRequest,
+            BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new CategoryValidationException(bindingResult);
+        }
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(categoryService.modifyCategory(id, categoryModifyRequest));
