@@ -1,5 +1,6 @@
 package store.mybooks.resource.return_rule_name.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,7 @@ public class ReturnRuleName {
     @Column(name = "return_rule_name_id")
     private String id;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "return_rule_name_created_date")
     private LocalDate createdDate;
 

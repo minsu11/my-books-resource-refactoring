@@ -9,6 +9,7 @@ import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsExcept
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
 import store.mybooks.resource.publisher.exception.PublisherAlreadyExistException;
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
+import store.mybooks.resource.return_rule_name.exception.ReturnRuleNameRequestValidationFailedException;
 import store.mybooks.resource.tag.exception.TagNameAlreadyExistsException;
 import store.mybooks.resource.tag.exception.TagNotExistsException;
 
@@ -51,6 +52,22 @@ public class GlobalControllerAdvice {
     @ExceptionHandler({CategoryNameAlreadyExistsException.class, TagNameAlreadyExistsException.class,
             PublisherAlreadyExistException.class})
     public ResponseEntity<String> xxxAlreadyExistsException(Exception exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
+    }
+
+
+    /**
+     * methodName : xxxValidationFailedException
+     * author : minsu11
+     * description : ValidationFailedException 을 처리하는 ExceptionHandler.
+     *
+     * @param exception the exception
+     * @return the response entity
+     */
+    @ExceptionHandler({ReturnRuleNameRequestValidationFailedException.class})
+    public ResponseEntity<String> xxxValidationFailedException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(exception.getMessage());
