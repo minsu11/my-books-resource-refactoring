@@ -1,5 +1,6 @@
 package store.mybooks.resource.tag.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
@@ -21,12 +22,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import store.mybooks.resource.tag.dto.request.TagCreateRequest;
 import store.mybooks.resource.tag.dto.request.TagModifyRequest;
 import store.mybooks.resource.tag.dto.response.TagCreateResponse;
 import store.mybooks.resource.tag.dto.response.TagDeleteResponse;
 import store.mybooks.resource.tag.dto.response.TagGetResponse;
 import store.mybooks.resource.tag.dto.response.TagModifyResponse;
+import store.mybooks.resource.tag.exception.TagValidationException;
 import store.mybooks.resource.tag.service.TagService;
 
 /**
@@ -61,6 +64,7 @@ class TagRestControllerTest {
         when(tagService.getTags()).thenReturn(tagGetResponseList);
 
         mockMvc.perform(get("/api/tags"))
+                .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.size()").value(tagGetResponseList.size()))
                 .andExpect(jsonPath("$[0].name").value(tagGetResponseList.get(0).getName()))
@@ -92,11 +96,13 @@ class TagRestControllerTest {
 
         String content = objectMapper.writeValueAsString(tagCreateRequest);
 
-        mockMvc.perform(post("/api/tags")
+        MvcResult mvcResult = mockMvc.perform(post("/api/tags")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$").value("Tag 이름은 1글자 이상 10글자 이하여야 합니다. Tag 이름은 공백일 수 없습니다."));
+                .andReturn();
+
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(TagValidationException.class);
     }
 
     @Test
@@ -123,11 +129,13 @@ class TagRestControllerTest {
 
         String content = objectMapper.writeValueAsString(tagModifyRequest);
 
-        mockMvc.perform(put("/api/tags/{id}", 1)
+        MvcResult mvcResult = mockMvc.perform(put("/api/tags/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$").value("Tag 이름은 1글자 이상 10글자 이하여야 합니다. Tag 이름은 공백일 수 없습니다."));
+                .andReturn();
+
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(TagValidationException.class);
     }
 
     @Test
