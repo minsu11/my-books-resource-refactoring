@@ -1,7 +1,6 @@
-package store.mybooks.resource.delivery_name_rule.repository;
+package store.mybooks.resource.delivery_rule_name.repository;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,7 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameDto;
+import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameDto;
 import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
 /**

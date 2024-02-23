@@ -1,14 +1,14 @@
-package store.mybooks.resource.delivery_name_rule.service;
+package store.mybooks.resource.delivery_rule_name.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameDto;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameMapper;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameRegisterRequest;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameResponse;
-import store.mybooks.resource.delivery_name_rule.exception.DeliveryRuleNameNotFoundException;
-import store.mybooks.resource.delivery_name_rule.repository.DeliveryRuleNameRepository;
+import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameDto;
+import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameMapper;
+import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameRegisterRequest;
+import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameResponse;
+import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotFoundException;
+import store.mybooks.resource.delivery_rule_name.repository.DeliveryRuleNameRepository;
 import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
 /**

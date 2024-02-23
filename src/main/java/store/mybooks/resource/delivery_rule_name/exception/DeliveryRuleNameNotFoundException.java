@@ -1,4 +1,4 @@
-package store.mybooks.resource.delivery_name_rule.exception;
+package store.mybooks.resource.delivery_rule_name.exception;
 
 /**
  * packageName    : store.mybooks.resource.delivery_name_rule.exception

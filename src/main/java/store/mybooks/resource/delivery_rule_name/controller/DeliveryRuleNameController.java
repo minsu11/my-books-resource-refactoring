@@ -1,4 +1,4 @@
-package store.mybooks.resource.delivery_name_rule.controller;
+package store.mybooks.resource.delivery_rule_name.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameDto;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameRegisterRequest;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameResponse;
-import store.mybooks.resource.delivery_name_rule.service.DeliveryRuleNameService;
+import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameDto;
+import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameRegisterRequest;
+import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameResponse;
+import store.mybooks.resource.delivery_rule_name.service.DeliveryRuleNameService;
 
 /**
  * packageName    : store.mybooks.resource.delivery_name_rule.controller

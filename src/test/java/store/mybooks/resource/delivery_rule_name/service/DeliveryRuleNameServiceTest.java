@@ -1,9 +1,11 @@
-package store.mybooks.resource.delivery_name_rule.service;
+package store.mybooks.resource.delivery_rule_name.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -13,13 +15,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameDto;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameMapper;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameRegisterRequest;
-import store.mybooks.resource.delivery_name_rule.dto.DeliveryRuleNameResponse;
-import store.mybooks.resource.delivery_name_rule.exception.DeliveryRuleNameNotFoundException;
-import store.mybooks.resource.delivery_name_rule.repository.DeliveryRuleNameRepository;
+import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameDto;
+import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameMapper;
+import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameRegisterRequest;
+import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameResponse;
 import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
+import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotFoundException;
+import store.mybooks.resource.delivery_rule_name.repository.DeliveryRuleNameRepository;
 
 /**
  * packageName    : store.mybooks.resource.delivery_name_rule.service
