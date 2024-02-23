@@ -1,16 +1,5 @@
 package store.mybooks.resource.book_status.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Arrays;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +10,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import store.mybooks.resource.book_status.dto.response.BookStatusGetResponse;
 import store.mybooks.resource.book_status.service.BookStatusService;
-import store.mybooks.resource.publisher.controller.PublisherRestController;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * packageName    : store.mybooks.resource.book_status.controller <br/>
@@ -66,7 +62,7 @@ class BookStatusRestControllerTest {
         mockMvc.perform(get(url)
                         .accept("application/json"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content.size()").value(2));
+                .andExpect(jsonPath("$.length()").value(2));
         verify(bookStatusService, times(1)).getAllBookStatus();
     }
 }
