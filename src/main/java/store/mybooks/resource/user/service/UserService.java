@@ -8,10 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.user.dto.mapper.UserMapper;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
+import store.mybooks.resource.user.dto.request.UserLoginRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
+import store.mybooks.resource.user.dto.response.UserLoginResponse;
 import store.mybooks.resource.user.dto.response.UserModifyResponse;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user.exception.UserAlreadyExistException;
@@ -168,12 +170,23 @@ public class UserService {
     /**
      * Find all user page.
      * 모든 User를 Pagination 해서 반환함
+     *
      * @param pageable the pageable
      * @return the page
      */
     public Page<UserGetResponse> findAllUser(Pageable pageable) {
 
         return userRepository.queryAllBy(pageable);
+    }
+
+    public UserLoginResponse loginUser(UserLoginRequest userLoginRequest) {
+
+        System.out.println(userLoginRequest.getEmail());
+        System.out.println(userLoginRequest.getPassword());
+
+        return new UserLoginResponse(
+                userRepository.existsByEmailAndPassword(userLoginRequest.getEmail(), userLoginRequest.getPassword()));
+
     }
 
 
