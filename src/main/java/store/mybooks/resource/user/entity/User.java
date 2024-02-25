@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.mapping.Bag;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
+import store.mybooks.resource.user.dto.request.UserPasswordModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
@@ -97,14 +98,9 @@ public class User {
     }
 
 
-    public void modifyUser(String name, String password, LocalDateTime latestLogin, LocalDateTime deletedAt,
-                           LocalDate gradeChangedDate, String phoneNumber) {
+    public void modifyUser(String name, String phoneNumber) {
 
         this.name = name;
-        this.password = password;
-        this.latestLogin = latestLogin;
-        this.deletedAt = deletedAt;
-        this.gradeChangedDate = gradeChangedDate;
         this.phoneNumber = phoneNumber;
 
     }
@@ -115,15 +111,20 @@ public class User {
 
     public void modifyUserGrade(UserGrade userGrade) {
         this.userGrade = userGrade;
+        this.gradeChangedDate = LocalDate.now();
     }
 
-    public void modifyLatestLogin(){
-        this.latestLogin= LocalDateTime.now();
+    public void modifyLatestLogin() {
+        this.latestLogin = LocalDateTime.now();
     }
 
     public void modifyByDeleteRequest(UserStatus userStatus) {
         this.userStatus = userStatus;
         this.deletedAt = LocalDateTime.now();
+    }
+
+    public void modifyPassword(String password) {
+        this.password = password;
     }
 
 
