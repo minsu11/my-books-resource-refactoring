@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
  */
 public interface UserAddressGetResponse {
 
+    Long getId();
     String getAlias();
 
     String getRoadName();
