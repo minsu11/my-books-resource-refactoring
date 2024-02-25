@@ -1,7 +1,10 @@
 package store.mybooks.resource.book.dto.request;
 
 import java.time.LocalDate;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
@@ -25,12 +28,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BookCreateRequest {
     @NotBlank
-    private Long id;
-    @NotBlank
     @Size(min = 1, max = 20)
     private String bookStatusId;
-    @NotBlank
-    @Size(min = 1, max = 100)
+    @NotNull
+    @Min(1)
+    @Max(100)
     private Integer publisherId;
     @NotBlank
     @Size(min = 1, max = 100)
@@ -38,28 +40,28 @@ public class BookCreateRequest {
     @NotBlank
     @Size(min = 13, max = 13)
     private String isbn;
-    @NotBlank
+    @NotNull
     @Past
     private LocalDate publishDate;
-    @NotBlank
+    @NotNull
     @Positive
     private Integer page;
     @NotBlank
     private String index;
     @NotBlank
     private String content;
-    @NotBlank
+    @NotNull
     @Positive
     private Integer originalCost;
-    @NotBlank
+    @NotNull
     @Positive
     private Integer saleCost;
-    @NotBlank
+    @NotNull
     @Positive
     private Integer discountRate;
-    @NotBlank
+    @NotNull
     @Positive
     private Integer stock;
-    @NotBlank
+    @NotNull
     private Boolean isPacking;
 }
