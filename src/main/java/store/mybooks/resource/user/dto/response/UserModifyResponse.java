@@ -32,11 +32,7 @@ import store.mybooks.resource.user_status.entity.UserStatus;
 public class UserModifyResponse {
 
     private String name;
-    private String userStatusName;
-    private String userGradeName;
-    private LocalDateTime latestLogin;
-    private LocalDateTime deletedAt;
-    private LocalDate gradeChangedDate;
 
+    private String phoneNumber;
 
 }
