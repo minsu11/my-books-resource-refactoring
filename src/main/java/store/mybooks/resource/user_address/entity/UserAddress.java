@@ -69,13 +69,10 @@ public class UserAddress {
         this.reference = reference;
     }
 
-    public void modifyByUserAddressModifyRequest(String alias,String roadName, String detail, Integer number, String reference) {
+    public void modifyByUserAddressModifyRequest(String alias, String detail) {
 
-        this.alias=alias;
+        this.alias = alias;
         this.detail = detail;
-        this.number = number;
-        this.roadName = roadName;
-        this.reference = reference;
 
     }
 

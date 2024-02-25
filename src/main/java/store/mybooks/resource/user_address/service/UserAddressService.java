@@ -73,10 +73,9 @@ public class UserAddressService {
 
         UserAddress userAddress = userAddressRepository.findById(addressId)
                 .orElseThrow(() -> new UserAddressNotExistException(addressId));
-
-        userAddress.modifyByUserAddressModifyRequest(modifyRequest.getAlias(), modifyRequest.getRoadName(),
-                modifyRequest.getDetail(),
-                modifyRequest.getNumber(), modifyRequest.getReference());
+        
+        userAddress.modifyByUserAddressModifyRequest(modifyRequest.getAlias(),
+                modifyRequest.getDetail());
 
         return userAddressMapper.toUserAddressModifyResponse(userAddress);
 

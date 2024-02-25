@@ -99,9 +99,9 @@ class UserAddressRestControllerTest {
             throws Exception {
 
         UserAddressModifyRequest userAddressModifyRequest =
-                new UserAddressModifyRequest("test", "test", "test", 1, "test");
+                new UserAddressModifyRequest("test", "test");
         UserAddressModifyResponse userAddressModifyResponse =
-                new UserAddressModifyResponse("test", "test", "test", 1, "test");
+                new UserAddressModifyResponse("test", "test");
 
         when(userAddressService.modifyUserAddress(anyLong(), anyLong(),
                 any(UserAddressModifyRequest.class))).thenReturn(userAddressModifyResponse);
@@ -113,10 +113,7 @@ class UserAddressRestControllerTest {
                         .content(objectMapper.writeValueAsString(userAddressModifyRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.alias").exists())
-                .andExpect(jsonPath("$.roadName").exists())
-                .andExpect(jsonPath("$.detail").exists())
-                .andExpect(jsonPath("$.number").exists())
-                .andExpect(jsonPath("$.reference").exists());
+                .andExpect(jsonPath("$.detail").exists());
     }
 
     @Test
@@ -146,7 +143,8 @@ class UserAddressRestControllerTest {
                 .andExpect(jsonPath("$.roadName").exists())
                 .andExpect(jsonPath("$.detail").exists())
                 .andExpect(jsonPath("$.number").exists())
-                .andExpect(jsonPath("$.reference").exists());
+                .andExpect(jsonPath("$.reference").exists())
+                .andExpect(jsonPath("$.id").exists());
     }
 
     @Test
@@ -198,6 +196,11 @@ class UserAddressRestControllerTest {
 
         userAddressGetResponse1 = new UserAddressGetResponse() {
             @Override
+            public Long getId() {
+                return 1L;
+            }
+
+            @Override
             public String getAlias() {
                 return "test";
             }
@@ -224,6 +227,11 @@ class UserAddressRestControllerTest {
         };
 
         userAddressGetResponse2 = new UserAddressGetResponse() {
+            @Override
+            public Long getId() {
+                return 1L;
+            }
+
             @Override
             public String getAlias() {
                 return "test";
