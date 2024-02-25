@@ -1,7 +1,15 @@
 package store.mybooks.resource.book.entity;
 
 import java.time.LocalDate;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -78,4 +86,34 @@ public class Book {
 
     @Column(name = "book_created_date")
     private LocalDate createdDate;
+
+    public Book(BookStatus bookStatus, Publisher publisher, String name, String isbn, LocalDate publishDate,
+                Integer page, String index, String content, Integer originalCost, Integer saleCost,
+                Integer discountRate, Integer stock, Boolean isPackaging) {
+        this.bookStatus = bookStatus;
+        this.publisher = publisher;
+        this.name = name;
+        this.isbn = isbn;
+        this.publishDate = publishDate;
+        this.page = page;
+        this.index = index;
+        this.content = content;
+        this.originalCost = originalCost;
+        this.saleCost = saleCost;
+        this.discountRate = discountRate;
+        this.stock = stock;
+        this.viewCount = 0;
+        this.isPackaging = isPackaging;
+        this.createdDate = LocalDate.now();
+    }
+
+    public void setModifyRequest(BookStatus bookStatus, Integer saleCost, Integer discountRate, Integer stock,
+                                 Boolean isPackaging) {
+        this.bookStatus = bookStatus;
+        this.saleCost = saleCost;
+        this.discountRate = discountRate;
+        this.stock = stock;
+        this.isPackaging = isPackaging;
+
+    }
 }
