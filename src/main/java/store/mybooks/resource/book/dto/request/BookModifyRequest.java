@@ -1,6 +1,9 @@
 package store.mybooks.resource.book.dto.request;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -25,15 +28,16 @@ public class BookModifyRequest {
     @NotBlank
     @Size(min = 1, max = 20)
     private String bookStatusId;
-    @NotBlank
+    @NotNull
     @Positive
     private Integer saleCost;
-    @NotBlank
-    @Positive
+    @NotNull
+    @Min(0)
+    @Max(99)
     private Integer discountRate;
-    @NotBlank
+    @NotNull
     @Positive
     private Integer stock;
-    @NotBlank
+    @NotNull
     private Boolean isPacking;
 }
