@@ -17,5 +17,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class BookModifyResponse {
-    String name;
+    private String name;
 }
