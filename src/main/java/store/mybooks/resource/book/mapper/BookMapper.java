@@ -1,6 +1,7 @@
 package store.mybooks.resource.book.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import store.mybooks.resource.book.dto.response.BookCreateResponse;
 import store.mybooks.resource.book.dto.response.BookModifyResponse;
@@ -21,6 +22,6 @@ import store.mybooks.resource.book.entity.Book;
 public interface BookMapper {
     BookCreateResponse createResponse(Book book);
 
-
+    @Mapping(source = "id", target = "changeId")
     BookModifyResponse modifyResponse(Book book);
 }
