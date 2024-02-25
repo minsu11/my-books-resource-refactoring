@@ -27,7 +27,6 @@ import store.mybooks.resource.publisher.entity.Publisher;
  * -----------------------------------------------------------
  * 2/13/24        newjaehun       최초 생성
  */
-
 @Entity
 @Getter
 @NoArgsConstructor
@@ -71,7 +70,6 @@ public class Book {
     @Column(name = "book_sale_cost")
     private Integer saleCost;
 
-
     @Column(name = "book_discount_rate")
     private Integer discountRate;
 
@@ -87,6 +85,24 @@ public class Book {
     @Column(name = "book_created_date")
     private LocalDate createdDate;
 
+
+    /**
+     * Instantiates a new Book.
+     *
+     * @param bookStatus   the book status
+     * @param publisher    the publisher
+     * @param name         the name
+     * @param isbn         the isbn
+     * @param publishDate  the publishDate
+     * @param page         the page
+     * @param index        the index
+     * @param content      the content
+     * @param originalCost the original cost
+     * @param saleCost     the sale cost
+     * @param discountRate the discount rate
+     * @param stock        the stock
+     * @param isPackaging  the is packaging
+     */
     public Book(BookStatus bookStatus, Publisher publisher, String name, String isbn, LocalDate publishDate,
                 Integer page, String index, String content, Integer originalCost, Integer saleCost,
                 Integer discountRate, Integer stock, Boolean isPackaging) {
@@ -107,6 +123,17 @@ public class Book {
         this.createdDate = LocalDate.now();
     }
 
+    /**
+     * methodName : setModifyRequest
+     * author : newjaehun
+     * description : 도서 객체를 수정하는 메서드.
+     *
+     * @param bookStatus   bookstatus
+     * @param saleCost     saleCost
+     * @param discountRate discountRate
+     * @param stock        stock
+     * @param isPackaging  isPackaging
+     */
     public void setModifyRequest(BookStatus bookStatus, Integer saleCost, Integer discountRate, Integer stock,
                                  Boolean isPackaging) {
         this.bookStatus = bookStatus;
