@@ -117,6 +117,10 @@ public class User {
         this.userGrade = userGrade;
     }
 
+    public void modifyLatestLogin(){
+        this.latestLogin= LocalDateTime.now();
+    }
+
     public void modifyByDeleteRequest(UserStatus userStatus) {
         this.userStatus = userStatus;
         this.deletedAt = LocalDateTime.now();

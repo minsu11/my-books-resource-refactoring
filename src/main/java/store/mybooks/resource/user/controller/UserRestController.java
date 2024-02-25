@@ -112,8 +112,7 @@ public class UserRestController {
      * @return the response entity
      */
     @GetMapping("/{id}")
-    public ResponseEntity<UserGetResponse> findUserByEmail(@PathVariable(name = "id") Long id) {
-
+    public ResponseEntity<UserGetResponse> findUserById(@PathVariable(name = "id") Long id) {
 
         UserGetResponse getResponse = userService.findById(id);
 
@@ -137,8 +136,8 @@ public class UserRestController {
 
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponse> loginUser(@RequestBody UserLoginRequest userLoginRequest) {
-
-        return new ResponseEntity<>(userService.loginUser(userLoginRequest), HttpStatus.OK);
+        UserLoginResponse userLoginResponse = userService.loginUser(userLoginRequest);
+        return new ResponseEntity<>(userLoginResponse, HttpStatus.OK);
     }
 
 
