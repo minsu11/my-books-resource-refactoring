@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import store.mybooks.resource.user.dto.request.UserLoginRequest;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
+import store.mybooks.resource.user.dto.response.UserLoginResponse;
 import store.mybooks.resource.user.entity.User;
 
 /**
@@ -31,6 +32,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<UserGetResponse> queryAllBy(Pageable pageable);
 
 
-    Boolean existsByEmailAndPassword(String email, String password);
+    Optional<User> findByEmailAndPassword(String email, String password);
 
 }
