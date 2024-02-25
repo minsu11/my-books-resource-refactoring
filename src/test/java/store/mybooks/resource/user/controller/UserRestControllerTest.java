@@ -33,11 +33,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
+import store.mybooks.resource.user.dto.request.UserGradeModifyRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
+import store.mybooks.resource.user.dto.request.UserStatusModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
+import store.mybooks.resource.user.dto.response.UserGradeModifyResponse;
 import store.mybooks.resource.user.dto.response.UserModifyResponse;
+import store.mybooks.resource.user.dto.response.UserStatusModifyResponse;
 import store.mybooks.resource.user.service.UserService;
 
 /**
@@ -96,12 +100,10 @@ class UserRestControllerTest {
     void givenUserModifyRequest_whenCallModifyUser_thenReturnUserModifyResponse() throws Exception {
 
         UserModifyRequest userModifyRequest =
-                new UserModifyRequest("test", "test", "test", "test", "test", LocalDateTime.now(), LocalDateTime.now(),
-                        LocalDate.now());
+                new UserModifyRequest("test", "01012345678");
 
         UserModifyResponse userModifyResponse =
-                new UserModifyResponse("test", "test", "test", LocalDateTime.now(), LocalDateTime.now(),
-                        LocalDate.now());
+                new UserModifyResponse("test", "01012345678");
 
         when(userService.modifyUser(anyLong(), any(UserModifyRequest.class))).thenReturn(userModifyResponse);
 
@@ -110,10 +112,41 @@ class UserRestControllerTest {
                         .content(objectMapper.writeValueAsString(userModifyRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").exists())
+                .andExpect(jsonPath("$.phoneNumber").exists());
+    }
+
+    @Test
+    @DisplayName("UserGradeModifyRequest 로 modifyUserGrade 실행시 UserGradeModifyResponse 반환")
+    void givenUserGradeModifyRequest_whenCallModifyUserGrade_thenReturnUserModifyResponse() throws Exception {
+
+        UserGradeModifyRequest userModifyRequest = new UserGradeModifyRequest("test");
+
+        UserGradeModifyResponse userModifyResponse = new UserGradeModifyResponse("test");
+
+        when(userService.modifyUserGrade(anyLong(), any(UserGradeModifyRequest.class))).thenReturn(userModifyResponse);
+
+        mockMvc.perform(put("/api/users/{userId}/grade", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userModifyRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userGradeName").exists());
+    }
+
+    @Test
+    @DisplayName("UserStatusModifyRequest 로 modifyUserStatus 실행시 UserStatusModifyResponse 반환")
+    void givenUserStatusModifyRequest_whenCallModifyUserStatus_thenReturnUserModifyResponse() throws Exception {
+
+        UserStatusModifyRequest userModifyRequest = new UserStatusModifyRequest("test");
+        UserStatusModifyResponse userModifyResponse = new UserStatusModifyResponse("test", LocalDate.now());
+
+        when(userService.modifyUserStatus(anyLong(), any(UserStatusModifyRequest.class))).thenReturn(
+                userModifyResponse);
+
+        mockMvc.perform(put("/api/users/{userId}/status", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userModifyRequest)))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userStatusName").exists())
-                .andExpect(jsonPath("$.userGradeName").exists())
-                .andExpect(jsonPath("$.latestLogin").exists())
-                .andExpect(jsonPath("$.deletedAt").exists())
                 .andExpect(jsonPath("$.gradeChangedDate").exists());
     }
 
@@ -138,7 +171,7 @@ class UserRestControllerTest {
 
         when(userService.findById(anyLong())).thenReturn(userGetResponse1);
 
-        mockMvc.perform(get("/api/users/{userId}",1L)
+        mockMvc.perform(get("/api/users/{userId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").exists())
