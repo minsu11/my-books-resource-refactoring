@@ -3,24 +3,24 @@ package store.mybooks.resource.delivery_rule_name.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameDto;
-import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameMapper;
-import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameRegisterRequest;
-import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameResponse;
+import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameDto;
+import store.mybooks.resource.delivery_rule_name.dto.mapper.DeliveryRuleNameMapper;
+import store.mybooks.resource.delivery_rule_name.dto.request.DeliveryRuleNameRegisterRequest;
+import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameResponse;
 import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotFoundException;
 import store.mybooks.resource.delivery_rule_name.repository.DeliveryRuleNameRepository;
 import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
 /**
- * packageName    : store.mybooks.resource.delivery_name_rule.service
- * fileName       : DeliveryNameRuleService
- * author         : Fiat_lux
- * date           : 2/15/24
- * description    :
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 2/15/24        Fiat_lux       최초 생성
+ * packageName    : store.mybooks.resource.delivery_name_rule.service<br>
+ * fileName       : DeliveryNameRuleService<br>
+ * author         : Fiat_lux<br>
+ * date           : 2/15/24<br>
+ * description    : 배송 규칙 이름 등록, 조회, 삭제를 담당하는 서비스<br>
+ * ===========================================================<br>
+ * DATE              AUTHOR             NOTE<br>
+ * -----------------------------------------------------------<br>
+ * 2/15/24        Fiat_lux       최초 생성<br>
  */
 @Service
 @RequiredArgsConstructor
@@ -32,7 +32,10 @@ public class DeliveryRuleNameService {
 
 
     /**
-     * Register delivery name rule delivery name rule response.
+     * methodName : registerDeliveryNameRule<br>
+     * author : Fiat_lux<br>
+     * description : 배송 이름 규칙의 생성 요청이 들어 왔을때 {@code request}의 정보 저장<br>
+     * <br>
      *
      * @param deliveryRuleNameRegisterRequest the delivery name rule register request
      * @return the delivery name rule response
@@ -46,10 +49,16 @@ public class DeliveryRuleNameService {
     }
 
     /**
-     * Gets delivery name rule.
+     * methodName : getDeliveryNameRule<br>
+     * author : Fiat_lux<br>
+     * description : <br>
+     * {@code id}의 배송 이름 규칙 조회<br>
+     * {@code id}의 배송 이름 규칙 조회 할 수 없는 경우 {@code DeliveryRuleNameNotFoundException} 던져줌<br>
+     * <br>
      *
      * @param id the id
-     * @return the delivery name rule
+     * @return the delivery name rule dto로 반환
+     * @throws DeliveryRuleNameNotFoundException {@code id}의 데이터 조회 할 수 없는 경우
      */
     public DeliveryRuleNameDto getDeliveryNameRule(String id) {
         return this.deliveryRuleNameRepository.findDeliveryRuleNameById(id)
@@ -57,9 +66,16 @@ public class DeliveryRuleNameService {
     }
 
     /**
-     * Delete delivery name rule.
+     * methodName : deleteDeliveryNameRule<br>
+     * author : Fiat_lux<br>
+     * description : <br>
+     * {@code id}의 배송 이름 규칙 삭제<br>
+     * {@code id}의 배송 이름 규칙 조회 할 수 없는 경우 {@code DeliveryRuleNameNotFoundException} 던져줌<br>
+     * <br>
      *
      * @param id the id
+     * @return void
+     * @thorws DeliveryRuleNameNotFoundException {@code id}의 데이터 조회 할 수 없는 경우
      */
     @Transactional
     public void deleteDeliveryNameRule(String id) {
