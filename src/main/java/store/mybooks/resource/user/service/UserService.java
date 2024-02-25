@@ -17,6 +17,8 @@ import store.mybooks.resource.user.dto.response.UserLoginResponse;
 import store.mybooks.resource.user.dto.response.UserModifyResponse;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user.exception.UserAlreadyExistException;
+import store.mybooks.resource.user.exception.UserAlreadyResignException;
+import store.mybooks.resource.user.exception.UserLoginFailException;
 import store.mybooks.resource.user.exception.UserNotExistException;
 import store.mybooks.resource.user.repository.UserRepository;
 import store.mybooks.resource.user_grade.entity.UserGrade;
@@ -181,7 +183,17 @@ public class UserService {
 
     public UserLoginResponse loginUser(UserLoginRequest userLoginRequest) {
 
-        return new UserLoginResponse(userRepository.existsByEmailAndPassword(userLoginRequest.getEmail(),userLoginRequest.getPassword()));
+        // 아이디,비밀번호 확인
+        User user = userRepository.findByEmailAndPassword(userLoginRequest.getEmail(), userLoginRequest.getPassword())
+                .orElseThrow(UserLoginFailException::new);
+        // 탈퇴한 회원인지 확인
+        if (user.getUserStatus().getId().equals(UserStatusEnum.RESIGN.toString())) {
+            throw new UserAlreadyResignException();
+        }
+
+        user.modifyLatestLogin();
+
+        return new UserLoginResponse(true);
 
     }
 
