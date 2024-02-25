@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.book.dto.request.BookCreateRequest;
 import store.mybooks.resource.book.dto.request.BookModifyRequest;
 import store.mybooks.resource.book.dto.response.BookBriefResponse;
@@ -48,6 +49,7 @@ public class BookService {
      * @param pageable pageable
      * @return page
      */
+    @Transactional(readOnly = true)
     public Page<BookBriefResponse> getBookBriefInfo(Pageable pageable) {
         return bookRepository.getBookBriefInfo(pageable);
     }
@@ -60,6 +62,7 @@ public class BookService {
      * @param bookId 검색할 도서 ID
      * @return book detail response
      */
+    @Transactional(readOnly = true)
     public BookDetailResponse getBookDetailInfo(Long bookId) {
         return bookRepository.getBookDetailInfo(bookId);
     }
@@ -72,6 +75,7 @@ public class BookService {
      * @param createRequest 추가할 도서의 정보 포함
      * @return bookCreateResponse : 추가된 도서의 name 포함
      */
+    @Transactional
     public BookCreateResponse createBook(BookCreateRequest createRequest) {
         BookStatus bookStatus = bookStatusRepository.findById(createRequest.getBookStatusId())
                 .orElseThrow(() -> new BookStatusNotExistException(createRequest.getBookStatusId()));
@@ -99,6 +103,7 @@ public class BookService {
      * @param modifyRequest 수정할 도서의 정보 포함
      * @return book modify response
      */
+    @Transactional
     public BookModifyResponse modifyBook(Long bookId, BookModifyRequest modifyRequest) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotExistException(bookId));
