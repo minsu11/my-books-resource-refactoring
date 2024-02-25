@@ -17,6 +17,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class BookModifyResponse {
-    Long id;
+    Long changeId;
     String name;
 }
