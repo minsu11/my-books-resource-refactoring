@@ -71,38 +71,8 @@ class AuthorServiceTest {
     void givenAuthorListAndPageable_whenFindAllAuthors_thenReturnPageAuthorsGetResponseList() {
         Pageable pageable = PageRequest.of(0, 2);
         List<AuthorGetResponse> authorGetResponseList = Arrays.asList(
-                new AuthorGetResponse() {
-                    @Override
-                    public Integer getId() {
-                        return id;
-                    }
+                new AuthorGetResponse(id, name, content), new AuthorGetResponse(2, "author2", "author_content2"));
 
-                    @Override
-                    public String getName() {
-                        return name;
-                    }
-
-                    @Override
-                    public String getContent() {
-                        return content;
-                    }
-                }, new AuthorGetResponse() {
-                    @Override
-                    public Integer getId() {
-                        return 2;
-                    }
-
-                    @Override
-                    public String getName() {
-                        return "author2";
-                    }
-
-                    @Override
-                    public String getContent() {
-                        return "author2_content";
-                    }
-                }
-        );
         Page<AuthorGetResponse> pageGetResponse =
                 new PageImpl<>(authorGetResponseList, pageable, authorGetResponseList.size());
         when(authorRepository.findAllBy(pageable)).thenReturn(pageGetResponse);
