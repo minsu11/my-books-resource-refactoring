@@ -21,10 +21,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import store.mybooks.resource.delivery_rule.dto.DeliveryRuleDto;
-import store.mybooks.resource.delivery_rule.dto.DeliveryRuleModifyRequest;
-import store.mybooks.resource.delivery_rule.dto.DeliveryRuleRegisterRequest;
-import store.mybooks.resource.delivery_rule.dto.DeliveryRuleResponse;
+import store.mybooks.resource.delivery_rule.dto.response.DeliveryRuleDto;
+import store.mybooks.resource.delivery_rule.dto.request.DeliveryRuleModifyRequest;
+import store.mybooks.resource.delivery_rule.dto.request.DeliveryRuleRegisterRequest;
+import store.mybooks.resource.delivery_rule.dto.response.DeliveryRuleResponse;
 import store.mybooks.resource.delivery_rule.service.DeliveryRuleService;
 import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
