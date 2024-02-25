@@ -181,11 +181,7 @@ public class UserService {
 
     public UserLoginResponse loginUser(UserLoginRequest userLoginRequest) {
 
-        System.out.println(userLoginRequest.getEmail());
-        System.out.println(userLoginRequest.getPassword());
-
-        return new UserLoginResponse(
-                userRepository.existsByEmailAndPassword(userLoginRequest.getEmail(), userLoginRequest.getPassword()));
+        return new UserLoginResponse(userRepository.existsByEmailAndPassword(userLoginRequest.getEmail(),userLoginRequest.getPassword()));
 
     }
 
