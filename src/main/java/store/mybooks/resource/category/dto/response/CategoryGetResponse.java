@@ -1,5 +1,7 @@
 package store.mybooks.resource.category.dto.response;
 
+import java.time.LocalDate;
+
 /**
  * packageName    : store.mybooks.resource.category.dto.response
  * fileName       : CategoryGetResponseDto
@@ -17,4 +19,6 @@ public interface CategoryGetResponse {
     CategoryGetResponse getParentCategory();
 
     String getName();
+
+    LocalDate getCreatedDate();
 }
