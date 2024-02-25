@@ -14,17 +14,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameDto;
-import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameRegisterRequest;
-import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameResponse;
+import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameDto;
+import store.mybooks.resource.delivery_rule_name.dto.request.DeliveryRuleNameRegisterRequest;
+import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameResponse;
 import store.mybooks.resource.delivery_rule_name.service.DeliveryRuleNameService;
-import store.mybooks.resource.delivery_rule_name.controller.DeliveryRuleNameController;
 
 /**
  * packageName    : store.mybooks.resource.delivery_name_rule.controller
@@ -37,6 +38,7 @@ import store.mybooks.resource.delivery_rule_name.controller.DeliveryRuleNameCont
  * -----------------------------------------------------------
  * 2/18/24        Fiat_lux       최초 생성
  */
+@ExtendWith(MockitoExtension.class)
 @WebMvcTest(DeliveryRuleNameController.class)
 class DeliveryRuleNameControllerTest {
 
