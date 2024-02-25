@@ -46,6 +46,11 @@ public class AuthorService {
         return authorRepository.findAllBy(pageable);
     }
 
+    @Transactional(readOnly = true)
+    public AuthorGetResponse getAuthor(Integer authorId) {
+        return authorRepository.getAuthorInfo(authorId);
+    }
+
     /**
      * methodName : createAuthor
      * author : newjaehun
@@ -93,4 +98,6 @@ public class AuthorService {
         authorRepository.deleteById(authorId);
         return authorMapper.deleteResponse(author);
     }
+
+
 }

@@ -91,41 +91,13 @@ class AuthorRestControllerTest {
         Integer size = 2;
         Pageable pageable = PageRequest.of(page, size);
         List<AuthorGetResponse> authorGetResponseList = Arrays.asList(
-                new AuthorGetResponse() {
-                    @Override
-                    public Integer getId() {
-                        return id;
-                    }
+                new AuthorGetResponse(id, name, content), new AuthorGetResponse(id2, name2, content2));
 
-                    @Override
-                    public String getName() {
-                        return name;
-                    }
-
-                    @Override
-                    public String getContent() {
-                        return content;
-                    }
-                }, new AuthorGetResponse() {
-                    @Override
-                    public Integer getId() {
-                        return id2;
-                    }
-
-                    @Override
-                    public String getName() {
-                        return name2;
-                    }
-
-                    @Override
-                    public String getContent() {
-                        return content2;
-                    }
-                }
-        );
         Page<AuthorGetResponse> authorGetResponsePage = new PageImpl<>(authorGetResponseList, pageable,
                 authorGetResponseList.size());
+
         when(authorService.getAllAuthors(pageable)).thenReturn(authorGetResponsePage);
+
         mockMvc.perform(get(url + "?page=" + page + "&size=" + size)
                         .accept("application/json"))
                 .andExpect(status().isOk())
