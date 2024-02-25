@@ -23,7 +23,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import store.mybooks.resource.user.dto.mapper.UserMapper;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
+import store.mybooks.resource.user.dto.request.UserGradeModifyRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
+import store.mybooks.resource.user.dto.request.UserStatusModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
@@ -128,25 +130,21 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("UserId 와 UserModifyRequest 를 이용해 ModifyUser 실행시 동작 테스트")
-    void givenUserIdAndUserModifyRequest_whenCallModifyUser_thenReturnUserModifyResponse(
-            @Mock UserModifyRequest modifyRequest,
+    @DisplayName("UserId 와 UserGradeModifyRequest 를 이용해 ModifyUser 실행시 동작 테스트")
+    void givenUserIdAndUserModifyRequest_whenCallModifyUserGrade_thenReturnUserModifyResponse(
+            @Mock UserGradeModifyRequest modifyRequest,
             @Mock User user,
-            @Mock UserStatus userStatus,
             @Mock UserGrade userGrade
     ) {
 
         when(modifyRequest.getUserGradeName()).thenReturn("test");
-        when(modifyRequest.getUserStatusName()).thenReturn("test");
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(userStatusRepository.findById(anyString())).thenReturn(Optional.of(userStatus));
         when(userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(anyString())).thenReturn(
                 Optional.of(userGrade));
 
-        userService.modifyUser(1L, modifyRequest);
+        userService.modifyUserGrade(1L, modifyRequest);
 
         verify(userRepository, times(1)).findById(anyLong());
-        verify(userStatusRepository, times(1)).findById(anyString());
         verify(userGradeRepository, times(1)).findByUserGradeNameIdAndIsAvailableIsTrue(anyString());
     }
 
@@ -158,30 +156,64 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 UserStatusName 을 담고있는 UserModifyRequest 를 이용해 modifyUser 실행시 UserStatusNotExistException")
-    void givenModifyRequestWithNotExistUserStatusName_whenCallModifyUser_thenThrowUserStatusNotExistException(
-            @Mock UserModifyRequest modifyRequest,
-            @Mock User user
-    ) {
-
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-
-        assertThrows(UserStatusNotExistException.class, () -> userService.modifyUser(1L, modifyRequest));
-    }
-
-    @Test
-    @DisplayName("존재하지 않는 UserGradeName 을 담고있는 UserModifyRequest 를 이용해 modifyUser 실행시 UserGradeNotExistException")
-    void givenModifyRequestWithNotExistUserGradeName_whenCallModifyUser_thenThrowUserGradeNotExistException(
-            @Mock UserModifyRequest modifyRequest,
+    @DisplayName("존재하는 UserStatusName 을 담고있는 UserStatusModifyRequest 를 이용해 modifyUser 실행시 UserStatusNotExistException")
+    void givenStatusModifyRequestWithExistUserStatusName_whenCallModifyUserStatus_thenThrowUserStatusNotExistException(
+            @Mock UserStatusModifyRequest modifyRequest,
             @Mock User user,
             @Mock UserStatus userStatus
     ) {
 
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(modifyRequest.getUserStatusName()).thenReturn("test");
         when(userStatusRepository.findById(anyString())).thenReturn(Optional.of(userStatus));
+        when(modifyRequest.getUserStatusName()).thenReturn("test");
+        userService.modifyUserStatus(1L,modifyRequest);
 
-        assertThrows(UserGradeIdNotExistException.class, () -> userService.modifyUser(1L, modifyRequest));
+        verify(userRepository, times(1)).findById(anyLong());
+        verify(userStatusRepository, times(1)).findById(anyString());
+
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 UserStatusName 을 담고있는 UserStatusModifyRequest 를 이용해 modifyUser 실행시 UserStatusNotExistException")
+    void givenStatusModifyRequestWithNotExistUserStatusName_whenCallModifyUserStatus_thenThrowUserStatusNotExistException(
+            @Mock UserStatusModifyRequest modifyRequest,
+            @Mock User user
+    ) {
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+
+        assertThrows(UserStatusNotExistException.class, () -> userService.modifyUserStatus(1L, modifyRequest));
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 UserGradeName 을 담고있는 UserGradeModifyRequest 를 이용해 modifyUser 실행시 UserGradeNotExistException")
+    void givenGradeModifyRequestWithNotExistUserGradeName_whenCallModifyUserGrade_thenThrowUserGradeNotExistException(
+            @Mock UserGradeModifyRequest modifyRequest,
+            @Mock User user
+    ) {
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+
+        assertThrows(UserGradeIdNotExistException.class, () -> userService.modifyUserGrade(1L, modifyRequest));
+    }
+
+    @Test
+    @DisplayName("존재하는 UserGradeName 을 담고있는 UserGradeModifyRequest 를 이용해 modifyUser 실행시 UserGradeNotExistException")
+    void givenGradeModifyRequestWithExistUserGradeName_whenCallModifyUserGrade_thenThrowUserGradeNotExistException(
+            @Mock UserGradeModifyRequest modifyRequest,
+            @Mock User user,
+            @Mock UserGrade userGrade
+    ) {
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(modifyRequest.getUserGradeName()).thenReturn("test");
+        when(userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(anyString())).thenReturn(Optional.of(userGrade));
+
+        userService.modifyUserGrade(1L,modifyRequest);
+
+        verify(userRepository, times(1)).findById(anyLong());
+        verify(userGradeRepository, times(1)).findByUserGradeNameIdAndIsAvailableIsTrue(anyString());
+
     }
 
     @Test
