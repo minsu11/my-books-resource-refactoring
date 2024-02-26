@@ -7,6 +7,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
+import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotFoundException;
+import store.mybooks.resource.delivery_rule.exception.DeliveryRuleValidationFailedException;
+import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotFoundException;
+import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameValidationFailedException;
 import store.mybooks.resource.publisher.exception.PublisherAlreadyExistException;
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
 import store.mybooks.resource.return_rule_name.exception.ReturnRuleNameRequestValidationFailedException;
@@ -87,4 +91,34 @@ public class GlobalControllerAdvice {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());
     }
+
+    @ExceptionHandler(DeliveryRuleNotFoundException.class)
+    public ResponseEntity<String> deliveryRuleNotFoundException(Exception exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
+    }
+
+    @ExceptionHandler(DeliveryRuleValidationFailedException.class)
+    public ResponseEntity<String> deliveryRuleValidationException(Exception exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
+    }
+
+    @ExceptionHandler(DeliveryRuleNameNotFoundException.class)
+    public ResponseEntity<String> deliveryRuleNameNotFoundException(Exception exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
+    }
+
+    @ExceptionHandler(DeliveryRuleNameValidationFailedException.class)
+    public ResponseEntity<String> deliveryRuleNameValidationException(Exception exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
+    }
+
+
 }
