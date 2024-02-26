@@ -58,6 +58,21 @@ public class AuthorRestController {
     }
 
     /**
+     * methodName : getAuthor
+     * author : newjaehun
+     * description : 저자 ID로 저자 반환.
+     *
+     * @param authorId authorId
+     * @return response entity
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<AuthorGetResponse> getAuthor(@PathVariable("id") Integer authorId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(authorService.getAuthor(authorId));
+    }
+    
+    /**
      * methodName : createAuthor
      * author : newjaehun
      * description : 저자 추가.
