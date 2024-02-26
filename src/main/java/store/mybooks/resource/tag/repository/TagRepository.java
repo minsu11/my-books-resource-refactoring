@@ -18,7 +18,9 @@ import store.mybooks.resource.tag.entity.Tag;
  * 2/17/24          damho-lee          최초 생성
  */
 public interface TagRepository extends JpaRepository<Tag, Integer> {
-    Page<TagGetResponse> findAllBy(Pageable pageable);
+    Page<TagGetResponse> findAllByOrderById(Pageable pageable);
+
+    TagGetResponse queryById(Integer id);
 
     boolean existsByName(String name);
 
