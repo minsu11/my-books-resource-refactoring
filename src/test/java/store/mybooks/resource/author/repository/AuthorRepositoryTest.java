@@ -38,34 +38,6 @@ class AuthorRepositoryTest {
     }
 
 
-//    @Test
-//    @DisplayName("전체 저자 조회")
-//    void givenPageable_whenPagedFindAllBy_thenReturnAuthorGetResponsePage() {
-//        Pageable pageable = PageRequest.of(0, 2);
-//
-//        Page<AuthorGetResponse> result = authorRepository.findAllBy(pageable);
-//
-//        Assertions.assertEquals(author1.getId(), result.getContent().get(0).getId());
-//        Assertions.assertEquals(author1.getName(), result.getContent().get(0).getName());
-//        Assertions.assertEquals(author1.getContent(), result.getContent().get(0).getContent());
-//        Assertions.assertEquals(author2.getId(), result.getContent().get(1).getId());
-//        Assertions.assertEquals(author2.getName(), result.getContent().get(1).getName());
-//        Assertions.assertEquals(author2.getContent(), result.getContent().get(1).getContent());
-//        Assertions.assertEquals(2, result.getSize());
-//    }
-//
-//    @Test
-//    @DisplayName("저자 조회")
-//    void givenAuthorId_whenGetAuthorInfo_thenReturnAuthorGetResponse() {
-//        Integer authorId = 1;
-//
-//        AuthorGetResponse getAuthor = authorRepository.getAuthorInfo(authorId);
-//
-//        Assertions.assertEquals(author1.getId(), getAuthor.getId());
-//        Assertions.assertEquals(author1.getName(), getAuthor.getName());
-//        Assertions.assertEquals(author1.getContent(), getAuthor.getContent());
-//    }
-
     @Test
     @DisplayName("저자명 중복일 경우")
     void givenExistsAuthorName_whenExistsByName_thenReturnTrue() {
