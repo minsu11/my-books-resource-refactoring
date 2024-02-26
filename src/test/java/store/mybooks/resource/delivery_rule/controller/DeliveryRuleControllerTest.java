@@ -1,6 +1,7 @@
 package store.mybooks.resource.delivery_rule.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -8,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -21,9 +23,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import store.mybooks.resource.delivery_rule.dto.response.DeliveryRuleDto;
 import store.mybooks.resource.delivery_rule.dto.request.DeliveryRuleModifyRequest;
 import store.mybooks.resource.delivery_rule.dto.request.DeliveryRuleRegisterRequest;
+import store.mybooks.resource.delivery_rule.dto.response.DeliveryRuleDto;
 import store.mybooks.resource.delivery_rule.dto.response.DeliveryRuleResponse;
 import store.mybooks.resource.delivery_rule.service.DeliveryRuleService;
 import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
@@ -128,6 +130,36 @@ class DeliveryRuleControllerTest {
     }
 
     @Test
+    @DisplayName("post 요청으로 들어온 데이터의 id값의 유효성을 지키지 않은 경우")
+    void givenDeliveryRuleRegisterRequest_whenRegisterDeliveryRuleIdIsBlank_thenHttpStatusIsBadRequest()
+            throws Exception {
+        DeliveryRuleRegisterRequest deliveryRuleRegisterRequest =
+                new DeliveryRuleRegisterRequest("", "test", 123, 123);
+        mockMvc.perform(
+                        post("/api/delivery-rules").content(new ObjectMapper().writeValueAsString(deliveryRuleRegisterRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+
+        verify(deliveryRuleService, never()).registerDeliveryRule(any());
+    }
+
+    @Test
+    @DisplayName("post 요청으로 들어온 데이터의 외래키의 유효성을 지키지 않은 경우")
+    void givenDeliveryRuleRegisterRequest_whenRegisterDeliveryRuleDeliveryCompanyNameIsBlank_thenHttpStatusIsBadRequest()
+            throws Exception {
+        DeliveryRuleRegisterRequest deliveryRuleRegisterRequest =
+                new DeliveryRuleRegisterRequest("test", "", 123, 123);
+        mockMvc.perform(
+                        post("/api/delivery-rules").content(new ObjectMapper().writeValueAsString(deliveryRuleRegisterRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+
+        verify(deliveryRuleService, never()).registerDeliveryRule(any());
+    }
+
+    @Test
     @DisplayName("DeliveryRule 수정 테스트")
     void givenDeliveryRuleIdAndDeliveryRuleModifyRequest_whenModifyDeliveryRule_thenModifyDeliveryRuleReturnDeliveryRuleResponse()
             throws Exception {
@@ -152,6 +184,37 @@ class DeliveryRuleControllerTest {
                 .andExpect(jsonPath("$.isAvailable").value(deliveryRuleResponse.getIsAvailable()));
 
         verify(deliveryRuleService, times(1)).modifyDeliveryRule(any(), any());
+    }
+
+    @Test
+    @DisplayName("put 요청으로 들어온 데이터의 id값의 유효성을 지키지 않은 경우")
+    void givenDeliveryRuleModifyRequest_whenModifyDeliveryRuleIdIsBlank_thenHttpStatusIsBadRequest() throws Exception {
+        DeliveryRuleModifyRequest deliveryRuleRegisterRequest =
+                new DeliveryRuleModifyRequest("", "test", 123, 123);
+        mockMvc.perform(
+                        put("/api/delivery-rules/{id}", 1).content(
+                                        new ObjectMapper().writeValueAsString(deliveryRuleRegisterRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+
+        verify(deliveryRuleService, never()).modifyDeliveryRule(any(), any());
+    }
+
+    @Test
+    @DisplayName("put 요청으로 들어온 데이터의 외래키의 유효성을 지키지 않은 경우")
+    void givenDeliveryRUleModifyRequest_whenModifyDeliveryRUleCompanyNameIsBlank_thenHttpStatusIsBadRequest()
+            throws Exception {
+        DeliveryRuleModifyRequest deliveryRuleRegisterRequest =
+                new DeliveryRuleModifyRequest("test", "", 123, 123);
+        mockMvc.perform(
+                        put("/api/delivery-rules/{id}", 1).content(
+                                        new ObjectMapper().writeValueAsString(deliveryRuleRegisterRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+
+        verify(deliveryRuleService, never()).modifyDeliveryRule(any(), any());
     }
 
     @Test
