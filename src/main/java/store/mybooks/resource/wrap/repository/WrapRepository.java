@@ -1,5 +1,8 @@
 package store.mybooks.resource.wrap.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import store.mybooks.resource.wrap.entity.Wrap;
+
 /**
  * packageName    : store.mybooks.resource.wrap.repository<br>
  * fileName       : WrapRepository<br>
@@ -11,5 +14,5 @@ package store.mybooks.resource.wrap.repository;
  * -----------------------------------------------------------<br>
  * 2/27/24        minsu11       최초 생성<br>
  */
-public interface WrapRepository {
+public interface WrapRepository extends JpaRepository<Wrap, Integer> {
 }
