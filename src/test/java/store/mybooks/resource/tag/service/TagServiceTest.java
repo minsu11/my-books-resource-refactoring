@@ -94,7 +94,7 @@ class TagServiceTest {
         });
         Pageable pageable = PageRequest.of(0, 10);
 
-        when(tagRepository.findAllBy(any())).thenReturn(new PageImpl<>(list, pageable, list.size()));
+        when(tagRepository.findAllByOrderById(any())).thenReturn(new PageImpl<>(list, pageable, list.size()));
 
         List<TagGetResponse> actualList = tagService.getTags(pageable).getContent();
 
