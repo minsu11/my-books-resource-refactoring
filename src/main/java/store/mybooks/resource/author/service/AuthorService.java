@@ -46,6 +46,20 @@ public class AuthorService {
         return authorRepository.findAllBy(pageable);
     }
 
+
+    /**
+     * methodName : getAuthor
+     * author : newjaehun
+     * description : 도서 정보 반환.
+     *
+     * @param authorId 가져올 도서 ID
+     * @return author get response
+     */
+    @Transactional(readOnly = true)
+    public AuthorGetResponse getAuthor(Integer authorId) {
+        return authorRepository.getAuthorInfo(authorId);
+    }
+
     /**
      * methodName : createAuthor
      * author : newjaehun
