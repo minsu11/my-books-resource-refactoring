@@ -49,12 +49,11 @@ public class ReturnRule {
     public void modifyByReturnRule(ReturnRuleModifyRequest request, ReturnRuleName returnRuleName) {
         this.deliveryFee = request.getDeliveryFee();
         this.term = request.getTerm();
-        this.isAvailable = request.getIsAvailable();
         this.returnRuleName = returnRuleName;
 
     }
 
-    public void deleteByReturnRule(Boolean status) {
+    public void modifyIsAvailable(Boolean status) {
         this.isAvailable = false;
     }
 

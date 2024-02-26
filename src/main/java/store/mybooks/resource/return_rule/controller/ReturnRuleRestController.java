@@ -105,9 +105,9 @@ public class ReturnRuleRestController {
      * @param bindingResult 유효성 검사 실패 시 에러의 정보가 담김.
      * @return response entity
      */
-    @PutMapping("/{name}")
+    @PutMapping("/{id}")
     public ResponseEntity<ReturnRuleModifyResponse> modifyReturnRule(
-            @PathVariable String name,
+            @PathVariable Long id,
             @Valid @RequestBody ReturnRuleModifyRequest modifyRequest,
             BindingResult bindingResult
     ) {
@@ -116,7 +116,7 @@ public class ReturnRuleRestController {
         }
         log.info("value:{}", modifyRequest);
         ReturnRuleModifyResponse modifyResponse =
-                returnRuleService.modifyReturnRule(modifyRequest, name);
+                returnRuleService.modifyReturnRule(modifyRequest, id);
         log.info("value:{}", modifyResponse);
         return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
     }

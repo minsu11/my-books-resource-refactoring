@@ -18,7 +18,6 @@ import store.mybooks.resource.return_rule.exception.ReturnRuleAlreadyExistExcept
 import store.mybooks.resource.return_rule.exception.ReturnRuleNotExistException;
 import store.mybooks.resource.return_rule.repository.ReturnRuleRepository;
 import store.mybooks.resource.return_rule_name.entity.ReturnRuleName;
-import store.mybooks.resource.return_rule_name.exception.ReturnRuleNameAlreadyExistException;
 import store.mybooks.resource.return_rule_name.exception.ReturnRuleNameNotExistException;
 import store.mybooks.resource.return_rule_name.repository.ReturnRuleNameRepository;
 
@@ -93,20 +92,16 @@ public class ReturnRuleService {
         if (returnRuleRepository.findByReturnRuleName(request.getReturnName()).isPresent()) {
             throw new ReturnRuleAlreadyExistException();
         }
-        log.info("================> 확인용");
 
         ReturnRuleName returnRuleName =
                 returnRuleNameRepository
                         .findById(request.getReturnName())
-                        .orElseThrow(ReturnRuleNameAlreadyExistException::new);
-        log.info("value:{}", returnRuleName);
+                        .orElseThrow(ReturnRuleNameNotExistException::new);
 
         ReturnRule returnRule =
-                new ReturnRule(1L, request.getDeliveryFee(), request.getTerm(), true, LocalDate.now(), returnRuleName);
+                returnRuleRepository.save(new ReturnRule(1L, request.getDeliveryFee(), request.getTerm(), true, LocalDate.now(), returnRuleName));
 
-        ReturnRule resultRule = returnRuleRepository.save(returnRule);
-
-        return returnRuleMapper.mapToReturnRuleCreateResponse(resultRule);
+        return returnRuleMapper.mapToReturnRuleCreateResponse(returnRule);
     }
 
     /**
@@ -118,25 +113,30 @@ public class ReturnRuleService {
      * {@code ReturnRuleNameNotExistException}, {@code ReturnRuleNotExistException}을 던져줌
      * <br>
      *
-     * @param request        수정될 반품 규정
-     * @param returnRuleName 수정할 반품 규정 명
+     * @param request 수정될 반품 규정
+     * @param id      수정할 반품 규정 아이디
      * @return returnRuleModifyResponse
      * @throws ReturnRuleNameNotExistException 반품 규정 명이 존재하지 않을 때
      * @throws ReturnRuleNotExistException     반품 규정이 존재 하지 않을 때
      */
-    public ReturnRuleModifyResponse modifyReturnRule(ReturnRuleModifyRequest request, String returnRuleName) {
+    public ReturnRuleModifyResponse modifyReturnRule(ReturnRuleModifyRequest request, Long id) {
+
+        ReturnRule beforeReturnRule = returnRuleRepository.findById(id)
+                .orElseThrow(ReturnRuleNotExistException::new);
+        String returnRuleName = request.getReturnRuleNameId();
 
         ReturnRuleName returnRuleNameResponse =
                 returnRuleNameRepository
                         .findById(returnRuleName)
                         .orElseThrow(ReturnRuleNameNotExistException::new);
-        ReturnRule returnRule =
-                returnRuleRepository
-                        .findByReturnRuleNameId(returnRuleNameResponse.getId())
-                        .orElseThrow(ReturnRuleNotExistException::new);
 
-        returnRule.modifyByReturnRule(request, returnRuleNameResponse);
-        return returnRuleMapper.mapToReturnRuleModifyResponse(returnRule);
+        // 어떻게 보면 반품 규정 삭제인데 여기에 불러도 괜찮을 까요..?
+        beforeReturnRule.modifyIsAvailable(false);
+
+        ReturnRule returnRule = new ReturnRule(1L, request.getDeliveryFee(), request.getTerm(),
+                true, LocalDate.now(), returnRuleNameResponse);
+
+        return returnRuleMapper.mapToReturnRuleModifyResponse(returnRuleRepository.save(returnRule));
     }
 
     /**
@@ -153,9 +153,8 @@ public class ReturnRuleService {
     public ReturnRuleDeleteResponse deleteReturnRule(Long id) {
 
         ReturnRule returnRule = returnRuleRepository.findById(id).orElseThrow(ReturnRuleNotExistException::new);
-        returnRule.deleteByReturnRule(false);
-        ReturnRuleDeleteResponse response = new ReturnRuleDeleteResponse("OK");
+        returnRule.modifyIsAvailable(false);
+        return new ReturnRuleDeleteResponse("OK");
 
-        return response;
     }
 }
