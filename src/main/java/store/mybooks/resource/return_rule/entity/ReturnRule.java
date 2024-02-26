@@ -28,7 +28,7 @@ public class ReturnRule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "return_rule_id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "return_rule_delivery_fee")
     private Integer deliveryFee;

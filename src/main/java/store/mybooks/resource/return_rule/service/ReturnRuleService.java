@@ -9,6 +9,7 @@ import store.mybooks.resource.return_rule.dto.mapper.ReturnRuleMapper;
 import store.mybooks.resource.return_rule.dto.request.ReturnRuleCreateRequest;
 import store.mybooks.resource.return_rule.dto.request.ReturnRuleModifyRequest;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleCreateResponse;
+import store.mybooks.resource.return_rule.dto.response.ReturnRuleDeleteResponse;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleModifyResponse;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleResponse;
 import store.mybooks.resource.return_rule.entity.ReturnRule;
@@ -97,7 +98,7 @@ public class ReturnRuleService {
                         .orElseThrow(ReturnRuleNameAlreadyExistException::new);
 
         ReturnRule returnRule =
-                new ReturnRule(1, request.getDeliveryFee(), request.getTerm(), true, LocalDate.now(), returnRuleName);
+                new ReturnRule(1L, request.getDeliveryFee(), request.getTerm(), true, LocalDate.now(), returnRuleName);
 
         returnRuleRepository.save(returnRule);
 
@@ -134,5 +135,23 @@ public class ReturnRuleService {
         return returnRuleMapper.mapToReturnRuleModifyResponse(returnRule);
     }
 
+    /**
+     * methodName : deleteReturnRule<br>
+     * author : minsu11<br>
+     * description : {@code id} 값을 가진 반품 규정 삭제.
+     * {@code id} 값이 존재 하지 않은 경우, {@code ReturnRuleNotExistException}을 던짐
+     * <br> *
+     *
+     * @param id 삭제할 반품 규정 아이디
+     * @return return rule delete response
+     * @throws ReturnRuleNotExistException 삭제할 반품 규정이 없을 경우
+     */
+    public ReturnRuleDeleteResponse deleteReturnRule(Long id) {
+        ReturnRule returnRule = returnRuleRepository.findById(id).orElseThrow(ReturnRuleNotExistException::new);
 
+        returnRuleRepository.delete(returnRule);
+        ReturnRuleDeleteResponse response = new ReturnRuleDeleteResponse("OK");
+
+        return response;
+    }
 }

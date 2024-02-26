@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import store.mybooks.resource.return_rule.dto.request.ReturnRuleCreateRequest;
 import store.mybooks.resource.return_rule.dto.request.ReturnRuleModifyRequest;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleCreateResponse;
+import store.mybooks.resource.return_rule.dto.response.ReturnRuleDeleteResponse;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleModifyResponse;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleResponse;
 import store.mybooks.resource.return_rule.exception.ReturnRuleValidationFailedException;
@@ -112,5 +113,22 @@ public class ReturnRuleRestController {
                 returnRuleService.modifyReturnRule(modifyRequest, name);
 
         return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
+    }
+
+    /**
+     * methodName : deleteReturnRule<br>
+     * author : minsu11<br>
+     * description : {@code id}의 반품 규정에 대한 삭제. 삭제 성공 시 {@code HttpStatus code OK}를 반환
+     * <br> *
+     *
+     * @param id 삭제할 반품 규정
+     * @return response entity
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ReturnRuleDeleteResponse> deleteReturnRule(@PathVariable Long id) {
+        ReturnRuleDeleteResponse response = returnRuleService.deleteReturnRule(id);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
     }
 }
