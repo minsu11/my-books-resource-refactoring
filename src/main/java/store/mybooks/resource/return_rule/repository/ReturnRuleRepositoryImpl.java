@@ -40,7 +40,7 @@ public class ReturnRuleRepositoryImpl extends QuerydslRepositorySupport implemen
         QReturnRuleName returnRuleName = QReturnRuleName.returnRuleName;
         return Optional.of(
                 from(returnRule)
-                        .select(Projections.constructor(ReturnRuleResponse.class, returnRule.returnRuleName,
+                        .select(Projections.constructor(ReturnRuleResponse.class, returnRule.returnRuleName.id,
                                 returnRule.deliveryFee,
                                 returnRule.term, returnRule.isAvailable))
                         .join(returnRule.returnRuleName, returnRuleName)
@@ -60,9 +60,11 @@ public class ReturnRuleRepositoryImpl extends QuerydslRepositorySupport implemen
     public List<ReturnRuleResponse> getReturnRuleResponseList() {
         QReturnRule returnRule = QReturnRule.returnRule;
         return from(returnRule)
-                .select(Projections.constructor(ReturnRuleResponse.class, returnRule.deliveryFee,
-                        returnRule.term, returnRule.isAvailable,
-                        returnRule.returnRuleName))
+                .select(Projections.constructor(ReturnRuleResponse.class,
+                        returnRule.returnRuleName.id,
+                        returnRule.deliveryFee,
+                        returnRule.term, returnRule.isAvailable
+                ))
                 .fetch();
     }
 }
