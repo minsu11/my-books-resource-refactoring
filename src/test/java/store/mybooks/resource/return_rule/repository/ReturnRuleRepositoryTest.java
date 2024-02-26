@@ -14,6 +14,7 @@ import store.mybooks.resource.return_rule.entity.ReturnRule;
 import store.mybooks.resource.return_rule_name.entity.ReturnRuleName;
 import store.mybooks.resource.return_rule_name.repository.ReturnRuleNameRepository;
 
+
 /**
  * packageName    : store.mybooks.resource.return_rule.repository<br>
  * fileName       : ReturnRuleRepositoryTest<br>
@@ -38,6 +39,7 @@ class ReturnRuleRepositoryTest {
     void setUp() {
         ReturnRuleName returnRuleName = new ReturnRuleName("test1", LocalDate.of(1212, 12, 12));
         returnRuleNameRepository.save(returnRuleName);
+
         ReturnRule returnRuleValue = new ReturnRule(1L, 10, 10, true, LocalDate.of(1212, 12, 12), returnRuleName);
         returnRuleRepository.save(returnRuleValue);
     }
@@ -74,5 +76,6 @@ class ReturnRuleRepositoryTest {
         Assertions.assertEquals(expected.get(0).getTerm(), actual.get(0).getTerm());
         Assertions.assertEquals(expected.get(0).getIsAvailable(), actual.get(0).getIsAvailable());
     }
+
 
 }
