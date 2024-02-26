@@ -1,11 +1,13 @@
 package store.mybooks.resource.wrap.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import store.mybooks.resource.wrap.entity.Wrap;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.data.repository.NoRepositoryBean;
+import store.mybooks.resource.wrap.dto.response.WrapResponse;
 
 /**
  * packageName    : store.mybooks.resource.wrap.repository<br>
- * fileName       : WrapRepository<br>
+ * fileName       : WrapRepositoryCustom<br>
  * author         : minsu11<br>
  * date           : 2/27/24<br>
  * description    :
@@ -14,5 +16,9 @@ import store.mybooks.resource.wrap.entity.Wrap;
  * -----------------------------------------------------------<br>
  * 2/27/24        minsu11       최초 생성<br>
  */
-public interface WrapRepository extends JpaRepository<Wrap, Integer>, WrapRepositoryCustom {
+@NoRepositoryBean
+public interface WrapRepositoryCustom {
+    Optional<WrapResponse> findWrapResponseById(Integer id);
+
+    List<WrapResponse> getWrapResponseList();
 }

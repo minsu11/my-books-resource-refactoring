@@ -1,5 +1,9 @@
 package store.mybooks.resource.wrap.dto.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * packageName    : store.mybooks.resource.wrap.dto.response<br>
  * fileName       : WrapResponse<br>
@@ -11,5 +15,11 @@ package store.mybooks.resource.wrap.dto.response;
  * -----------------------------------------------------------<br>
  * 2/27/24        minsu11       최초 생성<br>
  */
+@Getter
+@Setter
+@AllArgsConstructor
 public class WrapResponse {
+    private String wrapName;
+    private Integer wrapCost;
+    private Boolean isAvailable;
 }
