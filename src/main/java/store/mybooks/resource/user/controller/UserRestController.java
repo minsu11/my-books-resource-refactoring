@@ -71,7 +71,6 @@ public class UserRestController {
 
         UserCreateResponse createResponse = userService.createUser(createRequest);
 
-
         return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
     }
 
@@ -110,7 +109,7 @@ public class UserRestController {
     }
 
     @PutMapping("/{id}/password")
-    public ResponseEntity<UserPasswordModifyResponse> modifyUserStatus(@PathVariable(name="id")Long id,
+    public ResponseEntity<UserPasswordModifyResponse> modifyUserPassword(@PathVariable(name="id")Long id,
                                                                        @RequestBody
                                                                        UserPasswordModifyRequest modifyRequest){
 
