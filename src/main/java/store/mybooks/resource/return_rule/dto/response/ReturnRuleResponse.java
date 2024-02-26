@@ -20,7 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ReturnRuleResponse {
     private String returnName;
-    private Integer deliverFee;
+    private Integer deliveryFee;
     private Integer term;
     private Boolean isAvailable;
 

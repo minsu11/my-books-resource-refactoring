@@ -1,7 +1,9 @@
 package store.mybooks.resource.return_rule.dto.request;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -16,11 +18,15 @@ import lombok.Getter;
  * 2/21/24        minsu11       최초 생성<br>
  */
 @Getter
+@AllArgsConstructor
 public class ReturnRuleCreateRequest {
     @NotBlank
     private String returnName;
-    @Size(min = 0, max = 10000)
+    @Min(0)
+    @Max(1000)
     private Integer deliveryFee;
-    @Size(min = 0, max = 365)
+    @Min(1)
+    @Max(365)
     private Integer term;
+
 }
