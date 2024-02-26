@@ -5,7 +5,10 @@ import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
+import store.mybooks.resource.user.dto.response.UserGradeModifyResponse;
 import store.mybooks.resource.user.dto.response.UserModifyResponse;
+import store.mybooks.resource.user.dto.response.UserPasswordModifyResponse;
+import store.mybooks.resource.user.dto.response.UserStatusModifyResponse;
 import store.mybooks.resource.user.entity.User;
 
 /**
@@ -28,8 +31,12 @@ public interface UserMapper {
     @Mapping(source = "userGrade.userGradeName.id", target = "userGradeName")
     UserCreateResponse toUserCreateResponse(User user);
 
-    @Mapping(source = "userStatus.id", target = "userStatusName")
-    @Mapping(source = "userGrade.userGradeName.id", target = "userGradeName")
+
     UserModifyResponse toUserModifyResponse(User user);
+
+    @Mapping(source = "userGrade.userGradeName.id", target = "userGradeName")
+    UserGradeModifyResponse toUserGradeModifyResponse(User user);
+    @Mapping(source = "userStatus.id", target = "userStatusName")
+    UserStatusModifyResponse toUserStatusModifyResponse(User user);
 
 }

@@ -1,6 +1,7 @@
 package store.mybooks.resource.user.controller;
 
 import java.util.List;
+import javax.ws.rs.POST;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.mapstruct.Mapper;
@@ -20,11 +21,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
+import store.mybooks.resource.user.dto.request.UserGradeModifyRequest;
+import store.mybooks.resource.user.dto.request.UserLoginRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
+import store.mybooks.resource.user.dto.request.UserPasswordModifyRequest;
+import store.mybooks.resource.user.dto.request.UserStatusModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
+import store.mybooks.resource.user.dto.response.UserGradeModifyResponse;
+import store.mybooks.resource.user.dto.response.UserLoginResponse;
 import store.mybooks.resource.user.dto.response.UserModifyResponse;
+import store.mybooks.resource.user.dto.response.UserPasswordModifyResponse;
+import store.mybooks.resource.user.dto.response.UserStatusModifyResponse;
 import store.mybooks.resource.user.service.UserService;
 
 /**
@@ -79,9 +88,34 @@ public class UserRestController {
     public ResponseEntity<UserModifyResponse> modifyUser(@PathVariable(name = "id") Long id,
                                                          @RequestBody UserModifyRequest modifyRequest) {
 
-        UserModifyResponse modifyResponse = userService.modifyUser(id,modifyRequest);
+        UserModifyResponse modifyResponse = userService.modifyUser(id, modifyRequest);
 
         return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/grade")
+    public ResponseEntity<UserGradeModifyResponse> modifyUserGrade(@PathVariable(name="id")Long id,
+                                                                   @RequestBody UserGradeModifyRequest modifyRequest){
+
+        UserGradeModifyResponse modifyResponse = userService.modifyUserGrade(id,modifyRequest);
+        return new ResponseEntity<>(modifyResponse,HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<UserStatusModifyResponse> modifyUserStatus(@PathVariable(name="id")Long id,
+                                                                    @RequestBody UserStatusModifyRequest modifyRequest){
+
+        UserStatusModifyResponse modifyResponse = userService.modifyUserStatus(id,modifyRequest);
+        return new ResponseEntity<>(modifyResponse,HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/password")
+    public ResponseEntity<UserPasswordModifyResponse> modifyUserStatus(@PathVariable(name="id")Long id,
+                                                                       @RequestBody
+                                                                       UserPasswordModifyRequest modifyRequest){
+
+        UserPasswordModifyResponse modifyResponse = userService.modifyUserPassword(id,modifyRequest);
+        return new ResponseEntity<>(modifyResponse,HttpStatus.OK);
     }
 
     /**
@@ -109,8 +143,7 @@ public class UserRestController {
      * @return the response entity
      */
     @GetMapping("/{id}")
-    public ResponseEntity<UserGetResponse> findUserByEmail(@PathVariable(name = "id") Long id) {
-
+    public ResponseEntity<UserGetResponse> findUserById(@PathVariable(name = "id") Long id) {
 
         UserGetResponse getResponse = userService.findById(id);
 
@@ -121,6 +154,7 @@ public class UserRestController {
     /**
      * Find all user response entity.
      * 모든 User를 Pagination 해서 반환함
+     *
      * @param pageable the pageable
      * @return the response entity
      */
@@ -128,7 +162,13 @@ public class UserRestController {
     public ResponseEntity<Page<UserGetResponse>> findAllUser(Pageable pageable) {
 
         Page<UserGetResponse> paginationUsr = userService.findAllUser(pageable);
-        return new ResponseEntity<>(paginationUsr,HttpStatus.OK);
+        return new ResponseEntity<>(paginationUsr, HttpStatus.OK);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserLoginResponse> loginUser(@RequestBody UserLoginRequest userLoginRequest) {
+        UserLoginResponse userLoginResponse = userService.loginUser(userLoginRequest);
+        return new ResponseEntity<>(userLoginResponse, HttpStatus.OK);
     }
 
 

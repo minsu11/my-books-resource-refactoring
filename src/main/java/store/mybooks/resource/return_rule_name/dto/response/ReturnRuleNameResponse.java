@@ -22,6 +22,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReturnRuleNameResponse {
-    private String name;
-    private LocalDate localDate;
+    private String id;
+    private LocalDate createdDate;
 }

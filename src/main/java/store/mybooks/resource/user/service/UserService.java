@@ -2,19 +2,28 @@ package store.mybooks.resource.user.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.user.dto.mapper.UserMapper;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
+import store.mybooks.resource.user.dto.request.UserGradeModifyRequest;
+import store.mybooks.resource.user.dto.request.UserLoginRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
+import store.mybooks.resource.user.dto.request.UserPasswordModifyRequest;
+import store.mybooks.resource.user.dto.request.UserStatusModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
+import store.mybooks.resource.user.dto.response.UserGradeModifyResponse;
+import store.mybooks.resource.user.dto.response.UserLoginResponse;
 import store.mybooks.resource.user.dto.response.UserModifyResponse;
+import store.mybooks.resource.user.dto.response.UserPasswordModifyResponse;
+import store.mybooks.resource.user.dto.response.UserStatusModifyResponse;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user.exception.UserAlreadyExistException;
+import store.mybooks.resource.user.exception.UserAlreadyResignException;
+import store.mybooks.resource.user.exception.UserLoginFailException;
 import store.mybooks.resource.user.exception.UserNotExistException;
 import store.mybooks.resource.user.repository.UserRepository;
 import store.mybooks.resource.user_grade.entity.UserGrade;
@@ -41,7 +50,7 @@ import store.mybooks.resource.user_status.repository.UserStatusRepository;
  */
 @AllArgsConstructor
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class UserService {
 
 
@@ -66,7 +75,6 @@ public class UserService {
      * @throws UserStatusNotExistException
      * @throws UserGradeNameNotExistException
      */
-    @Transactional
     public UserCreateResponse createUser(UserCreateRequest createRequest) {
 
         // 이미 존재하면 예외처리
@@ -106,29 +114,53 @@ public class UserService {
      * @throws UserStatusNotExistException
      * @throws UserGradeNameNotExistException
      */
-    @Transactional
     public UserModifyResponse modifyUser(Long id, UserModifyRequest modifyRequest) {
 
         // 없으면 예외처리
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotExistException(id));
 
-        String userStatusName = modifyRequest.getUserStatusName();
+        user.modifyUser(modifyRequest.getName(), modifyRequest.getPhoneNumber());
+        return userMapper.toUserModifyResponse(user);
+    }
+
+    public UserGradeModifyResponse modifyUserGrade(Long id, UserGradeModifyRequest modifyRequest) {
+
+        // 없으면 예외처리
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotExistException(id));
+
         String userGradeName = modifyRequest.getUserGradeName();
+
+        UserGrade userGrade = userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(userGradeName).orElseThrow(
+                UserGradeIdNotExistException::new);
+        user.modifyUserGrade(userGrade);
+
+        return userMapper.toUserGradeModifyResponse(user);
+    }
+
+    public UserStatusModifyResponse modifyUserStatus(Long id, UserStatusModifyRequest modifyRequest) {
+
+        // 없으면 예외처리
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotExistException(id));
+
+        String userStatusName = modifyRequest.getUserStatusName();
 
         UserStatus userStatus = userStatusRepository.findById(userStatusName)
                 .orElseThrow(() -> new UserStatusNotExistException(userStatusName));
-        UserGrade userGrade = userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(userGradeName).orElseThrow(
-                UserGradeIdNotExistException::new);
-
-        user.modifyUser(modifyRequest.getName(), modifyRequest.getPassword(), modifyRequest.getLatestLogin(),
-                modifyRequest.getDeletedAt(), modifyRequest.getGradeChangeDate(), modifyRequest.getPhoneNumber());
-
         user.modifyUserStatus(userStatus);
-        user.modifyUserGrade(userGrade);
+        return userMapper.toUserStatusModifyResponse(user);
+    }
 
-        return userMapper.toUserModifyResponse(user);
+    public UserPasswordModifyResponse modifyUserPassword(Long id, UserPasswordModifyRequest modifyRequest) {
 
+        // 없으면 예외처리
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotExistException(id));
+
+        user.modifyPassword(modifyRequest.getPassword());
+        return new UserPasswordModifyResponse(true);
     }
 
     /**
@@ -139,7 +171,6 @@ public class UserService {
      * @param id the id
      * @return the user delete response
      */
-    @Transactional
     public UserDeleteResponse deleteUser(Long id) {
 
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotExistException(id));
@@ -159,6 +190,7 @@ public class UserService {
      * @param id the id
      * @return the user get response
      */
+    @Transactional(readOnly = true)
     public UserGetResponse findById(Long id) {
 
         return userRepository.queryById(id).orElseThrow(() -> new UserNotExistException(id));
@@ -168,12 +200,30 @@ public class UserService {
     /**
      * Find all user page.
      * 모든 User를 Pagination 해서 반환함
+     *
      * @param pageable the pageable
      * @return the page
      */
+    @Transactional(readOnly = true)
     public Page<UserGetResponse> findAllUser(Pageable pageable) {
 
         return userRepository.queryAllBy(pageable);
+    }
+
+    public UserLoginResponse loginUser(UserLoginRequest userLoginRequest) {
+
+        // 아이디,비밀번호 확인
+        User user = userRepository.findByEmailAndPassword(userLoginRequest.getEmail(), userLoginRequest.getPassword())
+                .orElseThrow(UserLoginFailException::new);
+        // 탈퇴한 회원인지 확인
+        if (user.getUserStatus().getId().equals(UserStatusEnum.RESIGN.toString())) {
+            throw new UserAlreadyResignException();
+        }
+
+        user.modifyLatestLogin();
+
+        return new UserLoginResponse(true);
+
     }
 
 

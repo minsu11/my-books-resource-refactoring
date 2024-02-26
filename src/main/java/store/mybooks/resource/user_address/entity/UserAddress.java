@@ -9,11 +9,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.criteria.CriteriaBuilder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import store.mybooks.resource.user.entity.User;
-import store.mybooks.resource.user_address.dto.request.UserAddressModifyRequest;
 
 /**
  * packageName    : store.mybooks.resource.user.entity
@@ -69,13 +67,10 @@ public class UserAddress {
         this.reference = reference;
     }
 
-    public void modifyByUserAddressModifyRequest(String alias,String roadName, String detail, Integer number, String reference) {
+    public void modifyByUserAddressModifyRequest(String alias, String detail) {
 
-        this.alias=alias;
+        this.alias = alias;
         this.detail = detail;
-        this.number = number;
-        this.roadName = roadName;
-        this.reference = reference;
 
     }
 

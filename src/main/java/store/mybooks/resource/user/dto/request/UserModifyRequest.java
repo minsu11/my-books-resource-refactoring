@@ -33,13 +33,7 @@ import store.mybooks.resource.user_status.entity.UserStatus;
 public class UserModifyRequest {
 
     private String name;
-    private String password;
-    private String userStatusName;
-    private String userGradeName;
     private String phoneNumber;
-    private LocalDateTime latestLogin;
-    private LocalDateTime deletedAt;
-    private LocalDate gradeChangeDate;
 
 }
 
