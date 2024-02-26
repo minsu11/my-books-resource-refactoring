@@ -12,5 +12,7 @@ package store.mybooks.resource.tag.dto.response;
  * 2/17/24          damho-lee          최초 생성
  */
 public interface TagGetResponse {
+    Integer getId();
+
     String getName();
 }
