@@ -20,9 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -61,53 +58,18 @@ class TagRestControllerTest {
     @DisplayName("태그 조회")
     void givenGetTags_whenNormalCase_thenReturnIsOk() throws Exception {
         List<TagGetResponse> tagGetResponseList = new ArrayList<>();
-        tagGetResponseList.add(new TagGetResponse() {
-            @Override
-            public Integer getId() {
-                return 1;
-            }
-
-            @Override
-            public String getName() {
-                return "firstTagName";
-            }
-        });
-        tagGetResponseList.add(new TagGetResponse() {
-            @Override
-            public Integer getId() {
-                return 2;
-            }
-
-            @Override
-            public String getName() {
-                return "secondTagName";
-            }
-        });
-        tagGetResponseList.add(new TagGetResponse() {
-            @Override
-            public Integer getId() {
-                return 3;
-            }
-
-            @Override
-            public String getName() {
-                return "thirdTagName";
-            }
-        });
-        Pageable pageable = PageRequest.of(0, 10);
-        when(tagService.getTags(any())).thenReturn(
-                new PageImpl<>(tagGetResponseList, pageable, tagGetResponseList.size()));
+        tagGetResponseList.add(() -> "firstTag");
+        tagGetResponseList.add(() -> "secondTag");
+        tagGetResponseList.add(() -> "thirdTag");
+        when(tagService.getTags()).thenReturn(tagGetResponseList);
 
         mockMvc.perform(get("/api/tags"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.content.size()").value(tagGetResponseList.size()))
-                .andExpect(jsonPath("$.content[0].name").value(tagGetResponseList.get(0).getName()))
-                .andExpect(jsonPath("$.content[0].id").value(tagGetResponseList.get(0).getId()))
-                .andExpect(jsonPath("$.content[1].name").value(tagGetResponseList.get(1).getName()))
-                .andExpect(jsonPath("$.content[1].id").value(tagGetResponseList.get(1).getId()))
-                .andExpect(jsonPath("$.content[2].name").value(tagGetResponseList.get(2).getName()))
-                .andExpect(jsonPath("$.content[2].id").value(tagGetResponseList.get(2).getId()));
+                .andExpect(jsonPath("$.size()").value(tagGetResponseList.size()))
+                .andExpect(jsonPath("$[0].name").value(tagGetResponseList.get(0).getName()))
+                .andExpect(jsonPath("$[1].name").value(tagGetResponseList.get(1).getName()))
+                .andExpect(jsonPath("$[2].name").value(tagGetResponseList.get(2).getName()));
     }
 
     @Test
