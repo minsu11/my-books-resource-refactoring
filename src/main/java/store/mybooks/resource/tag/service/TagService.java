@@ -35,9 +35,26 @@ public class TagService {
     private final TagRepository tagRepository;
     private final TagMapper tagMapper;
 
+    /**
+     * methodName : getTag <br>
+     * author : damho-lee <br>
+     * description : id 로 TagGetResponse 리턴. id 가 존재하지 않으면 TagNotExistsException.<br>
+     *
+     * @param id Integer
+     * @return TagGetResponse
+     */
+    @Transactional(readOnly = true)
+    public TagGetResponse getTag(Integer id) {
+        if (!tagRepository.existsById(id)) {
+            throw new TagNotExistsException(id);
+        }
+
+        return tagRepository.queryById(id);
+    }
+
     @Transactional(readOnly = true)
     public Page<TagGetResponse> getTags(Pageable pageable) {
-        return tagRepository.findAllBy(pageable);
+        return tagRepository.findAllByOrderById(pageable);
     }
 
     /**
