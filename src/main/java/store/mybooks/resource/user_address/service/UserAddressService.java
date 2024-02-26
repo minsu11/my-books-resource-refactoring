@@ -22,10 +22,10 @@ import store.mybooks.resource.user_address.exception.UserAddressNotExistExceptio
 import store.mybooks.resource.user_address.repository.UserAddressRepository;
 
 /**
- * packageName    : store.mybooks.resource.user_address.service
- * fileName       : UserAddressService
- * author         : masiljangajji
- * date           : 2/13/24
+ * packageName    : store.mybooks.resource.user_address.service<br>
+ * fileName       : UserAddressService<br>
+ * author         : masiljangajji<br>
+ * date           : 2/13/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
@@ -73,7 +73,7 @@ public class UserAddressService {
 
         UserAddress userAddress = userAddressRepository.findById(addressId)
                 .orElseThrow(() -> new UserAddressNotExistException(addressId));
-        
+
         userAddress.modifyByUserAddressModifyRequest(modifyRequest.getAlias(),
                 modifyRequest.getDetail());
 

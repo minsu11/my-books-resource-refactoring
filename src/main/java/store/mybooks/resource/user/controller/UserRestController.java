@@ -37,10 +37,10 @@ import store.mybooks.resource.user.dto.response.UserStatusModifyResponse;
 import store.mybooks.resource.user.service.UserService;
 
 /**
- * packageName    : store.mybooks.resource.user.controller
- * fileName       : UserController
- * author         : masiljangajji
- * date           : 2/13/24
+ * packageName    : store.mybooks.resource.user.controller<br>
+ * fileName       : UserController<br>
+ * author         : masiljangajji<br>
+ * date           : 2/13/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE

@@ -9,10 +9,10 @@ import store.mybooks.resource.user_status.exception.UserStatusNotExistException;
 import store.mybooks.resource.user_status.repository.UserStatusRepository;
 
 /**
- * packageName    : store.mybooks.resource.user_status.service
- * fileName       : UserStatusService
- * author         : masiljangajji
- * date           : 2/13/24
+ * packageName    : store.mybooks.resource.user_status.service<br>
+ * fileName       : UserStatusService<br>
+ * author         : masiljangajji<br>
+ * date           : 2/13/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
@@ -52,6 +52,8 @@ public class UserStatusService {
     public List<UserStatusGetResponse> findAllUserStatus() {
         return userStatusRepository.queryAllBy();
     }
+
+
 
 
 }

@@ -1,10 +1,10 @@
 package store.mybooks.resource.user_grade.exception;
 
 /**
- * packageName    : store.mybooks.resource.user_grade.exception
- * fileName       : UserGradeNotExistException
- * author         : masiljangajji
- * date           : 2/16/24
+ * packageName    : store.mybooks.resource.user_grade.exception<br>
+ * fileName       : UserGradeNotExistException<br>
+ * author         : masiljangajji<br>
+ * date           : 2/16/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE

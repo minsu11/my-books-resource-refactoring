@@ -12,10 +12,10 @@ import store.mybooks.resource.user_status.dto.response.UserStatusGetResponse;
 import store.mybooks.resource.user_status.service.UserStatusService;
 
 /**
- * packageName    : store.mybooks.resource.user_status.controller
- * fileName       : UserStatusRestController
- * author         : masiljangajji
- * date           : 2/18/24
+ * packageName    : store.mybooks.resource.user_status.controller<br>
+ * fileName       : UserStatusRestController<br>
+ * author         : masiljangajji<br>
+ * date           : 2/18/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE

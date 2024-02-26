@@ -1,10 +1,10 @@
 package store.mybooks.resource.user.exception;
 
 /**
- * packageName    : store.mybooks.resource.user.exception
- * fileName       : UserNotExistException
- * author         : masiljangajji
- * date           : 2/13/24
+ * packageName    : store.mybooks.resource.user.exception<br>
+ * fileName       : UserNotExistException<br>
+ * author         : masiljangajji<br>
+ * date           : 2/13/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE

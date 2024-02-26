@@ -17,10 +17,10 @@ import store.mybooks.resource.user_grade.entity.UserGrade;
 import store.mybooks.resource.user_status.entity.UserStatus;
 
 /**
- * packageName    : store.mybooks.resource.user.entity
- * fileName       : User
- * author         : masiljangajji
- * date           : 2/13/24
+ * packageName    : store.mybooks.resource.user.entity<br>
+ * fileName       : User<br>
+ * author         : masiljangajji<br>
+ * date           : 2/13/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
