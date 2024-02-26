@@ -170,10 +170,10 @@ class ReturnRuleRestControllerUnitTest {
         String changeName = "changeTest";
         ObjectMapper mapper = new ObjectMapper();
         ReturnRuleModifyResponse response = new ReturnRuleModifyResponse(changeName, 1000, 10, true);
-        ReturnRuleModifyRequest request = new ReturnRuleModifyRequest(changeName, 10, 11, true);
-        when(returnRuleService.modifyReturnRule(any(ReturnRuleModifyRequest.class), anyString())).thenReturn(response);
+        ReturnRuleModifyRequest request = new ReturnRuleModifyRequest(changeName, 10, 11);
+        when(returnRuleService.modifyReturnRule(any(ReturnRuleModifyRequest.class), any())).thenReturn(response);
 
-        mockMvc.perform(put("/api/return-rules/{name}", returnName)
+        mockMvc.perform(put("/api/return-rules/{id}", 1L)
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -183,68 +183,67 @@ class ReturnRuleRestControllerUnitTest {
                 .andExpect(jsonPath("$.term").value(10))
                 .andExpect(jsonPath("$.isAvailable").value(true));
 
-        verify(returnRuleService, times(1)).modifyReturnRule(any(), anyString());
+        verify(returnRuleService, times(1)).modifyReturnRule(any(), any());
     }
 
     @Test
     @DisplayName("반품 규정 수정 반품 규정 명 유효성 테스트")
     void givenReturnRuleModifyRequestReturnRuleNameValidation_when_thenReturnHttpStatusCodeIsNotFound() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        ReturnRuleModifyRequest request = new ReturnRuleModifyRequest("", 10, 11, true);
+        ReturnRuleModifyRequest request = new ReturnRuleModifyRequest("", 10, 11);
 
-        mockMvc.perform(put("/api/return-rules/{name}", "test")
+        mockMvc.perform(put("/api/return-rules/{id}", 1L)
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andDo(print());
 
-        verify(returnRuleService, never()).modifyReturnRule(any(), anyString());
+        verify(returnRuleService, never()).modifyReturnRule(any(), any());
     }
 
     @Test
     @DisplayName("반품 규정 수정 반품 배송 요금 유효성 테스트")
     void givenReturnRuleModifyRequestDeliveryFeeValidation_when_thenReturnHttpStatusCodeIsNotFound() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        ReturnRuleModifyRequest request = new ReturnRuleModifyRequest("test", 10001, 11, true);
+        ReturnRuleModifyRequest request = new ReturnRuleModifyRequest("test", 10001, 11);
 
-        mockMvc.perform(put("/api/return-rules/{name}", "test")
+        mockMvc.perform(put("/api/return-rules/{id}", 1L)
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andDo(print());
 
-        verify(returnRuleService, never()).modifyReturnRule(any(), anyString());
+        verify(returnRuleService, never()).modifyReturnRule(any(), any());
     }
 
     @Test
     @DisplayName("반품 규정 수정 반품 기간 유효성 테스트")
     void givenReturnRuleModifyRequestTermValidation_when_thenReturnHttpStatusCodeIsNotFound() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        ReturnRuleModifyRequest request = new ReturnRuleModifyRequest("test", 10, 366, true);
+        ReturnRuleModifyRequest request = new ReturnRuleModifyRequest("test", 10, 366);
 
-        mockMvc.perform(put("/api/return-rules/{name}", "test")
+        mockMvc.perform(put("/api/return-rules/{id}", 1L)
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andDo(print());
 
-        verify(returnRuleService, never()).modifyReturnRule(any(), anyString());
+        verify(returnRuleService, never()).modifyReturnRule(any(), any());
     }
 
     @Test
     @DisplayName("반품 규정 수정 반품 사용 여부 유효성 테스트")
     void givenReturnRuleModifyRequestIsAvailableValidation_when_thenReturnHttpStatusCodeIsNotFound() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        ReturnRuleModifyRequest request = new ReturnRuleModifyRequest("test", 10, 366,
-                null);
+        ReturnRuleModifyRequest request = new ReturnRuleModifyRequest("test", 10, 366);
 
-        mockMvc.perform(put("/api/return-rules/{name}", "test")
+        mockMvc.perform(put("/api/return-rules/{id}", 1L)
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andDo(print());
 
-        verify(returnRuleService, never()).modifyReturnRule(any(), anyString());
+        verify(returnRuleService, never()).modifyReturnRule(any(), any());
     }
 
 
