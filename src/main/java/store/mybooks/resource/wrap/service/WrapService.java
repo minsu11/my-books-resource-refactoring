@@ -1,9 +1,15 @@
 package store.mybooks.resource.wrap.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import store.mybooks.resource.wrap.dto.WrapMapper;
+import store.mybooks.resource.wrap.dto.request.WrapCreateRequest;
+import store.mybooks.resource.wrap.dto.response.WrapCreateResponse;
 import store.mybooks.resource.wrap.dto.response.WrapResponse;
+import store.mybooks.resource.wrap.entity.Wrap;
+import store.mybooks.resource.wrap.exception.WrapAlreadyExistException;
 import store.mybooks.resource.wrap.exception.WrapNotExistException;
 import store.mybooks.resource.wrap.repository.WrapRepository;
 
@@ -22,6 +28,8 @@ import store.mybooks.resource.wrap.repository.WrapRepository;
 @RequiredArgsConstructor
 public class WrapService {
     private final WrapRepository wrapRepository;
+
+    private final WrapMapper wrapMapper;
 
     /**
      * methodName : getWrapById<br>
@@ -51,6 +59,24 @@ public class WrapService {
     public List<WrapResponse> getWrapResponseList() {
         return wrapRepository.getWrapResponseList();
 
+    }
+
+    /**
+     * methodName : createWrap<br>
+     * author : minsu11<br>
+     * description : 포장지 등록. 포장지 등록에 실패 시 {@code WrapAlreadyExistException}을 던짐.
+     * <br> *
+     *
+     * @param request 등록할 포장지
+     * @return wrap create response
+     * @throws WrapAlreadyExistException 포장지가 이미 존재 했을 경우
+     */
+    public WrapCreateResponse createWrap(WrapCreateRequest request) {
+        if (wrapRepository.existWrap(request.getWrapName())) {
+            throw new WrapAlreadyExistException();
+        }
+        Wrap wrap = new Wrap(1, request.getWrapName(), request.getWrapCost(), LocalDate.now(), true);
+        return wrapMapper.mapToWrapCreateResponse(wrapRepository.save(wrap));
     }
 
 

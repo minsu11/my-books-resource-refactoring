@@ -21,4 +21,6 @@ public interface WrapRepositoryCustom {
     Optional<WrapResponse> findWrapResponseById(Integer id);
 
     List<WrapResponse> getWrapResponseList();
+
+    Boolean existWrap(String wrapName);
 }

@@ -5,7 +5,6 @@ import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * packageName    : store.mybooks.resource.wrap.entity
@@ -19,7 +18,6 @@ import lombok.Setter;
  * 2/13/24        minsu11       최초 생성
  */
 @Getter
-@Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor

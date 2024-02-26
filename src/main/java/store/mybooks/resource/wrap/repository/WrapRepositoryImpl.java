@@ -2,6 +2,7 @@ package store.mybooks.resource.wrap.repository;
 
 import com.querydsl.core.types.Projections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import store.mybooks.resource.wrap.dto.response.WrapResponse;
@@ -45,5 +46,16 @@ public class WrapRepositoryImpl extends QuerydslRepositorySupport implements Wra
                         qWrap.cost,
                         qWrap.isAvailable))
                 .fetch();
+    }
+
+    @Override
+    public Boolean existWrap(String wrapName) {
+        QWrap qWrap = QWrap.wrap;
+        return Objects.nonNull(
+                from(qWrap)
+                        .where(qWrap.name.eq(wrapName)
+                                .and(qWrap.isAvailable.eq(true)))
+                        .fetch()
+        );
     }
 }
