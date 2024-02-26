@@ -57,7 +57,8 @@ public class BookCreateRequest {
     @Positive
     private Integer saleCost;
     @NotNull
-    @Positive
+    @Min(0)
+    @Max(99)
     private Integer discountRate;
     @NotNull
     @Positive

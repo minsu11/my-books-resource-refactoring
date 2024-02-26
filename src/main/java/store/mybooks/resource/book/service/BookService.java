@@ -64,6 +64,9 @@ public class BookService {
      */
     @Transactional(readOnly = true)
     public BookDetailResponse getBookDetailInfo(Long bookId) {
+        if (bookRepository.existsById(bookId)) {
+            throw new BookNotExistException(bookId);
+        }
         return bookRepository.getBookDetailInfo(bookId);
     }
 

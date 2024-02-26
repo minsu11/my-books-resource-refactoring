@@ -13,6 +13,6 @@ package store.mybooks.resource.book_status.exception;
  */
 public class BookStatusNotExistException extends RuntimeException {
     public BookStatusNotExistException(String bookStatusId) {
-        super("도사상태 " + bookStatusId + "는 존재하지 않습니다");
+        super("도서상태 " + bookStatusId + "는 존재하지 않습니다");
     }
 }
