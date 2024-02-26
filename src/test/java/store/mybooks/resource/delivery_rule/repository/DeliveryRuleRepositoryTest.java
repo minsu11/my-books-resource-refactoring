@@ -10,7 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import store.mybooks.resource.delivery_name_rule.repository.DeliveryRuleNameRepository;
+import store.mybooks.resource.delivery_rule_name.repository.DeliveryRuleNameRepository;
 import store.mybooks.resource.delivery_rule.dto.DeliveryRuleDto;
 import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
 import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;

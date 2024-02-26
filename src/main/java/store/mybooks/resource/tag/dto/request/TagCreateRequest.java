@@ -1,5 +1,7 @@
 package store.mybooks.resource.tag.dto.request;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,5 +21,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TagCreateRequest {
+    @NotBlank
+    @Size(min = 1, max = 20)
     private String name;
 }
