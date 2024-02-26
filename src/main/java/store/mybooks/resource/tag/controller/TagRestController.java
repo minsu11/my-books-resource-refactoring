@@ -46,6 +46,21 @@ public class TagRestController {
     private final TagService tagService;
 
     /**
+     * methodName : getTag <br>
+     * author : damho-lee <br>
+     * description : id 로 태그 조회.<br>
+     *
+     * @param id Integer
+     * @return response entity
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<TagGetResponse> getTag(@PathVariable("id") Integer id) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(tagService.getTag(id));
+    }
+
+    /**
      * methodName : getTags
      * author : damho-lee
      * description : 모든 Tag 들을 TagGetResponse 로 변환하여 반환하는 메서드.
