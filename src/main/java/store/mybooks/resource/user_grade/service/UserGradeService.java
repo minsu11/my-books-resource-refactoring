@@ -1,5 +1,6 @@
 package store.mybooks.resource.user_grade.service;
 
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -111,13 +112,12 @@ public class UserGradeService {
     /**
      * methodName : findAllUserGrade
      * author : masiljangajji
-     * description : 모든 유저등급을 Pagination 으로 찾음
+     * description : 사용중인 모든 유저등급 정보를 찾음
      *
-     * @param pageable pageable
-     * @return page
+     * @return list
      */
-    public Page<UserGradeGetResponse> findAllUserGrade(Pageable pageable) {
-        return userGradeRepository.queryAllBy(pageable);
+    public List<UserGradeGetResponse> findAllUserGrade() {
+        return userGradeRepository.queryAllByAndIsAvailableIsTrue();
     }
 
 

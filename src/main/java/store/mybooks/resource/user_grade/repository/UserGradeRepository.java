@@ -1,6 +1,7 @@
 package store.mybooks.resource.user_grade.repository;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +27,7 @@ public interface UserGradeRepository extends JpaRepository<UserGrade, Integer> {
 
     Optional<UserGrade> findByUserGradeNameIdAndIsAvailableIsTrue(String userGradeName);
 
-    Page<UserGradeGetResponse> queryAllBy(Pageable pageable);
+    List<UserGradeGetResponse> queryAllByAndIsAvailableIsTrue();
 
 
 }

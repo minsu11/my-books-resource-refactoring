@@ -1,5 +1,6 @@
 package store.mybooks.resource.user_grade.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -91,15 +92,14 @@ public class UserGradeRestController {
     /**
      * methodName : findAllUserGrade
      * author : masiljangajji
-     * description : 모든 유저등급을 Pagination 으로 찾음
+     * description : 모든 유저등급을 list 형태로 으로 찾음
      *
-     * @param pageable pageable
      * @return response entity
      */
     @GetMapping
-    public ResponseEntity<Page<UserGradeGetResponse>> findAllUserGrade(Pageable pageable) {
+    public ResponseEntity<List<UserGradeGetResponse>> findAllUserGrade() {
 
-        Page<UserGradeGetResponse> paginationUserGrade = userGradeService.findAllUserGrade(pageable);
+        List<UserGradeGetResponse> paginationUserGrade = userGradeService.findAllUserGrade();
         return new ResponseEntity<>(paginationUserGrade, HttpStatus.OK);
     }
 
