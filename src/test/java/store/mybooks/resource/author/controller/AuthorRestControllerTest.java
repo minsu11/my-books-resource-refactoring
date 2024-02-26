@@ -2,6 +2,7 @@ package store.mybooks.resource.author.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -19,7 +20,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -52,12 +56,16 @@ import store.mybooks.resource.author.service.AuthorService;
  */
 @WebMvcTest(AuthorRestController.class)
 @ExtendWith({MockitoExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 class AuthorRestControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Mock
+    private AuthorMapper authorMapper;
 
     @MockBean
     private AuthorService authorService;
@@ -82,39 +90,9 @@ class AuthorRestControllerTest {
         Integer page = 0;
         Integer size = 2;
         Pageable pageable = PageRequest.of(page, size);
-        List<AuthorGetResponse> authorGetResponseList = Arrays.asList(
-                new AuthorGetResponse() {
-                    @Override
-                    public Integer getId() {
-                        return id;
-                    }
+        List<AuthorGetResponse> authorGetResponseList =
+                Arrays.asList(new AuthorGetResponse(id, name, content), new AuthorGetResponse(id2, name2, content2));
 
-                    @Override
-                    public String getName() {
-                        return name;
-                    }
-
-                    @Override
-                    public String getContent() {
-                        return content;
-                    }
-                }, new AuthorGetResponse() {
-                    @Override
-                    public Integer getId() {
-                        return id2;
-                    }
-
-                    @Override
-                    public String getName() {
-                        return name2;
-                    }
-
-                    @Override
-                    public String getContent() {
-                        return content2;
-                    }
-                }
-        );
         Page<AuthorGetResponse> authorGetResponsePage = new PageImpl<>(authorGetResponseList, pageable,
                 authorGetResponseList.size());
         when(authorService.getAllAuthors(pageable)).thenReturn(authorGetResponsePage);
@@ -132,18 +110,41 @@ class AuthorRestControllerTest {
     }
 
     @Test
+    @DisplayName("저자 조회")
+    void givenAuthorId_whenFindAuthor_thenReturnAuthorGetResponse() throws Exception {
+        AuthorGetResponse authorGetResponse =
+                new AuthorGetResponse(author.getId(), author.getName(), author.getContent());
+
+        when(authorService.getAuthor(id)).thenReturn(authorGetResponse);
+
+        mockMvc.perform(get(url + "/{id}", id)
+                        .accept("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(authorGetResponse.getId()))
+                .andExpect(jsonPath("$.name").value(authorGetResponse.getName()))
+                .andExpect(jsonPath("$.content").value(authorGetResponse.getContent()));
+
+        verify(authorService, times(1)).getAuthor(id);
+    }
+
+    @Test
     @DisplayName("저자 등록(검증 통과)")
     void givenValidAuthorCreateRequest_whenCreateAuthor_thenSaveAuthorAndReturnAuthorCreateResponse()
             throws Exception {
         AuthorCreateRequest createRequest = new AuthorCreateRequest(name, content);
-        AuthorCreateResponse createResponse = AuthorMapper.INSTANCE.createResponse(author);
+
+        AuthorCreateResponse createResponse = new AuthorCreateResponse();
+        createResponse.setName(createRequest.getName());
+        createResponse.setContent(createRequest.getContent());
+
+        given(authorMapper.createResponse(author)).willReturn(createResponse);
 
         when(authorService.createAuthor(any(AuthorCreateRequest.class))).thenReturn(createResponse);
 
         mockMvc.perform(post(url)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(createRequest)))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value(createResponse.getName()))
                 .andExpect(jsonPath("$.content").value(createResponse.getContent()));
@@ -157,7 +158,7 @@ class AuthorRestControllerTest {
     void givenInvalidAuthorCreateRequest_whenCreateAuthor_thenThrowBindException()
             throws Exception {
         AuthorCreateRequest createRequest = new AuthorCreateRequest("", content);
-        AuthorCreateResponse createResponse = AuthorMapper.INSTANCE.createResponse(author);
+        AuthorCreateResponse createResponse = new AuthorCreateResponse();
 
         when(authorService.createAuthor(any(AuthorCreateRequest.class))).thenReturn(createResponse);
 
@@ -172,14 +173,18 @@ class AuthorRestControllerTest {
 
     @Test
     @DisplayName("저자 수정(검증 성공)")
-    void givenAuthorIdAndValidAuthorModifyRequest_whenModifyAuthor_thenModifyAuthorAndReturnAuthorModifyResponse() throws Exception {
+    void givenAuthorIdAndValidAuthorModifyRequest_whenModifyAuthor_thenModifyAuthorAndReturnAuthorModifyResponse()
+            throws Exception {
         AuthorModifyRequest modifyRequest = new AuthorModifyRequest(name2, content2);
         Author resultAuthor = new Author(modifyRequest.getChangeName(), modifyRequest.getChangeContent());
-        AuthorModifyResponse modifyResponse = AuthorMapper.INSTANCE.modifyResponse(resultAuthor);
+
+        AuthorModifyResponse modifyResponse = new AuthorModifyResponse();
+        modifyResponse.setChangedName(modifyRequest.getChangeName());
+        modifyResponse.setChangedContent(modifyRequest.getChangeContent());
+
+        given(authorMapper.modifyResponse(resultAuthor)).willReturn(modifyResponse);
 
         when(authorService.modifyAuthor(eq(id), any(AuthorModifyRequest.class))).thenReturn(modifyResponse);
-
-
 
         mockMvc.perform(put(url + "/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -192,10 +197,9 @@ class AuthorRestControllerTest {
 
     @Test
     @DisplayName("저자 수정(검증 실패)")
-    void givenAuthorIdAndInvalidAuthorModifyRequest_whenModifyAuthor_thenModifyAuthorAndReturnAuthorModifyResponse() throws Exception {
+    void givenAuthorIdAndInvalidAuthorModifyRequest_whenModifyAuthor_thenThrowBindException() throws Exception {
         AuthorModifyRequest modifyRequest = new AuthorModifyRequest("", content2);
-        Author resultAuthor = new Author(modifyRequest.getChangeName(), modifyRequest.getChangeContent());
-        AuthorModifyResponse modifyResponse = AuthorMapper.INSTANCE.modifyResponse(resultAuthor);
+        AuthorModifyResponse modifyResponse = new AuthorModifyResponse();
 
         when(authorService.modifyAuthor(eq(id), any(AuthorModifyRequest.class))).thenReturn(modifyResponse);
 
@@ -210,7 +214,9 @@ class AuthorRestControllerTest {
     @Test
     @DisplayName("저자 삭제")
     void givenAuthorId_whenDeleteAuthor_thenDeleteAuthorAndReturnAuthorDeleteResponse() throws Exception {
-        AuthorDeleteResponse deleteResponse = AuthorMapper.INSTANCE.deleteResponse(author);
+        AuthorDeleteResponse deleteResponse = new AuthorDeleteResponse();
+        deleteResponse.setName(name);
+        given(authorMapper.deleteResponse(author)).willReturn(deleteResponse);
 
         when(authorService.deleteAuthor(id)).thenReturn(deleteResponse);
 

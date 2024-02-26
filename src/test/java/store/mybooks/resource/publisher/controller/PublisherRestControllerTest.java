@@ -37,7 +37,6 @@ import store.mybooks.resource.publisher.dto.response.PublisherDeleteResponse;
 import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
 import store.mybooks.resource.publisher.dto.response.PublisherModifyResponse;
 import store.mybooks.resource.publisher.entity.Publisher;
-import store.mybooks.resource.publisher.mapper.PublisherMapper;
 import store.mybooks.resource.publisher.service.PublisherService;
 
 /**
@@ -82,96 +81,118 @@ class PublisherRestControllerTest {
         Integer page = 0;
         Integer size = 2;
         Pageable pageable = PageRequest.of(page, size);
-        List<PublisherGetResponse> publisherList = Arrays.asList(
-                new PublisherGetResponse() {
-                    @Override
-                    public Integer getId() {
-                        return id;
-                    }
+        List<PublisherGetResponse> publisherList = Arrays.asList(new PublisherGetResponse() {
+            @Override
+            public Integer getId() {
+                return id;
+            }
 
-                    @Override
-                    public String getName() {
-                        return name;
-                    }
-                },
-                new PublisherGetResponse() {
-                    @Override
-                    public Integer getId() {
-                        return id2;
-                    }
+            @Override
+            public String getName() {
+                return name;
+            }
+        }, new PublisherGetResponse() {
+            @Override
+            public Integer getId() {
+                return id2;
+            }
 
-                    @Override
-                    public String getName() {
-                        return name2;
-                    }
-                });
+            @Override
+            public String getName() {
+                return name2;
+            }
+        });
 
         Page<PublisherGetResponse> publisherGetResponsePage =
                 new PageImpl<>(publisherList, pageable, publisherList.size());
 
         when(publisherService.getAllPublisher(pageable)).thenReturn(publisherGetResponsePage);
 
-        mockMvc.perform(get(url + "?page=" + page + "&size=" + size)
-                        .accept("application/json"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].id").value(id))
-                .andExpect(jsonPath("$.content[0].name").value(name))
-                .andExpect(jsonPath("$.content[1].id").value(id2))
+        mockMvc.perform(get(url + "?page=" + page + "&size=" + size).accept("application/json"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.content[0].id").value(id))
+                .andExpect(jsonPath("$.content[0].name").value(name)).andExpect(jsonPath("$.content[1].id").value(id2))
                 .andExpect(jsonPath("$.content[1].name").value(name2));
-
         verify(publisherService, times(1)).getAllPublisher(pageable);
     }
 
     @Test
-    @DisplayName("출판사 등록")
-    void givenPublisherCreateRequest_whenCreatePublisher_thenSavePublisherAndReturnPublisherCreateResponse() throws Exception {
+    @DisplayName("출판사 등록(검증 성공)")
+    void givenValidPublisherCreateRequest_whenCreatePublisher_thenSavePublisherAndReturnPublisherCreateResponse()
+            throws Exception {
         PublisherCreateRequest request = new PublisherCreateRequest(name);
-        PublisherCreateResponse response = PublisherMapper.INSTANCE.createResponse(publisher);
+        PublisherCreateResponse response = new PublisherCreateResponse();
+        response.setName(request.getName());
 
         when(publisherService.createPublisher(any(PublisherCreateRequest.class))).thenReturn(response);
 
-        mockMvc.perform(post(url)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(request)))
-                .andExpect(status().isCreated())
+        mockMvc.perform(post(url).accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(request))).andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value(response.getName()));
-
         verify(publisherService, times(1)).createPublisher(any(PublisherCreateRequest.class));
     }
 
     @Test
-    @DisplayName("출판사 수정")
-    void givenPublisherIdAndPublisherModifyRequest_whenModifyPublisher_thenModifyPublisherAndReturnPublisherModifyResponse() throws Exception {
+    @DisplayName("출판사 등록(검증 실패)")
+    void givenInvalidPublisherCreateRequest_whenCreatePublisher_thenThrowBindException() throws Exception {
+        PublisherCreateRequest request = new PublisherCreateRequest("");
+        PublisherCreateResponse response = new PublisherCreateResponse();
+        response.setName(request.getName());
+
+        when(publisherService.createPublisher(any(PublisherCreateRequest.class))).thenReturn(response);
+
+        mockMvc.perform(post(url).accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(request))).andExpect(status().isBadRequest());
+
+
+        verify(publisherService, times(0)).createPublisher(any(PublisherCreateRequest.class));
+    }
+
+    @Test
+    @DisplayName("출판사 수정(검증 통과)")
+    void givenPublisherIdAndValidPublisherModifyRequest_whenModifyPublisher_thenModifyPublisherAndReturnPublisherModifyResponse()
+            throws Exception {
         String nameToChange = "nameToChange";
-        Publisher publisher = new Publisher(nameToChange);
         PublisherModifyRequest request = new PublisherModifyRequest(nameToChange);
-        PublisherModifyResponse response = PublisherMapper.INSTANCE.modifyResponse(publisher);
+        PublisherModifyResponse response = new PublisherModifyResponse();
+        response.setName(request.getChangeName());
 
         when(publisherService.modifyPublisher(eq(id), any(PublisherModifyRequest.class))).thenReturn(response);
 
-        mockMvc.perform(put(url + "/{id}", id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                        .andExpect(status().isOk())
-                        .andExpect(jsonPath("$.name").value(response.getName()));
+        mockMvc.perform(put(url + "/{id}", id).contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))).andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value(response.getName()));
 
         verify(publisherService, times(1)).modifyPublisher(eq(id), any(PublisherModifyRequest.class));
     }
 
     @Test
+    @DisplayName("출판사 수정(검증 실패)")
+    void givenPublisherIdAndInvalidPublisherModifyRequest_whenModifyPublisher_thenThrowBindException()
+            throws Exception {
+        String nameToChange = "";
+        PublisherModifyRequest request = new PublisherModifyRequest(nameToChange);
+        PublisherModifyResponse response = new PublisherModifyResponse();
+        response.setName(request.getChangeName());
+
+        when(publisherService.modifyPublisher(eq(id), any(PublisherModifyRequest.class))).thenReturn(response);
+
+        mockMvc.perform(put(url + "/{id}", id).contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))).andExpect(status().isBadRequest());
+
+        verify(publisherService, times(0)).modifyPublisher(eq(id), any(PublisherModifyRequest.class));
+    }
+
+    @Test
     @DisplayName("출판사 삭제")
     void givenPublisherId_whenDeletePublisher_thenDeletePublisherAndReturnPublisherDeleteResponse() throws Exception {
-        PublisherDeleteResponse response = PublisherMapper.INSTANCE.deleteResponse(publisher);
+        PublisherDeleteResponse response = new PublisherDeleteResponse();
+        response.setName(name);
+        when(publisherService.deletePublisher(id)).thenReturn(response);
 
-        when(publisherService.deletePublisher(eq(id))).thenReturn(response);
-
-        mockMvc.perform(delete(url + "/{id}", id)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+        mockMvc.perform(delete(url + "/{id}", id).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(response.getName()));
 
-        verify(publisherService, times(1)).deletePublisher(eq(id));
+        verify(publisherService, times(1)).deletePublisher(id);
 
     }
 }

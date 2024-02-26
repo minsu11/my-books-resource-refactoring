@@ -5,7 +5,9 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * packageName    : store.mybooks.resource.user_grade.dto.request
@@ -20,6 +22,8 @@ import lombok.Getter;
  */
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserGradeCreateRequest {
 
     private String name;

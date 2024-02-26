@@ -1,5 +1,10 @@
 package store.mybooks.resource.author.dto.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * packageName    : store.mybooks.resource.author.dto.response
  * fileName       : AuthorGetResponse
@@ -11,8 +16,14 @@ package store.mybooks.resource.author.dto.response;
  * -----------------------------------------------------------
  * 2/20/24        newjaehun       최초 생성
  */
-public interface AuthorGetResponse {
-    Integer getId();
-    String getName();
-    String getContent();
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class AuthorGetResponse {
+    private Integer id;
+
+    private String name;
+
+    private String content;
 }

@@ -32,13 +32,14 @@ import store.mybooks.resource.publisher.repository.PublisherRepository;
 @RequiredArgsConstructor
 public class PublisherService {
     private final PublisherRepository publisherRepository;
+    private final PublisherMapper publisherMapper;
 
     /**
      * methodName : getAllPublisher
      * author : newjaehun
-     * description : 전체 출판사 리스트 반환
+     * description : 전체 출판사 리스트 반환.
      *
-     * @param pageable
+     * @param pageable pageable
      * @return Page
      */
     @Transactional(readOnly = true)
@@ -49,9 +50,9 @@ public class PublisherService {
     /**
      * methodName : createPublisher
      * author : newjaehun
-     * description : 출판사 추가하는 메서드
+     * description : 출판사 추가하는 메서드.
      *
-     * @param createRequest: 추가할 name, name이 이미 존재하는 경우 PublisherAlreadyExistException 발생
+     * @param createRequest 추가할 name, name이 이미 존재하는 경우 PublisherAlreadyExistException 발생
      * @return publisherCreateResponse: 추가된 name
      */
     @Transactional
@@ -61,16 +62,16 @@ public class PublisherService {
         if (publisherRepository.existsByName(createRequest.getName())) {
             throw new PublisherAlreadyExistException(createRequest.getName());
         }
-        return PublisherMapper.INSTANCE.createResponse(publisherRepository.save(publisher));
+        return publisherMapper.createResponse(publisherRepository.save(publisher));
     }
 
     /**
      * methodName : modifyPublisher
      * author : newjaehun
-     * description : 출판사 수정하는 메서드
+     * description : 출판사 수정하는 메서드.
      *
      * @param publisherId 수정하려는 publisher 의 id, 존재하지 않으면 PublisherNotExistException 발생
-     * @param modifyRequest: 수정할 name 포함
+     * @param modifyRequest 수정할 name 포함
      * @return publisherModifyResponse: 수정된 name 포함
      */
     @Transactional
@@ -83,13 +84,13 @@ public class PublisherService {
             throw new PublisherAlreadyExistException(publisher.getName());
         }
         publisher.setByModifyRequest(modifyRequest);
-        return PublisherMapper.INSTANCE.modifyResponse(publisher);
+        return publisherMapper.modifyResponse(publisher);
     }
 
     /**
      * methodName : deletePublisher
      * author : newjaehun
-     * description : 출판사 삭제하는 메서드
+     * description : 출판사 삭제하는 메서드.
      *
      * @param publisherId 삭제하려는 publisher 의 id, 존재하지 않으면 PublisherNotExistException 발생
      * @return publisherDeleteResponse: 삭제된 name 포함
@@ -98,9 +99,8 @@ public class PublisherService {
     public PublisherDeleteResponse deletePublisher(Integer publisherId) {
         Publisher publisher =
                 publisherRepository.findById(publisherId).orElseThrow(() -> new PublisherNotExistException(publisherId));
-
         publisherRepository.deleteById(publisherId);
-        return PublisherMapper.INSTANCE.deleteResponse(publisher);
+        return publisherMapper.deleteResponse(publisher);
     }
 
 }

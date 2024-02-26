@@ -9,6 +9,7 @@ import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsExcept
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
 import store.mybooks.resource.publisher.exception.PublisherAlreadyExistException;
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
+import store.mybooks.resource.return_rule_name.exception.ReturnRuleNameRequestValidationFailedException;
 import store.mybooks.resource.tag.exception.TagNameAlreadyExistsException;
 import store.mybooks.resource.tag.exception.TagNotExistsException;
 
@@ -31,7 +32,7 @@ public class GlobalControllerAdvice {
      * description : NotFoundException 을 처리하는 ExceptionHandler.
      *
      * @param exception exception.
-     * @return response entity
+     * @return ResponseEntity
      */
     @ExceptionHandler({CategoryNotExistsException.class, TagNotExistsException.class, PublisherNotExistException.class})
     public ResponseEntity<String> xxxNotExistsException(Exception exception) {
@@ -46,7 +47,7 @@ public class GlobalControllerAdvice {
      * description : AlreadyExistsException 을 처리하는 ExceptionHandler.
      *
      * @param exception exception.
-     * @return response entity
+     * @return ResponseEntity
      */
     @ExceptionHandler({CategoryNameAlreadyExistsException.class, TagNameAlreadyExistsException.class,
             PublisherAlreadyExistException.class})
@@ -56,7 +57,31 @@ public class GlobalControllerAdvice {
                 .body(exception.getMessage());
     }
 
-    @ExceptionHandler({ValidationException.class})
+
+    /**
+     * methodName : xxxValidationFailedException
+     * author : minsu11
+     * description : ValidationFailedException 을 처리하는 ExceptionHandler.
+     *
+     * @param exception the exception
+     * @return the response entity
+     */
+    @ExceptionHandler({ReturnRuleNameRequestValidationFailedException.class})
+    public ResponseEntity<String> xxxValidationFailedException(Exception exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
+    }
+
+    /**
+     * methodName : validationException <br>
+     * author : damho-lee <br>
+     * description : ValidationException 을 처리하는 ExceptionHandler. <br>
+     *
+     * @param exception ValidationException.
+     * @return ResponseEntity
+     */
+    @ExceptionHandler(ValidationException.class)
     public ResponseEntity<String> validationException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

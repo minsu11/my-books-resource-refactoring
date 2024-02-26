@@ -31,13 +31,14 @@ import store.mybooks.resource.author.repository.AuthorRepository;
 @RequiredArgsConstructor
 public class AuthorService {
     private final AuthorRepository authorRepository;
+    private final AuthorMapper authorMapper;
 
     /**
      * methodName : getAllAuthors
      * author : newjaehun
-     * description : 전체 저자 리스트 반환
+     * description : 전체 저자 리스트 반환.
      *
-     * @param pageable
+     * @param pageable pageable
      * @return page
      */
     @Transactional(readOnly = true)
@@ -45,26 +46,41 @@ public class AuthorService {
         return authorRepository.findAllBy(pageable);
     }
 
+
+    /**
+     * methodName : getAuthor
+     * author : newjaehun
+     * description : 도서 정보 반환.
+     *
+     * @param authorId 가져올 도서 ID
+     * @return author get response
+     */
+    @Transactional(readOnly = true)
+    public AuthorGetResponse getAuthor(Integer authorId) {
+        return authorRepository.getAuthorInfo(authorId);
+    }
+
     /**
      * methodName : createAuthor
      * author : newjaehun
-     * description : 저자 추가하는 메서드
+     * description : 저자 추가하는 메서드.
      *
-     * @param createRequest: 추가할 name, content
+     * @param createRequest 추가할 name, content
      * @return AuthorCreateResponse
      */
     @Transactional
     public AuthorCreateResponse createAuthor(AuthorCreateRequest createRequest) {
-        return AuthorMapper.INSTANCE.createResponse(authorRepository.save(new Author(createRequest.getName(), createRequest.getContent())));
+        return authorMapper.createResponse(
+                authorRepository.save(new Author(createRequest.getName(), createRequest.getContent())));
     }
 
     /**
      * methodName : modifyAuthor
      * author : newjaehun
-     * description : 저자 수정하는 메서드
+     * description : 저자 수정하는 메서드.
      *
-     * @param authorId
-     * @param modifyRequest
+     * @param authorId      저자 ID
+     * @param modifyRequest request
      * @return AuthorModifyResponse
      */
     @Transactional
@@ -73,15 +89,15 @@ public class AuthorService {
                 authorRepository.findById(authorId).orElseThrow(() -> new AuthorNotExistException(authorId));
 
         author.setByModifyRequest(modifyRequest);
-        return AuthorMapper.INSTANCE.modifyResponse(author);
+        return authorMapper.modifyResponse(author);
     }
 
     /**
      * methodName : deleteAuthor
      * author : newjaehun
-     * description : 저자 삭제하는 메서드
+     * description : 저자 삭제하는 메서드.
      *
-     * @param authorId
+     * @param authorId 저자 ID
      * @return AuthorDeleteResponse
      */
     @Transactional
@@ -89,6 +105,6 @@ public class AuthorService {
         Author author =
                 authorRepository.findById(authorId).orElseThrow(() -> new AuthorNotExistException(authorId));
         authorRepository.deleteById(authorId);
-        return AuthorMapper.INSTANCE.deleteResponse(author);
+        return authorMapper.deleteResponse(author);
     }
 }

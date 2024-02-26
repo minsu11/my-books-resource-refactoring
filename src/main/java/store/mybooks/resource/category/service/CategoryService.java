@@ -2,6 +2,8 @@ package store.mybooks.resource.category.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.category.dto.request.CategoryCreateRequest;
@@ -28,10 +30,32 @@ import store.mybooks.resource.category.repository.CategoryRepository;
  * 2/16/24          damho-lee          최초 생성
  */
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
+    /**
+     * methodName : getCategoriesOrderByParentCategoryId <br>
+     * author : damho-lee <br>
+     * description : ParentCategoryId 를 기준으로 Caetgory 를 오름차순으로 반환. null 인 값이 가장 먼저 반환. 즉, 최상위 카테고리부터 반환됨.<br>
+     *
+     * @param pageable pagination. (default: page = 0, size = 10)
+     * @return list
+     */
+    @Transactional(readOnly = true)
+    public Page<CategoryGetResponse> getCategoriesOrderByParentCategoryId(Pageable pageable) {
+        return categoryRepository.findByOrderByParentCategory_Id(pageable);
+    }
+
+    /**
+     * methodName : getHighestCategories <br>
+     * author : damho-lee <br>
+     * description : 최상위 Category 들을 반환.<br>
+     *
+     * @return list
+     */
     @Transactional(readOnly = true)
     public List<CategoryGetResponse> getHighestCategories() {
         return categoryRepository.findAllByParentCategoryIsNull();
@@ -62,7 +86,6 @@ public class CategoryService {
      * @param categoryCreateRequest ParentCategory, name 포함.
      * @return category create response
      */
-    @Transactional
     public CategoryCreateResponse createCategory(CategoryCreateRequest categoryCreateRequest) {
         if (categoryRepository.existsByName(categoryCreateRequest.getName())) {
             throw new CategoryNameAlreadyExistsException(categoryCreateRequest.getName());
@@ -77,7 +100,7 @@ public class CategoryService {
                     .orElseThrow(() -> new CategoryNotExistsException(parentCategoryId));
         }
 
-        return CategoryMapper.INSTANCE.createResponse(categoryRepository.save(new Category(parentCategory, name)));
+        return categoryMapper.createResponse(categoryRepository.save(new Category(parentCategory, name)));
     }
 
     /**
@@ -91,7 +114,6 @@ public class CategoryService {
      *                              name 이 이미 존재하는 경우 CategoryNameAlreadyExistsException.
      * @return category modify response
      */
-    @Transactional
     public CategoryModifyResponse modifyCategory(int id, CategoryModifyRequest categoryModifyRequest) {
         if (categoryRepository.existsByName(categoryModifyRequest.getName())) {
             throw new CategoryNameAlreadyExistsException(categoryModifyRequest.getName());
@@ -107,7 +129,7 @@ public class CategoryService {
                     categoryRepository.findById(parentCategoryId).orElseThrow(() -> new CategoryNotExistsException(id));
         }
 
-        return CategoryMapper.INSTANCE.modifyResponse(
+        return categoryMapper.modifyResponse(
                 category.modifyCategory(parentCategory, categoryModifyRequest.getName()));
     }
 
@@ -119,12 +141,11 @@ public class CategoryService {
      * @param id 삭제하고자 하는 카테고리의 id. id 에 해당하는 category 가 없는 경우 CategoryNotExistsException.
      * @return CategoryDeleteResponse
      */
-    @Transactional
     public CategoryDeleteResponse deleteCategory(int id) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotExistsException(id));
 
         categoryRepository.deleteById(id);
 
-        return CategoryMapper.INSTANCE.deleteResponse(category);
+        return categoryMapper.deleteResponse(category);
     }
 }

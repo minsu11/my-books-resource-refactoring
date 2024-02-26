@@ -44,9 +44,9 @@ public class AuthorRestController {
     /**
      * methodName : getAllAuthors
      * author : newjaehun
-     * description : 전체 저자 리스트 반환
+     * description : 전체 저자 리스트 반환.
      *
-     * @param pageable
+     * @param pageable pageable
      * @return ResponseEntity
      */
     @GetMapping
@@ -58,11 +58,26 @@ public class AuthorRestController {
     }
 
     /**
+     * methodName : getAuthor
+     * author : newjaehun
+     * description : 저자 ID로 저자 반환.
+     *
+     * @param authorId authorId
+     * @return response entity
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<AuthorGetResponse> getAuthor(@PathVariable("id") Integer authorId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(authorService.getAuthor(authorId));
+    }
+    
+    /**
      * methodName : createAuthor
      * author : newjaehun
-     * description : 저자 추가
+     * description : 저자 추가.
      *
-     * @param createRequest: 추가할 name, content 포함
+     * @param createRequest 추가할 name, content 포함
      * @return ResponseEntity
      */
     @PostMapping
@@ -80,15 +95,16 @@ public class AuthorRestController {
     /**
      * methodName : modifyAuthor
      * author : newjaehun
-     * description : 저자 수정
+     * description : 저자 수정.
      *
-     * @param authorId: 수정하려는 author 의 id
-     * @param modifyRequest: 수정할 namem, content 포함
+     * @param authorId      수정하려는 author 의 id
+     * @param modifyRequest 수정할 namem, content 포함
      * @return ResponseEntity
      */
     @PutMapping("/{id}")
-    public ResponseEntity<AuthorModifyResponse> modifyAuthor(@PathVariable("id") Integer authorId, @Valid @RequestBody
-    AuthorModifyRequest modifyRequest, BindingResult bindingResult) throws BindException {
+    public ResponseEntity<AuthorModifyResponse> modifyAuthor(@PathVariable("id") Integer authorId,
+                                                             @Valid @RequestBody AuthorModifyRequest modifyRequest,
+                                                             BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
         }
@@ -100,9 +116,9 @@ public class AuthorRestController {
     /**
      * methodName : deleteAuthor
      * author : newjaehun
-     * description : 저자 삭제
+     * description : 저자 삭제.
      *
-     * @param authorId: 삭제하려는 author 의 id
+     * @param authorId 삭제하려는 author 의 id
      * @return ResponseEntity
      */
     @DeleteMapping("/{id}")
