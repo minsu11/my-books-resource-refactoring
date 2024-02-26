@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import javax.swing.text.html.Option;
 import org.junit.jupiter.api.DisplayName;
@@ -127,13 +128,13 @@ class UserGradeServiceTest {
     }
 
     @Test
-    @DisplayName("Pageable 로 findAllUserGrade 메서드 실행시 동작 테스트")
-    void givenPageable_whenCallFindAllUserGrade_thenReturnUserGradeGetResponsePage(@Mock Page page) {
+    @DisplayName("findAllUserGrade 메서드 실행시 동작 테스트")
+    void givenPageable_whenCallFindAllUserGrade_thenReturnUserGradeGetResponsePage(@Mock List<UserGradeGetResponse> list) {
 
-        when(userGradeRepository.queryAllBy(any())).thenReturn(page);
+        when(userGradeRepository.queryAllByAndIsAvailableIsTrue()).thenReturn(list);
 
-        userGradeService.findAllUserGrade(any());
+        userGradeService.findAllUserGrade();
 
-        verify(userGradeRepository, times(1)).queryAllBy(any());
+        verify(userGradeRepository, times(1)).queryAllByAndIsAvailableIsTrue();
     }
 }

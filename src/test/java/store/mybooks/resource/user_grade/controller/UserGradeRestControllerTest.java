@@ -120,23 +120,23 @@ class UserGradeRestControllerTest {
     }
 
     @Test
-    @DisplayName("Pageable 로 findAllUserGrade 실행시 모든 UserGrade 를 Pagination 해서 조회")
-    void givenPageable_whenCallFindAllUserGrade_thenReturnUserGradeGetResponsePage() throws Exception {
+    @DisplayName("findAllUserGrade 실행시 모든 UserGrade 를 List 로 조회")
+    void givenNothing_whenCallFindAllUserGrade_thenReturnUserGradeGetResponseList() throws Exception {
 
         List<UserGradeGetResponse> userGradeList = new ArrayList<>();
         userGradeList.add(userGradeGetResponse1);
         userGradeList.add(userGradeGetResponse2);
-        Page<UserGradeGetResponse> userGradePage = new PageImpl<>(userGradeList);
 
-        when(userGradeService.findAllUserGrade(any(Pageable.class))).thenReturn(userGradePage);
+        when(userGradeService.findAllUserGrade()).thenReturn(userGradeList);
 
         mockMvc.perform(get("/api/users-grades")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").exists())
-                .andExpect(jsonPath("$.totalElements").exists())
-                .andExpect(jsonPath("$.number").exists())
-                .andExpect(jsonPath("$.totalPages").exists());
+                .andExpectAll(jsonPath("$.[*].minCost").exists())
+                .andExpectAll(jsonPath("$.[*].maxCost").exists())
+                .andExpectAll(jsonPath("$.[*].rate").exists())
+                .andExpectAll(jsonPath("$.[*].createdDate").exists())
+                .andExpectAll(jsonPath("$.[*].userGradeNameId").exists());
     }
 
 
