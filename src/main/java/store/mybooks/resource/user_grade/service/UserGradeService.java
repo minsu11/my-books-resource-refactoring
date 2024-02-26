@@ -42,12 +42,13 @@ public class UserGradeService {
 
 
     /**
-     * Create user grade user grade create response.
-     * UserGrade 생성
-     * UserGradeName이 존재하지않는다면 UserGradeNameNotExistException
+     * methodName : createUserGrade
+     * author : masiljangajji
+     * description : 유저 등급을 생성
      *
-     * @param createRequest the create request
-     * @return the user grade create response
+     * @param createRequest request
+     * @throws UserGradeNameNotExistException 유저의 이름이 존재하지 않는 경우
+     * @return user grade create response
      */
     @Transactional
     public UserGradeCreateResponse createUserGrade(UserGradeCreateRequest createRequest) {
@@ -73,13 +74,13 @@ public class UserGradeService {
     }
 
     /**
-     * Delete user grade user grade delete response.
-     * UserGrade를 id를 이용해 삭제함
-     * 강 삭제가 아닌 isAvailable Field를 flase로 변경하는 약삭제를 제공
-     * 삭제하려는 UserGradeId가 존재하지 않는다면 UserGradeIdNotExistException
+     * methodName : deleteUserGrade
+     * author : masiljangajji
+     * description : 유저 등급을 삭제
      *
-     * @param id the id
-     * @return the user grade delete response
+     * @param id id
+     * @throws UserGradeIdNotExistException 유저등급이 존재하지 않는 경우
+     * @return user grade delete response
      */
     @Transactional
     public UserGradeDeleteResponse deleteUserGrade(Integer id) {
@@ -91,13 +92,13 @@ public class UserGradeService {
     }
 
     /**
-     * Find user grade by id user grade get response.
-     * <p>
-     * UserGrade를 id를 이용해 찾음
-     * 찾으려는 UserGradeId가 존재하지 않는다면 UserGradeIdNotExistException
+     * methodName : findUserGradeById
+     * author : masiljangajji
+     * description : 유저등급을 찾음
      *
-     * @param id the id
-     * @return the user grade get response
+     * @param id id
+     * @throws UserGradeIdNotExistException 유저등급이 존재하지 않는 경우
+     * @return user grade get response
      */
     public UserGradeGetResponse findUserGradeById(Integer id) {
 
@@ -108,12 +109,12 @@ public class UserGradeService {
 
 
     /**
-     * Find all user grade page.
+     * methodName : findAllUserGrade
+     * author : masiljangajji
+     * description : 모든 유저등급을 Pagination 으로 찾음
      *
-     * 모든 UserGrade를 Pagination해서 보여줌
-     *
-     * @param pageable the pageable
-     * @return the page
+     * @param pageable pageable
+     * @return page
      */
     public Page<UserGradeGetResponse> findAllUserGrade(Pageable pageable) {
         return userGradeRepository.queryAllBy(pageable);

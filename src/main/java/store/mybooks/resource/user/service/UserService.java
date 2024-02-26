@@ -36,7 +36,6 @@ import store.mybooks.resource.user_status.enumeration.UserStatusEnum;
 import store.mybooks.resource.user_status.exception.UserStatusNotExistException;
 import store.mybooks.resource.user_status.repository.UserStatusRepository;
 
-
 /**
  * packageName    : store.mybooks.resource.user.service<br>
  * fileName       : UserService<br>
@@ -63,17 +62,15 @@ public class UserService {
     private final UserMapper userMapper;
 
     /**
-     * Create user user create response.
-     * User를 생성함
-     * User의 email이 중복되는 경우 UserAlreadyExistException
-     * UserStatus가 존재하지 않는 경우 UserStatusNotExistException
-     * 사용중인 UserGrade가 존재하지 않는 경우 UserGradeNameNotExistException
+     * methodName : createUser
+     * author : masiljangajji
+     * description : 유저를 생성
      *
-     * @param createRequest the create request
-     * @return the user create response
-     * @throws UserAlreadyExistException
-     * @throws UserStatusNotExistException
-     * @throws UserGradeNameNotExistException
+     * @param createRequest request
+     * @throws UserAlreadyExistException 이미 등록된 이메일인 경우
+     * @throws UserStatusNotExistException  유저의 상태가 존재하지 않는 경우
+     * @throws UserGradeNameNotExistException 유저의 등급이름이 존재하지 않는 경우
+     * @return user create response
      */
     public UserCreateResponse createUser(UserCreateRequest createRequest) {
 
@@ -102,17 +99,14 @@ public class UserService {
     }
 
     /**
-     * Modify user user modify response.
-     * id 찾은 User를 수정함 , 이름 ,비밀번호,핸드폰번호 등 변경될 수 있는 모든 Field에 대해서 변경처리를 함
-     * (후에 세분화 예정)
-     * UserStatus가 존재하지 않는 경우 UserStatusNotExistException
-     * 사용중인 UserGrade가 존재하지 않는 경우 UserGradeNameNotExistException
+     * methodName : modifyUser
+     * author : masiljangajji
+     * description : 유저의 정보를 변경함 (이름,전화번호)
      *
-     * @param id            the id
-     * @param modifyRequest the modify request
-     * @return the user modify response
-     * @throws UserStatusNotExistException
-     * @throws UserGradeNameNotExistException
+     * @param id id
+     * @param modifyRequest request
+     * @throws UserNotExistException 유저가 존재하지 않는 경우
+     * @return user modify response
      */
     public UserModifyResponse modifyUser(Long id, UserModifyRequest modifyRequest) {
 
@@ -124,6 +118,18 @@ public class UserService {
         return userMapper.toUserModifyResponse(user);
     }
 
+
+    /**
+     * methodName : modifyUserGrade
+     * author : masiljangajji
+     * description : 유저의 등급을 변경함
+     *
+     * @param id id
+     * @param modifyRequest request
+     * @throws UserNotExistException 유저가 존재하지 않는 경우
+     * @throws UserGradeIdNotExistException 유저의 등급이 존재하지 않는 경우
+     * @return user grade modify response
+     */
     public UserGradeModifyResponse modifyUserGrade(Long id, UserGradeModifyRequest modifyRequest) {
 
         // 없으면 예외처리
@@ -139,6 +145,17 @@ public class UserService {
         return userMapper.toUserGradeModifyResponse(user);
     }
 
+    /**
+     * methodName : modifyUserStatus
+     * author : masiljangajji
+     * description : 유저의 상태를 변경함
+     *
+     * @param id id
+     * @param modifyRequest request
+     * @throws  UserNotExistException 유저가 존재하지 않는 경우
+     * @throws  UserStatusNotExistException 유저상태가 존재하지 않는 경우
+     * @return user status modify response
+     */
     public UserStatusModifyResponse modifyUserStatus(Long id, UserStatusModifyRequest modifyRequest) {
 
         // 없으면 예외처리
@@ -153,6 +170,16 @@ public class UserService {
         return userMapper.toUserStatusModifyResponse(user);
     }
 
+    /**
+     * methodName : modifyUserPassword
+     * author : masiljangajji
+     * description : 유저의 비밀번호 변경
+     *
+     * @param id id
+     * @param modifyRequest request
+     * @throws UserNotExistException 유저가 존재하지 않는 경우
+     * @return user password modify response
+     */
     public UserPasswordModifyResponse modifyUserPassword(Long id, UserPasswordModifyRequest modifyRequest) {
 
         // 없으면 예외처리
@@ -164,12 +191,13 @@ public class UserService {
     }
 
     /**
-     * Delete user user delete response.
-     * id로 찾은 User를 삭제함
-     * 강삭제가 아닌 약삭제로 User의 상태를 "탈퇴"로 변경함
+     * methodName : deleteUser
+     * author : masiljangajji
+     * description :유저 삭제
      *
-     * @param id the id
-     * @return the user delete response
+     * @param id id
+     * @throws UserStatusNotExistException 유저의 상태가 존재하지 않는 경우
+     * @return user delete response
      */
     public UserDeleteResponse deleteUser(Long id) {
 
@@ -184,11 +212,13 @@ public class UserService {
     }
 
     /**
-     * Find by email user get response.
-     * id를 이용해 User를 반환함
+     * methodName : findById
+     * author : masiljangajji
+     * description :유저의 정보를 찾음
      *
-     * @param id the id
-     * @return the user get response
+     * @param id id
+     * @throws UserNotExistException 유저가 존재하지 않는 경우
+     * @return user get response
      */
     @Transactional(readOnly = true)
     public UserGetResponse findById(Long id) {
@@ -198,11 +228,12 @@ public class UserService {
 
 
     /**
-     * Find all user page.
-     * 모든 User를 Pagination 해서 반환함
+     * methodName : findAllUser
+     * author : masiljangajji
+     * description : 모든 유저를 찾아 Pagination 함
      *
-     * @param pageable the pageable
-     * @return the page
+     * @param pageable pageable
+     * @return page
      */
     @Transactional(readOnly = true)
     public Page<UserGetResponse> findAllUser(Pageable pageable) {
@@ -210,6 +241,16 @@ public class UserService {
         return userRepository.queryAllBy(pageable);
     }
 
+    /**
+     * methodName : loginUser
+     * author : masiljangajji
+     * description : 로그인요청 처리
+     *
+     * @param userLoginRequest login request
+     * @throws UserLoginFailException 로그인 실패하는 경우
+     * @throws UserAlreadyResignException 이미 탈퇴한 유저인 경우
+     * @return user login response
+     */
     public UserLoginResponse loginUser(UserLoginRequest userLoginRequest) {
 
         // 아이디,비밀번호 확인

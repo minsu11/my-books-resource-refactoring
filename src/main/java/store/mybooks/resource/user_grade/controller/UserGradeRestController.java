@@ -38,12 +38,12 @@ public class UserGradeRestController {
     private final UserGradeService userGradeService;
 
     /**
-     * Create user grade response entity.
-     * <p>
-     * userGrade를 생성하는 api
+     * methodName : createUserGrade
+     * author : masiljangajji
+     * description : 유저등급을 생성
      *
-     * @param createRequest the create request
-     * @return the response entity
+     * @param createRequest request
+     * @return response entity
      */
     @PostMapping
     public ResponseEntity<UserGradeCreateResponse> createUserGrade(
@@ -56,12 +56,12 @@ public class UserGradeRestController {
     }
 
     /**
-     * Delete user grade by id response entity.
-     * id로 찾은 UserGrade를 삭제하는 api
-     * 강삭제가 아닌 약삭제로 isAvailable 를 false 로 변경한다
+     * methodName : deleteUserGradeById
+     * author : masiljangajji
+     * description :유저 등급을 삭제 (등급의 상태를 삭제로 만듬)
      *
-     * @param id the id
-     * @return the response entity
+     * @param id id
+     * @return response entity
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<UserGradeDeleteResponse> deleteUserGradeById(@PathVariable(name = "id") Integer id) {
@@ -72,11 +72,12 @@ public class UserGradeRestController {
     }
 
     /**
-     * Find user grade by id response entity.
-     * UserGrade를 id를 이용해 찾음
+     * methodName : findUserGradeById
+     * author : masiljangajji
+     * description : 유저등급을 찾음
      *
-     * @param id the id
-     * @return the response entity
+     * @param id id
+     * @return response entity
      */
     @GetMapping("/{id}")
     public ResponseEntity<UserGradeGetResponse> findUserGradeById(@PathVariable(name = "id") Integer id) {
@@ -88,10 +89,12 @@ public class UserGradeRestController {
 
 
     /**
-     * Find all user grade response entity.
-     * 모든 UserGrade를 Pagination해서 보여줌
-     * @param pageable the pageable
-     * @return the response entity
+     * methodName : findAllUserGrade
+     * author : masiljangajji
+     * description : 모든 유저등급을 Pagination 으로 찾음
+     *
+     * @param pageable pageable
+     * @return response entity
      */
     @GetMapping
     public ResponseEntity<Page<UserGradeGetResponse>> findAllUserGrade(Pageable pageable) {

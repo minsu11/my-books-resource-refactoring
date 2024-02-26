@@ -32,7 +32,6 @@ import store.mybooks.resource.user_address.repository.UserAddressRepository;
  * -----------------------------------------------------------
  * 2/13/24        masiljangajji       최초 생성
  */
-
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
@@ -44,6 +43,15 @@ public class UserAddressService {
 
     private final UserAddressMapper userAddressMapper;
 
+    /**
+     * methodName : createUserAddress
+     * author : masiljangajji
+     * description : 유저주소를 생성
+     *
+     * @param userId   id
+     * @param createRequest request
+     * @return user address create response
+     */
     @Transactional
     public UserAddressCreateResponse createUserAddress(Long userId, UserAddressCreateRequest createRequest) {
 
@@ -65,6 +73,18 @@ public class UserAddressService {
     }
 
 
+    /**
+     * methodName : modifyUserAddress
+     * author : masiljangajji
+     * description : 유저주소를 수정 (별명,상세주소)
+     *
+     * @param userId    id
+     * @param addressId id
+     * @param modifyRequest  request
+     * @throws UserNotExistException 유저가 존재하지 않는경우
+     * @throws UserAddressNotExistException 유저가주소가 존재하지 않는 경우
+     * @return user address modify response
+     */
     @Transactional
     public UserAddressModifyResponse modifyUserAddress(Long userId, Long addressId,
                                                        UserAddressModifyRequest modifyRequest) {
@@ -81,6 +101,17 @@ public class UserAddressService {
 
     }
 
+    /**
+     * methodName : deleteUserAddress
+     * author : masiljangajji
+     * description : 유저주소를 삭제
+     *
+     * @param userId    id
+     * @param addressId id
+     * @throws UserNotExistException 유저가 존재하지 않는 경우
+     * @throws UserAddressNotExistException 유저가주소가 존재하지 않는 경우
+     * @return user address delete response
+     */
     @Transactional
     public UserAddressDeleteResponse deleteUserAddress(Long userId, Long addressId) {
         userRepository.findById(userId)
@@ -93,17 +124,44 @@ public class UserAddressService {
         return new UserAddressDeleteResponse(String.format("[%s] 삭제 완료", userAddress.getAlias()));
     }
 
+    /**
+     * methodName : findByAddressId
+     * author : masiljangajji
+     * description : 유저 주소를 찾음
+     *
+     * @param userId    id
+     * @param addressId id
+     * @throws UserAddressNotExistException 유저주소가 존재하지 않는 경우
+     * @return user address get response
+     */
     public UserAddressGetResponse findByAddressId(Long userId, Long addressId) {
 
         return userAddressRepository.queryByIdAndUserId(addressId, userId)
                 .orElseThrow(() -> new UserAddressNotExistException(addressId));
     }
 
+    /**
+     * methodName : findByAllUserAddress
+     * author : masiljangajji
+     * description : 모든 유저 주소를 Pagination 해서 찾음
+     *
+     * @param pageable pageable
+     * @return page
+     */
     public Page<UserAddressGetResponse> findByAllUserAddress(Pageable pageable) {
 
         return userAddressRepository.queryAllBy(pageable);
     }
 
+    /**
+     * methodName : findAllAddressByUserId
+     * author : masiljangajji
+     * description : 유저의 모든 주소를 List 로 반환
+     *
+     * @param userId id
+     * @throws UserNotExistException 유저가 존재하지 않는 경우
+     * @return list
+     */
     public List<UserAddressGetResponse> findAllAddressByUserId(Long userId) {
 
         userRepository.findById(userId)

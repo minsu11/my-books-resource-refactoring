@@ -43,7 +43,6 @@ import store.mybooks.resource.user_address.service.UserAddressService;
  * -----------------------------------------------------------
  * 2/19/24        masiljangajji       최초 생성
  */
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
@@ -51,6 +50,15 @@ public class UserAddressRestController {
 
     private final UserAddressService userAddressService;
 
+    /**
+     * methodName : createUserAddress
+     * author : masiljangajji
+     * description : 유저의 주소를 등록함
+     *
+     * @param userId   id
+     * @param createRequest request
+     * @return response entity
+     */
     @PostMapping("/{userId}/addresses")
     public ResponseEntity<UserAddressCreateResponse> createUserAddress(
             @PathVariable(name = "userId") Long userId,
@@ -63,6 +71,16 @@ public class UserAddressRestController {
     }
 
 
+    /**
+     * methodName : modifyUserAddress
+     * author : masiljangajji
+     * description : 유저의 주소를 변경함 (별명,상세주소)
+     *
+     * @param userId    id
+     * @param addressId id
+     * @param modifyRequest  request
+     * @return response entity
+     */
     @PutMapping("/{userId}/addresses/{addressId}")
     public ResponseEntity<UserAddressModifyResponse> modifyUserAddress(
             @PathVariable(name = "userId") Long userId,
@@ -75,6 +93,15 @@ public class UserAddressRestController {
         return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
     }
 
+    /**
+     * methodName : deleteUserAddress
+     * author : masiljangajji
+     * description : 유저의 주소를 삭제함
+     *
+     * @param userId    id
+     * @param addressId id
+     * @return response entity
+     */
     @DeleteMapping("/{userId}/addresses/{addressId}")
     public ResponseEntity<UserAddressDeleteResponse> deleteUserAddress(
             @PathVariable(name = "userId") Long userId,
@@ -87,6 +114,15 @@ public class UserAddressRestController {
     }
 
 
+    /**
+     * methodName : findUserAddressByAddressId
+     * author : masiljangajji
+     * description : 유저의 특정 주소를 찾음
+     *
+     * @param userId    id
+     * @param addressId id
+     * @return response entity
+     */
     @GetMapping("/{userId}/addresses/{addressId}")
     public ResponseEntity<UserAddressGetResponse> findUserAddressByAddressId(
             @PathVariable(name = "userId") Long userId,
@@ -98,6 +134,14 @@ public class UserAddressRestController {
     }
 
 
+    /**
+     * methodName : findAllUserAddress
+     * author : masiljangajji
+     * description : 모든 유저의 주소를 Pagination 처리
+     *
+     * @param pageable pageable
+     * @return response entity
+     */
     @GetMapping("/addresses")
     public ResponseEntity<Page<UserAddressGetResponse>> findAllUserAddress(Pageable pageable) {
 
@@ -105,6 +149,14 @@ public class UserAddressRestController {
         return new ResponseEntity<>(paginationUserAddress, HttpStatus.OK);
     }
 
+    /**
+     * methodName : findAllAddressByUserId
+     * author : masiljangajji
+     * description : 유저의 모든 주소를 찾음
+     *
+     * @param userId id
+     * @return response entity
+     */
     @GetMapping("/{userId}/addresses")
     public ResponseEntity<List<UserAddressGetResponse>> findAllAddressByUserId(@PathVariable(name = "userId") Long
                                                                                        userId) {
