@@ -1,6 +1,8 @@
 package store.mybooks.resource.book.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -16,14 +18,16 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class BookBriefResponse {
     private Long id;
 
-    private String bookImage;
+//    private String bookImage;
 
     private String name;
 
-    private Double rate;
+//    private Double rate;
 
     private Integer saleCost;
 }
