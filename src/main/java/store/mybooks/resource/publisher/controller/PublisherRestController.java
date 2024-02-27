@@ -1,5 +1,6 @@
 package store.mybooks.resource.publisher.controller;
 
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -46,15 +47,31 @@ public class PublisherRestController {
      * author : newjaehun
      * description : 전체 출판사 리스트 반환.
      *
+     * @return responseEntity
+     */
+    @GetMapping
+    public ResponseEntity<List<PublisherGetResponse>> getAllPublishers() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(publisherService.getAllPublishers());
+    }
+
+
+    /**
+     * methodName : getAllPublishers
+     * author : newjaehun
+     * description : 페이징된 전체 출판사 리스트 반환.
+     *
      * @param pageable pageable
      * @return ResponseEntity
      */
-    @GetMapping
-    public ResponseEntity<Page<PublisherGetResponse>> getAllPublishers(Pageable pageable) {
+    @GetMapping("/page")
+    public ResponseEntity<Page<PublisherGetResponse>> getPagedPublisher(Pageable pageable) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(publisherService.getAllPublisher(pageable));
+                .body(publisherService.getPagedPublisher(pageable));
     }
+
 
     /**
      * methodName : createPublisher
