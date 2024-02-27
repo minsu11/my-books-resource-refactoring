@@ -33,9 +33,49 @@ include::{snippets}/author-create/http-request.adoc[]
 
 include::{snippets}/author-create/http-response.adoc[]
 
+==== RequestFields
+
+include::{snippets}/author-create/request-fields.adoc[]
+
+==== ResponseFields
+
+include::{snippets}/author-create/response-fields.adoc[]
+
 === 저자 수정
 
+==== HTTP Request
+
+include::{snippets}/author-modify/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/author-modify/http-response.adoc[]
+
+==== PathParameters
+
+include::{snippets}/author-modify/path-parameters.adoc[]
+
+==== ResponseFields
+
+include::{snippets}/author-modify/response-fields.adoc[]
+
 === 저자 삭제
+
+==== HTTP Request
+
+include::{snippets}/author-delete/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/author-delete/http-response.adoc[]
+
+==== PathParameters
+
+include::{snippets}/author-delete/path-parameters.adoc[]
+
+==== ResponseFields
+
+include::{snippets}/author-delete/response-fields.adoc[]
 
 == 출판사 API
 

@@ -9,10 +9,10 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -166,9 +166,9 @@ class AuthorRestControllerTest {
                 .andExpect(jsonPath("$.name").value(createResponse.getName()))
                 .andExpect(jsonPath("$.content").value(createResponse.getContent()))
                 .andDo(document("author-create",
-                        requestParameters(
-                                parameterWithName("name").description("등록할 저자명"),
-                                parameterWithName("content").description("저자 소개글")
+                        requestFields(
+                                fieldWithPath("name").description("저자명"),
+                                fieldWithPath("content").description("저자 소개글")
                         ),
                         responseFields(
                                 fieldWithPath("name").description("저자명"),
