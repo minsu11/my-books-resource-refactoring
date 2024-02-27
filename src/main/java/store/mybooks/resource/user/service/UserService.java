@@ -3,6 +3,7 @@ package store.mybooks.resource.user.service;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.user.dto.mapper.UserMapper;
@@ -61,18 +62,21 @@ public class UserService {
 
     private final UserMapper userMapper;
 
+    private final PasswordEncoder passwordEncoder;
+
     /**
      * methodName : createUser
      * author : masiljangajji
      * description : 유저를 생성
      *
      * @param createRequest request
-     * @throws UserAlreadyExistException 이미 등록된 이메일인 경우
-     * @throws UserStatusNotExistException  유저의 상태가 존재하지 않는 경우
-     * @throws UserGradeNameNotExistException 유저의 등급이름이 존재하지 않는 경우
      * @return user create response
+     * @throws UserAlreadyExistException      이미 등록된 이메일인 경우
+     * @throws UserStatusNotExistException    유저의 상태가 존재하지 않는 경우
+     * @throws UserGradeNameNotExistException 유저의 등급이름이 존재하지 않는 경우
      */
     public UserCreateResponse createUser(UserCreateRequest createRequest) {
+
 
         // 이미 존재하면 예외처리
         if (userRepository.findByEmail(createRequest.getEmail()).isPresent()) {
@@ -88,8 +92,8 @@ public class UserService {
         UserGrade userGrade = userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(userGradeName)
                 .orElseThrow(() -> new UserGradeNameNotExistException(userGradeName));
 
-
-        User user = new User(createRequest.getEmail(), createRequest.getBirth(), createRequest.getPassword(),
+        User user = new User(createRequest.getEmail(), createRequest.getBirth(),
+                passwordEncoder.encode(createRequest.getPassword()),
                 createRequest.getPhoneNumber(), createRequest.getIsAdmin(), createRequest.getName(), userStatus,
                 userGrade);
 
@@ -103,10 +107,10 @@ public class UserService {
      * author : masiljangajji
      * description : 유저의 정보를 변경함 (이름,전화번호)
      *
-     * @param id id
+     * @param id            id
      * @param modifyRequest request
-     * @throws UserNotExistException 유저가 존재하지 않는 경우
      * @return user modify response
+     * @throws UserNotExistException 유저가 존재하지 않는 경우
      */
     public UserModifyResponse modifyUser(Long id, UserModifyRequest modifyRequest) {
 
@@ -124,11 +128,11 @@ public class UserService {
      * author : masiljangajji
      * description : 유저의 등급을 변경함
      *
-     * @param id id
+     * @param id            id
      * @param modifyRequest request
-     * @throws UserNotExistException 유저가 존재하지 않는 경우
-     * @throws UserGradeIdNotExistException 유저의 등급이 존재하지 않는 경우
      * @return user grade modify response
+     * @throws UserNotExistException        유저가 존재하지 않는 경우
+     * @throws UserGradeIdNotExistException 유저의 등급이 존재하지 않는 경우
      */
     public UserGradeModifyResponse modifyUserGrade(Long id, UserGradeModifyRequest modifyRequest) {
 
@@ -150,11 +154,11 @@ public class UserService {
      * author : masiljangajji
      * description : 유저의 상태를 변경함
      *
-     * @param id id
+     * @param id            id
      * @param modifyRequest request
-     * @throws  UserNotExistException 유저가 존재하지 않는 경우
-     * @throws  UserStatusNotExistException 유저상태가 존재하지 않는 경우
      * @return user status modify response
+     * @throws UserNotExistException       유저가 존재하지 않는 경우
+     * @throws UserStatusNotExistException 유저상태가 존재하지 않는 경우
      */
     public UserStatusModifyResponse modifyUserStatus(Long id, UserStatusModifyRequest modifyRequest) {
 
@@ -175,10 +179,10 @@ public class UserService {
      * author : masiljangajji
      * description : 유저의 비밀번호 변경
      *
-     * @param id id
+     * @param id            id
      * @param modifyRequest request
-     * @throws UserNotExistException 유저가 존재하지 않는 경우
      * @return user password modify response
+     * @throws UserNotExistException 유저가 존재하지 않는 경우
      */
     public UserPasswordModifyResponse modifyUserPassword(Long id, UserPasswordModifyRequest modifyRequest) {
 
@@ -186,7 +190,7 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotExistException(id));
 
-        user.modifyPassword(modifyRequest.getPassword());
+        user.modifyPassword(passwordEncoder.encode(modifyRequest.getPassword()));
         return new UserPasswordModifyResponse(true);
     }
 
@@ -196,8 +200,8 @@ public class UserService {
      * description :유저 삭제
      *
      * @param id id
-     * @throws UserStatusNotExistException 유저의 상태가 존재하지 않는 경우
      * @return user delete response
+     * @throws UserStatusNotExistException 유저의 상태가 존재하지 않는 경우
      */
     public UserDeleteResponse deleteUser(Long id) {
 
@@ -217,8 +221,8 @@ public class UserService {
      * description :유저의 정보를 찾음
      *
      * @param id id
-     * @throws UserNotExistException 유저가 존재하지 않는 경우
      * @return user get response
+     * @throws UserNotExistException 유저가 존재하지 않는 경우
      */
     @Transactional(readOnly = true)
     public UserGetResponse findById(Long id) {
@@ -247,18 +251,23 @@ public class UserService {
      * description : 로그인요청 처리
      *
      * @param userLoginRequest login request
-     * @throws UserLoginFailException 로그인 실패하는 경우
-     * @throws UserAlreadyResignException 이미 탈퇴한 유저인 경우
      * @return user login response
+     * @throws UserLoginFailException     로그인 실패하는 경우
+     * @throws UserAlreadyResignException 이미 탈퇴한 유저인 경우
      */
     public UserLoginResponse loginUser(UserLoginRequest userLoginRequest) {
 
         // 아이디,비밀번호 확인
-        User user = userRepository.findByEmailAndPassword(userLoginRequest.getEmail(), userLoginRequest.getPassword())
+
+        User user = userRepository.findByEmail(userLoginRequest.getEmail())
                 .orElseThrow(UserLoginFailException::new);
         // 탈퇴한 회원인지 확인
         if (user.getUserStatus().getId().equals(UserStatusEnum.RESIGN.toString())) {
             throw new UserAlreadyResignException();
+        }
+
+        if (!passwordEncoder.matches(userLoginRequest.getPassword(), user.getPassword())) {
+            throw new UserLoginFailException();
         }
 
         user.modifyLatestLogin();
