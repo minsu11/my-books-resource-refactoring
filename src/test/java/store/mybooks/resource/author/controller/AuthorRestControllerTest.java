@@ -2,7 +2,6 @@ package store.mybooks.resource.author.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -23,10 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -43,7 +39,6 @@ import store.mybooks.resource.author.dto.response.AuthorCreateResponse;
 import store.mybooks.resource.author.dto.response.AuthorDeleteResponse;
 import store.mybooks.resource.author.dto.response.AuthorModifyResponse;
 import store.mybooks.resource.author.entity.Author;
-import store.mybooks.resource.author.mapper.AuthorMapper;
 import store.mybooks.resource.author.service.AuthorService;
 
 /**
@@ -59,25 +54,19 @@ import store.mybooks.resource.author.service.AuthorService;
  */
 @WebMvcTest(AuthorRestController.class)
 @ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
-@MockitoSettings(strictness = Strictness.LENIENT)
 class AuthorRestControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Mock
-    private AuthorMapper authorMapper;
-
     @MockBean
     private AuthorService authorService;
 
     private final String url = "/api/authors";
-    private Author author;
+
     private final Integer authorId = 1;
-    private final Integer authorId2 = 2;
     private final String authorName = "authorName";
-    private final String authorname2 = "authorName2";
     private final String authorContent = "authorContent";
     private final String authorContent2 = "authorContent2";
 
@@ -88,61 +77,7 @@ class AuthorRestControllerTest {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .apply(documentationConfiguration(restDocumentation))
                 .build();
-        author = new Author(authorName, authorContent);
     }
-
-//    @Test
-//    @DisplayName("전체 저자 조회")
-//    void givenAuthorList_whenFindAllAuthors_thenReturnAllAuthorsGetResponse() throws Exception {
-//        Integer page = 0;
-//        Integer size = 2;
-//        Pageable pageable = PageRequest.of(page, size);
-//        List<AuthorGetResponse> authorGetResponseList =
-//                Arrays.asList(new AuthorGetResponse(bookId, bookName, bookContent), new AuthorGetResponse(bookId2,
-//                        bookName2, bookContent2));
-//
-//        Page<AuthorGetResponse> authorGetResponsePage = new PageImpl<>(authorGetResponseList, pageable,
-//                authorGetResponseList.size());
-//        when(authorService.getAllAuthors(pageable)).thenReturn(authorGetResponsePage);
-//        mockMvc.perform(get(url + "?page=" + page + "&size=" + size)
-//                        .accept("application/json"))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.content[0].id").value(bookId))
-//                .andExpect(jsonPath("$.content[0].name").value(bookName))
-//                .andExpect(jsonPath("$.content[0].content").value(bookContent))
-//                .andExpect(jsonPath("$.content[1].id").value(bookId2))
-//                .andExpect(jsonPath("$.content[1].name").value(bookName2))
-//                .andExpect(jsonPath("$.content[1].content").value(bookContent2));
-//
-//        verify(authorService, times(1)).getAllAuthors(pageable);
-//    }
-
-//    @Test
-//    @DisplayName("저자 조회")
-//    void givenAuthorId_whenFindAuthor_thenReturnAuthorGetResponse() throws Exception {
-//        AuthorGetResponse authorGetResponse =
-//                new AuthorGetResponse(author.getId(), author.getName(), author.getContent());
-//
-//        when(authorService.getAuthor(bookId)).thenReturn(authorGetResponse);
-//
-//        mockMvc.perform(get(url + "/{id}", bookId)
-//                        .accept("application/json"))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").value(authorGetResponse.getId()))
-//                .andExpect(jsonPath("$.name").value(authorGetResponse.getName()))
-//                .andExpect(jsonPath("$.content").value(authorGetResponse.getContent()))
-//                .andDo(document("author-get",
-//                        pathParameters(
-//                                parameterWithName("id").description("저자 ID")
-//                        ),
-//                        responseFields(
-//                                fieldWithPath("id").description("도서 ID"),
-//                                fieldWithPath("name").description("도서명"),
-//                                fieldWithPath("content").description("도서 설명")
-//                        )));
-//
-//        verify(authorService, times(1)).getAuthor(bookId);
-//    }
 
     @Test
     @DisplayName("저자 등록(검증 통과)")
@@ -153,8 +88,6 @@ class AuthorRestControllerTest {
         AuthorCreateResponse createResponse = new AuthorCreateResponse();
         createResponse.setName(createRequest.getName());
         createResponse.setContent(createRequest.getContent());
-
-        given(authorMapper.createResponse(author)).willReturn(createResponse);
 
         when(authorService.createAuthor(any(AuthorCreateRequest.class))).thenReturn(createResponse);
 
@@ -199,14 +132,13 @@ class AuthorRestControllerTest {
     @DisplayName("저자 수정(검증 성공)")
     void givenAuthorIdAndValidAuthorModifyRequest_whenModifyAuthor_thenModifyAuthorAndReturnAuthorModifyResponse()
             throws Exception {
-        AuthorModifyRequest modifyRequest = new AuthorModifyRequest(authorname2, authorContent2);
+        String authorName2 = "authorName2";
+        AuthorModifyRequest modifyRequest = new AuthorModifyRequest(authorName2, authorContent2);
         Author resultAuthor = new Author(modifyRequest.getChangeName(), modifyRequest.getChangeContent());
 
         AuthorModifyResponse modifyResponse = new AuthorModifyResponse();
         modifyResponse.setChangedName(modifyRequest.getChangeName());
         modifyResponse.setChangedContent(modifyRequest.getChangeContent());
-
-        given(authorMapper.modifyResponse(resultAuthor)).willReturn(modifyResponse);
 
         when(authorService.modifyAuthor(eq(authorId), any(AuthorModifyRequest.class))).thenReturn(modifyResponse);
 
@@ -249,7 +181,6 @@ class AuthorRestControllerTest {
     void givenAuthorId_whenDeleteAuthor_thenDeleteAuthorAndReturnAuthorDeleteResponse() throws Exception {
         AuthorDeleteResponse deleteResponse = new AuthorDeleteResponse();
         deleteResponse.setName(authorName);
-        given(authorMapper.deleteResponse(author)).willReturn(deleteResponse);
 
         when(authorService.deleteAuthor(authorId)).thenReturn(deleteResponse);
 
