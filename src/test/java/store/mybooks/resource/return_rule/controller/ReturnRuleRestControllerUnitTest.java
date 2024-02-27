@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -23,6 +24,7 @@ import store.mybooks.resource.return_rule.dto.response.ReturnRuleCreateResponse;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleModifyResponse;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleResponse;
 import store.mybooks.resource.return_rule.service.ReturnRuleService;
+
 
 /**
  * packageName    : store.mybooks.resource.return_rule.controller<br>
@@ -36,7 +38,7 @@ import store.mybooks.resource.return_rule.service.ReturnRuleService;
  * 2/26/24        minsu11       최초 생성<br>
  */
 @ExtendWith(MockitoExtension.class)
-@WebMvcTest(ReturnRuleRestController.class)
+@WebMvcTest(value = ReturnRuleRestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class ReturnRuleRestControllerUnitTest {
 
     @Autowired
@@ -117,7 +119,7 @@ class ReturnRuleRestControllerUnitTest {
         mockMvc.perform(post("/api/return-rules")
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isBadRequest())
                 .andDo(print());
     }
 
@@ -130,14 +132,14 @@ class ReturnRuleRestControllerUnitTest {
         mockMvc.perform(post("/api/return-rules")
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isBadRequest())
                 .andDo(print());
 
         ReturnRuleCreateRequest request2 = new ReturnRuleCreateRequest("test", 10001, 10);
         mockMvc.perform(post("/api/return-rules")
                         .content(mapper.writeValueAsString(request2))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isBadRequest())
                 .andDo(print());
     }
 
@@ -150,7 +152,7 @@ class ReturnRuleRestControllerUnitTest {
         mockMvc.perform(post("/api/return-rules")
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isBadRequest())
                 .andDo(print());
 
         ReturnRuleCreateRequest request2 = new ReturnRuleCreateRequest("test", 1000, 366);
@@ -158,7 +160,7 @@ class ReturnRuleRestControllerUnitTest {
         mockMvc.perform(post("/api/return-rules")
                         .content(mapper.writeValueAsString(request2))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isBadRequest())
                 .andDo(print());
     }
 
@@ -194,7 +196,7 @@ class ReturnRuleRestControllerUnitTest {
         mockMvc.perform(put("/api/return-rules/{id}", 1L)
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isBadRequest())
                 .andDo(print());
 
         verify(returnRuleService, never()).modifyReturnRule(any(), any());
@@ -209,7 +211,7 @@ class ReturnRuleRestControllerUnitTest {
         mockMvc.perform(put("/api/return-rules/{id}", 1L)
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isBadRequest())
                 .andDo(print());
 
         verify(returnRuleService, never()).modifyReturnRule(any(), any());
@@ -224,7 +226,7 @@ class ReturnRuleRestControllerUnitTest {
         mockMvc.perform(put("/api/return-rules/{id}", 1L)
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isBadRequest())
                 .andDo(print());
 
         verify(returnRuleService, never()).modifyReturnRule(any(), any());
@@ -239,7 +241,7 @@ class ReturnRuleRestControllerUnitTest {
         mockMvc.perform(put("/api/return-rules/{id}", 1L)
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isBadRequest())
                 .andDo(print());
 
         verify(returnRuleService, never()).modifyReturnRule(any(), any());
