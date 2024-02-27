@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * packageName    : store.mybooks.resource.user.dto.response
- * fileName       : UserLoginResponse
- * author         : masiljangajji
- * date           : 2/23/24
+ * packageName    : store.mybooks.resource.user.dto.response<br>
+ * fileName       : UserLoginResponse<br>
+ * author         : masiljangajji<br>
+ * date           : 2/23/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE

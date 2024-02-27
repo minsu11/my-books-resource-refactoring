@@ -12,10 +12,10 @@ import store.mybooks.resource.user.dto.response.UserStatusModifyResponse;
 import store.mybooks.resource.user.entity.User;
 
 /**
- * packageName    : store.mybooks.resource.user.dto.mapper
- * fileName       : UserCreateMapper
- * author         : masiljangajji
- * date           : 2/18/24
+ * packageName    : store.mybooks.resource.user.dto.mapper<br>
+ * fileName       : UserCreateMapper<br>
+ * author         : masiljangajji<br>
+ * date           : 2/18/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE

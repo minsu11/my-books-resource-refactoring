@@ -5,10 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * packageName    : store.mybooks.resource.user_address.dto.response
- * fileName       : UserAddressCreateResponse
- * author         : masiljangajji
- * date           : 2/13/24
+ * packageName    : store.mybooks.resource.user_address.dto.response<br>
+ * fileName       : UserAddressCreateResponse<br>
+ * author         : masiljangajji<br>
+ * date           : 2/13/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
