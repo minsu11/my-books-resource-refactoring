@@ -21,9 +21,13 @@ import store.mybooks.resource.category.entity.Category;
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
     Page<CategoryGetResponse> findByOrderByParentCategory_Id(Pageable pageable);
 
+    CategoryGetResponse queryById(int id);
+
     List<CategoryGetResponse> findAllByParentCategoryIsNull();
 
     List<CategoryGetResponse> findAllByParentCategory_Id(int id);
+
+    Integer countByParentCategory_Id(int id);
 
     boolean existsByName(String name);
 }

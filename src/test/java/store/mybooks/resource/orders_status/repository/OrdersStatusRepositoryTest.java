@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 import store.mybooks.resource.orders_status.entity.OrdersStatus;
 
@@ -21,7 +20,6 @@ import store.mybooks.resource.orders_status.entity.OrdersStatus;
  * 2/20/24        minsu11       최초 생성<br>
  */
 @DataJpaTest
-@Transactional
 class OrdersStatusRepositoryTest {
 
     @Autowired

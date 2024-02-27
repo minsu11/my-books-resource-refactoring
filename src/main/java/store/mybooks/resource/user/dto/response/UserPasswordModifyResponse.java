@@ -6,10 +6,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * packageName    : store.mybooks.resource.user.dto.response
- * fileName       : UserPasswordResponse
- * author         : masiljangajji
- * date           : 2/25/24
+ * packageName    : store.mybooks.resource.user.dto.response<br>
+ * fileName       : UserPasswordResponse<br>
+ * author         : masiljangajji<br>
+ * date           : 2/25/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE

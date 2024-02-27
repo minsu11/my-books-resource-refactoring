@@ -6,10 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * packageName    : store.mybooks.resource.user.dto.request
- * fileName       : UserGradeModifyRequest
- * author         : masiljangajji
- * date           : 2/25/24
+ * packageName    : store.mybooks.resource.user.dto.request<br>
+ * fileName       : UserGradeModifyRequest<br>
+ * author         : masiljangajji<br>
+ * date           : 2/25/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE

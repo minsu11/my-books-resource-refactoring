@@ -18,6 +18,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import store.mybooks.resource.tag.dto.request.TagCreateRequest;
 import store.mybooks.resource.tag.dto.request.TagModifyRequest;
 import store.mybooks.resource.tag.dto.response.TagCreateResponse;
@@ -56,13 +59,44 @@ class TagServiceTest {
     @DisplayName("getTags 리턴 값 테스트")
     void givenGetTags_whenNormalCase_thenReturnTagGetResponseList() {
         List<TagGetResponse> list = new ArrayList<>();
-        list.add(() -> "firstTagName");
-        list.add(() -> "secondTagName");
-        list.add(() -> "thirdTagName");
+        list.add(new TagGetResponse() {
+            @Override
+            public Integer getId() {
+                return 1;
+            }
 
-        when(tagRepository.findAllBy()).thenReturn(list);
+            @Override
+            public String getName() {
+                return "firstTagName";
+            }
+        });
+        list.add(new TagGetResponse() {
+            @Override
+            public Integer getId() {
+                return 2;
+            }
 
-        List<TagGetResponse> actualList = tagService.getTags();
+            @Override
+            public String getName() {
+                return "secondTagName";
+            }
+        });
+        list.add(new TagGetResponse() {
+            @Override
+            public Integer getId() {
+                return 3;
+            }
+
+            @Override
+            public String getName() {
+                return "thirdTagName";
+            }
+        });
+        Pageable pageable = PageRequest.of(0, 10);
+
+        when(tagRepository.findAllByOrderById(any())).thenReturn(new PageImpl<>(list, pageable, list.size()));
+
+        List<TagGetResponse> actualList = tagService.getTags(pageable).getContent();
 
         assertThat(actualList).isNotNull();
         assertThat(actualList).hasSize(3);

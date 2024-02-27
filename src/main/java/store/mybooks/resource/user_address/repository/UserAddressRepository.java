@@ -11,10 +11,10 @@ import store.mybooks.resource.user_address.dto.response.UserAddressGetResponse;
 import store.mybooks.resource.user_address.entity.UserAddress;
 
 /**
- * packageName    : store.mybooks.resource.user_address.repository
- * fileName       : UserAddressRepository
- * author         : masiljangajji
- * date           : 2/13/24
+ * packageName    : store.mybooks.resource.user_address.repository<br>
+ * fileName       : UserAddressRepository<br>
+ * author         : masiljangajji<br>
+ * date           : 2/13/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE

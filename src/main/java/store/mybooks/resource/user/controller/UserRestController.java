@@ -37,10 +37,10 @@ import store.mybooks.resource.user.dto.response.UserStatusModifyResponse;
 import store.mybooks.resource.user.service.UserService;
 
 /**
- * packageName    : store.mybooks.resource.user.controller
- * fileName       : UserController
- * author         : masiljangajji
- * date           : 2/13/24
+ * packageName    : store.mybooks.resource.user.controller<br>
+ * fileName       : UserController<br>
+ * author         : masiljangajji<br>
+ * date           : 2/13/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
@@ -57,32 +57,30 @@ public class UserRestController {
 
 
     /**
-     * Create user response entity.
-     * <p>
-     * User를 생성하는 api
+     * methodName : createUser
+     * author : masiljangajji
+     * description : 유저를 생성함
      *
-     * @param createRequest the create request
-     * @return the response entity
+     * @param createRequest request
+     * @return response entity
      */
     @PostMapping
     public ResponseEntity<UserCreateResponse> createUser(
             @RequestBody UserCreateRequest createRequest) {
 
-
         UserCreateResponse createResponse = userService.createUser(createRequest);
-
 
         return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
     }
 
     /**
-     * Modify user response entity.
-     * <p>
-     * id로 찾은 User의 정보를 수정하는 api
+     * methodName : modifyUser
+     * author : masiljangajji
+     * description : 유저의 정보를 변경함 (이름,전화번호)
      *
-     * @param id            the id
-     * @param modifyRequest the modify request
-     * @return the response entity
+     * @param id     id
+     * @param modifyRequest request
+     * @return response entity
      */
     @PutMapping("/{id}")
     public ResponseEntity<UserModifyResponse> modifyUser(@PathVariable(name = "id") Long id,
@@ -93,6 +91,15 @@ public class UserRestController {
         return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
     }
 
+    /**
+     * methodName : modifyUserGrade
+     * author : masiljangajji
+     * description : 유저의 등급을 변경함
+     *
+     * @param id id
+     * @param modifyRequest request
+     * @return response entity
+     */
     @PutMapping("/{id}/grade")
     public ResponseEntity<UserGradeModifyResponse> modifyUserGrade(@PathVariable(name="id")Long id,
                                                                    @RequestBody UserGradeModifyRequest modifyRequest){
@@ -101,6 +108,15 @@ public class UserRestController {
         return new ResponseEntity<>(modifyResponse,HttpStatus.OK);
     }
 
+    /**
+     * methodName : modifyUserStatus
+     * author : masiljangajji
+     * description : 유저의 상태를 변경
+     *
+     * @param id id
+     * @param modifyRequest request
+     * @return response entity
+     */
     @PutMapping("/{id}/status")
     public ResponseEntity<UserStatusModifyResponse> modifyUserStatus(@PathVariable(name="id")Long id,
                                                                     @RequestBody UserStatusModifyRequest modifyRequest){
@@ -109,8 +125,17 @@ public class UserRestController {
         return new ResponseEntity<>(modifyResponse,HttpStatus.OK);
     }
 
+    /**
+     * methodName : modifyUserPassword
+     * author : masiljangajji
+     * description : 유저의 비밀번호를 변경
+     *
+     * @param id id
+     * @param modifyRequest request
+     * @return response entity
+     */
     @PutMapping("/{id}/password")
-    public ResponseEntity<UserPasswordModifyResponse> modifyUserStatus(@PathVariable(name="id")Long id,
+    public ResponseEntity<UserPasswordModifyResponse> modifyUserPassword(@PathVariable(name="id")Long id,
                                                                        @RequestBody
                                                                        UserPasswordModifyRequest modifyRequest){
 
@@ -118,14 +143,14 @@ public class UserRestController {
         return new ResponseEntity<>(modifyResponse,HttpStatus.OK);
     }
 
+
     /**
-     * Delete user response entity.
-     * <p>
-     * id로 찾은 User를 삭제하는 api
-     * 강삭제가 아닌 약삭제를 제공함
+     * methodName : deleteUser
+     * author : masiljangajji
+     * description : 유저를 삭제함 (강삭제가 아닌 약삭제로 상태를 탈퇴로 변경)
      *
-     * @param id the id
-     * @return the response entity
+     * @param id id
+     * @return response entity
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<UserDeleteResponse> deleteUser(@PathVariable(name = "id") Long id) {
@@ -134,13 +159,14 @@ public class UserRestController {
         return new ResponseEntity<>(deleteResponse, HttpStatus.OK);
     }
 
+
     /**
-     * Find user by email response entity.
-     * <p>
-     * id로 찾은 User를 반환함
+     * methodName : findUserById
+     * author : masiljangajji
+     * description : 유저의 정보를 찾음
      *
-     * @param id the id
-     * @return the response entity
+     * @param id id
+     * @return response entity
      */
     @GetMapping("/{id}")
     public ResponseEntity<UserGetResponse> findUserById(@PathVariable(name = "id") Long id) {
@@ -152,11 +178,12 @@ public class UserRestController {
 
 
     /**
-     * Find all user response entity.
-     * 모든 User를 Pagination 해서 반환함
+     * methodName : findAllUser
+     * author : masiljangajji
+     * description : 모든 유저를 Pagination 해서 찾음
      *
-     * @param pageable the pageable
-     * @return the response entity
+     * @param pageable pageable
+     * @return response entity
      */
     @GetMapping
     public ResponseEntity<Page<UserGetResponse>> findAllUser(Pageable pageable) {
@@ -165,6 +192,14 @@ public class UserRestController {
         return new ResponseEntity<>(paginationUsr, HttpStatus.OK);
     }
 
+    /**
+     * methodName : loginUser
+     * author : masiljangajji
+     * description : 유저의 로그인을 처리함
+     *
+     * @param userLoginRequest login request
+     * @return response entity
+     */
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponse> loginUser(@RequestBody UserLoginRequest userLoginRequest) {
         UserLoginResponse userLoginResponse = userService.loginUser(userLoginRequest);

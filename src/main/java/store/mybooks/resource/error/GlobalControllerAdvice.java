@@ -5,10 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import store.mybooks.resource.category.exception.CannotDeleteParentCategoryException;
 import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
 import store.mybooks.resource.publisher.exception.PublisherAlreadyExistException;
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
+import store.mybooks.resource.return_rule.exception.ReturnRuleValidationFailedException;
 import store.mybooks.resource.return_rule_name.exception.ReturnRuleNameRequestValidationFailedException;
 import store.mybooks.resource.tag.exception.TagNameAlreadyExistsException;
 import store.mybooks.resource.tag.exception.TagNotExistsException;
@@ -59,21 +61,6 @@ public class GlobalControllerAdvice {
 
 
     /**
-     * methodName : xxxValidationFailedException
-     * author : minsu11
-     * description : ValidationFailedException 을 처리하는 ExceptionHandler.
-     *
-     * @param exception the exception
-     * @return the response entity
-     */
-    @ExceptionHandler({ReturnRuleNameRequestValidationFailedException.class})
-    public ResponseEntity<String> xxxValidationFailedException(Exception exception) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(exception.getMessage());
-    }
-
-    /**
      * methodName : validationException <br>
      * author : damho-lee <br>
      * description : ValidationException 을 처리하는 ExceptionHandler. <br>
@@ -81,8 +68,23 @@ public class GlobalControllerAdvice {
      * @param exception ValidationException.
      * @return ResponseEntity
      */
-    @ExceptionHandler(ValidationException.class)
+    @ExceptionHandler({ValidationException.class, ReturnRuleNameRequestValidationFailedException.class, ReturnRuleValidationFailedException.class})
     public ResponseEntity<String> validationException(Exception exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
+    }
+
+    /**
+     * methodName : cannotDeleteParentCategoryException <br>
+     * author : damho-lee <br>
+     * description : 자식 카테고리가 있는 카테고리를 삭제하려는 경우 발생하는 CannotDeleteParentCategoryException 을 처리하기 위한 ExceptionHandler.<br>
+     *
+     * @param exception CannotDeleteParentCategoryException
+     * @return ResponseEntity
+     */
+    @ExceptionHandler(CannotDeleteParentCategoryException.class)
+    public ResponseEntity<String> cannotDeleteParentCategoryException(CannotDeleteParentCategoryException exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());

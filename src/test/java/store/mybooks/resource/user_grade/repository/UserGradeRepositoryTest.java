@@ -3,6 +3,7 @@ package store.mybooks.resource.user_grade.repository;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -91,13 +92,12 @@ class UserGradeRepositoryTest {
     }
 
     @Test
-    @DisplayName("Pageable 로 queryAllBy 실행시 Page<UserGradeGetResponse> 반환")
-    void givenPageable_whenQueryAllBy_thenReturnUserGradeGetResponsePage() {
+    @DisplayName("queryAllBy 실행시 List<UserGradeGetResponse> 반환")
+    void givenNothing_whenQueryAllBy_thenReturnUserGradeGetResponseList() {
 
-        Page<UserGradeGetResponse> page = userGradeRepository.queryAllBy(PageRequest.of(0, 10));
+        List<UserGradeGetResponse> list = userGradeRepository.queryAllByAndIsAvailableIsTrue();
 
-        assertEquals(3, page.getTotalElements());
-        assertEquals(1, page.getTotalPages());
+        assertEquals(2, list.size());
 
     }
 
