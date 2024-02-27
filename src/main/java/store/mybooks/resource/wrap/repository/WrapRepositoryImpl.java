@@ -25,36 +25,37 @@ public class WrapRepositoryImpl extends QuerydslRepositorySupport implements Wra
         super(WrapResponse.class);
     }
 
+    private final QWrap wrap = QWrap.wrap;
+
     @Override
     public Optional<WrapResponse> findWrapResponseById(Integer id) {
-        QWrap qWrap = QWrap.wrap;
 
-        return Optional.of(from(qWrap)
+        return Optional.of(from(wrap)
                 .select(Projections.constructor(WrapResponse.class,
-                        qWrap.name,
-                        qWrap.cost,
-                        qWrap.isAvailable))
+                        wrap.name,
+                        wrap.cost,
+                        wrap.isAvailable))
+                .where(wrap.id.eq(id)
+                        .and(wrap.isAvailable.eq(true)))
                 .fetchOne());
     }
 
     @Override
     public List<WrapResponse> getWrapResponseList() {
-        QWrap qWrap = QWrap.wrap;
-        return from(qWrap)
+        return from(wrap)
                 .select(Projections.constructor(WrapResponse.class,
-                        qWrap.name,
-                        qWrap.cost,
-                        qWrap.isAvailable))
+                        wrap.name,
+                        wrap.cost,
+                        wrap.isAvailable))
                 .fetch();
     }
 
     @Override
     public Boolean existWrap(String wrapName) {
-        QWrap qWrap = QWrap.wrap;
         return Objects.nonNull(
-                from(qWrap)
-                        .where(qWrap.name.eq(wrapName)
-                                .and(qWrap.isAvailable.eq(true)))
+                from(wrap)
+                        .where(wrap.name.eq(wrapName)
+                                .and(wrap.isAvailable.eq(true)))
                         .fetch()
         );
     }

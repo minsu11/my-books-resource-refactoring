@@ -2,6 +2,7 @@ package store.mybooks.resource.wrap.dto;
 
 import org.mapstruct.Mapper;
 import store.mybooks.resource.wrap.dto.response.WrapCreateResponse;
+import store.mybooks.resource.wrap.dto.response.WrapModifyResponse;
 import store.mybooks.resource.wrap.entity.Wrap;
 
 /**
@@ -18,4 +19,6 @@ import store.mybooks.resource.wrap.entity.Wrap;
 @Mapper(componentModel = "spring")
 public interface WrapMapper {
     WrapCreateResponse mapToWrapCreateResponse(Wrap wrap);
+
+    WrapModifyResponse mapToWrapModifyResponse(Wrap wrap);
 }

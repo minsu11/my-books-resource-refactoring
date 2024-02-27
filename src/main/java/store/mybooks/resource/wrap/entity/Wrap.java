@@ -5,6 +5,7 @@ import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import store.mybooks.resource.wrap.dto.request.WrapModifyRequest;
 
 /**
  * packageName    : store.mybooks.resource.wrap.entity
@@ -39,5 +40,11 @@ public class Wrap {
 
     @Column(name = "is_available")
     private Boolean isAvailable;
+
+    public void modifyWrap(WrapModifyRequest wrapModifyRequest) {
+        this.name = wrapModifyRequest.getWrapName();
+        this.cost = wrapModifyRequest.getWrapCost();
+        this.isAvailable = wrapModifyRequest.getIsAvailable();
+    }
 
 }

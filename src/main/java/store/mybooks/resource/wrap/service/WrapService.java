@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import store.mybooks.resource.wrap.dto.WrapMapper;
 import store.mybooks.resource.wrap.dto.request.WrapCreateRequest;
+import store.mybooks.resource.wrap.dto.request.WrapModifyRequest;
 import store.mybooks.resource.wrap.dto.response.WrapCreateResponse;
+import store.mybooks.resource.wrap.dto.response.WrapModifyResponse;
 import store.mybooks.resource.wrap.dto.response.WrapResponse;
 import store.mybooks.resource.wrap.entity.Wrap;
 import store.mybooks.resource.wrap.exception.WrapAlreadyExistException;
@@ -79,5 +81,26 @@ public class WrapService {
         return wrapMapper.mapToWrapCreateResponse(wrapRepository.save(wrap));
     }
 
+    /**
+     * methodName : updateWrap<br>
+     * author : minsu11<br>
+     * description : 사용 중인 포장지의 정보 수정. {@code id} 조회 시 포장지가 없는 경우
+     * {@code WrapNotExistException}을 던짐
+     * <br>
+     *
+     * @param wrapModifyRequest 정보 수정할 포장지 정보
+     * @param id                정보 수정할 포장지의 아이디
+     * @return wrap modify response
+     * @throws WrapNotExistException 조회한 포장지의 정보가 없는 경우
+     */
+    public WrapModifyResponse updateWrap(WrapModifyRequest wrapModifyRequest, Integer id) {
+        if (wrapRepository.existsById(id)) {
+            throw new WrapNotExistException();
+        }
+        Wrap wrap = wrapRepository.findById(id).orElse(null);
+        wrap.modifyWrap(wrapModifyRequest);
+
+        return wrapMapper.mapToWrapModifyResponse(wrap);
+    }
 
 }
