@@ -3,12 +3,16 @@ package store.mybooks.resource.wrap.service;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.wrap.dto.WrapMapper;
 import store.mybooks.resource.wrap.dto.request.WrapCreateRequest;
 import store.mybooks.resource.wrap.dto.request.WrapModifyRequest;
 import store.mybooks.resource.wrap.dto.response.WrapCreateResponse;
 import store.mybooks.resource.wrap.dto.response.WrapModifyResponse;
+import store.mybooks.resource.wrap.dto.response.WrapPageResponse;
 import store.mybooks.resource.wrap.dto.response.WrapResponse;
 import store.mybooks.resource.wrap.entity.Wrap;
 import store.mybooks.resource.wrap.exception.WrapAlreadyExistException;
@@ -28,6 +32,7 @@ import store.mybooks.resource.wrap.repository.WrapRepository;
  */
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class WrapService {
     private final WrapRepository wrapRepository;
 
@@ -43,6 +48,7 @@ public class WrapService {
      * @return wrap response
      * @throws WrapNotExistException {@code id}에 맞는 포장지가 없는 경우
      */
+    @Transactional(readOnly = true)
     public WrapResponse getWrapById(Integer id) {
         return wrapRepository.findWrapResponseById(id)
                 .orElseThrow(WrapNotExistException::new);
@@ -58,6 +64,7 @@ public class WrapService {
      *
      * @return {@code WrapResponse} 목록을 반환
      */
+    @Transactional(readOnly = true)
     public List<WrapResponse> getWrapResponseList() {
         return wrapRepository.getWrapResponseList();
 
@@ -101,6 +108,19 @@ public class WrapService {
         wrap.modifyWrap(wrapModifyRequest);
 
         return wrapMapper.mapToWrapModifyResponse(wrap);
+    }
+
+    /**
+     * methodName : getWrapPage<br>
+     * author : minsu11<br>
+     * description : 포장지 전체 목록에 대한 {@code pagination}
+     * <br> *
+     *
+     * @param pageable
+     * @return page
+     */
+    public Page<WrapPageResponse> getWrapPage(Pageable pageable) {
+        return wrapRepository.getPageBy(pageable);
     }
 
 
