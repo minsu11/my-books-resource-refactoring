@@ -24,18 +24,39 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+
+    /**
+     * methodName : passwordEncoder
+     * author : masiljangajji
+     * description : 비밀번호를 암호화하는 Encoder 설정
+     * 기본값인 bcrypt 를 사용 비밀번호를 해시화할 때, 솔트,비용요소 값을 함께 사용하기 떄문에 보안강도 높음
+     * @return password encoder
+     */
     @Bean
     public PasswordEncoder passwordEncoder(){
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
+    /**
+     * methodName : filterChain
+     * author : masiljangajji
+     * description : 메서드 체인 방식으로 Security 설정
+     * 여기서 설정한 것들이 SpringSecurityFilterChain 이름의 Bean 으로 등록됨
+     * 시큐리티는 모든 인증/인가는 filter 기반 동작
+     * Servlet Context 가 관리하는 filter 를 Bean 형태로 사용하기 위해
+     * Delegating Filter Proxy 를 사용해 SpringSecurityFilterChain 이름을 가진 Bean 에게
+     * 처리를 위임하는 방식으로 동작
+     * @param http http
+     * @return security filter chain
+     * @throws Exception the exception
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/**") // api 요청은 전부 허용
-                .permitAll();
+                .antMatchers("/api/**") // api 요청에 대해서
+                .permitAll(); // 전부허용
 
 
         return http.build();
