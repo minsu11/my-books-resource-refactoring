@@ -29,6 +29,8 @@ import store.mybooks.resource.category.entity.Category;
  */
 @Entity
 @Table(name = "book_category")
+@NoArgsConstructor
+@AllArgsConstructor
 public class BookCategory {
     @EmbeddedId
     private Pk pk;
