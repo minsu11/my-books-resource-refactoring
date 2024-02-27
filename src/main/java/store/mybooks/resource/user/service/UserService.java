@@ -79,7 +79,7 @@ public class UserService {
 
 
         // 이미 존재하면 예외처리
-        if (userRepository.findByEmail(createRequest.getEmail()).isPresent()) {
+        if (userRepository.existsByEmail(createRequest.getEmail())) {
             throw new UserAlreadyExistException(createRequest.getEmail());
         }
 
