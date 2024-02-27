@@ -97,10 +97,11 @@ public class WrapService {
         if (wrapRepository.existsById(id)) {
             throw new WrapNotExistException();
         }
-        Wrap wrap = wrapRepository.findById(id).orElse(null);
+        Wrap wrap = wrapRepository.findById(id).orElseThrow(WrapNotExistException::new);
         wrap.modifyWrap(wrapModifyRequest);
 
         return wrapMapper.mapToWrapModifyResponse(wrap);
     }
+
 
 }
