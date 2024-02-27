@@ -1,5 +1,6 @@
 package store.mybooks.resource.author.controller;
 
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -46,12 +47,27 @@ public class AuthorRestController {
      * author : newjaehun
      * description : 전체 저자 리스트 반환.
      *
+     * @return responseEntity
+     */
+    @GetMapping
+    public ResponseEntity<List<AuthorGetResponse>> getAllAuthors() {
+        List<AuthorGetResponse> authors = authorService.getAllAuthors();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(authors);
+    }
+
+    /**
+     * methodName : getAllAuthors
+     * author : newjaehun
+     * description : 페이징된 전체 저자 리스트 반환.
+     *
      * @param pageable pageable
      * @return ResponseEntity
      */
-    @GetMapping
-    public ResponseEntity<Page<AuthorGetResponse>> getAllAuthors(Pageable pageable) {
-        Page<AuthorGetResponse> authors = authorService.getAllAuthors(pageable);
+    @GetMapping("/page")
+    public ResponseEntity<Page<AuthorGetResponse>> getPagedAuthors(Pageable pageable) {
+        Page<AuthorGetResponse> authors = authorService.getPagedAuthors(pageable);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(authors);
@@ -71,7 +87,7 @@ public class AuthorRestController {
                 .status(HttpStatus.OK)
                 .body(authorService.getAuthor(authorId));
     }
-    
+
     /**
      * methodName : createAuthor
      * author : newjaehun
