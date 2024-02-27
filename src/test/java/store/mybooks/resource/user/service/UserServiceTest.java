@@ -83,7 +83,7 @@ class UserServiceTest {
             @Mock User user) {
 
         when(userCreateRequest.getEmail()).thenReturn("test");
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+        when(userRepository.existsByEmail(anyString())).thenReturn(true);
 
         assertThrows(UserAlreadyExistException.class, () -> userService.createUser(userCreateRequest));
     }
@@ -98,7 +98,7 @@ class UserServiceTest {
 
         when(userCreateRequest.getEmail()).thenReturn("test");
         when(userCreateRequest.getPassword()).thenReturn("test");
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+        when(userRepository.existsByEmail("test")).thenReturn(false);
         when(userStatusRepository.findById(anyString())).thenReturn(Optional.of(userStatus));
         when(userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(anyString())).thenReturn(
                 Optional.of(userGrade));
@@ -108,7 +108,7 @@ class UserServiceTest {
 
         verify(userStatusRepository, times(1)).findById(anyString());
         verify(userGradeRepository, times(1)).findByUserGradeNameIdAndIsAvailableIsTrue(anyString());
-        verify(userRepository, times(1)).findByEmail(anyString());
+        verify(userRepository, times(1)).existsByEmail(anyString());
     }
 
     @Test
@@ -117,7 +117,7 @@ class UserServiceTest {
             @Mock UserCreateRequest userCreateRequest) {
 
         when(userCreateRequest.getEmail()).thenReturn("test");
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+        when(userRepository.existsByEmail("test")).thenReturn(false);
 
         assertThrows(UserStatusNotExistException.class, () -> userService.createUser(userCreateRequest));
 
@@ -130,7 +130,7 @@ class UserServiceTest {
             @Mock UserStatus userStatus) {
 
         when(userCreateRequest.getEmail()).thenReturn("test");
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+        when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(userStatusRepository.findById(anyString())).thenReturn(Optional.of(userStatus));
 
         assertThrows(UserGradeNameNotExistException.class, () -> userService.createUser(userCreateRequest));
