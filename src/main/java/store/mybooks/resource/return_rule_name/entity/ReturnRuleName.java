@@ -2,7 +2,10 @@ package store.mybooks.resource.return_rule_name.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +29,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReturnRuleName {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "return_rule_name_id")
     private String id;
 

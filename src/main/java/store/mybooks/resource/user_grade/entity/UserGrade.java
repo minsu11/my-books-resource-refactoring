@@ -10,10 +10,10 @@ import store.mybooks.resource.user_grade.dto.request.UserGradeCreateRequest;
 import store.mybooks.resource.user_grade_name.entity.UserGradeName;
 
 /**
- * packageName    : store.mybooks.resource.user.entity
- * fileName       : UserGrade
- * author         : masiljangajji
- * date           : 2/13/24
+ * packageName    : store.mybooks.resource.user.entity<br>
+ * fileName       : UserGrade<br>
+ * author         : masiljangajji<br>
+ * date           : 2/13/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE

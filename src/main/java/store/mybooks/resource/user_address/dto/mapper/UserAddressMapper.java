@@ -8,10 +8,10 @@ import store.mybooks.resource.user_address.dto.response.UserAddressModifyRespons
 import store.mybooks.resource.user_address.entity.UserAddress;
 
 /**
- * packageName    : store.mybooks.resource.user_address.dto.mapper
- * fileName       : UserAddressMapper
- * author         : masiljangajji
- * date           : 2/19/24
+ * packageName    : store.mybooks.resource.user_address.dto.mapper<br>
+ * fileName       : UserAddressMapper<br>
+ * author         : masiljangajji<br>
+ * date           : 2/19/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE

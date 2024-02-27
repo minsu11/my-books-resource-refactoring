@@ -3,6 +3,7 @@ package store.mybooks.resource.return_rule.service;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.return_rule.dto.mapper.ReturnRuleMapper;
@@ -16,7 +17,6 @@ import store.mybooks.resource.return_rule.exception.ReturnRuleAlreadyExistExcept
 import store.mybooks.resource.return_rule.exception.ReturnRuleNotExistException;
 import store.mybooks.resource.return_rule.repository.ReturnRuleRepository;
 import store.mybooks.resource.return_rule_name.entity.ReturnRuleName;
-import store.mybooks.resource.return_rule_name.exception.ReturnRuleNameAlreadyExistException;
 import store.mybooks.resource.return_rule_name.exception.ReturnRuleNameNotExistException;
 import store.mybooks.resource.return_rule_name.repository.ReturnRuleNameRepository;
 
@@ -31,6 +31,7 @@ import store.mybooks.resource.return_rule_name.repository.ReturnRuleNameReposito
  * -----------------------------------------------------------<br>
  * 2/21/24        minsu11       최초 생성<br>
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -45,11 +46,11 @@ public class ReturnRuleService {
      * methodName : getReturnRuleResponseByReturnRuleName<br>
      * author : minsu11<br>
      * description : <br>
-     * {@code returnRuleName}의 반품 정책 조회. <br>
+     * 사용 중인 {@code returnRuleName}의 반품 정책 조회. <br>
      * {@code returnRuleName}로 반품 정책을 조회 할 수 없는 경우 {@code ReturnRuleNotExistException}을 던짐
      * <br> *
      *
-     * @param returnRuleName 조회할 반품 규정 이름
+     * @param returnRuleName 조회할 사용 중인 반품 규정 이름
      * @return returnRuleResponse dto로 반환
      * @throws ReturnRuleNotExistException {@code returnRuleName}의 데이터를 조회 할 수 없는 경우
      */
@@ -94,12 +95,10 @@ public class ReturnRuleService {
         ReturnRuleName returnRuleName =
                 returnRuleNameRepository
                         .findById(request.getReturnName())
-                        .orElseThrow(ReturnRuleNameAlreadyExistException::new);
+                        .orElseThrow(ReturnRuleNameNotExistException::new);
 
         ReturnRule returnRule =
-                new ReturnRule(1, request.getDeliveryFee(), request.getTerm(), true, LocalDate.now(), returnRuleName);
-
-        returnRuleRepository.save(returnRule);
+                returnRuleRepository.save(new ReturnRule(1L, request.getDeliveryFee(), request.getTerm(), true, LocalDate.now(), returnRuleName));
 
         return returnRuleMapper.mapToReturnRuleCreateResponse(returnRule);
     }
@@ -113,26 +112,44 @@ public class ReturnRuleService {
      * {@code ReturnRuleNameNotExistException}, {@code ReturnRuleNotExistException}을 던져줌
      * <br>
      *
-     * @param request        수정될 반품 규정
-     * @param returnRuleName 수정할 반품 규정 명
+     * @param request 수정될 반품 규정
+     * @param id      수정할 반품 규정 아이디
      * @return returnRuleModifyResponse
      * @throws ReturnRuleNameNotExistException 반품 규정 명이 존재하지 않을 때
      * @throws ReturnRuleNotExistException     반품 규정이 존재 하지 않을 때
      */
-    public ReturnRuleModifyResponse modifyReturnRule(ReturnRuleModifyRequest request, String returnRuleName) {
+    public ReturnRuleModifyResponse modifyReturnRule(ReturnRuleModifyRequest request, Long id) {
+
+        ReturnRule beforeReturnRule = returnRuleRepository.findById(id)
+                .orElseThrow(ReturnRuleNotExistException::new);
+        String returnRuleName = request.getReturnRuleNameId();
 
         ReturnRuleName returnRuleNameResponse =
                 returnRuleNameRepository
                         .findById(returnRuleName)
                         .orElseThrow(ReturnRuleNameNotExistException::new);
-        ReturnRule returnRule =
-                returnRuleRepository
-                        .findByReturnRuleNameId(returnRuleNameResponse.getId())
-                        .orElseThrow(ReturnRuleNotExistException::new);
 
-        returnRule.modifyByReturnRule(request, returnRuleNameResponse);
-        return returnRuleMapper.mapToReturnRuleModifyResponse(returnRule);
+        // 어떻게 보면 반품 규정 삭제인데 여기에 불러도 괜찮을 까요..?
+        beforeReturnRule.modifyIsAvailable(false);
+
+        ReturnRule returnRule = new ReturnRule(1L, request.getDeliveryFee(), request.getTerm(),
+                true, LocalDate.now(), returnRuleNameResponse);
+
+        return returnRuleMapper.mapToReturnRuleModifyResponse(returnRuleRepository.save(returnRule));
     }
 
-
+    /**
+     * methodName : deleteReturnRule<br>
+     * author : minsu11<br>
+     * description : {@code id} 값을 가진 반품 규정의 사용 여부의 값을 {@code false}로 변경.
+     * {@code id} 값이 존재 하지 않은 경우, {@code ReturnRuleNotExistException}을 던짐
+     * <br> *
+     *
+     * @param id 삭제할 반품 규정 아이디
+     * @throws ReturnRuleNotExistException 삭제할 반품 규정이 없을 경우
+     */
+    public void deleteReturnRule(Long id) {
+        ReturnRule returnRule = returnRuleRepository.findById(id).orElseThrow(ReturnRuleNotExistException::new);
+        returnRule.modifyIsAvailable(false);
+    }
 }

@@ -13,6 +13,7 @@ import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 import store.mybooks.resource.category.entity.Category;
+import store.mybooks.resource.category.exception.CannotDeleteParentCategoryException;
 import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
 import store.mybooks.resource.category.mapper.CategoryMapper;
@@ -47,6 +48,23 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public Page<CategoryGetResponse> getCategoriesOrderByParentCategoryId(Pageable pageable) {
         return categoryRepository.findByOrderByParentCategory_Id(pageable);
+    }
+
+    /**
+     * methodName : getCategory <br>
+     * author : damho-lee <br>
+     * description : id 로 Category 검색.<br>
+     *
+     * @param id int
+     * @return CategoryGetResponse
+     */
+    @Transactional(readOnly = true)
+    public CategoryGetResponse getCategory(int id) {
+        if (!categoryRepository.existsById(id)) {
+            throw new CategoryNotExistsException(id);
+        }
+
+        return categoryRepository.queryById(id);
     }
 
     /**
@@ -143,6 +161,11 @@ public class CategoryService {
      */
     public CategoryDeleteResponse deleteCategory(int id) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotExistsException(id));
+        int count = categoryRepository.countByParentCategory_Id(id);
+
+        if (count > 0) {
+            throw new CannotDeleteParentCategoryException();
+        }
 
         categoryRepository.deleteById(id);
 
