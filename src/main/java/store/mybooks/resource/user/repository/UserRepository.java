@@ -12,10 +12,10 @@ import store.mybooks.resource.user.dto.response.UserLoginResponse;
 import store.mybooks.resource.user.entity.User;
 
 /**
- * packageName    : store.mybooks.resource.user.repository
- * fileName       : UserRepository
- * author         : masiljangajji
- * date           : 2/13/24
+ * packageName    : store.mybooks.resource.user.repository<br>
+ * fileName       : UserRepository<br>
+ * author         : masiljangajji<br>
+ * date           : 2/13/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
@@ -30,6 +30,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<UserGetResponse> queryById(Long id);
 
     Page<UserGetResponse> queryAllBy(Pageable pageable);
+
+    Boolean existsByEmail(String email);
 
 
     Optional<User> findByEmailAndPassword(String email, String password);

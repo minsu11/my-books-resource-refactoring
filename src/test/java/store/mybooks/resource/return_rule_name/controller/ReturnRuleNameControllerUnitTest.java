@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -40,7 +41,7 @@ import store.mybooks.resource.return_rule_name.service.ReturnRuleNameService;
  * 2/20/24        minsu11       최초 생성<br>
  */
 @ExtendWith(MockitoExtension.class)
-@WebMvcTest(ReturnRuleNameRestController.class)
+@WebMvcTest(value = ReturnRuleNameRestController.class,excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class ReturnRuleNameControllerUnitTest {
 
 
