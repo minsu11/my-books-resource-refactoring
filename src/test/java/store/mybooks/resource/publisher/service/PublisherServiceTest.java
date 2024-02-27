@@ -68,40 +68,34 @@ class PublisherServiceTest {
     }
 
     @Test
-    @DisplayName("전체 출판사 조회")
+    @DisplayName("전체 출판사 조회(리스트)")
+    void whenFindAllPublishers_thenReturnPublishersGetResponseList() {
+        List<PublisherGetResponse> publisherGetResponseList =
+                Arrays.asList(new PublisherGetResponse(id, name), new PublisherGetResponse(2, "publisher1"));
+
+
+        when(publisherRepository.findAllBy()).thenReturn(publisherGetResponseList);
+
+        assertThat(publisherService.getAllPublishers()).isEqualTo(publisherGetResponseList);
+
+        verify(publisherRepository, times(1)).findAllBy();
+    }
+
+    @Test
+    @DisplayName("전체 출판사 조회(페이징)")
     void givenPublisherListAndPageable_whenFindAllPublishers_thenReturnPagePublishersGetResponseList() {
         Pageable pageable = PageRequest.of(0, 2);
-        List<PublisherGetResponse> publisherGetResponseList = Arrays.asList(
-                new PublisherGetResponse() {
-                    @Override
-                    public Integer getId() {
-                        return id;
-                    }
+        List<PublisherGetResponse> publisherGetResponseList =
+                Arrays.asList(new PublisherGetResponse(id, name), new PublisherGetResponse(2, "publisher1"));
 
-                    @Override
-                    public String getName() {
-                        return name;
-                    }
-                },
-                new PublisherGetResponse() {
-                    @Override
-                    public Integer getId() {
-                        return 2;
-                    }
-
-                    @Override
-                    public String getName() {
-                        return "publisher1";
-                    }
-                });
 
         Page<PublisherGetResponse> pageGetResponse =
                 new PageImpl<>(publisherGetResponseList, pageable, publisherGetResponseList.size());
-        when(publisherRepository.findAllBy(pageable)).thenReturn(pageGetResponse);
+        when(publisherRepository.getPagedBy(pageable)).thenReturn(pageGetResponse);
 
-        assertThat(publisherService.getAllPublisher(pageable)).isEqualTo(pageGetResponse);
+        assertThat(publisherService.getPagedPublisher(pageable)).isEqualTo(pageGetResponse);
 
-        verify(publisherRepository, times(1)).findAllBy(pageable);
+        verify(publisherRepository, times(1)).getPagedBy(pageable);
     }
 
 

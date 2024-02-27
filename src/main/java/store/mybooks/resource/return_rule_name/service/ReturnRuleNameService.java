@@ -3,6 +3,7 @@ package store.mybooks.resource.return_rule_name.service;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.return_rule_name.dto.mapper.ReturnRuleNameMapper;
@@ -26,6 +27,7 @@ import store.mybooks.resource.return_rule_name.repository.ReturnRuleNameReposito
  * 2/20/24        minsu11       최초 생성
  */
 @Service
+@Slf4j
 @Transactional
 @RequiredArgsConstructor
 public class ReturnRuleNameService {
@@ -72,9 +74,11 @@ public class ReturnRuleNameService {
      * @throws ReturnRuleNameAlreadyExistException id의 값이 이미 존재하는 경우
      */
     public ReturnRuleNameCreateResponse createReturnRuleName(ReturnRuleNameCreateRequest request) {
+        log.info("value: {}", request);
         if (returnRuleNameRepository.existsById(request.getId())) {
             throw new ReturnRuleNameAlreadyExistException();
         }
+
         ReturnRuleName returnRuleName = new ReturnRuleName(request.getId(), LocalDate.now());
         returnRuleNameRepository.save(returnRuleName);
         return returnRuleNameMapper.mapToReturnRuleNameCreateResponse(returnRuleName);

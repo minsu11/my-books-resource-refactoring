@@ -70,12 +70,10 @@ public class Category {
      * author : damho-lee
      * description : 카테고리 수정.
      *
-     * @param parentCategory 부모 카테고리. null 인 경우 최상위 카테고리.
-     * @param name           카테고리 이름.
+     * @param name 카테고리 이름.
      * @return CategoryModifyResponse
      */
-    public Category modifyCategory(Category parentCategory, String name) {
-        this.parentCategory = parentCategory;
+    public Category modifyCategory(String name) {
         this.name = name;
 
         return this;

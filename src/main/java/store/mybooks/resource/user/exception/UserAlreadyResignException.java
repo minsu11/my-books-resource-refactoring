@@ -1,10 +1,10 @@
 package store.mybooks.resource.user.exception;
 
 /**
- * packageName    : store.mybooks.resource.user.exception
- * fileName       : UserAlreadyRegisnException
- * author         : masiljangajji
- * date           : 2/25/24
+ * packageName    : store.mybooks.resource.user.exception<br>
+ * fileName       : UserAlreadyRegisnException<br>
+ * author         : masiljangajji<br>
+ * date           : 2/25/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE

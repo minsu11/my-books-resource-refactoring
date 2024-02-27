@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -50,7 +51,7 @@ import store.mybooks.resource.publisher.service.PublisherService;
  * -----------------------------------------------------------
  * 2/18/24        newjaehun       최초 생성
  */
-@WebMvcTest(PublisherRestController.class)
+@WebMvcTest(value = PublisherRestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ExtendWith(MockitoExtension.class)
 class PublisherRestControllerTest {
     @Autowired
@@ -74,45 +75,49 @@ class PublisherRestControllerTest {
     }
 
     @Test
-    @DisplayName("전체 출판사 조회")
-    void givenPublisherList_whenFindAllPublishers_thenReturnAllPublishersGetResponseList() throws Exception {
+    @DisplayName("전체 출판사 조회(리스트)")
+    void whenFindAllBy_thenReturnAllPublishersGetResponseList() throws Exception {
+        Integer id2 = 2;
+        String name2 = "publisher2";
+
+        List<PublisherGetResponse> publisherList =
+                Arrays.asList(new PublisherGetResponse(id, name), new PublisherGetResponse(id2, name2));
+
+
+        when(publisherService.getAllPublishers()).thenReturn(publisherList);
+
+        mockMvc.perform(get(url).accept("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].id").value(id))
+                .andExpect(jsonPath("$.[0].name").value(name))
+                .andExpect(jsonPath("$.[1].id").value(id2))
+                .andExpect(jsonPath("$.[1].name").value(name2));
+
+        verify(publisherService, times(1)).getAllPublishers();
+    }
+
+
+    @Test
+    @DisplayName("전체 출판사 조회(페이징)")
+    void givenPublisherList_whenGetPagedPublishers_thenReturnAllPagedPublishersGetResponseList() throws Exception {
         Integer id2 = 2;
         String name2 = "publisher2";
         Integer page = 0;
         Integer size = 2;
         Pageable pageable = PageRequest.of(page, size);
-        List<PublisherGetResponse> publisherList = Arrays.asList(new PublisherGetResponse() {
-            @Override
-            public Integer getId() {
-                return id;
-            }
-
-            @Override
-            public String getName() {
-                return name;
-            }
-        }, new PublisherGetResponse() {
-            @Override
-            public Integer getId() {
-                return id2;
-            }
-
-            @Override
-            public String getName() {
-                return name2;
-            }
-        });
+        List<PublisherGetResponse> publisherList =
+                Arrays.asList(new PublisherGetResponse(id, name), new PublisherGetResponse(id2, name2));
 
         Page<PublisherGetResponse> publisherGetResponsePage =
                 new PageImpl<>(publisherList, pageable, publisherList.size());
 
-        when(publisherService.getAllPublisher(pageable)).thenReturn(publisherGetResponsePage);
+        when(publisherService.getPagedPublisher(pageable)).thenReturn(publisherGetResponsePage);
 
-        mockMvc.perform(get(url + "?page=" + page + "&size=" + size).accept("application/json"))
+        mockMvc.perform(get(url + "/page?page=" + page + "&size=" + size).accept("application/json"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.content[0].id").value(id))
                 .andExpect(jsonPath("$.content[0].name").value(name)).andExpect(jsonPath("$.content[1].id").value(id2))
                 .andExpect(jsonPath("$.content[1].name").value(name2));
-        verify(publisherService, times(1)).getAllPublisher(pageable);
+        verify(publisherService, times(1)).getPagedPublisher(pageable);
     }
 
     @Test
