@@ -71,29 +71,9 @@ class PublisherServiceTest {
     @DisplayName("전체 출판사 조회")
     void givenPublisherListAndPageable_whenFindAllPublishers_thenReturnPagePublishersGetResponseList() {
         Pageable pageable = PageRequest.of(0, 2);
-        List<PublisherGetResponse> publisherGetResponseList = Arrays.asList(
-                new PublisherGetResponse() {
-                    @Override
-                    public Integer getId() {
-                        return id;
-                    }
+        List<PublisherGetResponse> publisherGetResponseList =
+                Arrays.asList(new PublisherGetResponse(id, name), new PublisherGetResponse(2, "publisher1"));
 
-                    @Override
-                    public String getName() {
-                        return name;
-                    }
-                },
-                new PublisherGetResponse() {
-                    @Override
-                    public Integer getId() {
-                        return 2;
-                    }
-
-                    @Override
-                    public String getName() {
-                        return "publisher1";
-                    }
-                });
 
         Page<PublisherGetResponse> pageGetResponse =
                 new PageImpl<>(publisherGetResponseList, pageable, publisherGetResponseList.size());

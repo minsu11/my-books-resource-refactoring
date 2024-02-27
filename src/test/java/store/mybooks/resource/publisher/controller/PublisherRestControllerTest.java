@@ -51,7 +51,7 @@ import store.mybooks.resource.publisher.service.PublisherService;
  * -----------------------------------------------------------
  * 2/18/24        newjaehun       최초 생성
  */
-@WebMvcTest(value = PublisherRestController.class,excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(value = PublisherRestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ExtendWith(MockitoExtension.class)
 class PublisherRestControllerTest {
     @Autowired
@@ -82,27 +82,8 @@ class PublisherRestControllerTest {
         Integer page = 0;
         Integer size = 2;
         Pageable pageable = PageRequest.of(page, size);
-        List<PublisherGetResponse> publisherList = Arrays.asList(new PublisherGetResponse() {
-            @Override
-            public Integer getId() {
-                return id;
-            }
-
-            @Override
-            public String getName() {
-                return name;
-            }
-        }, new PublisherGetResponse() {
-            @Override
-            public Integer getId() {
-                return id2;
-            }
-
-            @Override
-            public String getName() {
-                return name2;
-            }
-        });
+        List<PublisherGetResponse> publisherList =
+                Arrays.asList(new PublisherGetResponse(id, name), new PublisherGetResponse(id2, name2));
 
         Page<PublisherGetResponse> publisherGetResponsePage =
                 new PageImpl<>(publisherList, pageable, publisherList.size());
