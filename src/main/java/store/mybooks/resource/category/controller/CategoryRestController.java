@@ -51,7 +51,7 @@ public class CategoryRestController {
      * @param pageable pagination. (default: page = 0, size = 10)
      * @return ResponseEntity
      */
-    @GetMapping
+    @GetMapping("/page")
     public ResponseEntity<Page<CategoryGetResponse>> getCategoriesOrderByParentCategoryId(
             @PageableDefault Pageable pageable) {
         return ResponseEntity
@@ -80,11 +80,27 @@ public class CategoryRestController {
      *
      * @return ResponseEntity
      */
-    @GetMapping("/{id}")
-    public ResponseEntity<List<CategoryGetResponse>> getCategoriesByParentCategoryId(@PathVariable("id") int id) {
+    @GetMapping("/parentCategoryId/{id}")
+    public ResponseEntity<List<CategoryGetResponse>> getCategoriesByParentCategoryId(
+            @PathVariable("id") int parentCategoryId) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(categoryService.getCategoriesByParentCategoryId(id));
+                .body(categoryService.getCategoriesByParentCategoryId(parentCategoryId));
+    }
+
+    /**
+     * methodName : getCategory <br>
+     * author : damho-lee <br>
+     * description : id 로 카테고리 검색.<br>
+     *
+     * @param id int
+     * @return response entity
+     */
+    @GetMapping("/categoryId/{id}")
+    public ResponseEntity<CategoryGetResponse> getCategoryForUpdate(@PathVariable("id") int id) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(categoryService.getCategory(id));
     }
 
     /**
