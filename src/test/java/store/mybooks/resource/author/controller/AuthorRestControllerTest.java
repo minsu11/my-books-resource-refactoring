@@ -52,7 +52,7 @@ import store.mybooks.resource.author.service.AuthorService;
  * -----------------------------------------------------------
  * 2/20/24        newjaehun       최초 생성
  */
-@WebMvcTest(value = AuthorRestController.class,excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(value = AuthorRestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ExtendWith({MockitoExtension.class})
 class AuthorRestControllerTest {
     @Autowired
@@ -82,8 +82,30 @@ class AuthorRestControllerTest {
     }
 
     @Test
-    @DisplayName("전체 저자 조회")
-    void givenAuthorList_whenFindAllAuthors_thenReturnAllAuthorsGetResponse() throws Exception {
+    @DisplayName("전체 저자 조회(리스트)")
+    void whenFindAllAuthors_thenReturnAllAuthorsGetResponseList() throws Exception {
+        List<AuthorGetResponse> authorGetResponseList =
+                Arrays.asList(new AuthorGetResponse(id, name, content), new AuthorGetResponse(id2, name2, content2));
+
+
+        when(authorService.getAllAuthors()).thenReturn(authorGetResponseList);
+        mockMvc.perform(get(url)
+                        .accept("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].id").value(id))
+                .andExpect(jsonPath("$.[0].name").value(name))
+                .andExpect(jsonPath("$.[0].content").value(content))
+                .andExpect(jsonPath("$.[1].id").value(id2))
+                .andExpect(jsonPath("$.[1].name").value(name2))
+                .andExpect(jsonPath("$.[1].content").value(content2));
+
+        verify(authorService, times(1)).getAllAuthors();
+    }
+
+
+    @Test
+    @DisplayName("전체 저자 조회(페이징)")
+    void givenAuthorList_whenFindPagedAllAuthors_thenReturnAllAuthorsGetResponse() throws Exception {
         Integer page = 0;
         Integer size = 2;
         Pageable pageable = PageRequest.of(page, size);
@@ -92,8 +114,8 @@ class AuthorRestControllerTest {
 
         Page<AuthorGetResponse> authorGetResponsePage = new PageImpl<>(authorGetResponseList, pageable,
                 authorGetResponseList.size());
-        when(authorService.getAllAuthors(pageable)).thenReturn(authorGetResponsePage);
-        mockMvc.perform(get(url + "?page=" + page + "&size=" + size)
+        when(authorService.getPagedAuthors(pageable)).thenReturn(authorGetResponsePage);
+        mockMvc.perform(get(url + "/page?page=" + page + "&size=" + size)
                         .accept("application/json"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].id").value(id))
@@ -103,7 +125,7 @@ class AuthorRestControllerTest {
                 .andExpect(jsonPath("$.content[1].name").value(name2))
                 .andExpect(jsonPath("$.content[1].content").value(content2));
 
-        verify(authorService, times(1)).getAllAuthors(pageable);
+        verify(authorService, times(1)).getPagedAuthors(pageable);
     }
 
     @Test
