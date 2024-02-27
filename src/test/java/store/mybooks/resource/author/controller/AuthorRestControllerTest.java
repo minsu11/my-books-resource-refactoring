@@ -25,6 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -54,7 +55,7 @@ import store.mybooks.resource.author.service.AuthorService;
  * -----------------------------------------------------------
  * 2/20/24        newjaehun       최초 생성
  */
-@WebMvcTest(AuthorRestController.class)
+@WebMvcTest(value = AuthorRestController.class,excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ExtendWith({MockitoExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
 class AuthorRestControllerTest {
