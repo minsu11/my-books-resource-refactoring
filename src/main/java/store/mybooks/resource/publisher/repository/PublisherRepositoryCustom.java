@@ -1,5 +1,6 @@
 package store.mybooks.resource.publisher.repository;
 
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -18,6 +19,8 @@ import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
  */
 @NoRepositoryBean
 public interface PublisherRepositoryCustom {
-    Page<PublisherGetResponse> findAllBy(Pageable pageable);
+    List<PublisherGetResponse> findAllBy();
+
+    Page<PublisherGetResponse> getPagedBy(Pageable pageable);
 
 }
