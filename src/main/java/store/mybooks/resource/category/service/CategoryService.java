@@ -139,16 +139,8 @@ public class CategoryService {
 
         Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotExistsException(id));
 
-        Category parentCategory = null;
-
-        Integer parentCategoryId = categoryModifyRequest.getParentCategoryId();
-        if (parentCategoryId != null) {
-            parentCategory =
-                    categoryRepository.findById(parentCategoryId).orElseThrow(() -> new CategoryNotExistsException(id));
-        }
-
         return categoryMapper.modifyResponse(
-                category.modifyCategory(parentCategory, categoryModifyRequest.getName()));
+                category.modifyCategory(categoryModifyRequest.getName()));
     }
 
     /**
