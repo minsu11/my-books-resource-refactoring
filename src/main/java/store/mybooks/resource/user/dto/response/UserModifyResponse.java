@@ -14,10 +14,10 @@ import store.mybooks.resource.user_grade.entity.UserGrade;
 import store.mybooks.resource.user_status.entity.UserStatus;
 
 /**
- * packageName    : store.mybooks.resource.user.dto.response
- * fileName       : UserModifyResponse
- * author         : masiljangajji
- * date           : 2/13/24
+ * packageName    : store.mybooks.resource.user.dto.response<br>
+ * fileName       : UserModifyResponse<br>
+ * author         : masiljangajji<br>
+ * date           : 2/13/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE

@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 import store.mybooks.resource.user.entity.User;
 
 /**
- * packageName    : store.mybooks.resource.user_address.dto.request
- * fileName       : UserAddressCreateRequest
- * author         : masiljangajji
- * date           : 2/13/24
+ * packageName    : store.mybooks.resource.user_address.dto.request<br>
+ * fileName       : UserAddressCreateRequest<br>
+ * author         : masiljangajji<br>
+ * date           : 2/13/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE

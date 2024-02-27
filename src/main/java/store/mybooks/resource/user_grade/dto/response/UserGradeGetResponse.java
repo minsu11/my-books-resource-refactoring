@@ -4,10 +4,10 @@ import java.time.LocalDate;
 import javax.persistence.Column;
 
 /**
- * packageName    : store.mybooks.resource.user_grade.dto.response
- * fileName       : UserGradeGetResponse
- * author         : masiljangajji
- * date           : 2/19/24
+ * packageName    : store.mybooks.resource.user_grade.dto.response<br>
+ * fileName       : UserGradeGetResponse<br>
+ * author         : masiljangajji<br>
+ * date           : 2/19/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
