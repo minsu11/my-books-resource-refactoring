@@ -96,7 +96,7 @@ public class CategoryRestController {
      * @param id int
      * @return response entity
      */
-    @GetMapping("/id/{id}")
+    @GetMapping("/categoryId/{id}")
     public ResponseEntity<CategoryGetResponse> getCategoryForUpdate(@PathVariable("id") int id) {
         return ResponseEntity
                 .status(HttpStatus.OK)
