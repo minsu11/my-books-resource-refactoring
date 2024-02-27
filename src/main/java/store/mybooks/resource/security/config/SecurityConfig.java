@@ -30,7 +30,6 @@ public class SecurityConfig {
      * methodName : passwordEncoder
      * author : masiljangajji
      * description : 비밀번호를 암호화하는 Encoder 설정
-     * 기본값인 bcrypt 를 사용 비밀번호를 해시화할 때, 솔트,비용요소 값을 함께 사용하기 떄문에 보안강도 높음
      * @return password encoder
      */
     @Bean
@@ -54,8 +53,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
-                .csrf().disable()
-                .authorizeRequests()
+                .csrf().disable()// csrf 보안설절 안함
+                .authorizeRequests() 
                 .antMatchers("/api/**") // api 요청에 대해서
                 .permitAll(); // 전부허용
 

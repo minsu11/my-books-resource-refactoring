@@ -68,7 +68,6 @@ public class UserRestController {
     public ResponseEntity<UserCreateResponse> createUser(
             @RequestBody UserCreateRequest createRequest) {
 
-
         UserCreateResponse createResponse = userService.createUser(createRequest);
 
         return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
