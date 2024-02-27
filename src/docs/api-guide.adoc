@@ -1,134 +1,23 @@
-= My Books
+= My Books -Resource
 :doctype: book
-:icons: font
-:source-highlighter: highlightjs
 :toc: left
-:toclevels: 4
+:toclevels: 3
 :sectnums:
-:sectlinks:
-:sectanchors:
+:numbered:
 
 [[api]]
-== 회원 API
-
-== 주소 API
-
-== 회원-등급 API
-
-== 회원-등급명 API
-
-== 회원-상태  API
-
-== 회원-쿠폰 API
-
-== 저자 API
-
-=== 저자 추가
-
-==== HTTP Request
-
-include::{snippets}/author-create/http-request.adoc[]
-
-==== HTTP Response
-
-include::{snippets}/author-create/http-response.adoc[]
-
-==== RequestFields
-
-include::{snippets}/author-create/request-fields.adoc[]
-
-==== ResponseFields
-
-include::{snippets}/author-create/response-fields.adoc[]
-
-=== 저자 수정
-
-==== HTTP Request
-
-include::{snippets}/author-modify/http-request.adoc[]
-
-==== HTTP Response
-
-include::{snippets}/author-modify/http-response.adoc[]
-
-==== PathParameters
-
-include::{snippets}/author-modify/path-parameters.adoc[]
-
-==== ResponseFields
-
-include::{snippets}/author-modify/response-fields.adoc[]
-
-=== 저자 삭제
-
-==== HTTP Request
-
-include::{snippets}/author-delete/http-request.adoc[]
-
-==== HTTP Response
-
-include::{snippets}/author-delete/http-response.adoc[]
-
-==== PathParameters
-
-include::{snippets}/author-delete/path-parameters.adoc[]
-
-==== ResponseFields
-
-include::{snippets}/author-delete/response-fields.adoc[]
-
-== 출판사 API
-
-== 카테고리 API
-
-== 태그 API
-
-== 쿠폰 API
-
-== 포인트 규정 API
-
-== 포인트 규정명 API
-
-== 포인트 내역 API
-
-== 도서 API
-
-== 도서-상태 API
-
-== 도서-저자 API
-
-== 도서-카테고리 API
-
-== 도서-태그 API
-
-== 도서-좋아요 API
-
-== 장바구니 API
-
-== 장바구니-상세 API
-
-== 포장 API
-
-== 주문 API
-
-== 주문-상태 API
-
-== 주문-상세 API
-
-== 주문-상세-상태 API
-
-== 반품 API
-
-== 반품-상세 API
-
-== 반품-규정 API
-
-== 반품-규정명 API
-
-== 배송규정 API
-
-== 배송규정명 API
-
-== 결제 API
-
-== 리뷰 API
+include::user-guide.adoc[]
+include::book-guide.adoc[]
+include::review-guide.adoc[]
+include::cart-guide.adoc[]
+include::order-guide.adoc[]
+include::delivery-guide.adoc[]
+include::wrap-guide.adoc[]
+include::payment-guide.adoc[]
+include::return-guide.adoc[]
+include::category-guide.adoc[]
+include::tag-guide.adoc[]
+include::publisher-guide.adoc[]
+include::author-guide.adoc[]
+include::point-guide.adoc[]
+include::coupon-guide.adoc[]
