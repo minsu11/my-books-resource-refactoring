@@ -1,0 +1,94 @@
+= My Books
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectnums:
+:sectlinks:
+:sectanchors:
+
+[[api]]
+== 회원 API
+
+== 주소 API
+
+== 회원-등급 API
+
+== 회원-등급명 API
+
+== 회원-상태  API
+
+== 회원-쿠폰 API
+
+== 저자 API
+
+=== 저자 추가
+
+==== HTTP Request
+
+include::{snippets}/author-create/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/author-create/http-response.adoc[]
+
+=== 저자 수정
+
+=== 저자 삭제
+
+== 출판사 API
+
+== 카테고리 API
+
+== 태그 API
+
+== 쿠폰 API
+
+== 포인트 규정 API
+
+== 포인트 규정명 API
+
+== 포인트 내역 API
+
+== 도서 API
+
+== 도서-상태 API
+
+== 도서-저자 API
+
+== 도서-카테고리 API
+
+== 도서-태그 API
+
+== 도서-좋아요 API
+
+== 장바구니 API
+
+== 장바구니-상세 API
+
+== 포장 API
+
+== 주문 API
+
+== 주문-상태 API
+
+== 주문-상세 API
+
+== 주문-상세-상태 API
+
+== 반품 API
+
+== 반품-상세 API
+
+== 반품-규정 API
+
+== 반품-규정명 API
+
+== 배송규정 API
+
+== 배송규정명 API
+
+== 결제 API
+
+== 리뷰 API
