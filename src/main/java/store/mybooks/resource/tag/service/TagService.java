@@ -1,7 +1,8 @@
 package store.mybooks.resource.tag.service;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.tag.dto.request.TagCreateRequest;
@@ -34,9 +35,26 @@ public class TagService {
     private final TagRepository tagRepository;
     private final TagMapper tagMapper;
 
+    /**
+     * methodName : getTag <br>
+     * author : damho-lee <br>
+     * description : id 로 TagGetResponse 리턴. id 가 존재하지 않으면 TagNotExistsException.<br>
+     *
+     * @param id Integer
+     * @return TagGetResponse
+     */
     @Transactional(readOnly = true)
-    public List<TagGetResponse> getTags() {
-        return tagRepository.findAllBy();
+    public TagGetResponse getTag(Integer id) {
+        if (!tagRepository.existsById(id)) {
+            throw new TagNotExistsException(id);
+        }
+
+        return tagRepository.queryById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<TagGetResponse> getTags(Pageable pageable) {
+        return tagRepository.findAllByOrderById(pageable);
     }
 
     /**
