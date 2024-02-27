@@ -2,7 +2,10 @@ package store.mybooks.resource.wrap.repository;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
+import store.mybooks.resource.wrap.dto.response.WrapPageResponse;
 import store.mybooks.resource.wrap.dto.response.WrapResponse;
 
 /**
@@ -21,6 +24,8 @@ public interface WrapRepositoryCustom {
     Optional<WrapResponse> findWrapResponseById(Integer id);
 
     List<WrapResponse> getWrapResponseList();
+
+    Page<WrapPageResponse> getPageBy(Pageable pageable);
 
     Boolean existWrap(String wrapName);
 

@@ -4,7 +4,11 @@ import com.querydsl.core.types.Projections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import store.mybooks.resource.wrap.dto.response.WrapPageResponse;
 import store.mybooks.resource.wrap.dto.response.WrapResponse;
 import store.mybooks.resource.wrap.entity.QWrap;
 
@@ -58,5 +62,16 @@ public class WrapRepositoryImpl extends QuerydslRepositorySupport implements Wra
                                 .and(wrap.isAvailable.eq(true)))
                         .fetch()
         );
+    }
+
+    @Override
+    public Page<WrapPageResponse> getPageBy(Pageable pageable) {
+        List<WrapPageResponse> wrapResponses = getQuerydsl().applyPagination(pageable,
+                from(wrap).select(
+                        Projections.constructor(WrapPageResponse.class, wrap.id,
+                                wrap.name, wrap.cost, wrap.isAvailable))).fetch();
+        long total = from().fetchCount();
+
+        return new PageImpl<>(wrapResponses, pageable, total);
     }
 }
