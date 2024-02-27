@@ -19,6 +19,7 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -48,7 +49,7 @@ import store.mybooks.resource.category.service.CategoryService;
  * -----------------------------------------------------------
  * 2/21/24          damho-lee          최초 생성
  */
-@WebMvcTest(CategoryRestController.class)
+@WebMvcTest(value = CategoryRestController.class,excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class CategoryRestControllerTest {
     @Autowired
     MockMvc mockMvc;
@@ -70,7 +71,7 @@ class CategoryRestControllerTest {
 
         when(categoryService.getCategoriesOrderByParentCategoryId(any())).thenReturn(categoryGetResponsePage);
 
-        mockMvc.perform(get("/api/categories"))
+        mockMvc.perform(get("/api/categories/page"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.content.size()").value(2))
@@ -112,7 +113,7 @@ class CategoryRestControllerTest {
         initChildCategoryList(categoryGetResponseList, parentCategoryId);
         when(categoryService.getCategoriesByParentCategoryId(anyInt())).thenReturn(categoryGetResponseList);
 
-        mockMvc.perform(get("/api/categories/{id}", 1))
+        mockMvc.perform(get("/api/categories/parentCategoryId/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.size()").value(2))

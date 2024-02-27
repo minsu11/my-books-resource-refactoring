@@ -13,10 +13,10 @@ import lombok.Setter;
 import store.mybooks.resource.user.entity.User;
 
 /**
- * packageName    : store.mybooks.resource.user_address.dto.response
- * fileName       : UserAddressModifyResponse
- * author         : masiljangajji
- * date           : 2/19/24
+ * packageName    : store.mybooks.resource.user_address.dto.response<br>
+ * fileName       : UserAddressModifyResponse<br>
+ * author         : masiljangajji<br>
+ * date           : 2/19/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
