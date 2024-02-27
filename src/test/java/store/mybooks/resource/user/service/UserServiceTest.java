@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import store.mybooks.resource.user.dto.mapper.UserMapper;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.request.UserGradeModifyRequest;
@@ -72,6 +73,9 @@ class UserServiceTest {
     @Mock
     UserMapper userMapper;
 
+    @Mock
+    PasswordEncoder passwordEncoder;
+
     @Test
     @DisplayName("이미 사용중인 email 을 담고있는 UserCreateRequest 를 이용해 CreateUser 실행시 UserAlreadyExistException")
     void givenUserCreateRequestWithAlreadyUsedEmail_whenCallCreateUser_thenThrowUserAlreadyExistException(
@@ -93,11 +97,12 @@ class UserServiceTest {
             @Mock UserCreateResponse userCreateResponse) {
 
         when(userCreateRequest.getEmail()).thenReturn("test");
+        when(userCreateRequest.getPassword()).thenReturn("test");
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
         when(userStatusRepository.findById(anyString())).thenReturn(Optional.of(userStatus));
         when(userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(anyString())).thenReturn(
                 Optional.of(userGrade));
-
+        when(passwordEncoder.encode("test")).thenReturn("test");
         when(userMapper.toUserCreateResponse(any(User.class))).thenReturn(userCreateResponse);
         userService.createUser(userCreateRequest);
 
@@ -206,7 +211,9 @@ class UserServiceTest {
             @Mock User user) {
 
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(request.getPassword()).thenReturn(anyString());
+        when(request.getPassword()).thenReturn("test");
+        when(passwordEncoder.encode("test")).thenReturn("test");
+
 
         userService.modifyUserPassword(1L,request);
 
