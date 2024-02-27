@@ -60,21 +60,6 @@ public class GlobalControllerAdvice {
 
 
     /**
-     * methodName : xxxValidationFailedException
-     * author : minsu11
-     * description : ValidationFailedException 을 처리하는 ExceptionHandler.
-     *
-     * @param exception the exception
-     * @return the response entity
-     */
-    @ExceptionHandler({ReturnRuleNameRequestValidationFailedException.class, ReturnRuleValidationFailedException.class})
-    public ResponseEntity<String> xxxValidationFailedException(Exception exception) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(exception.getMessage());
-    }
-
-    /**
      * methodName : validationException <br>
      * author : damho-lee <br>
      * description : ValidationException 을 처리하는 ExceptionHandler. <br>
@@ -82,7 +67,7 @@ public class GlobalControllerAdvice {
      * @param exception ValidationException.
      * @return ResponseEntity
      */
-    @ExceptionHandler(ValidationException.class)
+    @ExceptionHandler({ValidationException.class, ReturnRuleNameRequestValidationFailedException.class, ReturnRuleValidationFailedException.class})
     public ResponseEntity<String> validationException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

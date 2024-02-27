@@ -44,14 +44,15 @@ public class ReturnRuleRepositoryImpl extends QuerydslRepositorySupport implemen
                                 returnRule.deliveryFee,
                                 returnRule.term, returnRule.isAvailable))
                         .join(returnRule.returnRuleName, returnRuleName)
-                        .where(returnRule.returnRuleName.id.eq(returnRuleNameId))
+                        .where(returnRule.returnRuleName.id.eq(returnRuleNameId)
+                                .and(returnRule.isAvailable.eq(true)))
                         .fetchOne());
     }
 
     /**
      * methodName : getReturnRuleResponseList<br>
      * author : minsu11<br>
-     * description : 모든 반품 규정의 조회해서 {@code ReturnRuleResponse} 리스트로 반환
+     * description : 사용 중인 모든 반품 규정의 조회해서 {@code ReturnRuleResponse} 리스트로 반환
      * <br> *
      *
      * @return optional
@@ -65,6 +66,7 @@ public class ReturnRuleRepositoryImpl extends QuerydslRepositorySupport implemen
                         returnRule.deliveryFee,
                         returnRule.term, returnRule.isAvailable
                 ))
+                .where(returnRule.isAvailable.eq(true))
                 .fetch();
     }
 }

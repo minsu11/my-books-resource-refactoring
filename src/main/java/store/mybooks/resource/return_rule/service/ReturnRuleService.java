@@ -10,7 +10,6 @@ import store.mybooks.resource.return_rule.dto.mapper.ReturnRuleMapper;
 import store.mybooks.resource.return_rule.dto.request.ReturnRuleCreateRequest;
 import store.mybooks.resource.return_rule.dto.request.ReturnRuleModifyRequest;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleCreateResponse;
-import store.mybooks.resource.return_rule.dto.response.ReturnRuleDeleteResponse;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleModifyResponse;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleResponse;
 import store.mybooks.resource.return_rule.entity.ReturnRule;
@@ -147,14 +146,10 @@ public class ReturnRuleService {
      * <br> *
      *
      * @param id 삭제할 반품 규정 아이디
-     * @return return rule delete response
      * @throws ReturnRuleNotExistException 삭제할 반품 규정이 없을 경우
      */
-    public ReturnRuleDeleteResponse deleteReturnRule(Long id) {
-
+    public void deleteReturnRule(Long id) {
         ReturnRule returnRule = returnRuleRepository.findById(id).orElseThrow(ReturnRuleNotExistException::new);
         returnRule.modifyIsAvailable(false);
-        return new ReturnRuleDeleteResponse("OK");
-
     }
 }

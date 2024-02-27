@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import store.mybooks.resource.return_rule.dto.request.ReturnRuleCreateRequest;
 import store.mybooks.resource.return_rule.dto.request.ReturnRuleModifyRequest;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleCreateResponse;
-import store.mybooks.resource.return_rule.dto.response.ReturnRuleDeleteResponse;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleModifyResponse;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleResponse;
 import store.mybooks.resource.return_rule.exception.ReturnRuleValidationFailedException;
@@ -84,7 +83,6 @@ public class ReturnRuleRestController {
     public ResponseEntity<ReturnRuleCreateResponse> createReturnRule(
             @Valid @RequestBody ReturnRuleCreateRequest request,
             BindingResult bindingResult) {
-        log.info("=============> 시작");
         if (bindingResult.hasErrors()) {
             throw new ReturnRuleValidationFailedException(bindingResult);
         }
@@ -131,10 +129,10 @@ public class ReturnRuleRestController {
      * @return response entity
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<ReturnRuleDeleteResponse> deleteReturnRule(@PathVariable Long id) {
-        ReturnRuleDeleteResponse response = returnRuleService.deleteReturnRule(id);
+    public ResponseEntity deleteReturnRule(@PathVariable Long id) {
+        returnRuleService.deleteReturnRule(id);
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(response);
+                .status(HttpStatus.NO_CONTENT)
+                .build();
     }
 }

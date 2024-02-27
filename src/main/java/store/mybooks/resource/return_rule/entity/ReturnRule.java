@@ -54,7 +54,7 @@ public class ReturnRule {
     }
 
     public void modifyIsAvailable(Boolean status) {
-        this.isAvailable = false;
+        this.isAvailable = status;
     }
 
 }
