@@ -1,6 +1,7 @@
 package store.mybooks.resource.wrap.dto.request;
 
 import javax.validation.constraints.Max;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public class WrapCreateRequest {
 
+
     @Size(min = 2, max = 20)
+    @NotBlank
     private String name;
 
     @Positive

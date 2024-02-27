@@ -14,6 +14,7 @@ import store.mybooks.resource.return_rule.exception.ReturnRuleValidationFailedEx
 import store.mybooks.resource.return_rule_name.exception.ReturnRuleNameRequestValidationFailedException;
 import store.mybooks.resource.tag.exception.TagNameAlreadyExistsException;
 import store.mybooks.resource.tag.exception.TagNotExistsException;
+import store.mybooks.resource.wrap.exception.WrapValidationFailedException;
 
 /**
  * packageName    : store.mybooks.resource.error
@@ -68,7 +69,8 @@ public class GlobalControllerAdvice {
      * @param exception ValidationException.
      * @return ResponseEntity
      */
-    @ExceptionHandler({ValidationException.class, ReturnRuleNameRequestValidationFailedException.class, ReturnRuleValidationFailedException.class})
+    @ExceptionHandler({ValidationException.class, ReturnRuleNameRequestValidationFailedException.class,
+            ReturnRuleValidationFailedException.class, WrapValidationFailedException.class})
     public ResponseEntity<String> validationException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

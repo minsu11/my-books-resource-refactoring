@@ -32,7 +32,7 @@ import store.mybooks.resource.wrap.service.WrapService;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/wraps")
+@RequestMapping("/api/wraps")
 public class WrapRestController {
     private final WrapService wrapService;
 
@@ -46,7 +46,7 @@ public class WrapRestController {
      * @return response entity
      */
     @GetMapping("/{id}")
-    public ResponseEntity<WrapResponse> getWrapResponse(@PathVariable Integer id) {
+    public ResponseEntity<WrapResponse> getWrapResponseById(@PathVariable Integer id) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(wrapService.getWrapById(id));
@@ -96,7 +96,7 @@ public class WrapRestController {
      * @throws WrapValidationFailedException 등록할 포장지 유효성 실패 시
      */
     @PostMapping
-    public ResponseEntity<WrapCreateResponse> createWrap(@Valid WrapCreateRequest wrapCreateRequest,
+    public ResponseEntity<WrapCreateResponse> createWrap(@Valid @RequestBody WrapCreateRequest wrapCreateRequest,
                                                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new WrapValidationFailedException(bindingResult);
@@ -120,7 +120,7 @@ public class WrapRestController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<WrapModifyResponse> modifyWrap(@PathVariable Integer id,
-                                                         @Valid WrapModifyRequest wrapModifyRequest,
+                                                         @Valid @RequestBody WrapModifyRequest wrapModifyRequest,
                                                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new WrapValidationFailedException(bindingResult);

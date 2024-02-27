@@ -23,5 +23,4 @@ import lombok.Setter;
 public class WrapModifyResponse {
     private String name;
     private Integer cost;
-    private Boolean isAvailable;
 }

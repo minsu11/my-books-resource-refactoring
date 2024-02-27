@@ -21,6 +21,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class WrapModifyRequest {
+
+    @NotBlank
     @Size(min = 2, max = 20)
     private String name;
 
@@ -28,6 +30,4 @@ public class WrapModifyRequest {
     @Max(100000)
     private Integer cost;
 
-    @NotBlank
-    private Boolean isAvailable;
 }

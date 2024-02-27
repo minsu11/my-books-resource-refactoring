@@ -94,7 +94,7 @@ public class WrapService {
      * @throws WrapAlreadyExistException 포장지가 이미 존재 했을 경우
      */
     public WrapCreateResponse createWrap(WrapCreateRequest request) {
-        if (wrapRepository.existWrap(request.getName())) {
+        if (Boolean.TRUE.equals(wrapRepository.existWrap(request.getName()))) {
             throw new WrapAlreadyExistException();
         }
         Wrap wrap = new Wrap(1, request.getName(), request.getCost(), LocalDate.now(), true);
