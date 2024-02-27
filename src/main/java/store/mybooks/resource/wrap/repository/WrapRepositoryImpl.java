@@ -69,7 +69,8 @@ public class WrapRepositoryImpl extends QuerydslRepositorySupport implements Wra
         List<WrapPageResponse> wrapResponses = getQuerydsl().applyPagination(pageable,
                 from(wrap).select(
                         Projections.constructor(WrapPageResponse.class, wrap.id,
-                                wrap.name, wrap.cost, wrap.isAvailable))).fetch();
+                                wrap.name, wrap.cost, wrap.isAvailable)
+                ).where(wrap.isAvailable.eq(true))).fetch();
         long total = from().fetchCount();
 
         return new PageImpl<>(wrapResponses, pageable, total);
