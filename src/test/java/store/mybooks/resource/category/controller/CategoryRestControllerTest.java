@@ -160,7 +160,7 @@ class CategoryRestControllerTest {
     @Test
     @DisplayName("카테고리 수정")
     public void givenModifyCategory_whenNormalCase_thenReturnIsOk() throws Exception {
-        CategoryModifyRequest categoryModifyRequest = new CategoryModifyRequest(null, "categoryName");
+        CategoryModifyRequest categoryModifyRequest = new CategoryModifyRequest("categoryName");
         CategoryModifyResponse categoryModifyResponse = new CategoryModifyResponse();
         categoryModifyResponse.setParentCategoryName(null);
         categoryModifyResponse.setParentCategoryId(null);
@@ -181,7 +181,7 @@ class CategoryRestControllerTest {
     @Test
     @DisplayName("카테고리 수정 - Validation 실패")
     void givenModifyCategory_whenValidationFailure_thenReturnBadRequest() throws Exception {
-        CategoryModifyRequest categoryModifyRequest = new CategoryModifyRequest(null, "   ");
+        CategoryModifyRequest categoryModifyRequest = new CategoryModifyRequest("   ");
         String content = objectMapper.writeValueAsString(categoryModifyRequest);
 
         MvcResult mvcResult = mockMvc.perform(put("/api/categories/{id}", 1)
