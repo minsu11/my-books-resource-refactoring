@@ -1,8 +1,8 @@
 package store.mybooks.resource.return_rule.dto.request;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -22,12 +22,12 @@ import lombok.Getter;
 public class ReturnRuleModifyRequest {
     @NotBlank
     private String returnRuleNameId;
-    @Size(min = 0, max = 10000)
+    @Min(0)
+    @Max(1000)
     private Integer deliveryFee;
-    @Size(min = 0, max = 365)
-    private Integer term;
 
-    @NotNull
-    private Boolean isAvailable;
+    @Min(1)
+    @Max(365)
+    private Integer term;
 
 }

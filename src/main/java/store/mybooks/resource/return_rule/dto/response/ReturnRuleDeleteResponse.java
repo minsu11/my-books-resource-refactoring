@@ -2,28 +2,22 @@ package store.mybooks.resource.return_rule.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
  * packageName    : store.mybooks.resource.return_rule.dto.response<br>
- * fileName       : ReturnRuleResponse<br>
+ * fileName       : ReturnRuleDelete<br>
  * author         : minsu11<br>
- * date           : 2/21/24<br>
- * description    : 반품 규정을 반환해주는 dto
+ * date           : 2/26/24<br>
+ * description    :
  * ===========================================================<br>
  * DATE              AUTHOR             NOTE<br>
  * -----------------------------------------------------------<br>
- * 2/21/24        minsu11       최초 생성<br>
+ * 2/26/24        minsu11       최초 생성<br>
  */
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class ReturnRuleResponse {
-    private String returnName;
-    private Integer deliveryFee;
-    private Integer term;
-    private Boolean isAvailable;
-
+public class ReturnRuleDeleteResponse {
+    private String result;
 }
