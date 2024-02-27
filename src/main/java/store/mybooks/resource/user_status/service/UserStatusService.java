@@ -9,10 +9,10 @@ import store.mybooks.resource.user_status.exception.UserStatusNotExistException;
 import store.mybooks.resource.user_status.repository.UserStatusRepository;
 
 /**
- * packageName    : store.mybooks.resource.user_status.service
- * fileName       : UserStatusService
- * author         : masiljangajji
- * date           : 2/13/24
+ * packageName    : store.mybooks.resource.user_status.service<br>
+ * fileName       : UserStatusService<br>
+ * author         : masiljangajji<br>
+ * date           : 2/13/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
@@ -28,13 +28,13 @@ public class UserStatusService {
 
 
     /**
-     * Find user status by id user status get response.
+     * methodName : findUserStatusById
+     * author : masiljangajji
+     * description : 유저상태의 정보를 찾음
      *
-     * UserStatus를 id를 이용해 찾음 .
-     * 특정 id의 userStatus가 존재하지 않는 경우 UserStatusNotExistException
-     *
-     * @param id the id
-     * @return the user status get response
+     * @param id id
+     * @throws UserStatusNotExistException 유저상태가 존재하지 않는 경우
+     * @return user status get response
      */
     public UserStatusGetResponse findUserStatusById(String id) {
 
@@ -43,15 +43,17 @@ public class UserStatusService {
     }
 
     /**
-     * Find all user status list.
+     * methodName : findAllUserStatus
+     * author : masiljangajji
+     * description : 모든 유저상태 정보를 찾음
      *
-     * 존재하는 모든 Userstatus를 찾아 List형태로 반환함
-     *
-     * @return the list
+     * @return list
      */
     public List<UserStatusGetResponse> findAllUserStatus() {
         return userStatusRepository.queryAllBy();
     }
+
+
 
 
 }

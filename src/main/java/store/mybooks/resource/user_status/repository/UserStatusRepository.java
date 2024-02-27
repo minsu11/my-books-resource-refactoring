@@ -6,10 +6,10 @@ import store.mybooks.resource.user_status.dto.response.UserStatusGetResponse;
 import store.mybooks.resource.user_status.entity.UserStatus;
 
 /**
- * packageName    : store.mybooks.resource.user.repository
- * fileName       : UserStatusRepository
- * author         : masiljangajji
- * date           : 2/13/24
+ * packageName    : store.mybooks.resource.user.repository<br>
+ * fileName       : UserStatusRepository<br>
+ * author         : masiljangajji<br>
+ * date           : 2/13/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE

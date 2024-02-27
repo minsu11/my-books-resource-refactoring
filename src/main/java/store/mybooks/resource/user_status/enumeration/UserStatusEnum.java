@@ -1,10 +1,10 @@
 package store.mybooks.resource.user_status.enumeration;
 
 /**
- * packageName    : store.mybooks.resource.user_status.enumeration
- * fileName       : UserStatusEnum
- * author         : masiljangajji
- * date           : 2/16/24
+ * packageName    : store.mybooks.resource.user_status.enumeration<br>
+ * fileName       : UserStatusEnum<br>
+ * author         : masiljangajji<br>
+ * date           : 2/16/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE

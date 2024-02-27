@@ -12,10 +12,10 @@ import store.mybooks.resource.user_status.dto.response.UserStatusGetResponse;
 import store.mybooks.resource.user_status.service.UserStatusService;
 
 /**
- * packageName    : store.mybooks.resource.user_status.controller
- * fileName       : UserStatusRestController
- * author         : masiljangajji
- * date           : 2/18/24
+ * packageName    : store.mybooks.resource.user_status.controller<br>
+ * fileName       : UserStatusRestController<br>
+ * author         : masiljangajji<br>
+ * date           : 2/18/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
@@ -30,12 +30,12 @@ public class UserStatusRestController {
     private final UserStatusService userStatusService;
 
     /**
-     * Gets user status.
+     * methodName : getUserStatus
+     * author : masiljangajji
+     * description : 유저상태 정보를 찾음
      *
-     * id를 통해 특정 UserStatus를 조회하는 api
-     *
-     * @param id the id
-     * @return the user status
+     * @param id id
+     * @return response entity
      */
     @GetMapping("/{id}")
     public ResponseEntity<UserStatusGetResponse> getUserStatus(@PathVariable(name = "id") String id) {
@@ -45,11 +45,11 @@ public class UserStatusRestController {
     }
 
     /**
-     * Gets all user status.
+     * methodName : getAllUserStatus
+     * author : masiljangajji
+     * description : 모든 유저상태 정보를 가져옴
      *
-     * 모든 UserStatus를 List형태로 조회하는 api
-     *
-     * @return the all user status
+     * @return response entity
      */
     @GetMapping
     public ResponseEntity<List<UserStatusGetResponse>> getAllUserStatus() {

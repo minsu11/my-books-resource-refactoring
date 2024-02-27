@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -37,7 +38,7 @@ import store.mybooks.resource.delivery_rule_name.controller.DeliveryRuleNameCont
  * -----------------------------------------------------------
  * 2/18/24        Fiat_lux       최초 생성
  */
-@WebMvcTest(DeliveryRuleNameController.class)
+@WebMvcTest(value = DeliveryRuleNameController.class,excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class DeliveryRuleNameControllerTest {
 
     @Autowired

@@ -5,10 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * packageName    : store.mybooks.resource.user.dto.request
- * fileName       : UserLoginRequest
- * author         : masiljangajji
- * date           : 2/23/24
+ * packageName    : store.mybooks.resource.user.dto.request<br>
+ * fileName       : UserLoginRequest<br>
+ * author         : masiljangajji<br>
+ * date           : 2/23/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE

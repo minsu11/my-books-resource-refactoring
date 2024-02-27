@@ -14,10 +14,10 @@ import lombok.NoArgsConstructor;
 import store.mybooks.resource.user.entity.User;
 
 /**
- * packageName    : store.mybooks.resource.user.entity
- * fileName       : UserAddress
- * author         : masiljangajji
- * date           : 2/13/24
+ * packageName    : store.mybooks.resource.user.entity<br>
+ * fileName       : UserAddress<br>
+ * author         : masiljangajji<br>
+ * date           : 2/13/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
