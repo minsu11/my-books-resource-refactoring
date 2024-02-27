@@ -46,11 +46,11 @@ public class ReturnRuleService {
      * methodName : getReturnRuleResponseByReturnRuleName<br>
      * author : minsu11<br>
      * description : <br>
-     * {@code returnRuleName}의 반품 정책 조회. <br>
+     * 사용 중인 {@code returnRuleName}의 반품 정책 조회. <br>
      * {@code returnRuleName}로 반품 정책을 조회 할 수 없는 경우 {@code ReturnRuleNotExistException}을 던짐
      * <br> *
      *
-     * @param returnRuleName 조회할 반품 규정 이름
+     * @param returnRuleName 조회할 사용 중인 반품 규정 이름
      * @return returnRuleResponse dto로 반환
      * @throws ReturnRuleNotExistException {@code returnRuleName}의 데이터를 조회 할 수 없는 경우
      */

@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import store.mybooks.resource.return_rule.dto.request.ReturnRuleCreateRequest;
 import store.mybooks.resource.return_rule.dto.request.ReturnRuleModifyRequest;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleCreateResponse;
-import store.mybooks.resource.return_rule.dto.response.ReturnRuleDeleteResponse;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleModifyResponse;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleResponse;
 import store.mybooks.resource.return_rule.service.ReturnRuleService;
@@ -251,13 +250,12 @@ class ReturnRuleRestControllerUnitTest {
     @DisplayName("반품 규정 정상 삭제")
     void deleteReturnRule() throws Exception {
         Long id = 1L;
-        ReturnRuleDeleteResponse deleteResponse = new ReturnRuleDeleteResponse("OK");
-        when(returnRuleService.deleteReturnRule(id)).thenReturn(deleteResponse);
+        doNothing().when(returnRuleService).deleteReturnRule(any());
 
         mockMvc.perform(delete("/api/return-rules/{id}", id))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.result").value("OK"));
+                .andExpect(status().isNoContent());
+
+        verify(returnRuleService, times(1)).deleteReturnRule(any());
     }
 
 

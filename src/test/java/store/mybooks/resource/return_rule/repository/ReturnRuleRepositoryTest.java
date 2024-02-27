@@ -37,11 +37,17 @@ class ReturnRuleRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        ReturnRuleName returnRuleName = new ReturnRuleName("test1", LocalDate.of(1212, 12, 12));
-        returnRuleNameRepository.save(returnRuleName);
+        ReturnRuleName returnRuleName1 = new ReturnRuleName("test", LocalDate.of(1212, 12, 12));
+        returnRuleNameRepository.save(returnRuleName1);
 
-        ReturnRule returnRuleValue = new ReturnRule(1L, 10, 10, true, LocalDate.of(1212, 12, 12), returnRuleName);
-        returnRuleRepository.save(returnRuleValue);
+        ReturnRule returnRuleValue1 = new ReturnRule(1L, 10, 10, false, LocalDate.of(1212, 12, 12), returnRuleName1);
+        returnRuleRepository.save(returnRuleValue1);
+
+        ReturnRuleName returnRuleName2 = new ReturnRuleName("test1", LocalDate.of(1212, 12, 12));
+        returnRuleNameRepository.save(returnRuleName2);
+
+        ReturnRule returnRuleValue2 = new ReturnRule(1L, 10, 10, true, LocalDate.of(1212, 12, 12), returnRuleName2);
+        returnRuleRepository.save(returnRuleValue2);
     }
 
     @Test

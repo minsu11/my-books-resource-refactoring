@@ -19,7 +19,6 @@ import store.mybooks.resource.return_rule.dto.mapper.ReturnRuleMapper;
 import store.mybooks.resource.return_rule.dto.request.ReturnRuleCreateRequest;
 import store.mybooks.resource.return_rule.dto.request.ReturnRuleModifyRequest;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleCreateResponse;
-import store.mybooks.resource.return_rule.dto.response.ReturnRuleDeleteResponse;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleModifyResponse;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleResponse;
 import store.mybooks.resource.return_rule.entity.ReturnRule;
@@ -57,7 +56,7 @@ class ReturnRuleServiceTest {
     ReturnRuleMapper returnRuleMapper;
 
     @Test
-    @DisplayName("id의 값으로 반품 규정 조회 성공 테스트")
+    @DisplayName("id의 값으로 사용 중인 반품 규정 조회 성공 테스트")
     void givenReturnRuleName_whenFindByReturnRuleName_thenReturnReturnRuleResponse() {
         String test = "test";
         ReturnRuleResponse expected = new ReturnRuleResponse("test", 1000, 10, true);
@@ -209,14 +208,11 @@ class ReturnRuleServiceTest {
 
     @Test
     @DisplayName("반품 규정 삭제 성공 테스트")
-    void givenLongId_whenReturnRuleModifyIsAvailable_thenReturnReturnRuleDeleteResponse() {
-        ReturnRuleName returnRuleName = new ReturnRuleName("test", LocalDate.of(1212, 12, 11));
-        ReturnRule expectedReturnRule = new ReturnRule(1L, 100, 10, true, LocalDate.of(1212, 12, 12), returnRuleName);
-        ReturnRuleDeleteResponse expected = new ReturnRuleDeleteResponse("OK");
-        when(returnRuleRepository.findById(1L)).thenReturn(Optional.of(expectedReturnRule));
+    void givenLongId_whenReturnRuleModifyIsAvailable_thenReturnReturnRuleDeleteResponse(@Mock ReturnRule returnRule) {
 
-        ReturnRuleDeleteResponse actual = returnRuleService.deleteReturnRule(1L);
-        assertEquals(expected.getResult(), actual.getResult());
+        when(returnRuleRepository.findById(any())).thenReturn(Optional.of(returnRule));
+        returnRuleService.deleteReturnRule(1L);
+        verify(returnRule, times(1)).modifyIsAvailable(any());
     }
 
     @Test
