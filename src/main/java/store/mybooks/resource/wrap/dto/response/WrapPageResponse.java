@@ -1,30 +1,26 @@
-package store.mybooks.resource.wrap.dto.request;
+package store.mybooks.resource.wrap.dto.response;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
- * packageName    : store.mybooks.resource.wrap.dto.request<br>
- * fileName       : WrapCreateRequaer<br>
+ * packageName    : store.mybooks.resource.wrap.dto.response<br>
+ * fileName       : WrapPageResponse<br>
  * author         : minsu11<br>
  * date           : 2/27/24<br>
- * description    : 등록할 포장지 DTO
+ * description    :
  * ===========================================================<br>
  * DATE              AUTHOR             NOTE<br>
  * -----------------------------------------------------------<br>
  * 2/27/24        minsu11       최초 생성<br>
  */
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
-public class WrapCreateRequest {
-
-    @Size(min = 2, max = 20)
+public class WrapPageResponse {
+    private Integer id;
     private String name;
-
-    @Positive
-    @Max(100000)
     private Integer cost;
+    private Boolean isAvailable;
 }

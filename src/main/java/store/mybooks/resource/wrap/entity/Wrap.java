@@ -42,8 +42,8 @@ public class Wrap {
     private Boolean isAvailable;
 
     public void modifyWrap(WrapModifyRequest wrapModifyRequest) {
-        this.name = wrapModifyRequest.getWrapName();
-        this.cost = wrapModifyRequest.getWrapCost();
+        this.name = wrapModifyRequest.getName();
+        this.cost = wrapModifyRequest.getCost();
         this.isAvailable = wrapModifyRequest.getIsAvailable();
     }
 

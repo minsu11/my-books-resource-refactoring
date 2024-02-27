@@ -19,7 +19,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class WrapResponse {
-    private String wrapName;
-    private Integer wrapCost;
+    private String name;
+    private Integer cost;
     private Boolean isAvailable;
 }

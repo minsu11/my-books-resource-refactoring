@@ -22,12 +22,12 @@ import lombok.Getter;
 @AllArgsConstructor
 public class WrapModifyRequest {
     @Size(min = 2, max = 20)
-    private String wrapName;
+    private String name;
 
     @Positive
     @Max(100000)
-    private Integer wrapCost;
-    
+    private Integer cost;
+
     @NotBlank
     private Boolean isAvailable;
 }

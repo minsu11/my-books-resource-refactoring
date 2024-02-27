@@ -21,6 +21,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WrapCreateResponse {
-    private String wrapName;
-    private Integer wrapCost;
+    private String name;
+    private Integer cost;
 }

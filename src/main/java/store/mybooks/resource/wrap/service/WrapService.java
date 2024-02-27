@@ -74,10 +74,10 @@ public class WrapService {
      * @throws WrapAlreadyExistException 포장지가 이미 존재 했을 경우
      */
     public WrapCreateResponse createWrap(WrapCreateRequest request) {
-        if (wrapRepository.existWrap(request.getWrapName())) {
+        if (wrapRepository.existWrap(request.getName())) {
             throw new WrapAlreadyExistException();
         }
-        Wrap wrap = new Wrap(1, request.getWrapName(), request.getWrapCost(), LocalDate.now(), true);
+        Wrap wrap = new Wrap(1, request.getName(), request.getCost(), LocalDate.now(), true);
         return wrapMapper.mapToWrapCreateResponse(wrapRepository.save(wrap));
     }
 
