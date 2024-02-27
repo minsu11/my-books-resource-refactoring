@@ -91,39 +91,9 @@ class AuthorRestControllerTest {
         Integer page = 0;
         Integer size = 2;
         Pageable pageable = PageRequest.of(page, size);
-        List<AuthorGetResponse> authorGetResponseList = Arrays.asList(
-                new AuthorGetResponse() {
-                    @Override
-                    public Integer getId() {
-                        return id;
-                    }
+        List<AuthorGetResponse> authorGetResponseList =
+                Arrays.asList(new AuthorGetResponse(id, name, content), new AuthorGetResponse(id2, name2, content2));
 
-                    @Override
-                    public String getName() {
-                        return name;
-                    }
-
-                    @Override
-                    public String getContent() {
-                        return content;
-                    }
-                }, new AuthorGetResponse() {
-                    @Override
-                    public Integer getId() {
-                        return id2;
-                    }
-
-                    @Override
-                    public String getName() {
-                        return name2;
-                    }
-
-                    @Override
-                    public String getContent() {
-                        return content2;
-                    }
-                }
-        );
         Page<AuthorGetResponse> authorGetResponsePage = new PageImpl<>(authorGetResponseList, pageable,
                 authorGetResponseList.size());
         when(authorService.getAllAuthors(pageable)).thenReturn(authorGetResponsePage);
@@ -138,6 +108,24 @@ class AuthorRestControllerTest {
                 .andExpect(jsonPath("$.content[1].content").value(content2));
 
         verify(authorService, times(1)).getAllAuthors(pageable);
+    }
+
+    @Test
+    @DisplayName("저자 조회")
+    void givenAuthorId_whenFindAuthor_thenReturnAuthorGetResponse() throws Exception {
+        AuthorGetResponse authorGetResponse =
+                new AuthorGetResponse(author.getId(), author.getName(), author.getContent());
+
+        when(authorService.getAuthor(id)).thenReturn(authorGetResponse);
+
+        mockMvc.perform(get(url + "/{id}", id)
+                        .accept("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(authorGetResponse.getId()))
+                .andExpect(jsonPath("$.name").value(authorGetResponse.getName()))
+                .andExpect(jsonPath("$.content").value(authorGetResponse.getContent()));
+
+        verify(authorService, times(1)).getAuthor(id);
     }
 
     @Test
