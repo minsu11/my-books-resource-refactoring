@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,10 +31,11 @@ public class SecurityConfig {
      * methodName : passwordEncoder
      * author : masiljangajji
      * description : 비밀번호를 암호화하는 Encoder 설정
+     *
      * @return password encoder
      */
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -46,17 +48,22 @@ public class SecurityConfig {
      * Servlet Context 가 관리하는 filter 를 Bean 형태로 사용하기 위해
      * Delegating Filter Proxy 를 사용해 SpringSecurityFilterChain 이름을 가진 Bean 에게
      * 처리를 위임하는 방식으로 동작
+     *
      * @param http http
      * @return security filter chain
      * @throws Exception the exception
      */
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()// csrf 보안설절 안함
-                .authorizeRequests() 
-                .antMatchers("/api/**") // api 요청에 대해서
-                .permitAll(); // 전부허용
+                .authorizeRequests()
+                .anyRequest() // 모든요청
+                .permitAll() // 전부허용
+                .and()
+                .formLogin().disable() // form 로그인 안함
+                .httpBasic().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // session 사용안함
 
 
         return http.build();
