@@ -157,7 +157,7 @@ public class CategoryService {
      * author : damho-lee
      * description : CategoryRequest 로 category 를 저장하는 메서드 카테고리 이름이 이미 존재하는 경우 CategoryNameAlreadyExistsException 발생.
      *
-     * @param category create request
+     * @param categoryCreateRequest CategoryCreateRequest
      * @return category create response
      */
     public CategoryCreateResponse createCategory(CategoryCreateRequest categoryCreateRequest) {
