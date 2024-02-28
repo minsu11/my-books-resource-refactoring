@@ -29,6 +29,14 @@ import store.mybooks.resource.book_category.service.BookCategoryService;
 public class BookCategoryRestController {
     private final BookCategoryService bookCategoryService;
 
+    /**
+     * methodName : createBookCategory <br>
+     * author : damho-lee <br>
+     * description : BookCategory 등록.<br>
+     *
+     * @param bookCategoryCreateRequest BookCategoryCreateRequest
+     * @return ResponseEntity
+     */
     @PostMapping
     public ResponseEntity<Void> createBookCategory(
             @RequestBody BookCategoryCreateRequest bookCategoryCreateRequest) {
@@ -37,6 +45,14 @@ public class BookCategoryRestController {
                 .status(HttpStatus.CREATED).build();
     }
 
+    /**
+     * methodName : deleteBookCategory <br>
+     * author : damho-lee <br>
+     * description : BookId 로 BookId 에 관한 데이터 모두 삭제.<br>
+     *
+     * @param bookId long
+     * @return ResponseEntity
+     */
     @DeleteMapping("/{bookId}")
     public ResponseEntity<Void> deleteBookCategory(@PathVariable("bookId") Long bookId) {
         bookCategoryService.deleteBookCategory(bookId);
