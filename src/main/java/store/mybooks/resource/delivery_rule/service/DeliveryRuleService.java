@@ -3,7 +3,7 @@ package store.mybooks.resource.delivery_rule.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotFoundException;
+import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotExistsException;
 import store.mybooks.resource.delivery_rule_name.repository.DeliveryRuleNameRepository;
 import store.mybooks.resource.delivery_rule.dto.response.DeliveryRuleDto;
 import store.mybooks.resource.delivery_rule.dto.mapper.DeliveryRuleMapper;
@@ -11,7 +11,7 @@ import store.mybooks.resource.delivery_rule.dto.request.DeliveryRuleModifyReques
 import store.mybooks.resource.delivery_rule.dto.request.DeliveryRuleRegisterRequest;
 import store.mybooks.resource.delivery_rule.dto.response.DeliveryRuleResponse;
 import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
-import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotFoundException;
+import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotExistsException;
 import store.mybooks.resource.delivery_rule.repository.DeliveryRuleRepository;
 import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
@@ -49,10 +49,10 @@ public class DeliveryRuleService {
 
         DeliveryRuleName deliveryRuleName =
                 deliveryRuleNameRepository.findById(deliveryRuleRegisterRequest.getDeliveryNameRuleId())
-                        .orElseThrow(() -> new DeliveryRuleNameNotFoundException("배송 이름 규칙이 존재하지 않습니다."));
+                        .orElseThrow(() -> new DeliveryRuleNameNotExistsException("배송 이름 규칙이 존재하지 않습니다."));
 
         DeliveryRule deliveryRule = new DeliveryRule(deliveryRuleName,
-                deliveryRuleRegisterRequest.getDeliveryCompanyName(), deliveryRuleRegisterRequest.getDeliveryCost(),
+                deliveryRuleRegisterRequest.getDeliveryRuleCompanyName(), deliveryRuleRegisterRequest.getDeliveryCost(),
                 deliveryRuleRegisterRequest.getDeliveryRuleCost());
 
         DeliveryRule saveDeliveryRule = deliveryRuleRepository.save(deliveryRule);
@@ -69,13 +69,13 @@ public class DeliveryRuleService {
      *
      * @param id the id
      * @return the delivery rule
-     * @throws DeliveryRuleNotFoundException {@code id}의 데이터 조회 할 수 없는 경우 던짐
+     * @throws DeliveryRuleNotExistsException {@code id}의 데이터 조회 할 수 없는 경우 던짐
      */
     @Transactional(readOnly = true)
     public DeliveryRuleDto getDeliveryRule(Integer id) {
 
         return deliveryRuleRepository.findDeliveryRuleById(id)
-                .orElseThrow(() -> new DeliveryRuleNotFoundException("배송 규칙이 존재하지 않습니다"));
+                .orElseThrow(() -> new DeliveryRuleNotExistsException("배송 규칙이 존재하지 않습니다"));
     }
 
     /**
@@ -89,17 +89,17 @@ public class DeliveryRuleService {
      * @param id                        the id
      * @param deliveryRuleModifyRequest the delivery rule modify request
      * @return the delivery rule response
-     * @throws DeliveryRuleNotFoundException 배송 규칙이 존재하지 않을 경우
-     * @throws DeliveryRuleNameNotFoundException 배송 규칙 이름이 존재하지 않을 경우
+     * @throws DeliveryRuleNotExistsException 배송 규칙이 존재하지 않을 경우
+     * @throws DeliveryRuleNameNotExistsException 배송 규칙 이름이 존재하지 않을 경우
      */
     @Transactional
     public DeliveryRuleResponse modifyDeliveryRule(Integer id, DeliveryRuleModifyRequest deliveryRuleModifyRequest) {
         DeliveryRule deliveryRule = deliveryRuleRepository.findById(id)
-                .orElseThrow(() -> new DeliveryRuleNotFoundException("배송 규칙이 존재하지 않습니다."));
+                .orElseThrow(() -> new DeliveryRuleNotExistsException("배송 규칙이 존재하지 않습니다."));
 
         DeliveryRuleName deliveryRuleName =
                 deliveryRuleNameRepository.findById(deliveryRuleModifyRequest.getDeliveryNameRuleId())
-                        .orElseThrow(() -> new DeliveryRuleNameNotFoundException("배송 규칙 이름이 존재하지 않습니다"));
+                        .orElseThrow(() -> new DeliveryRuleNameNotExistsException("배송 규칙 이름이 존재하지 않습니다"));
 
         deliveryRule.setDeliveryRuleName(deliveryRuleName);
         deliveryRule.setCompanyName(deliveryRuleModifyRequest.getDeliveryRuleCompanyName());
@@ -117,14 +117,14 @@ public class DeliveryRuleService {
      * {@code id}로 배송 규칙 조회 할 수 없는 경우 {@code DeliveryRuleNotFoundException} 던짐<br>
      *
      * @param id the id
-     * @throws DeliveryRuleNotFoundException {@code id}의 데이터를 조회 할 수 없는 경우
+     * @throws DeliveryRuleNotExistsException {@code id}의 데이터를 조회 할 수 없는 경우
      */
     @Transactional
     public void deleteDeliveryRule(Integer id) {
         if (deliveryRuleRepository.existsById(id)) {
             deliveryRuleRepository.deleteById(id);
         } else {
-            throw new DeliveryRuleNotFoundException("배송 규칙이 존재하지 않습니다");
+            throw new DeliveryRuleNotExistsException("배송 규칙이 존재하지 않습니다");
         }
     }
 
