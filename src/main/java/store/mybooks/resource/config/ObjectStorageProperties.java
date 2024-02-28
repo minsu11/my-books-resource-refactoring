@@ -29,6 +29,4 @@ public class ObjectStorageProperties {
     private String tenantId;
     private String password;
     private String identity;
-    private String book;
-    private String review;
 }
