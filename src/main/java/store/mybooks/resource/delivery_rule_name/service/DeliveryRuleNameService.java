@@ -7,7 +7,8 @@ import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameDt
 import store.mybooks.resource.delivery_rule_name.dto.mapper.DeliveryRuleNameMapper;
 import store.mybooks.resource.delivery_rule_name.dto.request.DeliveryRuleNameRegisterRequest;
 import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameResponse;
-import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotFoundException;
+import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameAlreadyExistsException;
+import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotExistsException;
 import store.mybooks.resource.delivery_rule_name.repository.DeliveryRuleNameRepository;
 import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
@@ -43,6 +44,9 @@ public class DeliveryRuleNameService {
     @Transactional
     public DeliveryRuleNameResponse registerDeliveryNameRule(
             DeliveryRuleNameRegisterRequest deliveryRuleNameRegisterRequest) {
+        if(deliveryRuleNameRepository.existsById(deliveryRuleNameRegisterRequest.getId())){
+            throw new DeliveryRuleNameAlreadyExistsException("해당하는 id값의 데이터가 있습니다");
+        }
         DeliveryRuleName deliveryNameRule = new DeliveryRuleName(deliveryRuleNameRegisterRequest.getId());
         DeliveryRuleName saveDeliveryNameRule = this.deliveryRuleNameRepository.save(deliveryNameRule);
         return deliveryRuleNameMapper.mapToResponse(saveDeliveryNameRule);
@@ -58,11 +62,11 @@ public class DeliveryRuleNameService {
      *
      * @param id the id
      * @return the delivery name rule dto로 반환
-     * @throws DeliveryRuleNameNotFoundException {@code id}의 데이터 조회 할 수 없는 경우
+     * @throws DeliveryRuleNameNotExistsException {@code id}의 데이터 조회 할 수 없는 경우
      */
     public DeliveryRuleNameDto getDeliveryNameRule(String id) {
         return this.deliveryRuleNameRepository.findDeliveryRuleNameById(id)
-                .orElseThrow(() -> new DeliveryRuleNameNotFoundException("배송 이름 규칙이 존재하지 않습니다"));
+                .orElseThrow(() -> new DeliveryRuleNameNotExistsException("배송 이름 규칙이 존재하지 않습니다"));
     }
 
     /**
@@ -82,7 +86,7 @@ public class DeliveryRuleNameService {
         if (this.deliveryRuleNameRepository.existsById(id)) {
             this.deliveryRuleNameRepository.deleteById(id);
         } else {
-            throw new DeliveryRuleNameNotFoundException("배송 이름 규칙이 존재하지 않습니다.");
+            throw new DeliveryRuleNameNotExistsException("배송 이름 규칙이 존재하지 않습니다.");
         }
     }
 }
