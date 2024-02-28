@@ -38,7 +38,7 @@ import store.mybooks.resource.return_rule.service.ReturnRuleService;
  * 2/26/24        minsu11       최초 생성<br>
  */
 @ExtendWith(MockitoExtension.class)
-@WebMvcTest(value = ReturnRuleRestController.class)
+@WebMvcTest(value = ReturnRuleRestController.class,excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class ReturnRuleRestControllerUnitTest {
 
     @Autowired

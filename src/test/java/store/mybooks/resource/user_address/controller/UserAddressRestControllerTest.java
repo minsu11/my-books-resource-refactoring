@@ -54,7 +54,7 @@ import store.mybooks.resource.user_grade.dto.response.UserGradeGetResponse;
  * -----------------------------------------------------------
  * 2/21/24        masiljangajji       최초 생성
  */
-@WebMvcTest(value = UserAddressRestController.class)
+@WebMvcTest(value = UserAddressRestController.class,excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ExtendWith(MockitoExtension.class)
 class UserAddressRestControllerTest {
 

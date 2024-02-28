@@ -19,6 +19,7 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -49,7 +50,7 @@ import store.mybooks.resource.category.service.CategoryService;
  * -----------------------------------------------------------
  * 2/21/24          damho-lee          최초 생성
  */
-@WebMvcTest(value = CategoryRestController.class)
+@WebMvcTest(value = CategoryRestController.class,excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class CategoryRestControllerTest {
     @Autowired
     MockMvc mockMvc;

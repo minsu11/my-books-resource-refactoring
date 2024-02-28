@@ -33,7 +33,7 @@ import store.mybooks.resource.order_detail_status.service.OrderDetailStatusServi
  * 2/20/24        minsu11       최초 생성<br>
  */
 @ExtendWith(MockitoExtension.class)
-@WebMvcTest(value = OrderDetailStatusController.class)
+@WebMvcTest(value = OrderDetailStatusController.class,excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class OrderDetailStatusControllerUnitTest {
     @Autowired
     MockMvc mockMvc;
