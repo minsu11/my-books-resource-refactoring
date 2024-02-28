@@ -214,7 +214,6 @@ class UserServiceTest {
         when(request.getPassword()).thenReturn("test");
         when(passwordEncoder.encode("test")).thenReturn("test");
 
-
         userService.modifyUserPassword(1L,request);
 
         verify(userRepository,times(1)).findById(anyLong());

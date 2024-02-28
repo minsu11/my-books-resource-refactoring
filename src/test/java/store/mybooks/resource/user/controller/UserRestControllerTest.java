@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -37,8 +36,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.SecurityConfig;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.request.UserGradeModifyRequest;
@@ -65,7 +62,7 @@ import store.mybooks.resource.user.service.UserService;
  */
 
 
-@WebMvcTest(value = UserRestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(value = UserRestController.class,excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ExtendWith(MockitoExtension.class)
 class UserRestControllerTest {
 
@@ -166,7 +163,7 @@ class UserRestControllerTest {
 
         when(userService.deleteUser(anyLong())).thenReturn(userDeleteResponse);
 
-        mockMvc.perform(delete("/api/users/{userId}", 1L).with(csrf())
+        mockMvc.perform(delete("/api/users/{userId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").exists());
@@ -179,7 +176,7 @@ class UserRestControllerTest {
 
         when(userService.findById(anyLong())).thenReturn(userGetResponse1);
 
-        mockMvc.perform(get("/api/users/{userId}", 1L).with(csrf())
+        mockMvc.perform(get("/api/users/{userId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").exists())
