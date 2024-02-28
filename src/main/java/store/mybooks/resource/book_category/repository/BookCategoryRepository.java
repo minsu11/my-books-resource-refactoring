@@ -14,6 +14,8 @@ import store.mybooks.resource.book_category.entity.BookCategory;
  * -----------------------------------------------------------
  * 2/22/24          damho-lee          최초 생성
  */
-public interface BookCategoryRepository
-        extends JpaRepository<BookCategory, BookCategory.Pk>, BookCategoryRepositoryCustom {
+public interface BookCategoryRepository extends JpaRepository<BookCategory, BookCategory.Pk> {
+    boolean existsByPk_BookId(Long bookId);
+
+    void deleteByPk_BookId(Long bookId);
 }

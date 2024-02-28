@@ -1,19 +1,15 @@
 package store.mybooks.resource.book_category.controller;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.book_category.dto.request.BookCategoryCreateRequest;
-import store.mybooks.resource.book_category.dto.response.BookCategoryCreateResponse;
-import store.mybooks.resource.book_category.dto.response.BookGetResponse;
-import store.mybooks.resource.book_category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.book_category.service.BookCategoryService;
 
 /**
@@ -33,27 +29,19 @@ import store.mybooks.resource.book_category.service.BookCategoryService;
 public class BookCategoryRestController {
     private final BookCategoryService bookCategoryService;
 
-    @GetMapping
-    public ResponseEntity<List<CategoryGetResponse>> getCategoryListByBookId(
-            @RequestParam(value = "bookId") Long bookId) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(bookCategoryService.getCategoryListByBookId(bookId));
-    }
-
-    @GetMapping
-    public ResponseEntity<List<BookGetResponse>> getBookListByCategoryId(
-            @RequestParam("categoryId") Integer categoryId) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(bookCategoryService.getBookListByCategoryId(categoryId));
-    }
-
     @PostMapping
-    public ResponseEntity<BookCategoryCreateResponse> createBookCategory(
+    public ResponseEntity<Void> createBookCategory(
             @RequestBody BookCategoryCreateRequest bookCategoryCreateRequest) {
+        bookCategoryService.createBookCategory(bookCategoryCreateRequest);
         return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(bookCategoryService.createBookCategory(bookCategoryCreateRequest));
+                .status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/{bookId}")
+    public ResponseEntity<Void> deleteBookCategory(@PathVariable("bookId") Long bookId) {
+        bookCategoryService.deleteBookCategory(bookId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
     }
 }

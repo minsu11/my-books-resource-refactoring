@@ -1,5 +1,6 @@
 package store.mybooks.resource.book_category.dto.request;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,5 +21,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BookCategoryCreateRequest {
     private Long bookId;
-    private Integer categoryId;
+    private List<Integer> categoryId;
 }
