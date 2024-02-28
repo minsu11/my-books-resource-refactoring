@@ -1,8 +1,11 @@
 package store.mybooks.resource.image.dto.request;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * packageName    : store.mybooks.resource.image.dto <br/>
@@ -19,6 +22,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ImageRegisterRequest {
+    @NotBlank
+    @Size(min = 1, max = 20)
     private String imageStatusId;
     private Long reviewId;
     private Long bookId;
