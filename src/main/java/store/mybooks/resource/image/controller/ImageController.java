@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.image.dto.request.ImageRegisterRequest;
+import store.mybooks.resource.image.dto.response.ImageGetResponse;
 import store.mybooks.resource.image.dto.response.ImageRegisterResponse;
 import store.mybooks.resource.image.service.ImageService;
 
@@ -45,10 +46,10 @@ public class ImageController {
     }
 
     @GetMapping("/{imageId}")
-    public ResponseEntity<byte[]> getImage(@PathVariable("imageId") Long id) {
-        ResponseEntity<byte[]> object = imageService.getObject(id);
+    public ResponseEntity<ImageGetResponse> getImage(@PathVariable("imageId") Long id) {
+        ImageGetResponse imageGetResponse = imageService.getObject(id);
 
-        return object;
+        return ResponseEntity.ok().body(imageGetResponse);
     }
 
     @DeleteMapping("/{imageId}")
