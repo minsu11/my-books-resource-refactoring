@@ -111,6 +111,19 @@ class DeliveryRuleNameControllerTest {
     }
 
     @Test
+    @DisplayName("post 요청으로 들어온 데이터의 id값의 유효성을 지키지 않은 경우 - max size 50")
+    void givenDeliveryRuleNameRegisterRequest_whenRegisterDeliveryNameRuleIdMaxSize50_thenHttpStatusIsBadRequest()
+            throws Exception {
+        DeliveryRuleNameRegisterRequest deliveryRuleNameRegisterRequest = new DeliveryRuleNameRegisterRequest("qwertyuiopasdfghjklzxcvbnmqwertyuiiiiiioasdfghjklzxcv");
+        mockMvc.perform(post("/api/delivery-name-rules").content(
+                                new ObjectMapper().writeValueAsString(deliveryRuleNameRegisterRequest))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+        verify(deliveryRuleNameService, never()).registerDeliveryNameRule(any());
+    }
+
+    @Test
     @DisplayName("배송 규칙 이름 삭제")
     void givenDeliveryNameRuleId_whenDeleteDeliveryNameRule_thenDeleteDeliveryNameRuleAndReturnNoting()
             throws Exception {
