@@ -44,7 +44,7 @@ public class BookCategoryService {
     @Transactional
     public void createBookCategory(BookCategoryCreateRequest bookCategoryCreateRequest) {
         Long bookId = bookCategoryCreateRequest.getBookId();
-        List<Integer> categoryIdList = bookCategoryCreateRequest.getCategoryId();
+        List<Integer> categoryIdList = bookCategoryCreateRequest.getCategoryIdList();
 
         for (Integer categoryId : categoryIdList) {
             BookCategory.Pk pk = new BookCategory.Pk(

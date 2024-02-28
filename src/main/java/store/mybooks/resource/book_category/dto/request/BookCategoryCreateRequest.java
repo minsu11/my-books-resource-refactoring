@@ -21,5 +21,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BookCategoryCreateRequest {
     private Long bookId;
-    private List<Integer> categoryId;
+    private List<Integer> categoryIdList;
 }
