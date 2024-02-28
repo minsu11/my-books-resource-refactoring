@@ -160,6 +160,67 @@ class DeliveryRuleControllerTest {
     }
 
     @Test
+    @DisplayName("post 요청으로 들어온 데이터의 길이가 넘어가는 경우 - deliveryNameRuleId")
+    void givenDeliveryRuleRegisterRequest_whenRegisterDeliveryNameRuleIdMaxSize50_thenHttpStatusIsBadRequest()
+            throws Exception {
+        DeliveryRuleRegisterRequest deliveryRuleRegisterRequest =
+                new DeliveryRuleRegisterRequest("qwertyuiopasdfghjklzxcvbnmqwertyuiiiiiioasdfghjklzxcv", "test", 123,
+                        123);
+        mockMvc.perform(
+                        post("/api/delivery-rules").content(new ObjectMapper().writeValueAsString(deliveryRuleRegisterRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+
+        verify(deliveryRuleService, never()).registerDeliveryRule(any());
+    }
+
+    @Test
+    @DisplayName("post 요청으로 들어온 데이터의 길이가 넘어가는 경우 - deliveryRuleCompanyName")
+    void givenDeliveryRuleRegisterRequest_whenRegisterDeliveryCompanyNameMaxSize20_thenHttpStatusIsBadRequest()
+            throws Exception {
+        DeliveryRuleRegisterRequest deliveryRuleRegisterRequest =
+                new DeliveryRuleRegisterRequest("test", "qwertyuiopasdfghjklzxc", 123, 123);
+        mockMvc.perform(
+                        post("/api/delivery-rules").content(new ObjectMapper().writeValueAsString(deliveryRuleRegisterRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+
+        verify(deliveryRuleService, never()).registerDeliveryRule(any());
+    }
+
+    @Test
+    @DisplayName("post 요청으로 들어온 데이터의 값의 최솟값이 해당 안되는 경우 - deliveryCost")
+    void givenDeliveryRuleRegisterRequest_whenRegisterDeliveryCostMin0_thenHttpStatusIsBadRequest() throws Exception {
+        DeliveryRuleRegisterRequest deliveryRuleRegisterRequest =
+                new DeliveryRuleRegisterRequest("test", "test", -1, 123);
+        mockMvc.perform(
+                        post("/api/delivery-rules").content(new ObjectMapper().writeValueAsString(deliveryRuleRegisterRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+
+        verify(deliveryRuleService, never()).registerDeliveryRule(any());
+    }
+
+    @Test
+    @DisplayName("post 요청으로 들어온 데이터의 값의 최솟값이 해당 안되는 경우 - deliveryRuleCost")
+    void givenDeliveryRuleRegisterRequest_whenRegisterDeliveryRuleCostMin0_thenHttpStatusIsBadRequest()
+            throws Exception {
+        DeliveryRuleRegisterRequest deliveryRuleRegisterRequest =
+                new DeliveryRuleRegisterRequest("test", "test", 123, -1);
+        mockMvc.perform(
+                        post("/api/delivery-rules").content(new ObjectMapper().writeValueAsString(deliveryRuleRegisterRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+
+        verify(deliveryRuleService, never()).registerDeliveryRule(any());
+    }
+
+
+    @Test
     @DisplayName("DeliveryRule 수정 테스트")
     void givenDeliveryRuleIdAndDeliveryRuleModifyRequest_whenModifyDeliveryRule_thenModifyDeliveryRuleReturnDeliveryRuleResponse()
             throws Exception {
@@ -203,7 +264,7 @@ class DeliveryRuleControllerTest {
 
     @Test
     @DisplayName("put 요청으로 들어온 데이터의 외래키의 유효성을 지키지 않은 경우")
-    void givenDeliveryRUleModifyRequest_whenModifyDeliveryRUleCompanyNameIsBlank_thenHttpStatusIsBadRequest()
+    void givenDeliveryRuleModifyRequest_whenModifyDeliveryRUleCompanyNameIsBlank_thenHttpStatusIsBadRequest()
             throws Exception {
         DeliveryRuleModifyRequest deliveryRuleRegisterRequest =
                 new DeliveryRuleModifyRequest("test", "", 123, 123);
@@ -216,6 +277,70 @@ class DeliveryRuleControllerTest {
 
         verify(deliveryRuleService, never()).modifyDeliveryRule(any(), any());
     }
+
+    @Test
+    @DisplayName("put 요청으로 들어온 데이터의 길이가 넘어가는 경우 - deliveryNameRuleId")
+    void givenDeliveryRuleModifyRequest_whenRegisterDeliveryNameRuleIdMaxSize50_thenHttpStatusIsBadRequest()
+            throws Exception {
+        DeliveryRuleRegisterRequest deliveryRuleRegisterRequest =
+                new DeliveryRuleRegisterRequest("qwertyuiopasdfghjklzxcvbnmqwertyuiiiiiioasdfghjklzxcv", "test", 123,
+                        123);
+        mockMvc.perform(
+                        put("/api/delivery-rules/{id}", 1).content(
+                                        new ObjectMapper().writeValueAsString(deliveryRuleRegisterRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+
+        verify(deliveryRuleService, never()).registerDeliveryRule(any());
+    }
+
+    @Test
+    @DisplayName("put 요청으로 들어온 데이터의 길이가 넘어가는 경우 - deliveryRuleCompanyName")
+    void givenDeliveryRuleModifyRequest_whenRegisterDeliveryCompanyNameMaxSize20_thenHttpStatusIsBadRequest()
+            throws Exception {
+        DeliveryRuleRegisterRequest deliveryRuleRegisterRequest =
+                new DeliveryRuleRegisterRequest("test", "qwertyuiopasdfghjklzxc", 123, 123);
+        mockMvc.perform(
+                        put("/api/delivery-rules/{id}", 1).content(
+                                        new ObjectMapper().writeValueAsString(deliveryRuleRegisterRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+
+        verify(deliveryRuleService, never()).registerDeliveryRule(any());
+    }
+
+    @Test
+    @DisplayName("put 요청으로 들어온 데이터의 값의 최솟값이 해당 안되는 경우 - deliveryCost")
+    void givenDeliveryRuleModifyRequest_whenRegisterDeliveryCostMin0_thenHttpStatusIsBadRequest() throws Exception {
+        DeliveryRuleRegisterRequest deliveryRuleRegisterRequest =
+                new DeliveryRuleRegisterRequest("test", "test", -1, 123);
+        mockMvc.perform(
+                        put("/api/delivery-rules/{id}", 1).content(
+                                        new ObjectMapper().writeValueAsString(deliveryRuleRegisterRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+
+        verify(deliveryRuleService, never()).registerDeliveryRule(any());
+    }
+
+    @Test
+    @DisplayName("put 요청으로 들어온 데이터의 값의 최솟값이 해당 안되는 경우 - deliveryRuleCost")
+    void givenDeliveryRuleModifyRequest_whenRegisterDeliveryRuleCostMin0_thenHttpStatusIsBadRequest() throws Exception {
+        DeliveryRuleRegisterRequest deliveryRuleRegisterRequest =
+                new DeliveryRuleRegisterRequest("test", "test", 123, -1);
+        mockMvc.perform(
+                        put("/api/delivery-rules/{id}", 1).content(
+                                        new ObjectMapper().writeValueAsString(deliveryRuleRegisterRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+
+        verify(deliveryRuleService, never()).registerDeliveryRule(any());
+    }
+
 
     @Test
     @DisplayName("DeliveryRule 삭제 테스트")
