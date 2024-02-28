@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.repository.NoRepositoryBean;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleResponse;
+import store.mybooks.resource.return_rule.entity.ReturnRule;
 
 /**
  * packageName    : store.mybooks.resource.return_rule.repository<br>
@@ -41,6 +42,9 @@ public interface ReturnRuleRepositoryCustom {
      * @return list
      */
     List<ReturnRuleResponse> getReturnRuleResponseList();
+
+
+    ReturnRule findByReturnRuleNameId(String returnRuleName);
 
 
 }

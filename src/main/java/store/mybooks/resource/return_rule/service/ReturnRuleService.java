@@ -2,6 +2,7 @@ package store.mybooks.resource.return_rule.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,6 @@ import store.mybooks.resource.return_rule.dto.response.ReturnRuleCreateResponse;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleModifyResponse;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleResponse;
 import store.mybooks.resource.return_rule.entity.ReturnRule;
-import store.mybooks.resource.return_rule.exception.ReturnRuleAlreadyExistException;
 import store.mybooks.resource.return_rule.exception.ReturnRuleNotExistException;
 import store.mybooks.resource.return_rule.repository.ReturnRuleRepository;
 import store.mybooks.resource.return_rule_name.entity.ReturnRuleName;
@@ -88,17 +88,24 @@ public class ReturnRuleService {
      * @return returnRuleCreateResponse
      */
     public ReturnRuleCreateResponse createReturnRule(ReturnRuleCreateRequest request) {
-        if (returnRuleRepository.findByReturnRuleName(request.getReturnName()).isPresent()) {
-            throw new ReturnRuleAlreadyExistException();
-        }
+        String name = request.getReturnName();
 
         ReturnRuleName returnRuleName =
                 returnRuleNameRepository
                         .findById(request.getReturnName())
                         .orElseThrow(ReturnRuleNameNotExistException::new);
+        ReturnRule returnRule = new ReturnRule(request.getDeliveryFee(), request.getTerm(), true, LocalDate.now(), returnRuleName);
 
-        ReturnRule returnRule =
-                returnRuleRepository.save(new ReturnRule(1L, request.getDeliveryFee(), request.getTerm(), true, LocalDate.now(), returnRuleName));
+
+        ReturnRule duplicateReturnRule =
+                returnRuleRepository.findByReturnRuleNameId(name);
+        if (Objects.nonNull(duplicateReturnRule)) {
+            duplicateReturnRule.modifyIsAvailable(false);
+        }
+
+
+        returnRuleRepository.save(returnRule);
+
 
         return returnRuleMapper.mapToReturnRuleCreateResponse(returnRule);
     }
@@ -118,11 +125,11 @@ public class ReturnRuleService {
      * @throws ReturnRuleNameNotExistException 반품 규정 명이 존재하지 않을 때
      * @throws ReturnRuleNotExistException     반품 규정이 존재 하지 않을 때
      */
-    public ReturnRuleModifyResponse modifyReturnRule(ReturnRuleModifyRequest request, Long id) {
+    public ReturnRuleModifyResponse modifyReturnRule(ReturnRuleModifyRequest request, Integer id) {
 
         ReturnRule beforeReturnRule = returnRuleRepository.findById(id)
                 .orElseThrow(ReturnRuleNotExistException::new);
-        String returnRuleName = request.getReturnRuleNameId();
+        String returnRuleName = request.getReturnName();
 
         ReturnRuleName returnRuleNameResponse =
                 returnRuleNameRepository
@@ -132,7 +139,7 @@ public class ReturnRuleService {
         // 어떻게 보면 반품 규정 삭제인데 여기에 불러도 괜찮을 까요..?
         beforeReturnRule.modifyIsAvailable(false);
 
-        ReturnRule returnRule = new ReturnRule(1L, request.getDeliveryFee(), request.getTerm(),
+        ReturnRule returnRule = new ReturnRule(1, request.getDeliveryFee(), request.getTerm(),
                 true, LocalDate.now(), returnRuleNameResponse);
 
         return returnRuleMapper.mapToReturnRuleModifyResponse(returnRuleRepository.save(returnRule));
@@ -148,7 +155,7 @@ public class ReturnRuleService {
      * @param id 삭제할 반품 규정 아이디
      * @throws ReturnRuleNotExistException 삭제할 반품 규정이 없을 경우
      */
-    public void deleteReturnRule(Long id) {
+    public void deleteReturnRule(Integer id) {
         ReturnRule returnRule = returnRuleRepository.findById(id).orElseThrow(ReturnRuleNotExistException::new);
         returnRule.modifyIsAvailable(false);
     }

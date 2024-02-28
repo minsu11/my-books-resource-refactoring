@@ -21,6 +21,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReturnRuleResponse {
+    private Integer id;
     private String returnName;
     private Integer deliveryFee;
     private Integer term;

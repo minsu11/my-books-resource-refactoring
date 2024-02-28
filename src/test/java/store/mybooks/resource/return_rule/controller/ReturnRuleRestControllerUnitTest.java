@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -52,7 +51,7 @@ class ReturnRuleRestControllerUnitTest {
     @DisplayName("반품 규정 id 조회 성공 테스트")
     void givenStringReturnRuleId_whenGetReturnRuleResponseByReturnRuleName_thenReturnReturnRuleResponse() throws Exception {
         String name = "test";
-        ReturnRuleResponse response = new ReturnRuleResponse("test", 1000, 10, true);
+        ReturnRuleResponse response = new ReturnRuleResponse(1, "test", 1000, 10, true);
         when(returnRuleService.getReturnRuleResponseByReturnRuleName(name)).thenReturn(response);
 
         mockMvc.perform(get("/api/return-rules/{id}", "test"))
@@ -69,7 +68,7 @@ class ReturnRuleRestControllerUnitTest {
     @DisplayName("전체 반품 규정 조회 성공 테스트")
     void given_whenGetReturnRuleResponseList_thenReturnReturnRuleResponseList() throws Exception {
 
-        when(returnRuleService.getReturnRuleResponseList()).thenReturn(List.of(new ReturnRuleResponse("test", 1000, 10, true)));
+        when(returnRuleService.getReturnRuleResponseList()).thenReturn(List.of(new ReturnRuleResponse(1, "test", 1000, 10, true)));
         mockMvc.perform(get("/api/return-rules"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -174,7 +173,7 @@ class ReturnRuleRestControllerUnitTest {
         ReturnRuleModifyRequest request = new ReturnRuleModifyRequest(changeName, 10, 11);
         when(returnRuleService.modifyReturnRule(any(ReturnRuleModifyRequest.class), any())).thenReturn(response);
 
-        mockMvc.perform(put("/api/return-rules/{id}", 1L)
+        mockMvc.perform(put("/api/return-rules/{id}", 1)
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -193,7 +192,7 @@ class ReturnRuleRestControllerUnitTest {
         ObjectMapper mapper = new ObjectMapper();
         ReturnRuleModifyRequest request = new ReturnRuleModifyRequest("", 10, 11);
 
-        mockMvc.perform(put("/api/return-rules/{id}", 1L)
+        mockMvc.perform(put("/api/return-rules/{id}", 1)
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -208,7 +207,7 @@ class ReturnRuleRestControllerUnitTest {
         ObjectMapper mapper = new ObjectMapper();
         ReturnRuleModifyRequest request = new ReturnRuleModifyRequest("test", 10001, 11);
 
-        mockMvc.perform(put("/api/return-rules/{id}", 1L)
+        mockMvc.perform(put("/api/return-rules/{id}", 1)
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -223,7 +222,7 @@ class ReturnRuleRestControllerUnitTest {
         ObjectMapper mapper = new ObjectMapper();
         ReturnRuleModifyRequest request = new ReturnRuleModifyRequest("test", 10, 366);
 
-        mockMvc.perform(put("/api/return-rules/{id}", 1L)
+        mockMvc.perform(put("/api/return-rules/{id}", 1)
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -238,7 +237,7 @@ class ReturnRuleRestControllerUnitTest {
         ObjectMapper mapper = new ObjectMapper();
         ReturnRuleModifyRequest request = new ReturnRuleModifyRequest("test", 10, 366);
 
-        mockMvc.perform(put("/api/return-rules/{id}", 1L)
+        mockMvc.perform(put("/api/return-rules/{id}", 1)
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -251,7 +250,7 @@ class ReturnRuleRestControllerUnitTest {
     @Test
     @DisplayName("반품 규정 정상 삭제")
     void deleteReturnRule() throws Exception {
-        Long id = 1L;
+        Integer id = 1;
         doNothing().when(returnRuleService).deleteReturnRule(any());
 
         mockMvc.perform(delete("/api/return-rules/{id}", id))

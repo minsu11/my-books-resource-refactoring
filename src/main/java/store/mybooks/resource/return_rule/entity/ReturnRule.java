@@ -28,7 +28,7 @@ public class ReturnRule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "return_rule_id")
-    private Long id;
+    private Integer id;
 
     @Column(name = "return_rule_delivery_fee")
     private Integer deliveryFee;
@@ -51,6 +51,14 @@ public class ReturnRule {
         this.term = request.getTerm();
         this.returnRuleName = returnRuleName;
 
+    }
+
+    public ReturnRule(Integer deliveryFee, Integer term, Boolean isAvailable, LocalDate createdDate, ReturnRuleName returnRuleName) {
+        this.deliveryFee = deliveryFee;
+        this.term = term;
+        this.isAvailable = isAvailable;
+        this.createdDate = createdDate;
+        this.returnRuleName = returnRuleName;
     }
 
     public void modifyIsAvailable(Boolean status) {
