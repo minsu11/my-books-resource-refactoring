@@ -102,7 +102,6 @@ class UserServiceTest {
         when(userStatusRepository.findById(anyString())).thenReturn(Optional.of(userStatus));
         when(userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(anyString())).thenReturn(
                 Optional.of(userGrade));
-        when(passwordEncoder.encode("test")).thenReturn("test");
         when(userMapper.toUserCreateResponse(any(User.class))).thenReturn(userCreateResponse);
         userService.createUser(userCreateRequest);
 
@@ -212,7 +211,6 @@ class UserServiceTest {
 
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(request.getPassword()).thenReturn("test");
-        when(passwordEncoder.encode("test")).thenReturn("test");
 
         userService.modifyUserPassword(1L,request);
 

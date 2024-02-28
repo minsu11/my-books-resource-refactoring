@@ -1,8 +1,10 @@
 package store.mybooks.resource.category.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +13,8 @@ import store.mybooks.resource.category.dto.request.CategoryModifyRequest;
 import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 import store.mybooks.resource.category.entity.Category;
 import store.mybooks.resource.category.exception.CannotDeleteParentCategoryException;
@@ -51,20 +55,72 @@ public class CategoryService {
     }
 
     /**
+     * methodName : getCategoriesOrderByParentCategoryIdForAdminPage <br>
+     * author : damho-lee <br>
+     * description : 관리자 페이지의 카테고리 페이지에서 Pagination 을 위한 메서드. 1단계 카테고리가 IT 고,
+     * 2단계 카테고리가 네트워크 인 경우 IT/네트워크 형식처럼 나오게 하기 위한 <br>
+     *
+     * @param pageable Pageable
+     * @return page
+     */
+    @Transactional(readOnly = true)
+    public Page<CategoryGetResponseForView> getCategoriesOrderByParentCategoryIdForAdminPage(Pageable pageable) {
+        Page<CategoryGetResponse> categoryGetResponsePage = categoryRepository.findByOrderByParentCategory_Id(pageable);
+        List<CategoryGetResponseForView> categoryGetResponseForViewList = new ArrayList<>();
+        for (CategoryGetResponse categoryGetResponse : categoryGetResponsePage.getContent()) {
+            CategoryGetResponse firstCategory = categoryGetResponse.getParentCategory();
+            CategoryGetResponse secondCategory = null;
+
+            if (firstCategory != null && firstCategory.getParentCategory() != null) {
+                secondCategory = firstCategory;
+                firstCategory = firstCategory.getParentCategory();
+            }
+
+            String firstCategoryName = firstCategory == null ? "" : firstCategory.getName();
+            String secondCategoryName = secondCategory == null ? "" : secondCategory.getName();
+
+            String parentCategoryName = firstCategoryName;
+            if (!secondCategoryName.isEmpty()) {
+                parentCategoryName = parentCategoryName.concat("/").concat(secondCategoryName);
+            }
+
+            categoryGetResponseForViewList.add(new CategoryGetResponseForView(
+                    categoryGetResponse.getId(),
+                    categoryGetResponse.getName(),
+                    parentCategoryName
+            ));
+        }
+        return new PageImpl<>(categoryGetResponseForViewList, pageable, categoryGetResponsePage.getTotalElements());
+    }
+
+    /**
      * methodName : getCategory <br>
      * author : damho-lee <br>
      * description : id 로 Category 검색.<br>
      *
      * @param id int
-     * @return CategoryGetResponse
+     * @return CategoryGetResponse get response
      */
     @Transactional(readOnly = true)
-    public CategoryGetResponse getCategory(int id) {
+    public CategoryGetResponseForUpdate getCategory(int id) {
         if (!categoryRepository.existsById(id)) {
             throw new CategoryNotExistsException(id);
         }
 
-        return categoryRepository.queryById(id);
+        CategoryGetResponse categoryGetResponse = categoryRepository.queryById(id);
+
+        CategoryGetResponse levelOneCategory = categoryGetResponse.getParentCategory();
+        CategoryGetResponse levelTwoCategory = null;
+        if (levelOneCategory != null && levelOneCategory.getParentCategory() != null) {
+            levelTwoCategory = levelOneCategory;
+            levelOneCategory = levelOneCategory.getParentCategory();
+        }
+
+        String levelOneCategoryName = levelOneCategory == null ? null : levelOneCategory.getName();
+        String levelTwoCategoryName = levelTwoCategory == null ? null : levelTwoCategory.getName();
+
+        return new CategoryGetResponseForUpdate(
+                categoryGetResponse, levelOneCategoryName, levelTwoCategoryName);
     }
 
     /**
@@ -101,7 +157,7 @@ public class CategoryService {
      * author : damho-lee
      * description : CategoryRequest 로 category 를 저장하는 메서드 카테고리 이름이 이미 존재하는 경우 CategoryNameAlreadyExistsException 발생.
      *
-     * @param categoryCreateRequest ParentCategory, name 포함.
+     * @param categoryCreateRequest CategoryCreateRequest
      * @return category create response
      */
     public CategoryCreateResponse createCategory(CategoryCreateRequest categoryCreateRequest) {
@@ -127,9 +183,7 @@ public class CategoryService {
      * description : category 수정.
      *
      * @param id                    수정하려는 category 의 id. 존재하지 않으면 CategoryNotExistsException.
-     * @param categoryModifyRequest ParentCategoryId, name 포함.
-     *                              ParentCategoryId 가 Null 이 아니고 존재하지 않으면 CategoryNotExistsException .
-     *                              name 이 이미 존재하는 경우 CategoryNameAlreadyExistsException.
+     * @param categoryModifyRequest CategoryModifyRequest
      * @return category modify response
      */
     public CategoryModifyResponse modifyCategory(int id, CategoryModifyRequest categoryModifyRequest) {
@@ -149,7 +203,7 @@ public class CategoryService {
      * description : id 를 통해 category 삭제.
      *
      * @param id 삭제하고자 하는 카테고리의 id. id 에 해당하는 category 가 없는 경우 CategoryNotExistsException.
-     * @return CategoryDeleteResponse
+     * @return CategoryDeleteResponse delete response
      */
     public CategoryDeleteResponse deleteCategory(int id) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotExistsException(id));
