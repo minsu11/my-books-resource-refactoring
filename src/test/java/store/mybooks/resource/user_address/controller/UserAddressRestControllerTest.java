@@ -33,7 +33,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import store.mybooks.resource.security.config.SecurityConfig;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
 import store.mybooks.resource.user_address.dto.request.UserAddressCreateRequest;
 import store.mybooks.resource.user_address.dto.request.UserAddressModifyRequest;
@@ -55,7 +54,7 @@ import store.mybooks.resource.user_grade.dto.response.UserGradeGetResponse;
  * -----------------------------------------------------------
  * 2/21/24        masiljangajji       최초 생성
  */
-@WebMvcTest(value = UserAddressRestController.class,excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(value = UserAddressRestController.class)
 @ExtendWith(MockitoExtension.class)
 class UserAddressRestControllerTest {
 
