@@ -16,8 +16,8 @@ import store.mybooks.resource.delivery_rule.dto.request.DeliveryRuleModifyReques
 import store.mybooks.resource.delivery_rule.dto.request.DeliveryRuleRegisterRequest;
 import store.mybooks.resource.delivery_rule.dto.response.DeliveryRuleDto;
 import store.mybooks.resource.delivery_rule.dto.response.DeliveryRuleResponse;
-import store.mybooks.resource.delivery_rule.exception.DeliveryRuleValidationFailedException;
 import store.mybooks.resource.delivery_rule.service.DeliveryRuleService;
+import store.mybooks.resource.error.RequestValidationFailedException;
 
 /**
  * packageName    : store.mybooks.resource.delivery_rule.controller<br>
@@ -71,14 +71,14 @@ public class DeliveryRuleController {
      * @param deliveryRuleRegisterRequest post 요청으로 들어오는 {@code RequestBody}<br>
      * @param bindingResult               유효성 검사 실패 시 발생한 오류에 대한 데이터 가지고 있음 <br>
      * @return the response entity<br>
-     * @throws DeliveryRuleValidationFailedException {@code request} 가 유효성 검사 실패 시 발생<br>
+     * @throws RequestValidationFailedException {@code request} 가 유효성 검사 실패 시 발생<br>
      */
     @PostMapping
     public ResponseEntity<DeliveryRuleResponse> createDeliveryRule(
             @Valid @RequestBody DeliveryRuleRegisterRequest deliveryRuleRegisterRequest,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new DeliveryRuleValidationFailedException(bindingResult);
+            throw new RequestValidationFailedException(bindingResult);
         }
         DeliveryRuleResponse deliveryRuleResponse =
                 deliveryRuleService.registerDeliveryRule(deliveryRuleRegisterRequest);
@@ -96,7 +96,7 @@ public class DeliveryRuleController {
      * @param deliveryRuleModifyRequest the delivery rule modify request
      * @param bindingResult             유효성 검사 실패 시 에러의 정보가 담김
      * @return the response entity
-     * @throws DeliveryRuleValidationFailedException {@code request} 가 유효성 검사 실패 시 발생<br>
+     * @throws RequestValidationFailedException {@code request} 가 유효성 검사 실패 시 발생<br>
      */
     @PutMapping("/{deliveryRuleId}")
     public ResponseEntity<DeliveryRuleResponse> modifyDeliveryRule(
@@ -104,7 +104,7 @@ public class DeliveryRuleController {
             @Valid @RequestBody DeliveryRuleModifyRequest deliveryRuleModifyRequest,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new DeliveryRuleValidationFailedException(bindingResult);
+            throw new RequestValidationFailedException(bindingResult);
         }
         DeliveryRuleResponse deliveryRuleResponse =
                 deliveryRuleService.modifyDeliveryRule(deliveryRuleId, deliveryRuleModifyRequest);

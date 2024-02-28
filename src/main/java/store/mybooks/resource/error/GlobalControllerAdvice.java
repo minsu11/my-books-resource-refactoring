@@ -8,10 +8,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
 import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotExistsException;
-import store.mybooks.resource.delivery_rule.exception.DeliveryRuleValidationFailedException;
 import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameAlreadyExistsException;
 import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotExistsException;
-import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameValidationFailedException;
 import store.mybooks.resource.publisher.exception.PublisherAlreadyExistException;
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
 import store.mybooks.resource.return_rule_name.exception.ReturnRuleNameRequestValidationFailedException;
@@ -72,8 +70,7 @@ public class GlobalControllerAdvice {
      * @param exception the exception
      * @return the response entity
      */
-    @ExceptionHandler({ReturnRuleNameRequestValidationFailedException.class,
-            DeliveryRuleNameValidationFailedException.class, DeliveryRuleValidationFailedException.class})
+    @ExceptionHandler({ReturnRuleNameRequestValidationFailedException.class})
     public ResponseEntity<String> xxxValidationFailedException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -88,7 +85,7 @@ public class GlobalControllerAdvice {
      * @param exception ValidationException.
      * @return ResponseEntity
      */
-    @ExceptionHandler(ValidationException.class)
+    @ExceptionHandler({ValidationException.class, RequestValidationFailedException.class})
     public ResponseEntity<String> validationException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.delivery_rule_name.dto.request.DeliveryRuleNameRegisterRequest;
 import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameDto;
 import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameResponse;
-import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameValidationFailedException;
 import store.mybooks.resource.delivery_rule_name.service.DeliveryRuleNameService;
+import store.mybooks.resource.error.RequestValidationFailedException;
 
 /**
  * packageName    : store.mybooks.resource.delivery_name_rule.controller<br>
@@ -61,14 +61,14 @@ public class DeliveryRuleNameController {
      * @param deliveryRuleNameRegisterRequest the delivery name rule register request<br>
      * @param bindingResult                   유효성 검사 실패 시 발생한 오류에 대한 데이터를 가지고 있다<br>
      * @return the response entity<br>
-     * @throws DeliveryRuleNameValidationFailedException {@code request} 가 유효성 검사 실패시 던짐 <br>
+     * @throws RequestValidationFailedException {@code request} 가 유효성 검사 실패시 던짐 <br>
      */
     @PostMapping
     public ResponseEntity<DeliveryRuleNameResponse> createDeliveryNameRule(
             @Valid @RequestBody DeliveryRuleNameRegisterRequest deliveryRuleNameRegisterRequest,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new DeliveryRuleNameValidationFailedException(bindingResult);
+            throw new RequestValidationFailedException(bindingResult);
         }
         DeliveryRuleNameResponse deliveryRuleNameResponse =
                 deliveryNameRuleService.registerDeliveryNameRule(deliveryRuleNameRegisterRequest);
