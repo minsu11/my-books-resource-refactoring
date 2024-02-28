@@ -49,7 +49,7 @@ import store.mybooks.resource.category.service.CategoryService;
  * -----------------------------------------------------------
  * 2/21/24          damho-lee          최초 생성
  */
-@WebMvcTest(value = CategoryRestController.class,excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(value = CategoryRestController.class)
 class CategoryRestControllerTest {
     @Autowired
     MockMvc mockMvc;
