@@ -7,9 +7,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
-import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotFoundException;
+import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotExistsException;
 import store.mybooks.resource.delivery_rule.exception.DeliveryRuleValidationFailedException;
-import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotFoundException;
+import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameAlreadyExistsException;
+import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotExistsException;
 import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameValidationFailedException;
 import store.mybooks.resource.publisher.exception.PublisherAlreadyExistException;
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
@@ -38,7 +39,8 @@ public class GlobalControllerAdvice {
      * @param exception exception.
      * @return ResponseEntity
      */
-    @ExceptionHandler({CategoryNotExistsException.class, TagNotExistsException.class, PublisherNotExistException.class})
+    @ExceptionHandler({CategoryNotExistsException.class, TagNotExistsException.class, PublisherNotExistException.class,
+            DeliveryRuleNameNotExistsException.class, DeliveryRuleNotExistsException.class})
     public ResponseEntity<String> xxxNotExistsException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -54,7 +56,7 @@ public class GlobalControllerAdvice {
      * @return ResponseEntity
      */
     @ExceptionHandler({CategoryNameAlreadyExistsException.class, TagNameAlreadyExistsException.class,
-            PublisherAlreadyExistException.class})
+            PublisherAlreadyExistException.class, DeliveryRuleNameAlreadyExistsException.class})
     public ResponseEntity<String> xxxAlreadyExistsException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -70,7 +72,8 @@ public class GlobalControllerAdvice {
      * @param exception the exception
      * @return the response entity
      */
-    @ExceptionHandler({ReturnRuleNameRequestValidationFailedException.class})
+    @ExceptionHandler({ReturnRuleNameRequestValidationFailedException.class,
+            DeliveryRuleNameValidationFailedException.class, DeliveryRuleValidationFailedException.class})
     public ResponseEntity<String> xxxValidationFailedException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -91,34 +94,4 @@ public class GlobalControllerAdvice {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());
     }
-
-    @ExceptionHandler(DeliveryRuleNotFoundException.class)
-    public ResponseEntity<String> deliveryRuleNotFoundException(Exception exception) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(exception.getMessage());
-    }
-
-    @ExceptionHandler(DeliveryRuleValidationFailedException.class)
-    public ResponseEntity<String> deliveryRuleValidationException(Exception exception) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(exception.getMessage());
-    }
-
-    @ExceptionHandler(DeliveryRuleNameNotFoundException.class)
-    public ResponseEntity<String> deliveryRuleNameNotFoundException(Exception exception) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(exception.getMessage());
-    }
-
-    @ExceptionHandler(DeliveryRuleNameValidationFailedException.class)
-    public ResponseEntity<String> deliveryRuleNameValidationException(Exception exception) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(exception.getMessage());
-    }
-
-
 }
