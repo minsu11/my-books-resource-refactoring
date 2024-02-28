@@ -2,6 +2,7 @@ package store.mybooks.resource.return_rule.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -17,9 +18,11 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class ReturnRuleCreateResponse {
-    private String returnName;
+
+    private String returnRuleName;
     private Integer deliveryFee;
     private Integer term;
     private Boolean isAvailable;

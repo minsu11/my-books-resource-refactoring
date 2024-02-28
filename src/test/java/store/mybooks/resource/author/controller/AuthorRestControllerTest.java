@@ -2,7 +2,6 @@ package store.mybooks.resource.author.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,8 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -55,9 +52,8 @@ import store.mybooks.resource.author.service.AuthorService;
  * -----------------------------------------------------------
  * 2/20/24        newjaehun       최초 생성
  */
-@WebMvcTest(value = AuthorRestController.class,excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(value = AuthorRestController.class)
 @ExtendWith({MockitoExtension.class})
-@MockitoSettings(strictness = Strictness.LENIENT)
 class AuthorRestControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -138,10 +134,7 @@ class AuthorRestControllerTest {
         createResponse.setName(createRequest.getName());
         createResponse.setContent(createRequest.getContent());
 
-        given(authorMapper.createResponse(author)).willReturn(createResponse);
-
         when(authorService.createAuthor(any(AuthorCreateRequest.class))).thenReturn(createResponse);
-
         mockMvc.perform(post(url)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -183,8 +176,6 @@ class AuthorRestControllerTest {
         modifyResponse.setChangedName(modifyRequest.getChangeName());
         modifyResponse.setChangedContent(modifyRequest.getChangeContent());
 
-        given(authorMapper.modifyResponse(resultAuthor)).willReturn(modifyResponse);
-
         when(authorService.modifyAuthor(eq(id), any(AuthorModifyRequest.class))).thenReturn(modifyResponse);
 
         mockMvc.perform(put(url + "/{id}", id)
@@ -217,7 +208,6 @@ class AuthorRestControllerTest {
     void givenAuthorId_whenDeleteAuthor_thenDeleteAuthorAndReturnAuthorDeleteResponse() throws Exception {
         AuthorDeleteResponse deleteResponse = new AuthorDeleteResponse();
         deleteResponse.setName(name);
-        given(authorMapper.deleteResponse(author)).willReturn(deleteResponse);
 
         when(authorService.deleteAuthor(id)).thenReturn(deleteResponse);
 

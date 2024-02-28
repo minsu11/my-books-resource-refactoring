@@ -1,13 +1,14 @@
 package store.mybooks.resource.tag.controller;
 
-import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,8 +22,6 @@ import store.mybooks.resource.tag.dto.response.TagCreateResponse;
 import store.mybooks.resource.tag.dto.response.TagDeleteResponse;
 import store.mybooks.resource.tag.dto.response.TagGetResponse;
 import store.mybooks.resource.tag.dto.response.TagModifyResponse;
-import store.mybooks.resource.tag.exception.TagNameAlreadyExistsException;
-import store.mybooks.resource.tag.exception.TagNotExistsException;
 import store.mybooks.resource.tag.exception.TagValidationException;
 import store.mybooks.resource.tag.service.TagService;
 
@@ -44,6 +43,21 @@ public class TagRestController {
     private final TagService tagService;
 
     /**
+     * methodName : getTag <br>
+     * author : damho-lee <br>
+     * description : id 로 태그 조회.<br>
+     *
+     * @param id Integer
+     * @return response entity
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<TagGetResponse> getTag(@PathVariable("id") Integer id) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(tagService.getTag(id));
+    }
+
+    /**
      * methodName : getTags
      * author : damho-lee
      * description : 모든 Tag 들을 TagGetResponse 로 변환하여 반환하는 메서드.
@@ -51,10 +65,10 @@ public class TagRestController {
      * @return ResponseEntity
      */
     @GetMapping
-    public ResponseEntity<List<TagGetResponse>> getTags() {
+    public ResponseEntity<Page<TagGetResponse>> getTags(@PageableDefault Pageable pageable) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(tagService.getTags());
+                .body(tagService.getTags(pageable));
     }
 
     /**
@@ -112,35 +126,5 @@ public class TagRestController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(tagService.deleteTag(id));
-    }
-
-    /**
-     * methodName : tagNotExistsExceptionHandler
-     * author : damho-lee
-     * description : TagNotExistsException 를 처리하는 ExceptionHandler.
-     *
-     * @param exception TagNotExistsException.
-     * @return ResponseEntity, 404 에러
-     */
-    @ExceptionHandler(TagNotExistsException.class)
-    public ResponseEntity<String> tagNotExistsExceptionHandler(TagNotExistsException exception) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(exception.getMessage());
-    }
-
-    /**
-     * methodName : tagNameAlreadyExistsExceptionHandler
-     * author : damho-lee
-     * description : TagNameAlreadyExistsException 를 처리하는 Exception Handler.
-     *
-     * @param exception TagNameAlreadyExistsException
-     * @return ResponseEntity, 404 에러
-     */
-    @ExceptionHandler(TagNameAlreadyExistsException.class)
-    public ResponseEntity<String> tagNameAlreadyExistsExceptionHandler(TagNameAlreadyExistsException exception) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(exception.getMessage());
     }
 }

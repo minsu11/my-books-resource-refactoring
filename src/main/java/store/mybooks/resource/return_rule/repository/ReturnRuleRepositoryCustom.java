@@ -41,4 +41,6 @@ public interface ReturnRuleRepositoryCustom {
      * @return list
      */
     List<ReturnRuleResponse> getReturnRuleResponseList();
+
+
 }

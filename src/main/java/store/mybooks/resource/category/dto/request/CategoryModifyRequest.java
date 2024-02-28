@@ -1,9 +1,10 @@
 package store.mybooks.resource.category.dto.request;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.hibernate.validator.constraints.Length;
+import lombok.NoArgsConstructor;
 
 /**
  * packageName    : store.mybooks.resource.category.dto.request
@@ -18,9 +19,9 @@ import org.hibernate.validator.constraints.Length;
  */
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class CategoryModifyRequest {
-    private Integer parentCategoryId;
     @NotBlank
-    @Length(min = 1, max = 25)
+    @Size(min = 1, max = 25)
     private String name;
 }

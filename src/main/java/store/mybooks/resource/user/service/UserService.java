@@ -62,7 +62,6 @@ public class UserService {
 
     private final UserMapper userMapper;
 
-    private final PasswordEncoder passwordEncoder;
 
     /**
      * methodName : createUser
@@ -93,7 +92,7 @@ public class UserService {
                 .orElseThrow(() -> new UserGradeNameNotExistException(userGradeName));
 
         User user = new User(createRequest.getEmail(), createRequest.getBirth(),
-                passwordEncoder.encode(createRequest.getPassword()),
+                createRequest.getPassword(),
                 createRequest.getPhoneNumber(), createRequest.getIsAdmin(), createRequest.getName(), userStatus,
                 userGrade);
 
@@ -190,7 +189,7 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotExistException(id));
 
-        user.modifyPassword(passwordEncoder.encode(modifyRequest.getPassword()));
+        user.modifyPassword(modifyRequest.getPassword());
         return new UserPasswordModifyResponse(true);
     }
 
@@ -258,16 +257,12 @@ public class UserService {
     public UserLoginResponse loginUser(UserLoginRequest userLoginRequest) {
 
         // 아이디,비밀번호 확인
-
         User user = userRepository.findByEmail(userLoginRequest.getEmail())
                 .orElseThrow(UserLoginFailException::new);
+
         // 탈퇴한 회원인지 확인
         if (user.getUserStatus().getId().equals(UserStatusEnum.RESIGN.toString())) {
             throw new UserAlreadyResignException();
-        }
-
-        if (!passwordEncoder.matches(userLoginRequest.getPassword(), user.getPassword())) {
-            throw new UserLoginFailException();
         }
 
         user.modifyLatestLogin();

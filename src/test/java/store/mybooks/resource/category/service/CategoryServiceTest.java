@@ -269,12 +269,11 @@ class CategoryServiceTest {
         expectedResponse.setParentCategoryId(parentCategory.getId());
         expectedResponse.setParentCategoryName(childCategory.getName());
 
-        when(categoryRepository.findById(parentCategory.getId())).thenReturn(Optional.of(parentCategory));
         when(categoryRepository.findById(childCategory.getId())).thenReturn(Optional.of(childCategory));
         when(categoryMapper.modifyResponse(any())).thenReturn(expectedResponse);
 
         CategoryModifyRequest categoryModifyRequest =
-                new CategoryModifyRequest(parentCategory.getId(), "newChildCategory");
+                new CategoryModifyRequest("newChildCategory");
         expectedResponse.setName(categoryModifyRequest.getName());
         CategoryModifyResponse actualResponse =
                 categoryService.modifyCategory(childCategory.getId(), categoryModifyRequest);
@@ -289,7 +288,7 @@ class CategoryServiceTest {
     void givenModifyCategory_whenDuplicateName_thenThrowCategoryNameAlreadyExistsException() {
         when(categoryRepository.existsByName(anyString())).thenReturn(true);
 
-        CategoryModifyRequest categoryModifyRequest = new CategoryModifyRequest(null, "duplicatedName");
+        CategoryModifyRequest categoryModifyRequest = new CategoryModifyRequest("duplicatedName");
         assertThrows(CategoryNameAlreadyExistsException.class,
                 () -> categoryService.modifyCategory(1, categoryModifyRequest));
     }
@@ -300,25 +299,8 @@ class CategoryServiceTest {
         when(categoryRepository.existsByName(anyString())).thenReturn(false);
         when(categoryRepository.findById(anyInt())).thenReturn(Optional.empty());
 
-        CategoryModifyRequest categoryModifyRequest = new CategoryModifyRequest(null, "categoryName");
+        CategoryModifyRequest categoryModifyRequest = new CategoryModifyRequest("categoryName");
         assertThrows(CategoryNotExistsException.class, () -> categoryService.modifyCategory(1, categoryModifyRequest));
-    }
-
-    @Test
-    @DisplayName("modifyCategory 메서드 존재하지 않는 ParentCategoryId 의 경우")
-    void givenModifyCategory_whenNotExistsParentCategoryId_thenThrowCategoryNotExistsException() {
-        Integer notExistsParentCategoryId = 1;
-        Integer categoryId = 2;
-        Category childCategory = new Category(categoryId, null, null, "childCategory", LocalDate.now());
-
-        when(categoryRepository.existsByName(anyString())).thenReturn(false);
-        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(childCategory));
-        when(categoryRepository.findById(notExistsParentCategoryId)).thenReturn(Optional.empty());
-
-        CategoryModifyRequest categoryModifyRequest =
-                new CategoryModifyRequest(notExistsParentCategoryId, "categoryName");
-        assertThrows(CategoryNotExistsException.class,
-                () -> categoryService.modifyCategory(categoryId, categoryModifyRequest));
     }
 
     @Test
