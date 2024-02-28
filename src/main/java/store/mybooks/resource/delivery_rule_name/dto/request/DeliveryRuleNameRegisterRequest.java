@@ -1,6 +1,7 @@
 package store.mybooks.resource.delivery_rule_name.dto.request;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,5 +22,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DeliveryRuleNameRegisterRequest {
     @NotBlank
+    @Size(min = 1, max = 50)
     private String id;
 }
