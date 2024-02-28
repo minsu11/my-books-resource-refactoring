@@ -3,7 +3,6 @@ package store.mybooks.resource.image.service;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,11 +26,13 @@ import store.mybooks.resource.config.ObjectStorageProperties;
 import store.mybooks.resource.image.dto.mapper.ImageMapper;
 import store.mybooks.resource.image.dto.request.ImageRegisterRequest;
 import store.mybooks.resource.image.dto.request.TokenRequest;
+import store.mybooks.resource.image.dto.response.ImageGetResponse;
 import store.mybooks.resource.image.dto.response.ImageRegisterResponse;
 import store.mybooks.resource.image.dto.response.TokenResponse;
 import store.mybooks.resource.image.entity.Image;
 import store.mybooks.resource.image.repository.ImageRepository;
 import store.mybooks.resource.image_status.entity.ImageStatus;
+import store.mybooks.resource.image_status.exception.ImageStatusNotExistException;
 import store.mybooks.resource.image_status.repository.ImageStatusRepository;
 import store.mybooks.resource.review.entity.Review;
 import store.mybooks.resource.review.repository.ReviewRepository;
@@ -51,7 +52,6 @@ import store.mybooks.resource.review.repository.ReviewRepository;
 @Service
 @Transactional(readOnly = true)
 public class ImageService {
-
     private final ObjectStorageProperties objectStorageProperties;
     private RestTemplate restTemplate;
     private final ImageRepository imageRepository;
@@ -96,23 +96,6 @@ public class ImageService {
                 + "/";
     }
 
-    private String getBookPath() {
-        return objectStorageProperties.getUrl()
-                + "/"
-                + objectStorageProperties.getContainerName()
-                + "/"
-                + objectStorageProperties.getBook()
-                + "/";
-    }
-
-    private String getReviewPath() {
-        return objectStorageProperties.getUrl()
-                + "/" + objectStorageProperties.getContainerName()
-                + "/"
-                + objectStorageProperties.getReview()
-                + "/";
-    }
-
     @Transactional
     public ImageRegisterResponse saveImage(ImageRegisterRequest imageRegisterRequest, MultipartFile file)
             throws IOException {
@@ -120,19 +103,8 @@ public class ImageService {
         int dot = Objects.requireNonNull(imageName).lastIndexOf(".");
         String extension = imageName.substring(dot);
         String nameSave = UUID.randomUUID().toString();
-        String path = "";
-        Optional<Book> optionalBook = bookRepository.findById(imageRegisterRequest.getBookId());
-        Optional<Review> optionalReview = reviewRepository.findById(imageRegisterRequest.getReviewId());
 
-        if (optionalBook.isPresent() && optionalReview.isEmpty()) {
-            path = getBookPath();
-        } else if (optionalReview.isPresent() && optionalBook.isEmpty()) {
-            path = getReviewPath();
-        } else {
-            path = getPath();
-        }
-
-        String url = path + nameSave + extension;
+        String url = getPath() + nameSave + extension;
 
         InputStream inputStream = new ByteArrayInputStream(file.getBytes());
         final RequestCallback requestCallback = new RequestCallback() {
@@ -152,26 +124,22 @@ public class ImageService {
         // API 호출
         restTemplates.execute(url, HttpMethod.PUT, requestCallback, responseExtractor);
 
-        ImageStatus imageStatus = imageStatusRepository.findById(imageRegisterRequest.getImageStatusId()).orElseThrow();
+        Optional<Book> optionalBook = bookRepository.findById(imageRegisterRequest.getBookId());
+        Optional<Review> optionalReview = reviewRepository.findById(imageRegisterRequest.getReviewId());
+        ImageStatus imageStatus = imageStatusRepository.findById(imageRegisterRequest.getImageStatusId()).orElseThrow(
+                () -> new ImageStatusNotExistException("해당하는 이미지 상태의 값이 없습니다"));
 
-        Image image = new Image(path, nameSave, extension, optionalBook.orElse(null), optionalReview.orElse(null),
+        Image image = new Image(getPath(), nameSave, extension, optionalBook.orElse(null), optionalReview.orElse(null),
                 imageStatus);
 
         return imageMapper.mapToResponse(imageRepository.save(image));
     }
 
-    public ResponseEntity<byte[]> getObject(Long id) {
+    public ImageGetResponse getObject(Long id) {
         Image image = imageRepository.findById(id).orElseThrow();
         String url = image.getPath() + image.getFileName() + image.getExtension();
 
-        // 헤더 생성
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(X_AUTH_TOKEN, requestToken());
-        headers.setAccept(List.of(MediaType.APPLICATION_OCTET_STREAM));
-
-        HttpEntity<String> requestHttpEntity = new HttpEntity<>(null, headers);
-
-        return this.restTemplate.exchange(url, HttpMethod.GET, requestHttpEntity, byte[].class);
+        return new ImageGetResponse(url);
     }
 
     @Transactional
