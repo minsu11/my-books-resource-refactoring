@@ -268,6 +268,9 @@ public class UserService {
             throw new UserAlreadyResignException();
         }
 
+        System.out.println(userLoginRequest.getPassword());
+        System.out.println(user.getPassword());
+
         // 비밀번호 확인
         if (!passwordEncoder.matches(userLoginRequest.getPassword(), user.getPassword())) {
             throw new UserLoginFailException();
@@ -275,9 +278,7 @@ public class UserService {
 
 
         user.modifyLatestLogin();
-
-        return new UserLoginResponse(true);
-
+        return new UserLoginResponse(true, user.getIsAdmin(), user.getId(),user.getUserStatus().getId());
     }
 
 
