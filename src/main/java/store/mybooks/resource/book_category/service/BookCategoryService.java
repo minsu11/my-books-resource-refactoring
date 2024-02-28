@@ -1,6 +1,5 @@
 package store.mybooks.resource.book_category.service;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,7 +8,6 @@ import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.repotisory.BookRepository;
 import store.mybooks.resource.book_category.dto.request.BookCategoryCreateRequest;
 import store.mybooks.resource.book_category.entity.BookCategory;
-import store.mybooks.resource.book_category.mapper.BookCategoryMapper;
 import store.mybooks.resource.book_category.repository.BookCategoryRepository;
 import store.mybooks.resource.category.entity.Category;
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
@@ -32,7 +30,6 @@ public class BookCategoryService {
     private final BookCategoryRepository bookCategoryRepository;
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
-    private final BookCategoryMapper bookCategoryMapper;
 
     /**
      * methodName : createBookCategory <br>
@@ -44,19 +41,16 @@ public class BookCategoryService {
     @Transactional
     public void createBookCategory(BookCategoryCreateRequest bookCategoryCreateRequest) {
         Long bookId = bookCategoryCreateRequest.getBookId();
-        List<Integer> categoryIdList = bookCategoryCreateRequest.getCategoryIdList();
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotExistException(bookId));
 
-        for (Integer categoryId : categoryIdList) {
+        for (Integer categoryId : bookCategoryCreateRequest.getCategoryIdList()) {
             BookCategory.Pk pk = new BookCategory.Pk(
                     bookCategoryCreateRequest.getBookId(),
                     categoryId);
-
-            Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotExistException(bookId));
             Category category =
                     categoryRepository.findById(categoryId)
                             .orElseThrow(() -> new CategoryNotExistsException(categoryId));
-            BookCategory bookCategory = new BookCategory(pk, book, category);
-            bookCategoryMapper.createResponse(bookCategoryRepository.save(bookCategory));
+            bookCategoryRepository.save(new BookCategory(pk, book, category));
         }
     }
 

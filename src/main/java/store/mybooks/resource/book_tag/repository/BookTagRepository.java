@@ -15,4 +15,7 @@ import store.mybooks.resource.book_tag.entity.BookTag;
  * 2/22/24          damho-lee          최초 생성
  */
 public interface BookTagRepository extends JpaRepository<BookTag, BookTag.Pk> {
+    boolean existsByPk_BookId(Long bookId);
+
+    void deleteByPk_BookId(Long bookId);
 }

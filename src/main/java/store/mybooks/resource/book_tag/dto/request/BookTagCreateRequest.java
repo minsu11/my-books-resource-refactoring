@@ -1,11 +1,12 @@
-package store.mybooks.resource.book_category.dto.response;
+package store.mybooks.resource.book_tag.dto.request;
 
+import java.util.List;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
- * packageName    : store.mybooks.resource.book_category.dto.response
- * fileName       : BookCategoryDeleteResponse
+ * packageName    : store.mybooks.resource.book_tag.dto.request
+ * fileName       : BookTagCreateRequest
  * author         : damho-lee
  * date           : 2/28/24
  * description    :
@@ -15,7 +16,8 @@ import lombok.Setter;
  * 2/28/24          damho-lee          최초 생성
  */
 @Getter
-@Setter
-public class BookCategoryDeleteResponse {
-    private String title;
+@NoArgsConstructor
+public class BookTagCreateRequest {
+    private Long bookId;
+    private List<Integer> tagIdList;
 }
