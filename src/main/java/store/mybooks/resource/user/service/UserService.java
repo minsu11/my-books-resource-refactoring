@@ -3,6 +3,7 @@ package store.mybooks.resource.user.service;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +63,8 @@ public class UserService {
 
     private final UserMapper userMapper;
 
+    private final PasswordEncoder passwordEncoder;
+
 
     /**
      * methodName : createUser
@@ -92,7 +95,7 @@ public class UserService {
                 .orElseThrow(() -> new UserGradeNameNotExistException(userGradeName));
 
         User user = new User(createRequest.getEmail(), createRequest.getBirth(),
-                createRequest.getPassword(),
+                passwordEncoder.encode(createRequest.getPassword()),
                 createRequest.getPhoneNumber(), createRequest.getIsAdmin(), createRequest.getName(), userStatus,
                 userGrade);
 
@@ -189,7 +192,7 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotExistException(id));
 
-        user.modifyPassword(modifyRequest.getPassword());
+        user.modifyPassword(passwordEncoder.encode(modifyRequest.getPassword()));
         return new UserPasswordModifyResponse(true);
     }
 
@@ -256,7 +259,7 @@ public class UserService {
      */
     public UserLoginResponse loginUser(UserLoginRequest userLoginRequest) {
 
-        // 아이디,비밀번호 확인
+        // 아이디 확인
         User user = userRepository.findByEmail(userLoginRequest.getEmail())
                 .orElseThrow(UserLoginFailException::new);
 
@@ -265,10 +268,17 @@ public class UserService {
             throw new UserAlreadyResignException();
         }
 
+        System.out.println(userLoginRequest.getPassword());
+        System.out.println(user.getPassword());
+
+        // 비밀번호 확인
+        if (!passwordEncoder.matches(userLoginRequest.getPassword(), user.getPassword())) {
+            throw new UserLoginFailException();
+        }
+
+
         user.modifyLatestLogin();
-
-        return new UserLoginResponse(true);
-
+        return new UserLoginResponse(true, user.getIsAdmin(), user.getId(),user.getUserStatus().getId());
     }
 
 

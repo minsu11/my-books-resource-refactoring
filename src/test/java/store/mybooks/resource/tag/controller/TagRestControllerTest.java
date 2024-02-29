@@ -46,7 +46,7 @@ import store.mybooks.resource.tag.service.TagService;
  * -----------------------------------------------------------
  * 2/21/24          damho-lee          최초 생성
  */
-@WebMvcTest(value = TagRestController.class)
+@WebMvcTest(value = TagRestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class TagRestControllerTest {
     @Autowired
     MockMvc mockMvc;

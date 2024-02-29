@@ -41,7 +41,7 @@ import store.mybooks.resource.return_rule_name.service.ReturnRuleNameService;
  * 2/20/24        minsu11       최초 생성<br>
  */
 @ExtendWith(MockitoExtension.class)
-@WebMvcTest(value = ReturnRuleNameRestController.class)
+@WebMvcTest(value = ReturnRuleNameRestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class ReturnRuleNameControllerUnitTest {
 
 
@@ -101,7 +101,8 @@ class ReturnRuleNameControllerUnitTest {
     @Test
     @Order(4)
     @DisplayName("요청 데이터를 저장한 뒤 response dto 반환")
-    void givenReturnRuleNameCreateRequest_whenCreateReturnRuleName_thenReturnReturnRulenameCreateResponse() throws Exception {
+    void givenReturnRuleNameCreateRequest_whenCreateReturnRuleName_thenReturnReturnRulenameCreateResponse()
+            throws Exception {
         String testData = "test123";
         ReturnRuleNameCreateRequest request = new ReturnRuleNameCreateRequest(testData);
         LocalDate date = LocalDate.of(1212, 12, 12);
@@ -123,7 +124,8 @@ class ReturnRuleNameControllerUnitTest {
     @Test
     @Order(5)
     @DisplayName("요청으로 들어온 데이터가 유효성을 지키지 않은 경우")
-    void givenReturnNameCreateRequest_whenCreateReturnRuleName_thenReturnReturnRuleNameCreateResponse() throws Exception {
+    void givenReturnNameCreateRequest_whenCreateReturnRuleName_thenReturnReturnRuleNameCreateResponse()
+            throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         ReturnRuleNameCreateRequest request = new ReturnRuleNameCreateRequest("");
         mockMvc.perform(post("/api/return_rule_names")
