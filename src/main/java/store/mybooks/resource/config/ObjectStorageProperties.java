@@ -1,9 +1,8 @@
 package store.mybooks.resource.config;
 
 import lombok.Getter;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * packageName    : store.mybooks.resource.config <br/>
@@ -16,17 +15,39 @@ import org.springframework.context.annotation.Configuration;
  * -----------------------------------------------------------<br/>
  * 2/23/24        Fiat_lux       최초 생성<br/>
  */
-
-@Configuration
 @Getter
-@Setter
+@RequiredArgsConstructor
 @ConfigurationProperties(prefix = "storage")
 public class ObjectStorageProperties {
-    private KeyConfig keyConfig;
+    private final KeyConfig keyConfig;
     private String url;
     private String username;
     private String containerName;
     private String tenantId;
     private String password;
     private String identity;
+
+    public void setUrl(String url) {
+        this.url = keyConfig.keyStore(url);
+    }
+
+    public void setUsername(String username) {
+        this.username = keyConfig.keyStore(username);
+    }
+
+    public void setContainerName(String containerName) {
+        this.containerName = keyConfig.keyStore(containerName);
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = keyConfig.keyStore(tenantId);
+    }
+
+    public void setPassword(String password) {
+        this.password = keyConfig.keyStore(password);
+    }
+
+    public void setIdentity(String identity) {
+        this.identity = keyConfig.keyStore(identity);
+    }
 }
