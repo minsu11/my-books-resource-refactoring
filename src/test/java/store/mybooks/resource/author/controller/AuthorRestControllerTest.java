@@ -53,7 +53,7 @@ import store.mybooks.resource.author.service.AuthorService;
  * 2/20/24        newjaehun       최초 생성
  */
 
-@WebMvcTest(AuthorRestController.class)
+@WebMvcTest(value = AuthorRestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 class AuthorRestControllerTest {
     private MockMvc mockMvc;

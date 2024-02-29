@@ -38,7 +38,7 @@ import store.mybooks.resource.return_rule.service.ReturnRuleService;
  * 2/26/24        minsu11       최초 생성<br>
  */
 @ExtendWith(MockitoExtension.class)
-@WebMvcTest(value = ReturnRuleRestController.class)
+@WebMvcTest(value = ReturnRuleRestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class ReturnRuleRestControllerUnitTest {
 
     @Autowired
@@ -50,7 +50,8 @@ class ReturnRuleRestControllerUnitTest {
 
     @Test
     @DisplayName("반품 규정 id 조회 성공 테스트")
-    void givenStringReturnRuleId_whenGetReturnRuleResponseByReturnRuleName_thenReturnReturnRuleResponse() throws Exception {
+    void givenStringReturnRuleId_whenGetReturnRuleResponseByReturnRuleName_thenReturnReturnRuleResponse()
+            throws Exception {
         String name = "test";
         ReturnRuleResponse response = new ReturnRuleResponse("test", 1000, 10, true);
         when(returnRuleService.getReturnRuleResponseByReturnRuleName(name)).thenReturn(response);
@@ -69,7 +70,8 @@ class ReturnRuleRestControllerUnitTest {
     @DisplayName("전체 반품 규정 조회 성공 테스트")
     void given_whenGetReturnRuleResponseList_thenReturnReturnRuleResponseList() throws Exception {
 
-        when(returnRuleService.getReturnRuleResponseList()).thenReturn(List.of(new ReturnRuleResponse("test", 1000, 10, true)));
+        when(returnRuleService.getReturnRuleResponseList()).thenReturn(
+                List.of(new ReturnRuleResponse("test", 1000, 10, true)));
         mockMvc.perform(get("/api/return-rules"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -189,7 +191,8 @@ class ReturnRuleRestControllerUnitTest {
 
     @Test
     @DisplayName("반품 규정 수정 반품 규정 명 유효성 테스트")
-    void givenReturnRuleModifyRequestReturnRuleNameValidation_when_thenReturnHttpStatusCodeIsNotFound() throws Exception {
+    void givenReturnRuleModifyRequestReturnRuleNameValidation_when_thenReturnHttpStatusCodeIsNotFound()
+            throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         ReturnRuleModifyRequest request = new ReturnRuleModifyRequest("", 10, 11);
 

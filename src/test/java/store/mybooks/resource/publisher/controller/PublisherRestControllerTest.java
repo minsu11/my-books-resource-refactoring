@@ -50,7 +50,7 @@ import store.mybooks.resource.publisher.service.PublisherService;
  * -----------------------------------------------------------
  * 2/18/24        newjaehun       최초 생성
  */
-@WebMvcTest(value = PublisherRestController.class)
+@WebMvcTest(value = PublisherRestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ExtendWith(MockitoExtension.class)
 class PublisherRestControllerTest {
     @Autowired
