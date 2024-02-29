@@ -13,6 +13,6 @@ package store.mybooks.resource.book.exception;
  */
 public class IsbnAlreadyExistsException extends RuntimeException {
     public IsbnAlreadyExistsException(String isbn) {
-        super("ISBN: " + isbn + "은 이미 존재합니다");
+        super(String.format("ISBN [%s]은 이미 존재합니다", isbn));
     }
 }
