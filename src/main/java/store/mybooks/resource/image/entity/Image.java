@@ -49,7 +49,7 @@ public class Image {
     private String extension;
 
     @Column(name = "image_created_date")
-    private LocalDate localDate;
+    private LocalDate createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_status_id")
@@ -69,7 +69,7 @@ public class Image {
         this.extension = extension;
         this.book = book;
         this.review = review;
-        this.localDate = LocalDate.now();
+        this.createdDate = LocalDate.now();
         this.imageStatus = imageStatus;
     }
 }
