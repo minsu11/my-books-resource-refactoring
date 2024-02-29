@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
@@ -21,6 +22,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "image_status")
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ImageStatus {
