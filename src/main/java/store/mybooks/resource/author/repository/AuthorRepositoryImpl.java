@@ -29,7 +29,14 @@ public class AuthorRepositoryImpl extends QuerydslRepositorySupport implements A
     QAuthor author = QAuthor.author;
 
     @Override
-    public Page<AuthorGetResponse> findAllBy(Pageable pageable) {
+    public List<AuthorGetResponse> getAllAUthors() {
+        return from(author)
+                .select(Projections.constructor(AuthorGetResponse.class, author.id, author.name, author.content))
+                .fetch();
+    }
+
+    @Override
+    public Page<AuthorGetResponse> getAllPagedAuthors(Pageable pageable) {
         List<AuthorGetResponse> lists = getQuerydsl().applyPagination(pageable,
                         from(author)
                                 .select(

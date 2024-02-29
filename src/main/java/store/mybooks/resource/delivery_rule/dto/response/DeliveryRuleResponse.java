@@ -1,4 +1,4 @@
-package store.mybooks.resource.delivery_rule.dto;
+package store.mybooks.resource.delivery_rule.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDate;

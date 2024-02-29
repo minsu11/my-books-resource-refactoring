@@ -91,7 +91,8 @@ public class BookService {
                 new Book(bookStatus, publisher, createRequest.getName(), createRequest.getIsbn(),
                         createRequest.getPublishDate(), createRequest.getPage(),
                         createRequest.getIndex(), createRequest.getContent(), createRequest.getOriginalCost(),
-                        createRequest.getSaleCost(), createRequest.getDiscountRate(), createRequest.getStock(),
+                        createRequest.getSaleCost(), createRequest.getOriginalCost() / createRequest.getSaleCost(),
+                        createRequest.getStock(),
                         createRequest.getIsPacking());
         return bookMapper.createResponse(bookRepository.save(book));
     }
@@ -114,7 +115,8 @@ public class BookService {
         BookStatus bookStatus = bookStatusRepository.findById(modifyRequest.getBookStatusId())
                 .orElseThrow(() -> new BookStatusNotExistException(modifyRequest.getBookStatusId()));
 
-        book.setModifyRequest(bookStatus, modifyRequest.getSaleCost(), modifyRequest.getDiscountRate(),
+        book.setModifyRequest(bookStatus, modifyRequest.getSaleCost(),
+                book.getOriginalCost() / modifyRequest.getSaleCost(),
                 modifyRequest.getStock(), modifyRequest.getIsPacking());
         return bookMapper.modifyResponse(book);
     }
