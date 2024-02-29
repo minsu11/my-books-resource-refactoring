@@ -1,5 +1,6 @@
 package store.mybooks.resource.config;
 
+import java.time.Duration;
 import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -13,6 +14,8 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 
 /**
  * packageName    : store.mybooks.resource.config
@@ -93,6 +96,14 @@ public class DatabaseConfig {
         transactionManager.setEntityManagerFactory(entityManagerFactory);
 
         return transactionManager;
+    }
+
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        return builder
+                .setConnectTimeout(Duration.ofSeconds(3L))
+                .setReadTimeout(Duration.ofSeconds(3L))
+                .build();
     }
 
 }
