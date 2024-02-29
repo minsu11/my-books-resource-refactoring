@@ -73,9 +73,6 @@ class UserServiceTest {
     @Mock
     UserMapper userMapper;
 
-    @Mock
-    PasswordEncoder passwordEncoder;
-
     @Test
     @DisplayName("이미 사용중인 email 을 담고있는 UserCreateRequest 를 이용해 CreateUser 실행시 UserAlreadyExistException")
     void givenUserCreateRequestWithAlreadyUsedEmail_whenCallCreateUser_thenThrowUserAlreadyExistException(
@@ -211,7 +208,6 @@ class UserServiceTest {
 
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(request.getPassword()).thenReturn("test");
-        when(passwordEncoder.encode("test")).thenReturn("test");
         userService.modifyUserPassword(1L,request);
 
         verify(userRepository,times(1)).findById(anyLong());

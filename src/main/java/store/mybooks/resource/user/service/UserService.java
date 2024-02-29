@@ -63,9 +63,6 @@ public class UserService {
 
     private final UserMapper userMapper;
 
-    private final PasswordEncoder passwordEncoder;
-
-
     /**
      * methodName : createUser
      * author : masiljangajji
@@ -95,7 +92,7 @@ public class UserService {
                 .orElseThrow(() -> new UserGradeNameNotExistException(userGradeName));
 
         User user = new User(createRequest.getEmail(), createRequest.getBirth(),
-                passwordEncoder.encode(createRequest.getPassword()),
+                createRequest.getPassword(),
                 createRequest.getPhoneNumber(), createRequest.getIsAdmin(), createRequest.getName(), userStatus,
                 userGrade);
 
@@ -192,7 +189,7 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotExistException(id));
 
-        user.modifyPassword(passwordEncoder.encode(modifyRequest.getPassword()));
+        user.modifyPassword(modifyRequest.getPassword());
         return new UserPasswordModifyResponse(true);
     }
 
@@ -268,17 +265,14 @@ public class UserService {
             throw new UserAlreadyResignException();
         }
 
-        System.out.println(userLoginRequest.getPassword());
-        System.out.println(user.getPassword());
-
         // 비밀번호 확인
-        if (!passwordEncoder.matches(userLoginRequest.getPassword(), user.getPassword())) {
+        if (userLoginRequest.getPassword().equals(user.getPassword())) {
             throw new UserLoginFailException();
         }
 
 
         user.modifyLatestLogin();
-        return new UserLoginResponse(true, user.getIsAdmin(), user.getId(),user.getUserStatus().getId());
+        return new UserLoginResponse(true, user.getIsAdmin(), user.getId(), user.getUserStatus().getId());
     }
 
 
