@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,8 +30,12 @@ import store.mybooks.resource.category.dto.request.CategoryModifyRequest;
 import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForBookCreate;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 import store.mybooks.resource.category.entity.Category;
+import store.mybooks.resource.category.exception.CannotDeleteParentCategoryException;
 import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
 import store.mybooks.resource.category.mapper.CategoryMapper;
@@ -63,56 +68,9 @@ class CategoryServiceTest {
     @DisplayName("getCategoriesOrderByParentCategoryId 메서드 ParentCategoryId 를 기준으로 Category 를 오름차순으로 반환")
     void givenGetCategoriesOrderByParentCategoryId_whenNormalCase_thenReturnListOfCategory() {
         List<CategoryGetResponse> categoryGetResponseList = new ArrayList<>();
-        CategoryGetResponse firstCategory = new CategoryGetResponse() {
-            @Override
-            public Integer getId() {
-                return 1;
-            }
-
-            @Override
-            public CategoryGetResponse getParentCategory() {
-                return null;
-            }
-
-            @Override
-            public String getName() {
-                return "firstCategory";
-            }
-        };
-
-        CategoryGetResponse secondCategory = new CategoryGetResponse() {
-            @Override
-            public Integer getId() {
-                return 2;
-            }
-
-            @Override
-            public CategoryGetResponse getParentCategory() {
-                return firstCategory;
-            }
-
-            @Override
-            public String getName() {
-                return "secondCategory";
-            }
-        };
-
-        CategoryGetResponse thirdCategory = new CategoryGetResponse() {
-            @Override
-            public Integer getId() {
-                return 3;
-            }
-
-            @Override
-            public CategoryGetResponse getParentCategory() {
-                return secondCategory;
-            }
-
-            @Override
-            public String getName() {
-                return "thirdCategory";
-            }
-        };
+        CategoryGetResponse firstCategory = makeCategoryGetResponse(1, null, "firstCategory");
+        CategoryGetResponse secondCategory = makeCategoryGetResponse(2, firstCategory, "secondCategory");
+        CategoryGetResponse thirdCategory = makeCategoryGetResponse(3, secondCategory, "thirdCategory");
 
         categoryGetResponseList.add(thirdCategory);
         categoryGetResponseList.add(secondCategory);
@@ -139,27 +97,113 @@ class CategoryServiceTest {
     }
 
     @Test
+    @DisplayName("ParentCategoryId 를 기준으로 오름차순 정렬된 category 리스트 반환")
+    void givenPageable_whenGetCategoryListOrderByParentCategoryId_thenReturnPageOfCategoryGetResponseForView() {
+        Pageable pageable = PageRequest.of(0, 3);
+        List<CategoryGetResponse> categoryGetResponseForViewList = new ArrayList<>();
+        CategoryGetResponse grandParentCategoryGetResponse =
+                makeCategoryGetResponse(1, null, "grandParentCategory");
+        CategoryGetResponse parentCategoryGetResponse =
+                makeCategoryGetResponse(2, grandParentCategoryGetResponse, "parentCategory");
+        CategoryGetResponse childCategoryGetResponse =
+                makeCategoryGetResponse(3, parentCategoryGetResponse, "childCategory");
+        categoryGetResponseForViewList.add(grandParentCategoryGetResponse);
+        categoryGetResponseForViewList.add(parentCategoryGetResponse);
+        categoryGetResponseForViewList.add(childCategoryGetResponse);
+
+        PageImpl<CategoryGetResponse> categoryGetResponseForViewPage =
+                new PageImpl<>(categoryGetResponseForViewList, pageable, 3);
+
+        when(categoryRepository.findByOrderByParentCategory_Id(any())).thenReturn(categoryGetResponseForViewPage);
+
+        Page<CategoryGetResponseForView> actualPage =
+                categoryService.getCategoriesOrderByParentCategoryIdForAdminPage(pageable);
+
+        assertThat(actualPage).isNotNull().hasSize(3);
+        List<CategoryGetResponseForView> actualList = actualPage.getContent();
+        assertThat(actualList).isNotNull().hasSize(3);
+        assertThat(actualList.get(0).getParentCategoryName()).isEmpty();
+        assertThat(actualList.get(0).getId()).isEqualTo(1);
+        assertThat(actualList.get(0).getName()).isEqualTo("grandParentCategory");
+        assertThat(actualList.get(1).getParentCategoryName()).isEqualTo("grandParentCategory");
+        assertThat(actualList.get(1).getId()).isEqualTo(2);
+        assertThat(actualList.get(1).getName()).isEqualTo("parentCategory");
+        assertThat(actualList.get(2).getParentCategoryName()).isEqualTo("grandParentCategory/parentCategory");
+        assertThat(actualList.get(2).getId()).isEqualTo(3);
+        assertThat(actualList.get(2).getName()).isEqualTo("childCategory");
+    }
+
+    @Test
+    @DisplayName("도서 생성할 때 필요한 카테고리 리스트 반환")
+    void whenCallGetCategoriesForBookCreateForBookCreate_thenReturnListOfCategoryGetResponseForBookCreate() {
+        List<CategoryGetResponse> categoryGetResponseList = new ArrayList<>();
+        CategoryGetResponse firstCategory = makeCategoryGetResponse(1, null, "firstCategory");
+        CategoryGetResponse secondCategory = makeCategoryGetResponse(2, firstCategory, "secondCategory");
+        CategoryGetResponse thirdCategory = makeCategoryGetResponse(3, secondCategory, "thirdCategory");
+        CategoryGetResponse idIsNullCategory = makeCategoryGetResponse(null, firstCategory, "idIsNullCategory");
+
+        categoryGetResponseList.add(firstCategory);
+        categoryGetResponseList.add(secondCategory);
+        categoryGetResponseList.add(thirdCategory);
+        categoryGetResponseList.add(idIsNullCategory);
+        categoryGetResponseList.add(null);
+
+        when(categoryRepository.findAllByOrderByParentCategory_Id()).thenReturn(categoryGetResponseList);
+
+        List<CategoryGetResponseForBookCreate> actualList = categoryService.getCategoriesForBookCreate();
+        assertThat(actualList).isNotNull().hasSize(3);
+        assertThat(actualList.get(0).getId()).isEqualTo(firstCategory.getId());
+        assertThat(actualList.get(0).getName()).isEqualTo(firstCategory.getName());
+        assertThat(actualList.get(1).getId()).isEqualTo(secondCategory.getId());
+        assertThat(actualList.get(1).getName()).isEqualTo(
+                firstCategory.getName().concat("/").concat(secondCategory.getName()));
+        assertThat(actualList.get(2).getId()).isEqualTo(thirdCategory.getId());
+        assertThat(actualList.get(2).getName()).isEqualTo(
+                firstCategory.getName().concat("/")
+                        .concat(secondCategory.getName()).concat("/")
+                        .concat(thirdCategory.getName()));
+    }
+
+    @Test
+    @DisplayName("카테고리 업데이트 시에 해당 카테고리의 부모 카테고리 이름 변경해서 가져오기")
+    void givenCategoryId_whenGetCategoryForUpdate_thenReturnReNamingCategoryGetResponseForUpdate() {
+        CategoryGetResponse grandParentCategory = makeCategoryGetResponse(1, null, "grandParentCategory");
+        CategoryGetResponse parentCategory = makeCategoryGetResponse(2, grandParentCategory, "parentCategory");
+        CategoryGetResponse childCategory = makeCategoryGetResponse(3, parentCategory, "childCategory");
+        when(categoryRepository.existsById(3)).thenReturn(true);
+        when(categoryRepository.queryById(3)).thenReturn(childCategory);
+
+        CategoryGetResponseForUpdate actual = categoryService.getCategory(3);
+        assertThat(actual).isNotNull();
+        assertThat(actual.getTargetCategory().getId()).isEqualTo(childCategory.getId());
+        assertThat(actual.getTargetCategory().getName()).isEqualTo(childCategory.getName());
+        assertThat(actual.getLevelOneCategoryName()).isEqualTo(grandParentCategory.getName());
+        assertThat(actual.getLevelTwoCategoryName()).isEqualTo(parentCategory.getName());
+    }
+
+    @Test
+    @DisplayName("CategoryGetResponseForUpdate 조회 시 존재하지 않는 카테고리 Id 를 넘겨준 경우")
+    void givenNotExistsCategoryId_whenGetCategoryForUpdate_thenThrowCategoryNotExistsException() {
+        when(categoryRepository.existsById(any())).thenReturn(false);
+        assertThrows(CategoryNotExistsException.class, () -> categoryService.getCategory(1));
+    }
+
+
+    @Test
     @DisplayName("getHighestCategories 메서드 최상위 카테고리들만 가져온다")
     void givenGetHighestCategories_whenNormalCase_thenReturnHighestCategoryGetResponseList() {
         List<CategoryGetResponse> categoryGetResponseList = new ArrayList<>();
-        categoryGetResponseList.add(new CategoryGetResponse() {
-            @Override
-            public Integer getId() {
-                return 1;
-            }
+        CategoryGetResponse firstCategory = makeCategoryGetResponse(1, null, "firstCategory");
+        CategoryGetResponse secondCategory = makeCategoryGetResponse(2, firstCategory, "secondCategory");
+        CategoryGetResponse thirdCategory = makeCategoryGetResponse(3, secondCategory, "thirdCategory");
+        categoryGetResponseList.add(firstCategory);
+        categoryGetResponseList.add(secondCategory);
+        categoryGetResponseList.add(thirdCategory);
 
-            @Override
-            public CategoryGetResponse getParentCategory() {
-                return null;
-            }
-
-            @Override
-            public String getName() {
-                return "firstCategory";
-            }
-        });
-
-        when(categoryRepository.findAllByParentCategoryIsNull()).thenReturn(categoryGetResponseList);
+        when(categoryRepository.findAllByParentCategoryIsNull())
+                .thenReturn(categoryGetResponseList.stream()
+                        .filter(category -> category.getParentCategory() == null)
+                        .collect(Collectors.toList()));
         List<CategoryGetResponse> actual = categoryService.getHighestCategories();
 
         assertThat(actual).isNotNull().hasSize(1);
@@ -175,37 +219,11 @@ class CategoryServiceTest {
     @DisplayName("getCategoriesByPArentCategoryId 메서드 ParentCategoryId 로 Category 들을 가져온다")
     void givenGetCategoriesByParentCategoryId_whenNormalCase_thenReturnCategoryGetResponseList() {
         List<CategoryGetResponse> categoryGetResponseList = new ArrayList<>();
-        categoryGetResponseList.add(new CategoryGetResponse() {
-            @Override
-            public Integer getId() {
-                return 2;
-            }
-
-            @Override
-            public CategoryGetResponse getParentCategory() {
-                return new CategoryGetResponse() {
-                    @Override
-                    public Integer getId() {
-                        return 1;
-                    }
-
-                    @Override
-                    public CategoryGetResponse getParentCategory() {
-                        return null;
-                    }
-
-                    @Override
-                    public String getName() {
-                        return "parentCategory";
-                    }
-                };
-            }
-
-            @Override
-            public String getName() {
-                return "childCategory";
-            }
-        });
+        categoryGetResponseList.add(makeCategoryGetResponse(
+                2,
+                makeCategoryGetResponse(1, null, "parentCategory"),
+                "childCategory"
+        ));
 
         when(categoryRepository.findAllByParentCategory_Id(anyInt())).thenReturn(categoryGetResponseList);
         when(categoryRepository.existsById(anyInt())).thenReturn(true);
@@ -256,6 +274,18 @@ class CategoryServiceTest {
         CategoryCreateRequest categoryCreateRequest = new CategoryCreateRequest(null, "name");
 
         assertThrows(CategoryNameAlreadyExistsException.class,
+                () -> categoryService.createCategory(categoryCreateRequest));
+    }
+
+    @Test
+    @DisplayName("createCategory 존재하지 않는 parentCategoryId 를 넘겨준 경우")
+    void givenNotExistsParentCategoryId_whenCreateCategory_thenThrowCategoryNotExistsException() {
+        when(categoryRepository.existsByName(anyString())).thenReturn(false);
+        when(categoryRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+        CategoryCreateRequest categoryCreateRequest = new CategoryCreateRequest(1, "categoryName");
+
+        assertThrows(CategoryNotExistsException.class,
                 () -> categoryService.createCategory(categoryCreateRequest));
     }
 
@@ -324,5 +354,33 @@ class CategoryServiceTest {
         when(categoryRepository.findById(anyInt())).thenReturn(Optional.empty());
 
         assertThrows(CategoryNotExistsException.class, () -> categoryService.deleteCategory(1));
+    }
+
+    @Test
+    @DisplayName("deleteCategory 자식 카테고리가 있는 카테고리 지우는 경우")
+    void givenCategoryIdThatHasChildCategory_whenDeleteCategory_thenThrowCannotDeleteParentCategoryException() {
+        when(categoryRepository.findById(anyInt())).thenReturn(Optional.of(new Category()));
+        when(categoryRepository.countByParentCategory_Id(anyInt())).thenReturn(1);
+        assertThrows(CannotDeleteParentCategoryException.class, () -> categoryService.deleteCategory(1));
+    }
+
+    private CategoryGetResponse makeCategoryGetResponse(Integer id, CategoryGetResponse parentCategoryGetResponse,
+                                                        String name) {
+        return new CategoryGetResponse() {
+            @Override
+            public Integer getId() {
+                return id;
+            }
+
+            @Override
+            public CategoryGetResponse getParentCategory() {
+                return parentCategoryGetResponse;
+            }
+
+            @Override
+            public String getName() {
+                return name;
+            }
+        };
     }
 }

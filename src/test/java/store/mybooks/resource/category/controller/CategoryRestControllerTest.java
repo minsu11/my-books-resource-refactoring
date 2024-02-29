@@ -33,6 +33,7 @@ import store.mybooks.resource.category.dto.request.CategoryModifyRequest;
 import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForBookCreate;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 import store.mybooks.resource.category.exception.CategoryValidationException;
@@ -83,6 +84,34 @@ class CategoryRestControllerTest {
                 .andExpect(jsonPath("$.content[1].id").value(2))
                 .andExpect(jsonPath("$.content[1].name").value("childCategory"))
                 .andExpect(jsonPath("$.content[1].parentCategoryName").value("parentCategory"));
+    }
+
+    @Test
+    @DisplayName("도서 생성할 때 필요한 카테고리 리스트 가져오기")
+    void whenCallGetCategoriesForBookCreateForCreatingBook_thenReturnListOfCategoryGetResponseForBookCreate()
+            throws Exception {
+        List<CategoryGetResponseForBookCreate> list = new ArrayList<>();
+        CategoryGetResponseForBookCreate grandParentCategory =
+                new CategoryGetResponseForBookCreate(1, "grandParentCategory");
+        CategoryGetResponseForBookCreate parentCategory =
+                new CategoryGetResponseForBookCreate(2, "grandParentCategory/parentCategory");
+        CategoryGetResponseForBookCreate childCategory =
+                new CategoryGetResponseForBookCreate(3, "grandParentCategory/parentCategory/childCategory");
+        list.add(grandParentCategory);
+        list.add(parentCategory);
+        list.add(childCategory);
+
+        when(categoryService.getCategoriesForBookCreate()).thenReturn(list);
+
+        mockMvc.perform(get("/api/categories"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(list.size()))
+                .andExpect(jsonPath("$[0].id").value(grandParentCategory.getId()))
+                .andExpect(jsonPath("$[0].name").value(grandParentCategory.getName()))
+                .andExpect(jsonPath("$[1].id").value(parentCategory.getId()))
+                .andExpect(jsonPath("$[1].name").value(parentCategory.getName()))
+                .andExpect(jsonPath("$[2].id").value(childCategory.getId()))
+                .andExpect(jsonPath("$[2].name").value(childCategory.getName()));
     }
 
     @Test
@@ -145,7 +174,7 @@ class CategoryRestControllerTest {
 
     @Test
     @DisplayName("카테고리 생성 - Validation 실패")
-    public void givenCreateCategory_whenValidationFailure_thenReturnBadRequest() throws Exception {
+    void givenCreateCategory_whenValidationFailure_thenReturnBadRequest() throws Exception {
         CategoryCreateRequest categoryCreateRequest = new CategoryCreateRequest(null, null);
 
         String content = objectMapper.writeValueAsString(categoryCreateRequest);
@@ -162,7 +191,7 @@ class CategoryRestControllerTest {
 
     @Test
     @DisplayName("카테고리 수정")
-    public void givenModifyCategory_whenNormalCase_thenReturnIsOk() throws Exception {
+    void givenModifyCategory_whenNormalCase_thenReturnIsOk() throws Exception {
         CategoryModifyRequest categoryModifyRequest = new CategoryModifyRequest("categoryName");
         CategoryModifyResponse categoryModifyResponse = new CategoryModifyResponse();
         categoryModifyResponse.setParentCategoryName(null);
