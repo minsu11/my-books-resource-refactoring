@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * -----------------------------------------------------------<br/>
  * 2/23/24        newjaehun       최초 생성<br/>
  */
-@WebMvcTest(value = BookStatusRestController.class,excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(value = BookStatusRestController.class)
 @ExtendWith(MockitoExtension.class)
 class BookStatusRestControllerTest {
     @Autowired

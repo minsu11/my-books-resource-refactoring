@@ -6,7 +6,6 @@ import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * packageName    : store.mybooks.resource.category.dto.request
@@ -20,7 +19,6 @@ import lombok.Setter;
  * 2/16/24          damho-lee          최초 생성
  */
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryCreateRequest {
