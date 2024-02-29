@@ -79,6 +79,7 @@ public class WrapService {
      * @param pageable
      * @return page
      */
+    @Transactional(readOnly = true)
     public Page<WrapPageResponse> getWrapPage(Pageable pageable) {
         return wrapRepository.getPageBy(pageable);
     }

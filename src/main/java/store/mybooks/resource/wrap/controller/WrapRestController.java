@@ -10,13 +10,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import store.mybooks.resource.error.RequestValidationFailedException;
 import store.mybooks.resource.wrap.dto.request.WrapCreateRequest;
 import store.mybooks.resource.wrap.dto.request.WrapModifyRequest;
 import store.mybooks.resource.wrap.dto.response.WrapCreateResponse;
 import store.mybooks.resource.wrap.dto.response.WrapModifyResponse;
 import store.mybooks.resource.wrap.dto.response.WrapPageResponse;
 import store.mybooks.resource.wrap.dto.response.WrapResponse;
-import store.mybooks.resource.wrap.exception.WrapValidationFailedException;
 import store.mybooks.resource.wrap.service.WrapService;
 
 /**
@@ -93,13 +93,13 @@ public class WrapRestController {
      *
      * @param wrapCreateRequest
      * @return response entity
-     * @throws WrapValidationFailedException 등록할 포장지 유효성 실패 시
+     * @throws RequestValidationFailedException 등록할 포장지 유효성 실패 시
      */
     @PostMapping
     public ResponseEntity<WrapCreateResponse> createWrap(@Valid @RequestBody WrapCreateRequest wrapCreateRequest,
                                                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new WrapValidationFailedException(bindingResult);
+            throw new RequestValidationFailedException(bindingResult);
         }
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -123,7 +123,7 @@ public class WrapRestController {
                                                          @Valid @RequestBody WrapModifyRequest wrapModifyRequest,
                                                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new WrapValidationFailedException(bindingResult);
+            throw new RequestValidationFailedException(bindingResult);
         }
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -143,7 +143,7 @@ public class WrapRestController {
     public ResponseEntity deleteWrap(@PathVariable Integer id) {
         wrapService.deleteWrap(id);
         return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
+                .status(HttpStatus.OK)
                 .build();
 
 
