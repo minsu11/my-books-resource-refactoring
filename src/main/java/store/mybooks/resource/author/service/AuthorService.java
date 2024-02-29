@@ -1,5 +1,6 @@
 package store.mybooks.resource.author.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,12 +39,25 @@ public class AuthorService {
      * author : newjaehun
      * description : 전체 저자 리스트 반환.
      *
+     * @return list
+     */
+    @Transactional(readOnly = true)
+    public List<AuthorGetResponse> getAllAuthors() {
+        return authorRepository.getAllAUthors();
+    }
+
+
+    /**
+     * methodName : getAllAuthors
+     * author : newjaehun
+     * description : 페이징된 전체 저자 리스트 반환.
+     *
      * @param pageable pageable
      * @return page
      */
     @Transactional(readOnly = true)
-    public Page<AuthorGetResponse> getAllAuthors(Pageable pageable) {
-        return authorRepository.findAllBy(pageable);
+    public Page<AuthorGetResponse> getPagedAuthors(Pageable pageable) {
+        return authorRepository.getAllPagedAuthors(pageable);
     }
 
 

@@ -1,5 +1,6 @@
 package store.mybooks.resource.tag.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -50,6 +51,11 @@ public class TagService {
         }
 
         return tagRepository.queryById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TagGetResponse> getTags() {
+        return tagRepository.findAllBy();
     }
 
     @Transactional(readOnly = true)
