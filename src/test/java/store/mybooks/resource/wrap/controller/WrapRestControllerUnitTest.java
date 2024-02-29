@@ -1,10 +1,19 @@
 package store.mybooks.resource.wrap.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -140,7 +149,8 @@ class WrapRestControllerUnitTest {
     @Test
     @DisplayName("포장지 등록 실패 테스트(유효성 테스트 실패: 글자 수 최대 넘었을 때 )")
     void givenWrapCreateRequest_whenCreateWrap_thenThrowWrapValidationFailedException2() throws Exception {
-        WrapCreateRequest wrapCreateRequest = new WrapCreateRequest("abcdfwqweasdasasfasfasadasdasdasdaasfasdfasdfasdfasdasdasd", 100);
+        WrapCreateRequest wrapCreateRequest =
+                new WrapCreateRequest("abcdfwqweasdasasfasfasadasdasdasdaasfasdfasdfasdfasdasdasd", 100);
         mockMvc.perform(post("/api/wraps")
                         .content(objectMapper.writeValueAsString(wrapCreateRequest))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -247,7 +257,7 @@ class WrapRestControllerUnitTest {
         doNothing().when(wrapService).deleteWrap(1);
 
         mockMvc.perform(delete("/api/wraps/{id}", 1))
-                .andExpect(status().isNoContent())
+                .andExpect(status().isOk())
                 .andDo(print());
         verify(wrapService, times(1)).deleteWrap(any());
 
