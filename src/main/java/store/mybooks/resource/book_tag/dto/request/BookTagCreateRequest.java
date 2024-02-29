@@ -1,6 +1,7 @@
 package store.mybooks.resource.book_tag.dto.request;
 
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
  * 2/28/24          damho-lee          최초 생성
  */
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 public class BookTagCreateRequest {
     private Long bookId;
