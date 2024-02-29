@@ -252,107 +252,33 @@ class CategoryRestControllerTest {
     }
 
     private void initHighestCategoryList(List<CategoryGetResponse> categoryGetResponseList) {
-        categoryGetResponseList.add(new CategoryGetResponse() {
-            @Override
-            public Integer getId() {
-                return 1;
-            }
-
-            @Override
-            public CategoryGetResponse getParentCategory() {
-                return null;
-            }
-
-            @Override
-            public String getName() {
-                return "firstCategory";
-            }
-        });
-
-        categoryGetResponseList.add(new CategoryGetResponse() {
-            @Override
-            public Integer getId() {
-                return 2;
-            }
-
-            @Override
-            public CategoryGetResponse getParentCategory() {
-                return null;
-            }
-
-            @Override
-            public String getName() {
-                return "secondCategory";
-            }
-        });
-
-        categoryGetResponseList.add(new CategoryGetResponse() {
-            @Override
-            public Integer getId() {
-                return 3;
-            }
-
-            @Override
-            public CategoryGetResponse getParentCategory() {
-                return null;
-            }
-
-            @Override
-            public String getName() {
-                return "thirdCategory";
-            }
-        });
+        categoryGetResponseList.add(makeCategoryGetResponse(1, null, "firstCategory"));
+        categoryGetResponseList.add(makeCategoryGetResponse(2, null, "secondCategory"));
+        categoryGetResponseList.add(makeCategoryGetResponse(3, null, "thirdCategory"));
     }
 
     private void initChildCategoryList(List<CategoryGetResponse> categoryGetResponseList, Integer parentCategoryId) {
-        CategoryGetResponse parentCategory = new CategoryGetResponse() {
+        CategoryGetResponse parentCategory = makeCategoryGetResponse(1, null, "parentCategory");
+        categoryGetResponseList.add(makeCategoryGetResponse(2, parentCategory, "firstChildCategory"));
+        categoryGetResponseList.add(makeCategoryGetResponse(3, parentCategory, "secondCategory"));
+    }
+
+    private CategoryGetResponse makeCategoryGetResponse(Integer id, CategoryGetResponse parentCategory, String name) {
+        return new CategoryGetResponse() {
             @Override
             public Integer getId() {
-                return parentCategoryId;
+                return id;
             }
 
             @Override
             public CategoryGetResponse getParentCategory() {
-                return null;
+                return parentCategory;
             }
 
             @Override
             public String getName() {
-                return "parentCategory";
+                return name;
             }
         };
-        categoryGetResponseList.add(new CategoryGetResponse() {
-            @Override
-            public Integer getId() {
-                return 2;
-            }
-
-            @Override
-            public CategoryGetResponse getParentCategory() {
-                return parentCategory;
-            }
-
-            @Override
-            public String getName() {
-                return "firstChildCategory";
-            }
-        });
-
-        categoryGetResponseList.add(new CategoryGetResponse() {
-            @Override
-            public Integer getId() {
-                return 3;
-            }
-
-            @Override
-            public CategoryGetResponse getParentCategory() {
-                return parentCategory;
-            }
-
-            @Override
-            public String getName() {
-                return "secondChildCategory";
-            }
-        });
     }
 }
