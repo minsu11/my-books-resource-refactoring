@@ -102,7 +102,7 @@ class TagRestControllerTest {
         tagGetResponseList.add(makeTagGetResponse(1, "firstTagName"));
         tagGetResponseList.add(makeTagGetResponse(2, "secondTagName"));
         tagGetResponseList.add(makeTagGetResponse(3, "thirdTagName"));
-        
+
         Pageable pageable = PageRequest.of(0, 10);
         when(tagService.getTags(any())).thenReturn(
                 new PageImpl<>(tagGetResponseList, pageable, tagGetResponseList.size()));
