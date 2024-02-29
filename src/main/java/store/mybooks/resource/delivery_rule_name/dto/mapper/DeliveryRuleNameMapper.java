@@ -1,6 +1,7 @@
 package store.mybooks.resource.delivery_rule_name.dto.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameResponse;
 import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
@@ -16,7 +17,7 @@ import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
  * 2/17/24        Fiat_lux       최초 생성
  */
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface DeliveryRuleNameMapper {
 
     /**
