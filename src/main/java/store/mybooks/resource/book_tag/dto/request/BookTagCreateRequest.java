@@ -20,6 +20,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class BookTagCreateRequest {
     @Positive
     private Long bookId;

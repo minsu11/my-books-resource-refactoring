@@ -3,6 +3,7 @@ package store.mybooks.resource.user.service;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,7 +62,6 @@ public class UserService {
     private final UserGradeRepository userGradeRepository;
 
     private final UserMapper userMapper;
-
 
     /**
      * methodName : createUser
@@ -256,7 +256,7 @@ public class UserService {
      */
     public UserLoginResponse loginUser(UserLoginRequest userLoginRequest) {
 
-        // 아이디,비밀번호 확인
+        // 아이디 확인
         User user = userRepository.findByEmail(userLoginRequest.getEmail())
                 .orElseThrow(UserLoginFailException::new);
 
@@ -265,10 +265,14 @@ public class UserService {
             throw new UserAlreadyResignException();
         }
 
+        // 비밀번호 확인
+        if (userLoginRequest.getPassword().equals(user.getPassword())) {
+            throw new UserLoginFailException();
+        }
+
+
         user.modifyLatestLogin();
-
-        return new UserLoginResponse(true);
-
+        return new UserLoginResponse(true, user.getIsAdmin(), user.getId(), user.getUserStatus().getId());
     }
 
 

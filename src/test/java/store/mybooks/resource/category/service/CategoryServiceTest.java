@@ -363,7 +363,6 @@ class CategoryServiceTest {
         when(categoryRepository.countByParentCategory_Id(anyInt())).thenReturn(1);
         assertThrows(CannotDeleteParentCategoryException.class, () -> categoryService.deleteCategory(1));
     }
-
     private CategoryGetResponse makeCategoryGetResponse(Integer id, CategoryGetResponse parentCategoryGetResponse,
                                                         String name) {
         return new CategoryGetResponse() {

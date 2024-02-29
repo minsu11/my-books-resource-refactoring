@@ -15,4 +15,5 @@ import store.mybooks.resource.book.entity.Book;
  * 2/24/24        newjaehun       최초 생성<br/>
  */
 public interface BookRepository extends JpaRepository<Book, Long>, BookRepositoryCustom {
+    boolean existsByIsbn(String isbn);
 }

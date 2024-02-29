@@ -18,6 +18,7 @@ import store.mybooks.resource.category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForBookCreate;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
+import store.mybooks.resource.category.dto.response.CategoryIdNameGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 import store.mybooks.resource.category.entity.Category;
 import store.mybooks.resource.category.exception.CannotDeleteParentCategoryException;
@@ -144,7 +145,7 @@ public class CategoryService {
      * @return CategoryGetResponse
      */
     @Transactional(readOnly = true)
-    public CategoryGetResponseForUpdate getCategory(int id) {
+    public CategoryGetResponseForUpdate getCategoryForUpdate(int id) {
         if (!categoryRepository.existsById(id)) {
             throw new CategoryNotExistsException(id);
         }
@@ -162,7 +163,17 @@ public class CategoryService {
         String levelTwoCategoryName = levelTwoCategory == null ? null : levelTwoCategory.getName();
 
         return new CategoryGetResponseForUpdate(
-                categoryGetResponse, levelOneCategoryName, levelTwoCategoryName);
+                new CategoryIdNameGetResponse() {
+                    @Override
+                    public Integer getId() {
+                        return categoryGetResponse.getId();
+                    }
+
+                    @Override
+                    public String getName() {
+                        return categoryGetResponse.getName();
+                    }
+                }, levelOneCategoryName, levelTwoCategoryName);
     }
 
     /**

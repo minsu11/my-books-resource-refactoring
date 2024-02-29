@@ -21,4 +21,10 @@ public class UserLoginResponse {
 
     private Boolean isValidUser;
 
+    private Boolean isAdmin;
+
+    private Long userId;
+
+    private String status;
+
 }
