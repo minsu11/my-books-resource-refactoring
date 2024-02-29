@@ -59,42 +59,50 @@ class TagRestControllerTest {
     TagService tagService;
 
     @Test
-    @DisplayName("태그 조회")
+    @DisplayName("태그 id로 조회")
+    void givenTagId_whenGetTag_thenReturnTagGetResponse() throws Exception {
+        TagGetResponse expected = makeTagGetResponse(1, "tagName");
+        when(tagService.getTag(1)).thenReturn(expected);
+
+        mockMvc.perform(get("/api/tags/{id}", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(expected.getId()))
+                .andExpect(jsonPath("$.name").value(expected.getName()));
+    }
+
+    @Test
+    @DisplayName("태그 전부 조회")
+    void when_getTags_thenReturnListOfTagGetResponse() throws Exception {
+        List<TagGetResponse> expectedList = new ArrayList<>();
+        TagGetResponse firstTag = makeTagGetResponse(1, "firstTag");
+        TagGetResponse secondTag = makeTagGetResponse(2, "secondTag");
+        TagGetResponse thirdTag = makeTagGetResponse(3, "thirdTag");
+        expectedList.add(firstTag);
+        expectedList.add(secondTag);
+        expectedList.add(thirdTag);
+
+        when(tagService.getTags()).thenReturn(expectedList);
+
+        mockMvc.perform(get("/api/tags"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.size()").value(expectedList.size()))
+                .andExpect(jsonPath("$[0].id").value(expectedList.get(0).getId()))
+                .andExpect(jsonPath("$[0].name").value(expectedList.get(0).getName()))
+                .andExpect(jsonPath("$[1].id").value(expectedList.get(1).getId()))
+                .andExpect(jsonPath("$[1].name").value(expectedList.get(1).getName()))
+                .andExpect(jsonPath("$[2].id").value(expectedList.get(2).getId()))
+                .andExpect(jsonPath("$[2].name").value(expectedList.get(2).getName()));
+    }
+
+    @Test
+    @DisplayName("태그 pageable 조회")
     void givenGetTags_whenNormalCase_thenReturnIsOk() throws Exception {
         List<TagGetResponse> tagGetResponseList = new ArrayList<>();
-        tagGetResponseList.add(new TagGetResponse() {
-            @Override
-            public Integer getId() {
-                return 1;
-            }
-
-            @Override
-            public String getName() {
-                return "firstTagName";
-            }
-        });
-        tagGetResponseList.add(new TagGetResponse() {
-            @Override
-            public Integer getId() {
-                return 2;
-            }
-
-            @Override
-            public String getName() {
-                return "secondTagName";
-            }
-        });
-        tagGetResponseList.add(new TagGetResponse() {
-            @Override
-            public Integer getId() {
-                return 3;
-            }
-
-            @Override
-            public String getName() {
-                return "thirdTagName";
-            }
-        });
+        tagGetResponseList.add(makeTagGetResponse(1, "firstTagName"));
+        tagGetResponseList.add(makeTagGetResponse(2, "secondTagName"));
+        tagGetResponseList.add(makeTagGetResponse(3, "thirdTagName"));
+        
         Pageable pageable = PageRequest.of(0, 10);
         when(tagService.getTags(any())).thenReturn(
                 new PageImpl<>(tagGetResponseList, pageable, tagGetResponseList.size()));
@@ -187,5 +195,19 @@ class TagRestControllerTest {
         mockMvc.perform(delete("/api/tags/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(tagDeleteResponse.getName()));
+    }
+
+    private TagGetResponse makeTagGetResponse(Integer id, String name) {
+        return new TagGetResponse() {
+            @Override
+            public Integer getId() {
+                return id;
+            }
+
+            @Override
+            public String getName() {
+                return name;
+            }
+        };
     }
 }

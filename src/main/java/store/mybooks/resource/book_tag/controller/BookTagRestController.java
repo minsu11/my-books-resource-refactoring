@@ -1,16 +1,19 @@
 package store.mybooks.resource.book_tag.controller;
 
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.book_tag.dto.request.BookTagCreateRequest;
 import store.mybooks.resource.book_tag.service.BookTagService;
+import store.mybooks.resource.error.exception.ValidationFailException;
 
 /**
  * packageName    : store.mybooks.resource.book_tag.controller
@@ -38,7 +41,12 @@ public class BookTagRestController {
      * @return ResponseEntity
      */
     @PostMapping
-    public ResponseEntity<Void> createBookTag(@RequestBody BookTagCreateRequest bookTagCreateRequest) {
+    public ResponseEntity<Void> createBookTag(@Valid @ModelAttribute BookTagCreateRequest bookTagCreateRequest,
+                                              BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationFailException(bindingResult);
+        }
+        
         bookTagService.createBookTag(bookTagCreateRequest);
         return ResponseEntity
                 .status(HttpStatus.CREATED)

@@ -56,50 +56,60 @@ class TagServiceTest {
     TagService tagService;
 
     @Test
-    @DisplayName("getTags 리턴 값 테스트")
+    @DisplayName("getTag 테스트")
+    void givenTagId_whenGetTag_thenReturnTagGetResponse() {
+        TagGetResponse expected = makeTagGetResponse(1, "tagName");
+        when(tagRepository.existsById(1)).thenReturn(true);
+        when(tagRepository.queryById(1)).thenReturn(expected);
+
+        TagGetResponse actual = tagService.getTag(1);
+
+        assertThat(actual).isNotNull();
+        assertThat(actual.getId()).isEqualTo(expected.getId());
+        assertThat(actual.getName()).isEqualTo(expected.getName());
+    }
+
+    @Test
+    @DisplayName("getName 존재하지 않는 태그 아이디 테스트")
+    void givenNotExistsTagId_whenGetTag_thenReturnTagGetResponse() {
+        when(tagRepository.existsById(anyInt())).thenReturn(false);
+        assertThrows(TagNotExistsException.class, () -> tagService.getTag(1));
+    }
+
+    @Test
+    @DisplayName("getTags() 테스트")
+    void whenGetTags_thenReturnListOfTagGetResponse() {
+        List<TagGetResponse> expectedList = new ArrayList<>();
+        expectedList.add(makeTagGetResponse(1, "firstTagName"));
+        expectedList.add(makeTagGetResponse(2, "secondTagName"));
+        expectedList.add(makeTagGetResponse(3, "thirdTagName"));
+        when(tagRepository.findAllBy()).thenReturn(expectedList);
+
+        List<TagGetResponse> actualList = tagService.getTags();
+        assertThat(actualList).isNotNull().hasSize(3);
+        assertThat(actualList.get(0).getId()).isEqualTo(expectedList.get(0).getId());
+        assertThat(actualList.get(0).getName()).isEqualTo(expectedList.get(0).getName());
+        assertThat(actualList.get(1).getId()).isEqualTo(expectedList.get(1).getId());
+        assertThat(actualList.get(1).getName()).isEqualTo(expectedList.get(1).getName());
+        assertThat(actualList.get(2).getId()).isEqualTo(expectedList.get(2).getId());
+        assertThat(actualList.get(2).getName()).isEqualTo(expectedList.get(2).getName());
+    }
+
+    @Test
+    @DisplayName("getTags(Pageable) 리턴 값 테스트")
     void givenGetTags_whenNormalCase_thenReturnTagGetResponseList() {
         List<TagGetResponse> list = new ArrayList<>();
-        list.add(new TagGetResponse() {
-            @Override
-            public Integer getId() {
-                return 1;
-            }
+        list.add(makeTagGetResponse(1, "firstTagName"));
+        list.add(makeTagGetResponse(2, "secondTagName"));
+        list.add(makeTagGetResponse(3, "thirdTagName"));
 
-            @Override
-            public String getName() {
-                return "firstTagName";
-            }
-        });
-        list.add(new TagGetResponse() {
-            @Override
-            public Integer getId() {
-                return 2;
-            }
-
-            @Override
-            public String getName() {
-                return "secondTagName";
-            }
-        });
-        list.add(new TagGetResponse() {
-            @Override
-            public Integer getId() {
-                return 3;
-            }
-
-            @Override
-            public String getName() {
-                return "thirdTagName";
-            }
-        });
         Pageable pageable = PageRequest.of(0, 10);
 
         when(tagRepository.findAllByOrderById(any())).thenReturn(new PageImpl<>(list, pageable, list.size()));
 
         List<TagGetResponse> actualList = tagService.getTags(pageable).getContent();
 
-        assertThat(actualList).isNotNull();
-        assertThat(actualList).hasSize(3);
+        assertThat(actualList).isNotNull().hasSize(3);
         assertThat(actualList.get(0).getName()).isEqualTo("firstTagName");
         assertThat(actualList.get(1).getName()).isEqualTo("secondTagName");
         assertThat(actualList.get(2).getName()).isEqualTo("thirdTagName");
@@ -200,5 +210,19 @@ class TagServiceTest {
 
         assertThrows(TagNotExistsException.class, () -> tagService.deleteTag(1));
         verify(tagRepository, times(0)).deleteById(1);
+    }
+
+    private TagGetResponse makeTagGetResponse(Integer id, String name) {
+        return new TagGetResponse() {
+            @Override
+            public Integer getId() {
+                return id;
+            }
+
+            @Override
+            public String getName() {
+                return name;
+            }
+        };
     }
 }
