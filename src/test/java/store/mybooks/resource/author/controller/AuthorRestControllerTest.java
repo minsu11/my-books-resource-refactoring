@@ -52,6 +52,7 @@ import store.mybooks.resource.author.service.AuthorService;
  * -----------------------------------------------------------
  * 2/20/24        newjaehun       최초 생성
  */
+
 @WebMvcTest(AuthorRestController.class)
 @ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 class AuthorRestControllerTest {
@@ -70,7 +71,7 @@ class AuthorRestControllerTest {
     private final String authorContent = "authorContent";
     private final String authorContent2 = "authorContent2";
 
-    @BeforeEach
+  @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,
                RestDocumentationContextProvider restDocumentation) {
 

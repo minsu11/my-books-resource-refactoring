@@ -1,6 +1,7 @@
-package store.mybooks.resource.delivery_rule_name.dto;
+package store.mybooks.resource.delivery_rule_name.dto.mapper;
 
 import org.mapstruct.Mapper;
+import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameResponse;
 import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
 /**
