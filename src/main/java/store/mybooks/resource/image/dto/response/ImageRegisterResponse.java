@@ -25,5 +25,5 @@ public class ImageRegisterResponse {
     private String path;
     private String fileName;
     private String extension;
-    private LocalDate localDate;
+    private LocalDate createdDate;
 }
