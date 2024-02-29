@@ -40,7 +40,7 @@ import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
  * -----------------------------------------------------------
  * 2/18/24        Fiat_lux       최초 생성
  */
-@WebMvcTest(value = DeliveryRuleController.class,excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(value = DeliveryRuleController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class DeliveryRuleControllerTest {
     @Autowired
     private MockMvc mockMvc;

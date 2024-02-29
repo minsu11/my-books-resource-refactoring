@@ -52,7 +52,7 @@ import store.mybooks.resource.user_grade.service.UserGradeService;
  */
 
 
-@WebMvcTest(value = UserGradeRestController.class,excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(value = UserGradeRestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ExtendWith(MockitoExtension.class)
 class UserGradeRestControllerTest {
 

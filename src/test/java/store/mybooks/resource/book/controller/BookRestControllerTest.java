@@ -39,7 +39,7 @@ import store.mybooks.resource.book.service.BookService;
  * -----------------------------------------------------------<br/>
  * 2/25/24        newjaehun       최초 생성<br/>
  */
-@WebMvcTest(value = BookRestController.class,excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(value = BookRestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ExtendWith(MockitoExtension.class)
 class BookRestControllerTest {
     @Autowired

@@ -33,7 +33,7 @@ import store.mybooks.resource.order_detail_status.service.OrderDetailStatusServi
  * 2/20/24        minsu11       최초 생성<br>
  */
 @ExtendWith(MockitoExtension.class)
-@WebMvcTest(value = OrderDetailStatusController.class,excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(value = OrderDetailStatusController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class OrderDetailStatusControllerUnitTest {
     @Autowired
     MockMvc mockMvc;
@@ -46,7 +46,8 @@ class OrderDetailStatusControllerUnitTest {
     @Test
     @Order(1)
     @DisplayName("api 경로로 들어온 id 값과 동일한 데이터를 DB에 찾아서 반환 테스트")
-    void givenOrderDetailStatusId_whenGetOrderDetailStatusByOrderDetailStatusId_thenReturnOrderDetailStatusResponse() throws Exception {
+    void givenOrderDetailStatusId_whenGetOrderDetailStatusByOrderDetailStatusId_thenReturnOrderDetailStatusResponse()
+            throws Exception {
         String orderDetailStatusId = "test";
         OrderDetailStatusResponse expected = new OrderDetailStatusResponse(orderDetailStatusId);
         when(orderDetailStatusService.getOrderDetailStatus(orderDetailStatusId)).thenReturn(expected);
@@ -66,7 +67,8 @@ class OrderDetailStatusControllerUnitTest {
     void given_whenGetOrderDetailStatusList_thenReturnOrderDetailStatusResponseList() throws Exception {
         String expected = "test";
         String actual = "test";
-        when(orderDetailStatusService.getOrderDetailStatusList()).thenReturn(List.of(new OrderDetailStatusResponse("test")));
+        when(orderDetailStatusService.getOrderDetailStatusList()).thenReturn(
+                List.of(new OrderDetailStatusResponse("test")));
 
         mockMvc.perform(get("/api/order-detail-statuses"))
                 .andExpect(status().isOk())

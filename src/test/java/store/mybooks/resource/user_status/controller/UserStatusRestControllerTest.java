@@ -44,7 +44,7 @@ import store.mybooks.resource.user_status.service.UserStatusService;
  */
 
 
-@WebMvcTest(value = UserStatusRestController.class,excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(value = UserStatusRestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ExtendWith(MockitoExtension.class)
 class UserStatusRestControllerTest {
 
@@ -101,8 +101,6 @@ class UserStatusRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpectAll(jsonPath("$.[*].id").exists());
     }
-
-
 
 
 }
