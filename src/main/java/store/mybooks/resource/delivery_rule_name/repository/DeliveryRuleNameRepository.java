@@ -2,7 +2,7 @@ package store.mybooks.resource.delivery_rule_name.repository;
 
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameDto;
+import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameDto;
 import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
 /**

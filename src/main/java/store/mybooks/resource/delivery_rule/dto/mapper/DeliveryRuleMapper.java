@@ -1,7 +1,7 @@
-package store.mybooks.resource.delivery_rule.dto;
+package store.mybooks.resource.delivery_rule.dto.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import store.mybooks.resource.delivery_rule.dto.response.DeliveryRuleResponse;
 import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
 
 /**
