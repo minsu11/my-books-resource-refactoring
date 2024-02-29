@@ -1,6 +1,7 @@
 package store.mybooks.resource.book_tag.dto.request;
 
 import java.util.List;
+import javax.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookTagCreateRequest {
+    @Positive
     private Long bookId;
     private List<Integer> tagIdList;
 }
