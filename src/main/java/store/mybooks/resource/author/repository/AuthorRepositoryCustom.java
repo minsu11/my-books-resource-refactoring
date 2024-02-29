@@ -18,7 +18,7 @@ import store.mybooks.resource.author.dto.response.AuthorGetResponse;
  */
 public interface AuthorRepositoryCustom {
 
-    List<AuthorGetResponse> getAllAUthors();
+    List<AuthorGetResponse> getAllAuthors();
 
     Page<AuthorGetResponse> getAllPagedAuthors(Pageable pageable);
 

@@ -40,7 +40,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                         from(book)
                                 .select(Projections.constructor(BookBriefResponse.class, book.id, book.name, book.saleCost)))
                 .fetch();
-        
+
         long total = from(book).fetchCount();
 
         return new PageImpl<>(lists, pageable, total);

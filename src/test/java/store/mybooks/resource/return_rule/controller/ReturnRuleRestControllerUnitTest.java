@@ -49,7 +49,8 @@ class ReturnRuleRestControllerUnitTest {
 
     @Test
     @DisplayName("반품 규정 id 조회 성공 테스트")
-    void givenStringReturnRuleId_whenGetReturnRuleResponseByReturnRuleName_thenReturnReturnRuleResponse() throws Exception {
+    void givenStringReturnRuleId_whenGetReturnRuleResponseByReturnRuleName_thenReturnReturnRuleResponse()
+            throws Exception {
         String name = "test";
         ReturnRuleResponse response = new ReturnRuleResponse(1, "test", 1000, 10, true);
         when(returnRuleService.getReturnRuleResponseByReturnRuleName(name)).thenReturn(response);
@@ -68,7 +69,9 @@ class ReturnRuleRestControllerUnitTest {
     @DisplayName("전체 반품 규정 조회 성공 테스트")
     void given_whenGetReturnRuleResponseList_thenReturnReturnRuleResponseList() throws Exception {
 
-        when(returnRuleService.getReturnRuleResponseList()).thenReturn(List.of(new ReturnRuleResponse(1, "test", 1000, 10, true)));
+
+        when(returnRuleService.getReturnRuleResponseList()).thenReturn(
+                List.of(new ReturnRuleResponse(1, "test", 1000, 10, true)));
         mockMvc.perform(get("/api/return-rules"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -188,7 +191,8 @@ class ReturnRuleRestControllerUnitTest {
 
     @Test
     @DisplayName("반품 규정 수정 반품 규정 명 유효성 테스트")
-    void givenReturnRuleModifyRequestReturnRuleNameValidation_when_thenReturnHttpStatusCodeIsNotFound() throws Exception {
+    void givenReturnRuleModifyRequestReturnRuleNameValidation_when_thenReturnHttpStatusCodeIsNotFound()
+            throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         ReturnRuleModifyRequest request = new ReturnRuleModifyRequest("", 10, 11);
 

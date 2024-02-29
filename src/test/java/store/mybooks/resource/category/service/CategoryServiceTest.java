@@ -29,6 +29,7 @@ import store.mybooks.resource.category.dto.request.CategoryModifyRequest;
 import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 import store.mybooks.resource.category.entity.Category;
 import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
@@ -136,6 +137,44 @@ class CategoryServiceTest {
         assertThat(actualPage.getContent().get(0).getId()).isEqualTo(firstCategory.getId());
         assertThat(actualPage.getContent().get(1).getId()).isEqualTo(secondCategory.getId());
         assertThat(actualPage.getTotalPages()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("ParentCategoryId 를 기준으로 오름차순 정렬된 category 리스트 반환")
+    void givenPageable_whenGetCategoryListOrderByParentCategoryId_thenReturnPageOfCategoryGetResponseForView() {
+        Pageable pageable = PageRequest.of(0, 3);
+        List<CategoryGetResponse> categoryGetResponseForViewList = new ArrayList<>();
+        CategoryGetResponse grandParentCategoryGetResponse =
+                makeCategoryGetResponse(1, null, "grandParentCategory");
+        CategoryGetResponse parentCategoryGetResponse =
+                makeCategoryGetResponse(2, grandParentCategoryGetResponse, "parentCategory");
+        CategoryGetResponse childCategoryGetResponse =
+                makeCategoryGetResponse(3, parentCategoryGetResponse, "childCategory");
+        categoryGetResponseForViewList.add(grandParentCategoryGetResponse);
+        categoryGetResponseForViewList.add(parentCategoryGetResponse);
+        categoryGetResponseForViewList.add(childCategoryGetResponse);
+
+        PageImpl<CategoryGetResponse> categoryGetResponseForViewPage =
+                new PageImpl<>(categoryGetResponseForViewList, pageable, 3);
+
+        when(categoryRepository.findByOrderByParentCategory_Id(any())).thenReturn(categoryGetResponseForViewPage);
+
+        Page<CategoryGetResponseForView> actualPage =
+                categoryService.getCategoriesOrderByParentCategoryIdForAdminPage(pageable);
+
+        assertThat(actualPage).isNotNull().hasSize(3);
+        List<CategoryGetResponseForView> actualList = actualPage.getContent();
+        assertThat(actualList).isNotNull().hasSize(3);
+        assertThat(actualList.get(0).getParentCategoryName()).isEmpty();
+        assertThat(actualList.get(0).getId()).isEqualTo(1);
+        assertThat(actualList.get(0).getName()).isEqualTo("grandParentCategory");
+        assertThat(actualList.get(1).getParentCategoryName()).isEqualTo("grandParentCategory");
+        assertThat(actualList.get(1).getId()).isEqualTo(2);
+        assertThat(actualList.get(1).getName()).isEqualTo("parentCategory");
+        assertThat(actualList.get(2).getParentCategoryName()).isEqualTo("grandParentCategory/parentCategory");
+        assertThat(actualList.get(2).getId()).isEqualTo(3);
+        assertThat(actualList.get(2).getName()).isEqualTo("childCategory");
+
     }
 
     @Test
@@ -324,5 +363,25 @@ class CategoryServiceTest {
         when(categoryRepository.findById(anyInt())).thenReturn(Optional.empty());
 
         assertThrows(CategoryNotExistsException.class, () -> categoryService.deleteCategory(1));
+    }
+
+    private CategoryGetResponse makeCategoryGetResponse(Integer id, CategoryGetResponse parentCategoryGetResponse,
+                                                        String name) {
+        return new CategoryGetResponse() {
+            @Override
+            public Integer getId() {
+                return id;
+            }
+
+            @Override
+            public CategoryGetResponse getParentCategory() {
+                return parentCategoryGetResponse;
+            }
+
+            @Override
+            public String getName() {
+                return name;
+            }
+        };
     }
 }

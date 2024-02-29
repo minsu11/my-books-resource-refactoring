@@ -29,7 +29,7 @@ public class AuthorRepositoryImpl extends QuerydslRepositorySupport implements A
     QAuthor author = QAuthor.author;
 
     @Override
-    public List<AuthorGetResponse> getAllAUthors() {
+    public List<AuthorGetResponse> getAllAuthors() {
         return from(author)
                 .select(Projections.constructor(AuthorGetResponse.class, author.id, author.name, author.content))
                 .fetch();

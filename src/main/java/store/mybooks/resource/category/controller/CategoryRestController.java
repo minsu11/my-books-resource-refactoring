@@ -117,7 +117,7 @@ public class CategoryRestController {
     public ResponseEntity<CategoryGetResponseForUpdate> getCategoryForUpdate(@PathVariable("id") int id) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(categoryService.getCategory(id));
+                .body(categoryService.getCategoryForUpdate(id));
     }
 
     /**
