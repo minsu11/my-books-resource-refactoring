@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -39,7 +38,9 @@ import store.mybooks.resource.book.service.BookService;
  * -----------------------------------------------------------<br/>
  * 2/25/24        newjaehun       최초 생성<br/>
  */
+
 @WebMvcTest(value = BookRestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
+
 @ExtendWith(MockitoExtension.class)
 class BookRestControllerTest {
     @Autowired
@@ -58,8 +59,7 @@ class BookRestControllerTest {
     void givenValidBookCreateRequest_whenCreateBook_thenSaveBookAndReturnBookCreateResponse() throws Exception {
         BookCreateRequest request =
                 new BookCreateRequest("판매중", 1, "도서1", "1234567898764", LocalDate.of(2024, 1, 1), 100, "인덱스1", "내용1",
-                        20000, 16000,
-                        20, 5, true);
+                        20000, 16000, 5, true);
         BookCreateResponse response = new BookCreateResponse();
         response.setName(request.getName());
 
@@ -78,8 +78,7 @@ class BookRestControllerTest {
     void givenInValidBookCreateRequest_whenCreateBook_thenThrowBindException() throws Exception {
         BookCreateRequest request =
                 new BookCreateRequest("판매중", 1, "도서1", "123456789876444", LocalDate.of(2024, 1, 1), 100, "인덱스1", "내용1",
-                        20000, 16000,
-                        20, 5, true);
+                        20000, 16000, 5, true);
         BookCreateResponse response = new BookCreateResponse();
         response.setName(request.getName());
 
@@ -98,7 +97,7 @@ class BookRestControllerTest {
     void givenBookIdAndValidBookModifyRequest_whenModifyBook_thenModifyBookAndReturnBookModifyResponse()
             throws Exception {
         Long bookId = 3L;
-        BookModifyRequest request = new BookModifyRequest("판매종료", 12000, 40, 3, false);
+        BookModifyRequest request = new BookModifyRequest("판매종료", 13000, 1, false);
         BookModifyResponse response = new BookModifyResponse();
         response.setName("도서명");
 
@@ -118,7 +117,7 @@ class BookRestControllerTest {
     @DisplayName("도서 수정(검증 실패)")
     void givenBookIdAndInValidBookModifyRequest_whenModifyBook_thenThrowBindException() throws Exception {
         Long bookId = 3L;
-        BookModifyRequest request = new BookModifyRequest("판매종료", 12000, 400, 3, false);
+        BookModifyRequest request = new BookModifyRequest("판매종료", 12000, -1, false);
         BookModifyResponse response = new BookModifyResponse();
         response.setName("도서명");
 

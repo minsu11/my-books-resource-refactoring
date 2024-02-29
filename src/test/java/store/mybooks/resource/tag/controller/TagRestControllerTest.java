@@ -18,7 +18,6 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
@@ -99,7 +98,7 @@ class TagRestControllerTest {
         when(tagService.getTags(any())).thenReturn(
                 new PageImpl<>(tagGetResponseList, pageable, tagGetResponseList.size()));
 
-        mockMvc.perform(get("/api/tags"))
+        mockMvc.perform(get("/api/tags/page?page=0&size=10"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.content.size()").value(tagGetResponseList.size()))

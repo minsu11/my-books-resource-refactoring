@@ -1,11 +1,14 @@
 package store.mybooks.resource.delivery_rule_name.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -15,17 +18,15 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameDto;
-import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameRegisterRequest;
-import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameResponse;
+import store.mybooks.resource.delivery_rule_name.dto.request.DeliveryRuleNameRegisterRequest;
+import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameDto;
+import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameResponse;
 import store.mybooks.resource.delivery_rule_name.service.DeliveryRuleNameService;
-import store.mybooks.resource.delivery_rule_name.controller.DeliveryRuleNameController;
 
 /**
  * packageName    : store.mybooks.resource.delivery_name_rule.controller
@@ -38,7 +39,10 @@ import store.mybooks.resource.delivery_rule_name.controller.DeliveryRuleNameCont
  * -----------------------------------------------------------
  * 2/18/24        Fiat_lux       최초 생성
  */
+
 @WebMvcTest(value = DeliveryRuleNameController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
+
+
 class DeliveryRuleNameControllerTest {
 
     @Autowired
@@ -93,6 +97,32 @@ class DeliveryRuleNameControllerTest {
                 .andExpect(jsonPath("$.id").value(deliveryRuleNameResponse.getId()))
                 .andExpect(jsonPath("$.createdDate").value(deliveryRuleNameResponse.getCreatedDate().toString()));
         verify(deliveryRuleNameService, times(1)).registerDeliveryNameRule(any());
+    }
+
+    @Test
+    @DisplayName("post 요청으로 들어온 데이터의 id값의 유효성을 지키지 않은 경우")
+    void givenDeliveryRuleNameRegisterRequest_whenRegisterDeliveryNameRuleIdIsBlank_thenHttpStatusIsBadRequest()
+            throws Exception {
+        DeliveryRuleNameRegisterRequest deliveryRuleNameRegisterRequest = new DeliveryRuleNameRegisterRequest("");
+        mockMvc.perform(post("/api/delivery-name-rules").content(
+                                new ObjectMapper().writeValueAsString(deliveryRuleNameRegisterRequest))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+        verify(deliveryRuleNameService, never()).registerDeliveryNameRule(any());
+    }
+
+    @Test
+    @DisplayName("post 요청으로 들어온 데이터의 id값의 유효성을 지키지 않은 경우 - max size 50")
+    void givenDeliveryRuleNameRegisterRequest_whenRegisterDeliveryNameRuleIdMaxSize50_thenHttpStatusIsBadRequest()
+            throws Exception {
+        DeliveryRuleNameRegisterRequest deliveryRuleNameRegisterRequest = new DeliveryRuleNameRegisterRequest("qwertyuiopasdfghjklzxcvbnmqwertyuiiiiiioasdfghjklzxcv");
+        mockMvc.perform(post("/api/delivery-name-rules").content(
+                                new ObjectMapper().writeValueAsString(deliveryRuleNameRegisterRequest))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+        verify(deliveryRuleNameService, never()).registerDeliveryNameRule(any());
     }
 
     @Test

@@ -22,6 +22,7 @@ import store.mybooks.resource.category.dto.request.CategoryModifyRequest;
 import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForBookCreate;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
@@ -59,6 +60,20 @@ public class CategoryRestController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(categoryService.getCategoriesOrderByParentCategoryIdForAdminPage(pageable));
+    }
+
+    /**
+     * methodName : getCategoriesForBookCreate <br>
+     * author : damho-lee <br>
+     * description : 도서 등록할 때 필요한 카테고리 리스트 반환.<br>
+     *
+     * @return ResponseEntity
+     */
+    @GetMapping
+    public ResponseEntity<List<CategoryGetResponseForBookCreate>> getCategoriesForBookCreate() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(categoryService.getCategoriesForBookCreate());
     }
 
     /**

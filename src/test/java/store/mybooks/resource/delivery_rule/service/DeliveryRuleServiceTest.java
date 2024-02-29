@@ -18,15 +18,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotFoundException;
+import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotExistsException;
 import store.mybooks.resource.delivery_rule_name.repository.DeliveryRuleNameRepository;
-import store.mybooks.resource.delivery_rule.dto.DeliveryRuleDto;
-import store.mybooks.resource.delivery_rule.dto.DeliveryRuleMapper;
-import store.mybooks.resource.delivery_rule.dto.DeliveryRuleModifyRequest;
-import store.mybooks.resource.delivery_rule.dto.DeliveryRuleRegisterRequest;
-import store.mybooks.resource.delivery_rule.dto.DeliveryRuleResponse;
+import store.mybooks.resource.delivery_rule.dto.response.DeliveryRuleDto;
+import store.mybooks.resource.delivery_rule.dto.mapper.DeliveryRuleMapper;
+import store.mybooks.resource.delivery_rule.dto.request.DeliveryRuleModifyRequest;
+import store.mybooks.resource.delivery_rule.dto.request.DeliveryRuleRegisterRequest;
+import store.mybooks.resource.delivery_rule.dto.response.DeliveryRuleResponse;
 import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
-import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotFoundException;
+import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotExistsException;
 import store.mybooks.resource.delivery_rule.repository.DeliveryRuleRepository;
 import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
@@ -96,7 +96,7 @@ class DeliveryRuleServiceTest {
                 new DeliveryRuleRegisterRequest("test", "test2", 2000, 2000);
         when(deliveryRuleNameRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThrows(DeliveryRuleNameNotFoundException.class,
+        assertThrows(DeliveryRuleNameNotExistsException.class,
                 () -> deliveryRuleService.registerDeliveryRule(deliveryRuleRegisterRequest));
 
         verify(deliveryRuleNameRepository, times(1)).findById(any());
@@ -200,7 +200,7 @@ class DeliveryRuleServiceTest {
         };
 
         when(deliveryRuleRepository.findDeliveryRuleById(deliveryRuleDto.getId())).thenReturn(Optional.empty());
-        assertThrows(DeliveryRuleNotFoundException.class,
+        assertThrows(DeliveryRuleNotExistsException.class,
                 () -> deliveryRuleService.getDeliveryRule(deliveryRuleDto.getId()));
 
         verify(deliveryRuleRepository, times(1)).findDeliveryRuleById(deliveryRuleDto.getId());
@@ -246,7 +246,7 @@ class DeliveryRuleServiceTest {
                 new DeliveryRuleModifyRequest("test", "test2", 2000, 2000);
         when(deliveryRuleRepository.findById(deliveryRuleId)).thenReturn(Optional.empty());
 
-        assertThrows(DeliveryRuleNotFoundException.class,
+        assertThrows(DeliveryRuleNotExistsException.class,
                 () -> deliveryRuleService.modifyDeliveryRule(deliveryRuleId, deliveryRuleModifyRequest));
 
         verify(deliveryRuleRepository, times(1)).findById(deliveryRuleId);
@@ -264,7 +264,7 @@ class DeliveryRuleServiceTest {
         when(deliveryRuleRepository.findById(deliveryRuleId)).thenReturn(Optional.of(deliveryRule));
         when(deliveryRuleNameRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThrows(DeliveryRuleNameNotFoundException.class,
+        assertThrows(DeliveryRuleNameNotExistsException.class,
                 () -> deliveryRuleService.modifyDeliveryRule(deliveryRuleId, deliveryRuleModifyRequest));
 
         verify(deliveryRuleRepository, times(1)).findById(deliveryRuleId);
@@ -288,7 +288,7 @@ class DeliveryRuleServiceTest {
     void givenNotDeliveryRuleId_whenDeleteDeliveryRule_thenThrowDeliveryRuleNotFoundException() {
         Integer deliveryRuleId = 1;
         when(deliveryRuleRepository.existsById(deliveryRuleId)).thenReturn(false);
-        assertThrows(DeliveryRuleNotFoundException.class, () -> deliveryRuleService.deleteDeliveryRule(deliveryRuleId));
+        assertThrows(DeliveryRuleNotExistsException.class, () -> deliveryRuleService.deleteDeliveryRule(deliveryRuleId));
         verify(deliveryRuleRepository, times(1)).existsById(deliveryRuleId);
         verify(deliveryRuleRepository, never()).deleteById(deliveryRuleId);
     }

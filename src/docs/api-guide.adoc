@@ -1,0 +1,23 @@
+= My Books -Resource
+:doctype: book
+:toc: left
+:toclevels: 3
+:sectnums:
+:numbered:
+
+[[api]]
+include::user-guide.adoc[]
+include::book-guide.adoc[]
+include::review-guide.adoc[]
+include::cart-guide.adoc[]
+include::order-guide.adoc[]
+include::delivery-guide.adoc[]
+include::wrap-guide.adoc[]
+include::payment-guide.adoc[]
+include::return-guide.adoc[]
+include::category-guide.adoc[]
+include::tag-guide.adoc[]
+include::publisher-guide.adoc[]
+include::author-guide.adoc[]
+include::point-guide.adoc[]
+include::coupon-guide.adoc[]
