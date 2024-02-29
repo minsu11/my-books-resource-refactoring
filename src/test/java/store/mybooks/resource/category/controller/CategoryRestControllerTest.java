@@ -16,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,16 +144,27 @@ class CategoryRestControllerTest {
     @DisplayName("ParentCategoryId 로 ChildCategoryList 가져오기")
     void givenGetCategoriesByParentCategoryId_whenNormalCase_thenReturnResponseEntity() throws Exception {
         List<CategoryGetResponse> categoryGetResponseList = new ArrayList<>();
-        Integer parentCategoryId = 1;
-        initChildCategoryList(categoryGetResponseList, parentCategoryId);
-        when(categoryService.getCategoriesByParentCategoryId(anyInt())).thenReturn(categoryGetResponseList);
+        CategoryGetResponse parentCategory = makeCategoryGetResponse(1, null, "parentCategory");
+        CategoryGetResponse firstChildCategory = makeCategoryGetResponse(2, parentCategory, "firstChildCategory");
+        CategoryGetResponse secondChildCategory = makeCategoryGetResponse(3, parentCategory, "secondChildCategory");
+
+        categoryGetResponseList.add(parentCategory);
+        categoryGetResponseList.add(firstChildCategory);
+        categoryGetResponseList.add(secondChildCategory);
+
+        when(categoryService.getCategoriesByParentCategoryId(anyInt())).thenReturn(categoryGetResponseList
+                .stream()
+                .filter(category -> category.getParentCategory() != null)
+                .collect(Collectors.toList()));
 
         mockMvc.perform(get("/api/categories/parentCategoryId/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.size()").value(2))
-                .andExpect(jsonPath("$[0].parentCategory.id").value(parentCategoryId))
-                .andExpect(jsonPath("$[1].parentCategory.id").value(parentCategoryId));
+                .andExpect(jsonPath("$[0].parentCategory.id").value(parentCategory.getId()))
+                .andExpect(jsonPath("$[0].id").value(firstChildCategory.getId()))
+                .andExpect(jsonPath("$[1].parentCategory.id").value(parentCategory.getId()))
+                .andExpect(jsonPath("$[1].id").value(secondChildCategory.getId()));
     }
 
     @Test
@@ -282,107 +294,27 @@ class CategoryRestControllerTest {
     }
 
     private void initHighestCategoryList(List<CategoryGetResponse> categoryGetResponseList) {
-        categoryGetResponseList.add(new CategoryGetResponse() {
-            @Override
-            public Integer getId() {
-                return 1;
-            }
-
-            @Override
-            public CategoryGetResponse getParentCategory() {
-                return null;
-            }
-
-            @Override
-            public String getName() {
-                return "firstCategory";
-            }
-        });
-
-        categoryGetResponseList.add(new CategoryGetResponse() {
-            @Override
-            public Integer getId() {
-                return 2;
-            }
-
-            @Override
-            public CategoryGetResponse getParentCategory() {
-                return null;
-            }
-
-            @Override
-            public String getName() {
-                return "secondCategory";
-            }
-        });
-
-        categoryGetResponseList.add(new CategoryGetResponse() {
-            @Override
-            public Integer getId() {
-                return 3;
-            }
-
-            @Override
-            public CategoryGetResponse getParentCategory() {
-                return null;
-            }
-
-            @Override
-            public String getName() {
-                return "thirdCategory";
-            }
-        });
+        categoryGetResponseList.add(makeCategoryGetResponse(1, null, "firstCategory"));
+        categoryGetResponseList.add(makeCategoryGetResponse(2, null, "secondCategory"));
+        categoryGetResponseList.add(makeCategoryGetResponse(3, null, "thirdCategory"));
     }
 
-    private void initChildCategoryList(List<CategoryGetResponse> categoryGetResponseList, Integer parentCategoryId) {
-        CategoryGetResponse parentCategory = new CategoryGetResponse() {
+    private CategoryGetResponse makeCategoryGetResponse(Integer id, CategoryGetResponse parentCategory, String name) {
+        return new CategoryGetResponse() {
             @Override
             public Integer getId() {
-                return parentCategoryId;
+                return id;
             }
 
             @Override
             public CategoryGetResponse getParentCategory() {
-                return null;
+                return parentCategory;
             }
 
             @Override
             public String getName() {
-                return "parentCategory";
+                return name;
             }
         };
-        categoryGetResponseList.add(new CategoryGetResponse() {
-            @Override
-            public Integer getId() {
-                return 2;
-            }
-
-            @Override
-            public CategoryGetResponse getParentCategory() {
-                return parentCategory;
-            }
-
-            @Override
-            public String getName() {
-                return "firstChildCategory";
-            }
-        });
-
-        categoryGetResponseList.add(new CategoryGetResponse() {
-            @Override
-            public Integer getId() {
-                return 3;
-            }
-
-            @Override
-            public CategoryGetResponse getParentCategory() {
-                return parentCategory;
-            }
-
-            @Override
-            public String getName() {
-                return "secondChildCategory";
-            }
-        });
     }
 }

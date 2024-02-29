@@ -173,7 +173,8 @@ class CategoryServiceTest {
         when(categoryRepository.existsById(3)).thenReturn(true);
         when(categoryRepository.queryById(3)).thenReturn(childCategory);
 
-        CategoryGetResponseForUpdate actual = categoryService.getCategory(3);
+        CategoryGetResponseForUpdate actual = categoryService.getCategoryForUpdate(3);
+
         assertThat(actual).isNotNull();
         assertThat(actual.getTargetCategory().getId()).isEqualTo(childCategory.getId());
         assertThat(actual.getTargetCategory().getName()).isEqualTo(childCategory.getName());
@@ -185,7 +186,7 @@ class CategoryServiceTest {
     @DisplayName("CategoryGetResponseForUpdate 조회 시 존재하지 않는 카테고리 Id 를 넘겨준 경우")
     void givenNotExistsCategoryId_whenGetCategoryForUpdate_thenThrowCategoryNotExistsException() {
         when(categoryRepository.existsById(any())).thenReturn(false);
-        assertThrows(CategoryNotExistsException.class, () -> categoryService.getCategory(1));
+        assertThrows(CategoryNotExistsException.class, () -> categoryService.getCategoryForUpdate(1));
     }
 
 
@@ -363,6 +364,7 @@ class CategoryServiceTest {
         when(categoryRepository.countByParentCategory_Id(anyInt())).thenReturn(1);
         assertThrows(CannotDeleteParentCategoryException.class, () -> categoryService.deleteCategory(1));
     }
+
     private CategoryGetResponse makeCategoryGetResponse(Integer id, CategoryGetResponse parentCategoryGetResponse,
                                                         String name) {
         return new CategoryGetResponse() {
