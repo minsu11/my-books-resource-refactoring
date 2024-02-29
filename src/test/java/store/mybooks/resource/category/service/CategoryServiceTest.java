@@ -174,6 +174,7 @@ class CategoryServiceTest {
         when(categoryRepository.queryById(3)).thenReturn(childCategory);
 
         CategoryGetResponseForUpdate actual = categoryService.getCategoryForUpdate(3);
+
         assertThat(actual).isNotNull();
         assertThat(actual.getTargetCategory().getId()).isEqualTo(childCategory.getId());
         assertThat(actual.getTargetCategory().getName()).isEqualTo(childCategory.getName());

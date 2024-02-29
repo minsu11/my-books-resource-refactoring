@@ -5,15 +5,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import store.mybooks.resource.book.exception.IsbnAlreadyExistsException;
 import store.mybooks.resource.category.exception.CannotDeleteParentCategoryException;
 import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
+import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotExistsException;
+import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameAlreadyExistsException;
+import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotExistsException;
 import store.mybooks.resource.publisher.exception.PublisherAlreadyExistException;
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
 import store.mybooks.resource.return_rule.exception.ReturnRuleValidationFailedException;
 import store.mybooks.resource.return_rule_name.exception.ReturnRuleNameRequestValidationFailedException;
 import store.mybooks.resource.tag.exception.TagNameAlreadyExistsException;
 import store.mybooks.resource.tag.exception.TagNotExistsException;
+import store.mybooks.resource.wrap.exception.WrapValidationFailedException;
 
 /**
  * packageName    : store.mybooks.resource.error
@@ -36,7 +41,8 @@ public class GlobalControllerAdvice {
      * @param exception exception.
      * @return ResponseEntity
      */
-    @ExceptionHandler({CategoryNotExistsException.class, TagNotExistsException.class, PublisherNotExistException.class})
+    @ExceptionHandler({CategoryNotExistsException.class, TagNotExistsException.class, PublisherNotExistException.class,
+            DeliveryRuleNameNotExistsException.class, DeliveryRuleNotExistsException.class})
     public ResponseEntity<String> xxxNotExistsException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -52,7 +58,8 @@ public class GlobalControllerAdvice {
      * @return ResponseEntity
      */
     @ExceptionHandler({CategoryNameAlreadyExistsException.class, TagNameAlreadyExistsException.class,
-            PublisherAlreadyExistException.class})
+            PublisherAlreadyExistException.class, DeliveryRuleNameAlreadyExistsException.class,
+            IsbnAlreadyExistsException.class})
     public ResponseEntity<String> xxxAlreadyExistsException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -68,7 +75,10 @@ public class GlobalControllerAdvice {
      * @param exception ValidationException.
      * @return ResponseEntity
      */
-    @ExceptionHandler({ValidationException.class, ReturnRuleNameRequestValidationFailedException.class, ReturnRuleValidationFailedException.class})
+
+
+    @ExceptionHandler({ValidationException.class, ReturnRuleNameRequestValidationFailedException.class,
+            ReturnRuleValidationFailedException.class, RequestValidationFailedException.class})
     public ResponseEntity<String> validationException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

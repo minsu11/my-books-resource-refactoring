@@ -47,7 +47,7 @@ class AuthorRepositoryTest {
     @Test
     @DisplayName("전체 저자 조회(리스트)")
     void whenFindAllAuthors_thenReturnAllAuthorsGetResponseList() {
-        List<AuthorGetResponse> result = authorRepository.getAllAUthors();
+        List<AuthorGetResponse> result = authorRepository.getAllAuthors();
 
         assertThat(result.get(0).getName()).isEqualTo(author1.getName());
         assertThat(result.get(1).getName()).isEqualTo(author2.getName());

@@ -73,10 +73,10 @@ class AuthorServiceTest {
                 Arrays.asList(new AuthorGetResponse(id, name, content),
                         new AuthorGetResponse(2, "author2", "author_content2"));
 
-        when(authorRepository.getAllAUthors()).thenReturn(authorGetResponseList);
+        when(authorRepository.getAllAuthors()).thenReturn(authorGetResponseList);
         assertThat(authorService.getAllAuthors()).isEqualTo(authorGetResponseList);
 
-        verify(authorRepository, times(1)).getAllAUthors();
+        verify(authorRepository, times(1)).getAllAuthors();
     }
 
     @Test
