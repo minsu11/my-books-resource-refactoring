@@ -33,7 +33,9 @@ import store.mybooks.resource.category.dto.request.CategoryModifyRequest;
 import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
+import store.mybooks.resource.category.dto.response.CategoryIdNameGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 import store.mybooks.resource.category.exception.CategoryValidationException;
 import store.mybooks.resource.category.service.CategoryService;
@@ -89,8 +91,8 @@ class CategoryRestControllerTest {
     @DisplayName("최상위 카테고리들 가져오기")
     void givenGetHighestCategories_whenNormalCase_thenReturnResponseEntity() throws Exception {
         List<CategoryGetResponse> categoryGetResponseList = new ArrayList<>();
-        when(categoryService.getHighestCategories()).thenReturn(categoryGetResponseList);
         initHighestCategoryList(categoryGetResponseList);
+        when(categoryService.getHighestCategories()).thenReturn(categoryGetResponseList);
 
         mockMvc.perform(get("/api/categories/highest"))
                 .andExpect(status().isOk())
@@ -124,6 +126,33 @@ class CategoryRestControllerTest {
     }
 
     @Test
+    @DisplayName("카테고리 수정을 위한 카테고리 가져오기")
+    void givenCategoryId_whenGetCategoryUpdateForm_thenReturnCategoryGetResponseForUpdate() throws Exception {
+        CategoryGetResponseForUpdate categoryGetResponseForUpdate = new CategoryGetResponseForUpdate(
+                new CategoryIdNameGetResponse() {
+                    @Override
+                    public Integer getId() {
+                        return 1;
+                    }
+
+                    @Override
+                    public String getName() {
+                        return "firstCategory";
+                    }
+                }, "levelOneCategoryName", "levelTwoCategoryName");
+
+        when(categoryService.getCategoryForUpdate(anyInt())).thenReturn(categoryGetResponseForUpdate);
+
+        mockMvc.perform(get("/api/categories/categoryId/{id}", 1))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.targetCategory.name").value("firstCategory"))
+                .andExpect(jsonPath("$.targetCategory.id").value(1))
+                .andExpect(jsonPath("$.levelOneCategoryName").value("levelOneCategoryName"))
+                .andExpect(jsonPath("$.levelTwoCategoryName").value("levelTwoCategoryName"));
+    }
+
+    @Test
     @DisplayName("카테고리 생성")
     void givenCreateCategory_whenNormalCase_thenReturnIsCreated() throws Exception {
         CategoryCreateRequest categoryCreateRequest = new CategoryCreateRequest(null, "categoryName");
@@ -145,7 +174,7 @@ class CategoryRestControllerTest {
 
     @Test
     @DisplayName("카테고리 생성 - Validation 실패")
-    public void givenCreateCategory_whenValidationFailure_thenReturnBadRequest() throws Exception {
+    void givenCreateCategory_whenValidationFailure_thenReturnBadRequest() throws Exception {
         CategoryCreateRequest categoryCreateRequest = new CategoryCreateRequest(null, null);
 
         String content = objectMapper.writeValueAsString(categoryCreateRequest);
@@ -162,7 +191,7 @@ class CategoryRestControllerTest {
 
     @Test
     @DisplayName("카테고리 수정")
-    public void givenModifyCategory_whenNormalCase_thenReturnIsOk() throws Exception {
+    void givenModifyCategory_whenNormalCase_thenReturnIsOk() throws Exception {
         CategoryModifyRequest categoryModifyRequest = new CategoryModifyRequest("categoryName");
         CategoryModifyResponse categoryModifyResponse = new CategoryModifyResponse();
         categoryModifyResponse.setParentCategoryName(null);
