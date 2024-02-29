@@ -22,6 +22,8 @@ import store.mybooks.resource.category.dto.request.CategoryModifyRequest;
 import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 import store.mybooks.resource.category.exception.CategoryValidationException;
 import store.mybooks.resource.category.service.CategoryService;
@@ -51,12 +53,12 @@ public class CategoryRestController {
      * @param pageable pagination. (default: page = 0, size = 10)
      * @return ResponseEntity
      */
-    @GetMapping
-    public ResponseEntity<Page<CategoryGetResponse>> getCategoriesOrderByParentCategoryId(
+    @GetMapping("/page")
+    public ResponseEntity<Page<CategoryGetResponseForView>> getCategoriesOrderByParentCategoryId(
             @PageableDefault Pageable pageable) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(categoryService.getCategoriesOrderByParentCategoryId(pageable));
+                .body(categoryService.getCategoriesOrderByParentCategoryIdForAdminPage(pageable));
     }
 
     /**
@@ -80,11 +82,27 @@ public class CategoryRestController {
      *
      * @return ResponseEntity
      */
-    @GetMapping("/{id}")
-    public ResponseEntity<List<CategoryGetResponse>> getCategoriesByParentCategoryId(@PathVariable("id") int id) {
+    @GetMapping("/parentCategoryId/{id}")
+    public ResponseEntity<List<CategoryGetResponse>> getCategoriesByParentCategoryId(
+            @PathVariable("id") int parentCategoryId) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(categoryService.getCategoriesByParentCategoryId(id));
+                .body(categoryService.getCategoriesByParentCategoryId(parentCategoryId));
+    }
+
+    /**
+     * methodName : getCategory <br>
+     * author : damho-lee <br>
+     * description : id 로 카테고리 검색.<br>
+     *
+     * @param id int
+     * @return response entity
+     */
+    @GetMapping("/categoryId/{id}")
+    public ResponseEntity<CategoryGetResponseForUpdate> getCategoryForUpdate(@PathVariable("id") int id) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(categoryService.getCategory(id));
     }
 
     /**

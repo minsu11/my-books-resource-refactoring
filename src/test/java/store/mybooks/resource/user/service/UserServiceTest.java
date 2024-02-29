@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -21,10 +22,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import store.mybooks.resource.user.dto.mapper.UserMapper;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.request.UserGradeModifyRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
+import store.mybooks.resource.user.dto.request.UserPasswordModifyRequest;
 import store.mybooks.resource.user.dto.request.UserStatusModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
@@ -70,6 +73,9 @@ class UserServiceTest {
     @Mock
     UserMapper userMapper;
 
+    @Mock
+    PasswordEncoder passwordEncoder;
+
     @Test
     @DisplayName("이미 사용중인 email 을 담고있는 UserCreateRequest 를 이용해 CreateUser 실행시 UserAlreadyExistException")
     void givenUserCreateRequestWithAlreadyUsedEmail_whenCallCreateUser_thenThrowUserAlreadyExistException(
@@ -77,7 +83,7 @@ class UserServiceTest {
             @Mock User user) {
 
         when(userCreateRequest.getEmail()).thenReturn("test");
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+        when(userRepository.existsByEmail(anyString())).thenReturn(true);
 
         assertThrows(UserAlreadyExistException.class, () -> userService.createUser(userCreateRequest));
     }
@@ -91,17 +97,17 @@ class UserServiceTest {
             @Mock UserCreateResponse userCreateResponse) {
 
         when(userCreateRequest.getEmail()).thenReturn("test");
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+        when(userCreateRequest.getPassword()).thenReturn("test");
+        when(userRepository.existsByEmail("test")).thenReturn(false);
         when(userStatusRepository.findById(anyString())).thenReturn(Optional.of(userStatus));
         when(userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(anyString())).thenReturn(
                 Optional.of(userGrade));
-
         when(userMapper.toUserCreateResponse(any(User.class))).thenReturn(userCreateResponse);
         userService.createUser(userCreateRequest);
 
         verify(userStatusRepository, times(1)).findById(anyString());
         verify(userGradeRepository, times(1)).findByUserGradeNameIdAndIsAvailableIsTrue(anyString());
-        verify(userRepository, times(1)).findByEmail(anyString());
+        verify(userRepository, times(1)).existsByEmail(anyString());
     }
 
     @Test
@@ -110,7 +116,7 @@ class UserServiceTest {
             @Mock UserCreateRequest userCreateRequest) {
 
         when(userCreateRequest.getEmail()).thenReturn("test");
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+        when(userRepository.existsByEmail("test")).thenReturn(false);
 
         assertThrows(UserStatusNotExistException.class, () -> userService.createUser(userCreateRequest));
 
@@ -123,7 +129,7 @@ class UserServiceTest {
             @Mock UserStatus userStatus) {
 
         when(userCreateRequest.getEmail()).thenReturn("test");
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+        when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(userStatusRepository.findById(anyString())).thenReturn(Optional.of(userStatus));
 
         assertThrows(UserGradeNameNotExistException.class, () -> userService.createUser(userCreateRequest));
@@ -156,7 +162,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("존재하는 UserStatusName 을 담고있는 UserStatusModifyRequest 를 이용해 modifyUser 실행시 UserStatusNotExistException")
+    @DisplayName("존재하는 UserStatusName 을 담고있는 UserStatusModifyRequest 를 이용해 modifyUserStatus 실행시 UserStatusNotExistException")
     void givenStatusModifyRequestWithExistUserStatusName_whenCallModifyUserStatus_thenThrowUserStatusNotExistException(
             @Mock UserStatusModifyRequest modifyRequest,
             @Mock User user,
@@ -166,7 +172,7 @@ class UserServiceTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(userStatusRepository.findById(anyString())).thenReturn(Optional.of(userStatus));
         when(modifyRequest.getUserStatusName()).thenReturn("test");
-        userService.modifyUserStatus(1L,modifyRequest);
+        userService.modifyUserStatus(1L, modifyRequest);
 
         verify(userRepository, times(1)).findById(anyLong());
         verify(userStatusRepository, times(1)).findById(anyString());
@@ -174,7 +180,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 UserStatusName 을 담고있는 UserStatusModifyRequest 를 이용해 modifyUser 실행시 UserStatusNotExistException")
+    @DisplayName("존재하지 않는 UserStatusName 을 담고있는 UserStatusModifyRequest 를 이용해 modifyUserStatus 실행시 UserStatusNotExistException")
     void givenStatusModifyRequestWithNotExistUserStatusName_whenCallModifyUserStatus_thenThrowUserStatusNotExistException(
             @Mock UserStatusModifyRequest modifyRequest,
             @Mock User user
@@ -186,7 +192,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 UserGradeName 을 담고있는 UserGradeModifyRequest 를 이용해 modifyUser 실행시 UserGradeNotExistException")
+    @DisplayName("존재하지 않는 UserGradeName 을 담고있는 UserGradeModifyRequest 를 이용해 modifyUserGrade 실행시 UserGradeNotExistException")
     void givenGradeModifyRequestWithNotExistUserGradeName_whenCallModifyUserGrade_thenThrowUserGradeNotExistException(
             @Mock UserGradeModifyRequest modifyRequest,
             @Mock User user
@@ -198,7 +204,25 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("존재하는 UserGradeName 을 담고있는 UserGradeModifyRequest 를 이용해 modifyUser 실행시 UserGradeNotExistException")
+    @DisplayName("UserPasswordModifyRequest 를 이용해 modifyUserPassword 실행시 동작 테스트")
+    void givenUserPasswordModifyRequest_whenCallModifyUserPassword_thenReturnUserPasswordModifyResponse(
+            @Mock UserPasswordModifyRequest request,
+            @Mock User user) {
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(request.getPassword()).thenReturn("test");
+
+
+        userService.modifyUserPassword(1L,request);
+
+        verify(userRepository,times(1)).findById(anyLong());
+        verify(user,times(1)).modifyPassword(anyString());
+
+    }
+
+
+    @Test
+    @DisplayName("존재하는 UserGradeName 을 담고있는 UserGradeModifyRequest 를 이용해 modifyUserGrade 실행시 UserGradeNotExistException")
     void givenGradeModifyRequestWithExistUserGradeName_whenCallModifyUserGrade_thenThrowUserGradeNotExistException(
             @Mock UserGradeModifyRequest modifyRequest,
             @Mock User user,
@@ -207,9 +231,10 @@ class UserServiceTest {
 
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(modifyRequest.getUserGradeName()).thenReturn("test");
-        when(userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(anyString())).thenReturn(Optional.of(userGrade));
+        when(userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(anyString())).thenReturn(
+                Optional.of(userGrade));
 
-        userService.modifyUserGrade(1L,modifyRequest);
+        userService.modifyUserGrade(1L, modifyRequest);
 
         verify(userRepository, times(1)).findById(anyLong());
         verify(userGradeRepository, times(1)).findByUserGradeNameIdAndIsAvailableIsTrue(anyString());

@@ -3,6 +3,7 @@ package store.mybooks.resource.return_rule.controller;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -26,7 +27,9 @@ import store.mybooks.resource.return_rule.service.ReturnRuleService;
  * -----------------------------------------------------------<br>
  * 2/21/24        minsu11       최초 생성<br>
  */
-@RequestMapping("/api/return-rule")
+@Slf4j
+@RestController
+@RequestMapping("/api/return-rules")
 @RequiredArgsConstructor
 public class ReturnRuleRestController {
     private final ReturnRuleService returnRuleService;
@@ -38,12 +41,12 @@ public class ReturnRuleRestController {
      * description : get 요청으로 들어온 name에 대한 조회 데이터 응답
      * <br> *
      *
-     * @param name
+     * @param returnRuleName 반품 규정을 조회 할 반품 규정 명
      * @return response entity
      */
-    @GetMapping("/{name}")
-    public ResponseEntity<ReturnRuleResponse> getReturnRule(@PathVariable String name) {
-        ReturnRuleResponse response = returnRuleService.getReturnRuleResponseByReturnRuleName(name);
+    @GetMapping("/{returnRuleName}")
+    public ResponseEntity<ReturnRuleResponse> getReturnRule(@PathVariable String returnRuleName) {
+        ReturnRuleResponse response = returnRuleService.getReturnRuleResponseByReturnRuleName(returnRuleName);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -84,6 +87,7 @@ public class ReturnRuleRestController {
             throw new ReturnRuleValidationFailedException(bindingResult);
         }
         ReturnRuleCreateResponse response = returnRuleService.createReturnRule(request);
+        log.info("value:{}", response);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -99,18 +103,36 @@ public class ReturnRuleRestController {
      * @param bindingResult 유효성 검사 실패 시 에러의 정보가 담김.
      * @return response entity
      */
-    @PutMapping("/{name}")
+    @PutMapping("/{id}")
     public ResponseEntity<ReturnRuleModifyResponse> modifyReturnRule(
-            @PathVariable String name,
+            @PathVariable Long id,
             @Valid @RequestBody ReturnRuleModifyRequest modifyRequest,
             BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
             throw new ReturnRuleValidationFailedException(bindingResult);
         }
+        log.info("value:{}", modifyRequest);
         ReturnRuleModifyResponse modifyResponse =
-                returnRuleService.modifyReturnRule(modifyRequest, name);
-
+                returnRuleService.modifyReturnRule(modifyRequest, id);
+        log.info("value:{}", modifyResponse);
         return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
+    }
+
+    /**
+     * methodName : deleteReturnRule<br>
+     * author : minsu11<br>
+     * description : {@code id}의 반품 규정에 대한 삭제. 삭제 성공 시 {@code HttpStatus code OK}를 반환
+     * <br> *
+     *
+     * @param id 삭제할 반품 규정
+     * @return response entity
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteReturnRule(@PathVariable Long id) {
+        returnRuleService.deleteReturnRule(id);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
     }
 }

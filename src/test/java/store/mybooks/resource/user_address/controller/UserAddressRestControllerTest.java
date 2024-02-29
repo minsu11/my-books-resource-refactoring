@@ -23,8 +23,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -51,7 +54,7 @@ import store.mybooks.resource.user_grade.dto.response.UserGradeGetResponse;
  * -----------------------------------------------------------
  * 2/21/24        masiljangajji       최초 생성
  */
-@WebMvcTest(UserAddressRestController.class)
+@WebMvcTest(value = UserAddressRestController.class)
 @ExtendWith(MockitoExtension.class)
 class UserAddressRestControllerTest {
 

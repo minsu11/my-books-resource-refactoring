@@ -1,5 +1,6 @@
 package store.mybooks.resource.publisher.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,17 +35,31 @@ public class PublisherService {
     private final PublisherRepository publisherRepository;
     private final PublisherMapper publisherMapper;
 
+
+    /**
+     * methodName : getAllPublishers
+     * author : newjaehun
+     * description : 전체 출판사 리스트 반환.
+     *
+     * @return list
+     */
+    @Transactional(readOnly = true)
+    public List<PublisherGetResponse> getAllPublishers() {
+        return publisherRepository.findAllBy();
+    }
+
+
     /**
      * methodName : getAllPublisher
      * author : newjaehun
-     * description : 전체 출판사 리스트 반환.
+     * description : 페이징된 전체 출판사 리스트 반환.
      *
      * @param pageable pageable
      * @return Page
      */
     @Transactional(readOnly = true)
-    public Page<PublisherGetResponse> getAllPublisher(Pageable pageable) {
-        return publisherRepository.findAllBy(pageable);
+    public Page<PublisherGetResponse> getPagedPublisher(Pageable pageable) {
+        return publisherRepository.getPagedBy(pageable);
     }
 
     /**
@@ -70,12 +85,12 @@ public class PublisherService {
      * author : newjaehun
      * description : 출판사 수정하는 메서드.
      *
-     * @param publisherId 수정하려는 publisher 의 id, 존재하지 않으면 PublisherNotExistException 발생
+     * @param publisherId   수정하려는 publisher 의 id, 존재하지 않으면 PublisherNotExistException 발생
      * @param modifyRequest 수정할 name 포함
      * @return publisherModifyResponse: 수정된 name 포함
      */
     @Transactional
-     public PublisherModifyResponse modifyPublisher(Integer publisherId, PublisherModifyRequest modifyRequest) {
+    public PublisherModifyResponse modifyPublisher(Integer publisherId, PublisherModifyRequest modifyRequest) {
         Publisher publisher =
                 publisherRepository.findById(publisherId)
                         .orElseThrow(() -> new PublisherNotExistException(publisherId));
@@ -98,7 +113,8 @@ public class PublisherService {
     @Transactional
     public PublisherDeleteResponse deletePublisher(Integer publisherId) {
         Publisher publisher =
-                publisherRepository.findById(publisherId).orElseThrow(() -> new PublisherNotExistException(publisherId));
+                publisherRepository.findById(publisherId)
+                        .orElseThrow(() -> new PublisherNotExistException(publisherId));
         publisherRepository.deleteById(publisherId);
         return publisherMapper.deleteResponse(publisher);
     }

@@ -1,9 +1,6 @@
 package store.mybooks.resource.author.repository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import store.mybooks.resource.author.dto.response.AuthorGetResponse;
 import store.mybooks.resource.author.entity.Author;
 
 /**
@@ -17,8 +14,6 @@ import store.mybooks.resource.author.entity.Author;
  * -----------------------------------------------------------
  * 2/20/24        newjaehun       최초 생성
  */
-public interface AuthorRepository extends JpaRepository<Author, Integer> {
-    Page<AuthorGetResponse> findAllBy(Pageable pageable);
-
+public interface AuthorRepository extends JpaRepository<Author, Integer>, AuthorRepositoryCustom {
     Boolean existsByName(String name);
 }

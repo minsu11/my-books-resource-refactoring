@@ -4,10 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import store.mybooks.resource.user_grade_name.entity.UserGradeName;
 
 /**
- * packageName    : store.mybooks.resource.user_grade_name.repository
- * fileName       : UserGradeNameRepository
- * author         : masiljangajji
- * date           : 2/19/24
+ * packageName    : store.mybooks.resource.user_grade_name.repository<br>
+ * fileName       : UserGradeNameRepository<br>
+ * author         : masiljangajji<br>
+ * date           : 2/19/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
