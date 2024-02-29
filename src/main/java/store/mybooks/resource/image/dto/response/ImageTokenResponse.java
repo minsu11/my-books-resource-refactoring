@@ -16,18 +16,18 @@ import lombok.NoArgsConstructor;
  * 2/27/24        Fiat_lux       최초 생성<br/>
  */
 @Getter
-public class TokenResponse {
+public class ImageTokenResponse {
     private Access access;
 
     @Getter
     @NoArgsConstructor
-    public static class Access{
+    public static class Access {
         Token token;
     }
 
     @Getter
     @NoArgsConstructor
-    public static class Token{
+    public static class Token {
         LocalDateTime dateTime;
         String id;
     }

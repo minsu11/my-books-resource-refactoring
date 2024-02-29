@@ -1,7 +1,7 @@
 package store.mybooks.resource.image.dto.request;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
@@ -15,26 +15,26 @@ import lombok.NoArgsConstructor;
  * -----------------------------------------------------------<br/>
  * 2/25/24        Fiat_lux       최초 생성<br/>
  */
-@Data
+@Getter
 @NoArgsConstructor
-public class TokenRequest {
+public class ImageTokenRequest {
     private Auth auth;
 
-    @Data
+    @Getter
     @AllArgsConstructor
     public static class Auth {
         private String tenantId;
         private PasswordCredentials passwordCredentials;
     }
 
-    @Data
+    @Getter
     @AllArgsConstructor
     public static class PasswordCredentials {
         private String username;
         private String password;
     }
 
-    public TokenRequest(String tenantId, String username, String password) {
+    public ImageTokenRequest(String tenantId, String username, String password) {
         this.auth = new Auth(tenantId, new PasswordCredentials(username, password));
     }
 }
