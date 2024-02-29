@@ -19,6 +19,7 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -34,7 +35,9 @@ import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForBookCreate;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
+import store.mybooks.resource.category.dto.response.CategoryIdNameGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 import store.mybooks.resource.category.exception.CategoryValidationException;
 import store.mybooks.resource.category.service.CategoryService;
@@ -118,8 +121,8 @@ class CategoryRestControllerTest {
     @DisplayName("최상위 카테고리들 가져오기")
     void givenGetHighestCategories_whenNormalCase_thenReturnResponseEntity() throws Exception {
         List<CategoryGetResponse> categoryGetResponseList = new ArrayList<>();
-        when(categoryService.getHighestCategories()).thenReturn(categoryGetResponseList);
         initHighestCategoryList(categoryGetResponseList);
+        when(categoryService.getHighestCategories()).thenReturn(categoryGetResponseList);
 
         mockMvc.perform(get("/api/categories/highest"))
                 .andExpect(status().isOk())
@@ -150,6 +153,33 @@ class CategoryRestControllerTest {
                 .andExpect(jsonPath("$.size()").value(2))
                 .andExpect(jsonPath("$[0].parentCategory.id").value(parentCategoryId))
                 .andExpect(jsonPath("$[1].parentCategory.id").value(parentCategoryId));
+    }
+
+    @Test
+    @DisplayName("카테고리 수정을 위한 카테고리 가져오기")
+    void givenCategoryId_whenGetCategoryUpdateForm_thenReturnCategoryGetResponseForUpdate() throws Exception {
+        CategoryGetResponseForUpdate categoryGetResponseForUpdate = new CategoryGetResponseForUpdate(
+                new CategoryIdNameGetResponse() {
+                    @Override
+                    public Integer getId() {
+                        return 1;
+                    }
+
+                    @Override
+                    public String getName() {
+                        return "firstCategory";
+                    }
+                }, "levelOneCategoryName", "levelTwoCategoryName");
+
+        when(categoryService.getCategoryForUpdate(anyInt())).thenReturn(categoryGetResponseForUpdate);
+
+        mockMvc.perform(get("/api/categories/categoryId/{id}", 1))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.targetCategory.name").value("firstCategory"))
+                .andExpect(jsonPath("$.targetCategory.id").value(1))
+                .andExpect(jsonPath("$.levelOneCategoryName").value("levelOneCategoryName"))
+                .andExpect(jsonPath("$.levelTwoCategoryName").value("levelTwoCategoryName"));
     }
 
     @Test

@@ -5,7 +5,7 @@ import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import store.mybooks.resource.wrap.dto.request.WrapModifyRequest;
 
 /**
  * packageName    : store.mybooks.resource.wrap.entity
@@ -19,7 +19,6 @@ import lombok.Setter;
  * 2/13/24        minsu11       최초 생성
  */
 @Getter
-@Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -41,5 +40,14 @@ public class Wrap {
 
     @Column(name = "is_available")
     private Boolean isAvailable;
+
+    public void modifyWrap(WrapModifyRequest wrapModifyRequest) {
+        this.name = wrapModifyRequest.getName();
+        this.cost = wrapModifyRequest.getCost();
+    }
+
+    public void modifyIsAvailable(Boolean status) {
+        isAvailable = status;
+    }
 
 }

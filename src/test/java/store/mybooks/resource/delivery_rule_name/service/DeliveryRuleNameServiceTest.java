@@ -1,6 +1,7 @@
 package store.mybooks.resource.delivery_rule_name.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -15,12 +16,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameDto;
-import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameMapper;
-import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameRegisterRequest;
-import store.mybooks.resource.delivery_rule_name.dto.DeliveryRuleNameResponse;
+import store.mybooks.resource.delivery_rule_name.dto.mapper.DeliveryRuleNameMapper;
+import store.mybooks.resource.delivery_rule_name.dto.request.DeliveryRuleNameRegisterRequest;
+import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameDto;
+import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameResponse;
 import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
-import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotFoundException;
+import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameAlreadyExistsException;
+import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotExistsException;
 import store.mybooks.resource.delivery_rule_name.repository.DeliveryRuleNameRepository;
 
 /**
@@ -35,7 +37,7 @@ import store.mybooks.resource.delivery_rule_name.repository.DeliveryRuleNameRepo
  * 2/18/24        Fiat_lux       최초 생성
  */
 @ExtendWith(MockitoExtension.class)
-class DeliveryNameRuleServiceTest {
+class DeliveryRuleNameServiceTest {
     @InjectMocks
     DeliveryRuleNameService deliveryRuleNameService;
 
@@ -69,6 +71,16 @@ class DeliveryNameRuleServiceTest {
     }
 
     @Test
+    @DisplayName("DeliveryRuleName이 이미 존재하는 경우 예외 테스트")
+    void givenDeliveryRuleNameRegisterRequest_whenAlreadyExistsData_thenThrowDeliveryRuleNameAlreadyExistsException() {
+        DeliveryRuleNameRegisterRequest deliveryRuleNameRegisterRequest = new DeliveryRuleNameRegisterRequest("test");
+        when(deliveryRuleNameRepository.existsById(any())).thenReturn(true);
+
+        assertThrows(DeliveryRuleNameAlreadyExistsException.class,
+                () -> deliveryRuleNameService.registerDeliveryNameRule(deliveryRuleNameRegisterRequest));
+    }
+
+    @Test
     @DisplayName("DeliveryRuleName read 테스트")
     void givenDeliveryRuleNameId_whenFindDeliveryRUleNameById_thenReturnDeliveryRuleNameDto() {
         DeliveryRuleNameDto expectedDeliveryNameRuleDto = new DeliveryRuleNameDto() {
@@ -95,9 +107,8 @@ class DeliveryNameRuleServiceTest {
     @Test
     @DisplayName("DeliveryRuleName 없을 경우 예외 테스트")
     void givenNotDeliveryRuleNameId_whenFindDeliveryRuleNameById_thenThrowDeliveryRuleNameNotFoundException() {
-        Integer id = 1;
         when(deliveryRuleNameRepository.findDeliveryRuleNameById("test")).thenReturn(Optional.empty());
-        assertThrows(DeliveryRuleNameNotFoundException.class,
+        assertThrows(DeliveryRuleNameNotExistsException.class,
                 () -> deliveryRuleNameService.getDeliveryNameRule("test"));
     }
 
@@ -123,7 +134,8 @@ class DeliveryNameRuleServiceTest {
         String id = "test";
         when(deliveryRuleNameRepository.existsById(id)).thenReturn(false);
 
-        assertThrows(DeliveryRuleNameNotFoundException.class, () -> deliveryRuleNameService.deleteDeliveryNameRule(id));
+        assertThrows(DeliveryRuleNameNotExistsException.class,
+                () -> deliveryRuleNameService.deleteDeliveryNameRule(id));
         verify(deliveryRuleNameRepository, times(1)).existsById(id);
         verify(deliveryRuleNameRepository, never()).deleteById(id);
     }

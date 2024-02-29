@@ -11,12 +11,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,7 +57,6 @@ public class UserRestController {
 
     private final UserService userService;
 
-
     /**
      * methodName : createUser
      * author : masiljangajji
@@ -67,6 +68,7 @@ public class UserRestController {
     @PostMapping
     public ResponseEntity<UserCreateResponse> createUser(
             @RequestBody UserCreateRequest createRequest) {
+
 
         UserCreateResponse createResponse = userService.createUser(createRequest);
 
@@ -169,8 +171,10 @@ public class UserRestController {
      * @return response entity
      */
     @GetMapping("/{id}")
-    public ResponseEntity<UserGetResponse> findUserById(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<UserGetResponse> findUserById(@PathVariable(name = "id") Long id
+    , @RequestHeader(name = "ddd",required = false)Long dd) {
 
+        System.out.println(dd);
         UserGetResponse getResponse = userService.findById(id);
 
         return new ResponseEntity<>(getResponse, HttpStatus.OK);
@@ -202,6 +206,7 @@ public class UserRestController {
      */
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponse> loginUser(@RequestBody UserLoginRequest userLoginRequest) {
+
         UserLoginResponse userLoginResponse = userService.loginUser(userLoginRequest);
         return new ResponseEntity<>(userLoginResponse, HttpStatus.OK);
     }
