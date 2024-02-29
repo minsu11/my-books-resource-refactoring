@@ -7,6 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -57,11 +58,7 @@ public class BookCreateRequest {
     @Positive
     private Integer saleCost;
     @NotNull
-    @Min(0)
-    @Max(99)
-    private Integer discountRate;
-    @NotNull
-    @Positive
+    @PositiveOrZero
     private Integer stock;
     @NotNull
     private Boolean isPacking;

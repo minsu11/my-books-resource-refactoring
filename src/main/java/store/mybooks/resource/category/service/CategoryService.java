@@ -2,6 +2,8 @@ package store.mybooks.resource.category.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -13,6 +15,7 @@ import store.mybooks.resource.category.dto.request.CategoryModifyRequest;
 import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForBookCreate;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
@@ -61,36 +64,75 @@ public class CategoryService {
      * 2단계 카테고리가 네트워크 인 경우 IT/네트워크 형식처럼 나오게 하기 위한 <br>
      *
      * @param pageable Pageable
-     * @return page
+     * @return Page
      */
     @Transactional(readOnly = true)
     public Page<CategoryGetResponseForView> getCategoriesOrderByParentCategoryIdForAdminPage(Pageable pageable) {
         Page<CategoryGetResponse> categoryGetResponsePage = categoryRepository.findByOrderByParentCategory_Id(pageable);
         List<CategoryGetResponseForView> categoryGetResponseForViewList = new ArrayList<>();
+
         for (CategoryGetResponse categoryGetResponse : categoryGetResponsePage.getContent()) {
-            CategoryGetResponse firstCategory = categoryGetResponse.getParentCategory();
-            CategoryGetResponse secondCategory = null;
+            CategoryGetResponse secondCategory = categoryGetResponse.getParentCategory();
+            CategoryGetResponse firstCategory =
+                    secondCategory != null ? secondCategory.getParentCategory() : null;
 
-            if (firstCategory != null && firstCategory.getParentCategory() != null) {
-                secondCategory = firstCategory;
-                firstCategory = firstCategory.getParentCategory();
-            }
+            String secondCategoryName = secondCategory != null ? secondCategory.getName() : "";
+            String firstCategoryName = firstCategory != null ? firstCategory.getName() : "";
 
-            String firstCategoryName = firstCategory == null ? "" : firstCategory.getName();
-            String secondCategoryName = secondCategory == null ? "" : secondCategory.getName();
-
-            String parentCategoryName = firstCategoryName;
-            if (!secondCategoryName.isEmpty()) {
-                parentCategoryName = parentCategoryName.concat("/").concat(secondCategoryName);
+            if (!firstCategoryName.isEmpty()) {
+                secondCategoryName = firstCategoryName + "/" + secondCategoryName;
             }
 
             categoryGetResponseForViewList.add(new CategoryGetResponseForView(
                     categoryGetResponse.getId(),
                     categoryGetResponse.getName(),
-                    parentCategoryName
+                    secondCategoryName
             ));
         }
+
         return new PageImpl<>(categoryGetResponseForViewList, pageable, categoryGetResponsePage.getTotalElements());
+    }
+
+    /**
+     * methodName : getCategoriesForBookCreate <br>
+     * author : damho-lee <br>
+     * description : 도서 등록할 때 카테고리 리스트를 보여주기 위한 함수.<br>
+     *
+     * @return list
+     */
+    @Transactional(readOnly = true)
+    public List<CategoryGetResponseForBookCreate> getCategoriesForBookCreate() {
+        List<CategoryGetResponse> categoryGetResponseList =
+                categoryRepository.findAllByOrderByParentCategory_Id().stream()
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+
+        List<CategoryGetResponseForBookCreate> categoryGetResponseForBookCreateList = new ArrayList<>();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (CategoryGetResponse categoryGetResponse : categoryGetResponseList) {
+            CategoryGetResponse currentCategoryGetResponse = categoryGetResponse;
+
+            if (categoryGetResponse.getId() == null) {
+                continue;
+            }
+
+            while (currentCategoryGetResponse != null) {
+                if (stringBuilder.length() > 0) {
+                    stringBuilder.insert(0, "/");
+                }
+                stringBuilder.insert(0, currentCategoryGetResponse.getName());
+                currentCategoryGetResponse = currentCategoryGetResponse.getParentCategory();
+            }
+
+            categoryGetResponseForBookCreateList.add(new CategoryGetResponseForBookCreate(
+                    categoryGetResponse.getId(),
+                    stringBuilder.toString()
+            ));
+            stringBuilder.setLength(0);
+        }
+
+        return categoryGetResponseForBookCreateList;
     }
 
     /**
@@ -99,7 +141,7 @@ public class CategoryService {
      * description : id 로 Category 검색.<br>
      *
      * @param id int
-     * @return CategoryGetResponse get response
+     * @return CategoryGetResponse
      */
     @Transactional(readOnly = true)
     public CategoryGetResponseForUpdate getCategory(int id) {
@@ -128,7 +170,7 @@ public class CategoryService {
      * author : damho-lee <br>
      * description : 최상위 Category 들을 반환.<br>
      *
-     * @return list
+     * @return List
      */
     @Transactional(readOnly = true)
     public List<CategoryGetResponse> getHighestCategories() {
@@ -141,7 +183,7 @@ public class CategoryService {
      * description : parentCategory 의 id 를 통해 list 를 반환.
      *
      * @param id parentCategoryId.
-     * @return list
+     * @return List
      */
     @Transactional(readOnly = true)
     public List<CategoryGetResponse> getCategoriesByParentCategoryId(int id) {
@@ -158,7 +200,7 @@ public class CategoryService {
      * description : CategoryRequest 로 category 를 저장하는 메서드 카테고리 이름이 이미 존재하는 경우 CategoryNameAlreadyExistsException 발생.
      *
      * @param categoryCreateRequest CategoryCreateRequest
-     * @return category create response
+     * @return CategoryCreateRequest
      */
     public CategoryCreateResponse createCategory(CategoryCreateRequest categoryCreateRequest) {
         if (categoryRepository.existsByName(categoryCreateRequest.getName())) {
@@ -184,7 +226,7 @@ public class CategoryService {
      *
      * @param id                    수정하려는 category 의 id. 존재하지 않으면 CategoryNotExistsException.
      * @param categoryModifyRequest CategoryModifyRequest
-     * @return category modify response
+     * @return CategoryModifyRequest
      */
     public CategoryModifyResponse modifyCategory(int id, CategoryModifyRequest categoryModifyRequest) {
         if (categoryRepository.existsByName(categoryModifyRequest.getName())) {
@@ -203,7 +245,7 @@ public class CategoryService {
      * description : id 를 통해 category 삭제.
      *
      * @param id 삭제하고자 하는 카테고리의 id. id 에 해당하는 category 가 없는 경우 CategoryNotExistsException.
-     * @return CategoryDeleteResponse delete response
+     * @return CategoryDeleteResponse
      */
     public CategoryDeleteResponse deleteCategory(int id) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotExistsException(id));
