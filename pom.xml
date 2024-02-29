@@ -168,7 +168,7 @@
                             <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
                         </configuration>
                     </execution>
-                </executions>정
+                </executions>
             </plugin>
         </plugins>
     </build>
