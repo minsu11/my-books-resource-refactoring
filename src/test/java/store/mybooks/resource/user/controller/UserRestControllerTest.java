@@ -62,7 +62,7 @@ import store.mybooks.resource.user.service.UserService;
  */
 
 
-@WebMvcTest(value = UserRestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(value = UserRestController.class)
 @ExtendWith(MockitoExtension.class)
 class UserRestControllerTest {
 

@@ -18,6 +18,7 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
@@ -46,7 +47,7 @@ import store.mybooks.resource.tag.service.TagService;
  * -----------------------------------------------------------
  * 2/21/24          damho-lee          최초 생성
  */
-@WebMvcTest(value = TagRestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(value = TagRestController.class)
 class TagRestControllerTest {
     @Autowired
     MockMvc mockMvc;

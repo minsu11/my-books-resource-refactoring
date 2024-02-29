@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -53,7 +54,7 @@ import store.mybooks.resource.author.service.AuthorService;
  * 2/20/24        newjaehun       최초 생성
  */
 
-@WebMvcTest(value = AuthorRestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(value = AuthorRestController.class)
 @ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 class AuthorRestControllerTest {
     private MockMvc mockMvc;
