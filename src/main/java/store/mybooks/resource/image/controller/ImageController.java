@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.image.dto.request.ImageRegisterRequest;
 import store.mybooks.resource.image.dto.response.ImageGetResponse;
 import store.mybooks.resource.image.dto.response.ImageRegisterResponse;
-import store.mybooks.resource.image.service.ImageService;
+import store.mybooks.resource.image.service.ObjectStorageImpl;
 
 /**
  * packageName    : store.mybooks.resource.image.controller <br/>
@@ -30,10 +30,10 @@ import store.mybooks.resource.image.service.ImageService;
 @RestController
 @RequestMapping("/api/images")
 public class ImageController {
-    private final ImageService imageService;
+    private final ObjectStorageImpl objectStorageImpl;
 
-    public ImageController(ImageService imageService) {
-        this.imageService = imageService;
+    public ImageController(ObjectStorageImpl objectStorageImpl) {
+        this.objectStorageImpl = objectStorageImpl;
     }
 
     @PostMapping("/upload")
@@ -41,20 +41,20 @@ public class ImageController {
             @RequestPart("dto") ImageRegisterRequest imageRegisterRequest,
             @RequestPart("files") MultipartFile multipartFile)
             throws IOException {
-        ImageRegisterResponse imageRegisterResponse = imageService.saveImage(imageRegisterRequest, multipartFile);
+        ImageRegisterResponse imageRegisterResponse = objectStorageImpl.saveImage(imageRegisterRequest, multipartFile);
         return ResponseEntity.status(HttpStatus.CREATED).body(imageRegisterResponse);
     }
 
     @GetMapping("/{imageId}")
     public ResponseEntity<ImageGetResponse> getImage(@PathVariable("imageId") Long id) {
-        ImageGetResponse imageGetResponse = imageService.getObject(id);
+        ImageGetResponse imageGetResponse = objectStorageImpl.getObject(id);
 
-        return ResponseEntity.ok().body(imageGetResponse);
+        return ResponseEntity.status(HttpStatus.OK).body(imageGetResponse);
     }
 
     @DeleteMapping("/{imageId}")
     public ResponseEntity<Void> deleteImage(@PathVariable("imageId") Long id) {
-        imageService.deleteObject(id);
+        objectStorageImpl.deleteObject(id);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
