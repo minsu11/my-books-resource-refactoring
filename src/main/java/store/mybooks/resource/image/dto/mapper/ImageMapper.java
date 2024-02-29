@@ -1,6 +1,7 @@
 package store.mybooks.resource.image.dto.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import store.mybooks.resource.image.dto.response.ImageRegisterResponse;
 import store.mybooks.resource.image.entity.Image;
 
@@ -15,7 +16,7 @@ import store.mybooks.resource.image.entity.Image;
  * -----------------------------------------------------------<br/>
  * 2/27/24        Fiat_lux       최초 생성<br/>
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface ImageMapper {
     ImageRegisterResponse mapToResponse(Image image);
 }
