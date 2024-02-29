@@ -67,7 +67,7 @@ class BookServiceTest {
         BookCreateRequest request =
                 new BookCreateRequest("판매중", 1, "도서1", "1234567898764", LocalDate.of(2024, 1, 1), 100, "인덱스1", "내용1",
                         20000, 16000,
-                        20, 5, true);
+                        5, true);
         BookCreateResponse response = new BookCreateResponse();
         response.setName(request.getName());
 
@@ -98,8 +98,7 @@ class BookServiceTest {
     void givenNotExistBookStatus_whenCreateBook_thenThrowBookStatusNotExistException() {
         BookCreateRequest request =
                 new BookCreateRequest("판매중", 1, "도서1", "1234567898764", LocalDate.of(2024, 1, 1), 100, "인덱스1", "내용1",
-                        20000, 16000,
-                        20, 5, true);
+                        20000, 16000, 5, true);
 
         given(bookStatusRepository.findById(anyString())).willReturn(Optional.empty());
 
@@ -115,8 +114,7 @@ class BookServiceTest {
     void givenNotExistPublisher_whenCreateBook_thenThrowPublisherNotExistException() {
         BookCreateRequest request =
                 new BookCreateRequest("판매중", 1, "도서1", "1234567898764", LocalDate.of(2024, 1, 1), 100, "인덱스1", "내용1",
-                        20000, 16000,
-                        20, 5, true);
+                        20000, 16000, 5, true);
         BookCreateResponse response = new BookCreateResponse();
         response.setName(request.getName());
 
@@ -136,7 +134,7 @@ class BookServiceTest {
     @Test
     @DisplayName("도서 수정")
     void givenBookIdAndBookModifyRequest_whenModifyBook_thenModifyBookAndReturnBookModifyResponse() {
-        BookModifyRequest request = new BookModifyRequest("판매종료", 12000, 400, 3, false);
+        BookModifyRequest request = new BookModifyRequest("판매종료", 12000, -1, false);
         Long bookId = 1L;
         Book book =
                 new Book(bookId, new BookStatus("판매중"), new Publisher(1, "출판사1", LocalDate.now()), "도서1",
@@ -166,7 +164,7 @@ class BookServiceTest {
     @DisplayName("도서 수정(존재하지 않는 도서ID)")
     void givenNotExistBookId_whenModifyBook_thenThrowBookNotExistException() {
         Long bookId = 1L;
-        BookModifyRequest request = new BookModifyRequest("판매종료", 12000, 400, 3, false);
+        BookModifyRequest request = new BookModifyRequest("판매종료", 12000, -1, false);
 
         given(bookRepository.findById(bookId)).willReturn(Optional.empty());
 
@@ -181,7 +179,7 @@ class BookServiceTest {
     @DisplayName("도서 수정(존재하지 않는 도서상태)")
     void givenNotExistBookStatus_whenModifyBook_thenThrowBookStatusNotExistException() {
         Long bookId = 1L;
-        BookModifyRequest request = new BookModifyRequest("판매종료", 12000, 400, 3, false);
+        BookModifyRequest request = new BookModifyRequest("판매종료", 12000, -1, false);
 
         Book book =
                 new Book(bookId, new BookStatus("판매중"), new Publisher(1, "출판사1", LocalDate.now()), "도서1",

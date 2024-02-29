@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import store.mybooks.resource.category.exception.CannotDeleteParentCategoryException;
 import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
+import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotExistsException;
+import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameAlreadyExistsException;
+import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotExistsException;
 import store.mybooks.resource.publisher.exception.PublisherAlreadyExistException;
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
 import store.mybooks.resource.return_rule.exception.ReturnRuleValidationFailedException;
@@ -37,7 +40,8 @@ public class GlobalControllerAdvice {
      * @param exception exception.
      * @return ResponseEntity
      */
-    @ExceptionHandler({CategoryNotExistsException.class, TagNotExistsException.class, PublisherNotExistException.class})
+    @ExceptionHandler({CategoryNotExistsException.class, TagNotExistsException.class, PublisherNotExistException.class,
+            DeliveryRuleNameNotExistsException.class, DeliveryRuleNotExistsException.class})
     public ResponseEntity<String> xxxNotExistsException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -53,7 +57,7 @@ public class GlobalControllerAdvice {
      * @return ResponseEntity
      */
     @ExceptionHandler({CategoryNameAlreadyExistsException.class, TagNameAlreadyExistsException.class,
-            PublisherAlreadyExistException.class})
+            PublisherAlreadyExistException.class, DeliveryRuleNameAlreadyExistsException.class})
     public ResponseEntity<String> xxxAlreadyExistsException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -69,8 +73,8 @@ public class GlobalControllerAdvice {
      * @param exception ValidationException.
      * @return ResponseEntity
      */
-    @ExceptionHandler({ValidationException.class, ReturnRuleNameRequestValidationFailedException.class,
-            ReturnRuleValidationFailedException.class, WrapValidationFailedException.class})
+    @ExceptionHandler({ValidationException.class, ReturnRuleNameRequestValidationFailedException.class, ReturnRuleValidationFailedException.class,
+            RequestValidationFailedException.class, WrapValidationFailedException.class})
     public ResponseEntity<String> validationException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

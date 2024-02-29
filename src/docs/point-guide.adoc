@@ -1,0 +1,15 @@
+= Point
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectnums:
+:sectlinks:
+:sectanchors:
+
+== 포인트 규정 API
+
+== 포인트 규정명 API
+
+== 포인트 내역 API

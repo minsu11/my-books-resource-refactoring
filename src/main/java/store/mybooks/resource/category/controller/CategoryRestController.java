@@ -22,6 +22,9 @@ import store.mybooks.resource.category.dto.request.CategoryModifyRequest;
 import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForBookCreate;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 import store.mybooks.resource.category.exception.CategoryValidationException;
 import store.mybooks.resource.category.service.CategoryService;
@@ -52,11 +55,25 @@ public class CategoryRestController {
      * @return ResponseEntity
      */
     @GetMapping("/page")
-    public ResponseEntity<Page<CategoryGetResponse>> getCategoriesOrderByParentCategoryId(
+    public ResponseEntity<Page<CategoryGetResponseForView>> getCategoriesOrderByParentCategoryId(
             @PageableDefault Pageable pageable) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(categoryService.getCategoriesOrderByParentCategoryId(pageable));
+                .body(categoryService.getCategoriesOrderByParentCategoryIdForAdminPage(pageable));
+    }
+
+    /**
+     * methodName : getCategoriesForBookCreate <br>
+     * author : damho-lee <br>
+     * description : 도서 등록할 때 필요한 카테고리 리스트 반환.<br>
+     *
+     * @return ResponseEntity
+     */
+    @GetMapping
+    public ResponseEntity<List<CategoryGetResponseForBookCreate>> getCategoriesForBookCreate() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(categoryService.getCategoriesForBookCreate());
     }
 
     /**
@@ -97,7 +114,7 @@ public class CategoryRestController {
      * @return response entity
      */
     @GetMapping("/categoryId/{id}")
-    public ResponseEntity<CategoryGetResponse> getCategoryForUpdate(@PathVariable("id") int id) {
+    public ResponseEntity<CategoryGetResponseForUpdate> getCategoryForUpdate(@PathVariable("id") int id) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(categoryService.getCategory(id));

@@ -1,12 +1,19 @@
 package store.mybooks.resource.author.repository;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import store.mybooks.resource.author.dto.response.AuthorGetResponse;
 import store.mybooks.resource.author.entity.Author;
 
 /**
@@ -37,10 +44,30 @@ class AuthorRepositoryTest {
         authorRepository.save(author2);
     }
 
+    @Test
+    @DisplayName("전체 저자 조회(리스트)")
+    void whenFindAllAuthors_thenReturnAllAuthorsGetResponseList() {
+        List<AuthorGetResponse> result = authorRepository.getAllAUthors();
+
+        assertThat(result.get(0).getName()).isEqualTo(author1.getName());
+        assertThat(result.get(1).getName()).isEqualTo(author2.getName());
+    }
+
+    @Test
+    @DisplayName("전체 저자 조회(페에지)")
+    void givenAuthorList_whenFindPagedAllAuthors_thenReturnAllAuthorsGetResponse() {
+        Pageable pageable = PageRequest.of(0, 2);
+
+        Page<AuthorGetResponse> result = authorRepository.getAllPagedAuthors(pageable);
+
+        assertThat(result.getContent().get(0).getName()).isEqualTo(author1.getName());
+        assertThat(result.getContent().get(1).getName()).isEqualTo(author2.getName());
+    }
 
     @Test
     @DisplayName("저자명 중복일 경우")
     void givenExistsAuthorName_whenExistsByName_thenReturnTrue() {
+
         Assertions.assertTrue(authorRepository.existsByName(author1.getName()));
     }
 

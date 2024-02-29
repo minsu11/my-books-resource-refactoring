@@ -19,7 +19,6 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -34,6 +33,7 @@ import store.mybooks.resource.category.dto.request.CategoryModifyRequest;
 import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 import store.mybooks.resource.category.exception.CategoryValidationException;
 import store.mybooks.resource.category.service.CategoryService;
@@ -63,24 +63,26 @@ class CategoryRestControllerTest {
     @Test
     @DisplayName("ParentCategoryId 를 기준으로 오름차순 정렬된 Page<CategoryGetResponse> 반환")
     void givenGetCategoriesOrderByParentCategoryId_whenNormalCase_thenReturnResponseEntity() throws Exception {
-        List<CategoryGetResponse> categoryGetResponseList = new ArrayList<>();
+        List<CategoryGetResponseForView> categoryGetResponseList = new ArrayList<>();
         Pageable pageable = PageRequest.of(0, 2);
         initCategoryGetResponseList(categoryGetResponseList);
-        Page<CategoryGetResponse> categoryGetResponsePage =
+        Page<CategoryGetResponseForView> categoryGetResponsePage =
                 new PageImpl<>(categoryGetResponseList.subList(0, 2), pageable, 1);
 
-        when(categoryService.getCategoriesOrderByParentCategoryId(any())).thenReturn(categoryGetResponsePage);
+        when(categoryService.getCategoriesOrderByParentCategoryIdForAdminPage(any())).thenReturn(
+                categoryGetResponsePage);
+
+        System.out.println("size : " + categoryGetResponseList.size());
 
         mockMvc.perform(get("/api/categories/page"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.content.size()").value(2))
                 .andExpect(jsonPath("$.content[0].id").value(1))
                 .andExpect(jsonPath("$.content[0].name").value("parentCategory"))
-                .andExpect(jsonPath("$.content[0].parentCategory", nullValue()))
+                .andExpect(jsonPath("$.content[0].parentCategoryName", nullValue()))
                 .andExpect(jsonPath("$.content[1].id").value(2))
                 .andExpect(jsonPath("$.content[1].name").value("childCategory"))
-                .andExpect(jsonPath("$.content[1].parentCategory.id").value(1));
+                .andExpect(jsonPath("$.content[1].parentCategoryName").value("parentCategory"));
     }
 
     @Test
@@ -207,57 +209,13 @@ class CategoryRestControllerTest {
                 .andExpect(jsonPath("$.name").value(categoryDeleteResponse.getName()));
     }
 
-    private void initCategoryGetResponseList(List<CategoryGetResponse> categoryGetResponseList) {
-        CategoryGetResponse parentCategory = new CategoryGetResponse() {
-            @Override
-            public Integer getId() {
-                return 1;
-            }
+    private void initCategoryGetResponseList(List<CategoryGetResponseForView> categoryGetResponseList) {
+        CategoryGetResponseForView parentCategory = new CategoryGetResponseForView(1, "parentCategory", null);
 
-            @Override
-            public CategoryGetResponse getParentCategory() {
-                return null;
-            }
+        CategoryGetResponseForView childCategory =
+                new CategoryGetResponseForView(2, "childCategory", parentCategory.getName());
 
-            @Override
-            public String getName() {
-                return "parentCategory";
-            }
-        };
-
-        CategoryGetResponse childCategory = new CategoryGetResponse() {
-            @Override
-            public Integer getId() {
-                return 2;
-            }
-
-            @Override
-            public CategoryGetResponse getParentCategory() {
-                return parentCategory;
-            }
-
-            @Override
-            public String getName() {
-                return "childCategory";
-            }
-        };
-
-        CategoryGetResponse category = new CategoryGetResponse() {
-            @Override
-            public Integer getId() {
-                return 3;
-            }
-
-            @Override
-            public CategoryGetResponse getParentCategory() {
-                return null;
-            }
-
-            @Override
-            public String getName() {
-                return "category";
-            }
-        };
+        CategoryGetResponseForView category = new CategoryGetResponseForView(3, "category", null);
 
         categoryGetResponseList.add(parentCategory);
         categoryGetResponseList.add(childCategory);

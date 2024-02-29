@@ -23,6 +23,8 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
     CategoryGetResponse queryById(int id);
 
+    List<CategoryGetResponse> findAllByOrderByParentCategory_Id();
+
     List<CategoryGetResponse> findAllByParentCategoryIsNull();
 
     List<CategoryGetResponse> findAllByParentCategory_Id(int id);

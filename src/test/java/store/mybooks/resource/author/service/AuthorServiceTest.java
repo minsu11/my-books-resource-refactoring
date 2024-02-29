@@ -67,7 +67,20 @@ class AuthorServiceTest {
     }
 
     @Test
-    @DisplayName("전체 저자 조회")
+    @DisplayName("전체 저자 조회(리스트)")
+    void whenFindAllAuthors_thenReturnAllAuthorsGetResponseList() {
+        List<AuthorGetResponse> authorGetResponseList =
+                Arrays.asList(new AuthorGetResponse(id, name, content),
+                        new AuthorGetResponse(2, "author2", "author_content2"));
+
+        when(authorRepository.getAllAUthors()).thenReturn(authorGetResponseList);
+        assertThat(authorService.getAllAuthors()).isEqualTo(authorGetResponseList);
+
+        verify(authorRepository, times(1)).getAllAUthors();
+    }
+
+    @Test
+    @DisplayName("전체 저자 조회(페이징)")
     void givenAuthorListAndPageable_whenFindAllAuthors_thenReturnPageAuthorsGetResponseList() {
         Pageable pageable = PageRequest.of(0, 2);
         List<AuthorGetResponse> authorGetResponseList =
@@ -76,11 +89,10 @@ class AuthorServiceTest {
 
         Page<AuthorGetResponse> pageGetResponse =
                 new PageImpl<>(authorGetResponseList, pageable, authorGetResponseList.size());
-        when(authorRepository.findAllBy(pageable)).thenReturn(pageGetResponse);
-        assertThat(authorService.getAllAuthors(pageable)).isEqualTo(pageGetResponse);
+        when(authorRepository.getAllPagedAuthors(pageable)).thenReturn(pageGetResponse);
+        assertThat(authorService.getPagedAuthors(pageable)).isEqualTo(pageGetResponse);
 
-        verify(authorRepository, times(1)).findAllBy(pageable);
-
+        verify(authorRepository, times(1)).getAllPagedAuthors(pageable);
     }
 
     @Test
