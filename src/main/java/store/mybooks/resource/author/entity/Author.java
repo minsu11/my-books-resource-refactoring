@@ -1,10 +1,16 @@
 package store.mybooks.resource.author.entity;
 
 import java.time.LocalDate;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import store.mybooks.resource.author.dto.request.AuthorModifyRequest;
 
 /**
  * packageName    : store.mybooks.resource.author.entity
@@ -36,4 +42,21 @@ public class Author {
 
     @Column(name = "author_created_date")
     private LocalDate createdDate;
+
+    /**
+     * Author 생성자 생성.
+     *
+     * @param name    the name
+     * @param content the content
+     */
+    public Author(String name, String content) {
+        this.name = name;
+        this.content = content;
+        this. createdDate = LocalDate.now();
+    }
+
+    public void setByModifyRequest(AuthorModifyRequest modifyRequest) {
+        this.name = modifyRequest.getChangeName();
+        this.content = modifyRequest.getChangeContent();
+    }
 }

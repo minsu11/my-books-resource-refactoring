@@ -1,7 +1,15 @@
 package store.mybooks.resource.tag.entity;
 
 import java.time.LocalDate;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import store.mybooks.resource.tag.dto.request.TagModifyRequest;
 
 /**
  * packageName    : store.mybooks.resource.domain.entity
@@ -16,6 +24,8 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "tag")
+@Getter
+@NoArgsConstructor
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,4 +37,13 @@ public class Tag {
 
     @Column(name = "tag_created_date")
     private LocalDate createdDate;
+
+    public Tag(String name) {
+        this.name = name;
+        this.createdDate = LocalDate.now();
+    }
+
+    public void setByTagModifyRequest(TagModifyRequest tagModifyRequest) {
+        this.name = tagModifyRequest.getName();
+    }
 }

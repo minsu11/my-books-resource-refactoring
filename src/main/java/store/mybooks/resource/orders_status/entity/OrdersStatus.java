@@ -4,9 +4,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import store.mybooks.resource.orders_status.dto.request.OrdersStatusRequest;
-import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
+import lombok.NoArgsConstructor;
 
 /**
  * packageName    : store.mybooks.resource.ordersstatus.entity
@@ -22,18 +22,12 @@ import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 @Getter
 @Entity
 @Table(name = "orders_status")
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrdersStatus {
     @Id
     @Column(name = "orders_status_id")
     private String id;
 
-    public OrdersStatus(OrdersStatusRequest request) {
-        this.id = request.getId();
-    }
 
-    public OrdersStatusResponse convertToOrdersStatusResponse() {
-        return OrdersStatusResponse.builder()
-                .id(this.id)
-                .build();
-    }
 }

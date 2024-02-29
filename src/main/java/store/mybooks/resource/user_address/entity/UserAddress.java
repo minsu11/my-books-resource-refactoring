@@ -9,13 +9,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import store.mybooks.resource.user.entity.User;
 
 /**
- * packageName    : store.mybooks.resource.user.entity
- * fileName       : UserAddress
- * author         : masiljangajji
- * date           : 2/13/24
+ * packageName    : store.mybooks.resource.user.entity<br>
+ * fileName       : UserAddress<br>
+ * author         : masiljangajji<br>
+ * date           : 2/13/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
@@ -24,6 +26,8 @@ import store.mybooks.resource.user.entity.User;
  */
 
 @Entity
+@NoArgsConstructor
+@Getter
 @Table(name = "address")
 public class UserAddress {
 
@@ -40,8 +44,35 @@ public class UserAddress {
     @Column(name = "address_alias")
     private String alias;
 
-    @Column(name = "address_full_name")
-    private String fullName;
+    @Column(name = "address_road_name")
+    private String roadName;
+
+    @Column(name = "address_detail")
+    private String detail;
+
+    @Column(name = "address_number")
+    private Integer number;
+
+    @Column(name = "address_reference")
+    private String reference;
+
+
+    public UserAddress(User user, String alias, String roadName, String detail, Integer number,
+                       String reference) {
+        this.user = user;
+        this.alias = alias;
+        this.roadName = roadName;
+        this.detail = detail;
+        this.number = number;
+        this.reference = reference;
+    }
+
+    public void modifyByUserAddressModifyRequest(String alias, String detail) {
+
+        this.alias = alias;
+        this.detail = detail;
+
+    }
 
 
 }

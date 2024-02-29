@@ -171,3 +171,5 @@ Temporary Items
 .idea/**
 
 *.http
+*.log
+*.gz

@@ -5,12 +5,13 @@ import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import store.mybooks.resource.return_name_rule.entity.ReturnNameRule;
+import store.mybooks.resource.return_rule.dto.request.ReturnRuleModifyRequest;
+import store.mybooks.resource.return_rule_name.entity.ReturnRuleName;
 
 /**
  * packageName    : store.mybooks.resource.return_rule.entity
  * fileName       : ReturnRule
- * author         : minsu
+ * author         : minsu11
  * date           : 2/13/24
  * description    :
  * ===========================================================
@@ -27,7 +28,7 @@ public class ReturnRule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "return_rule_id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "return_rule_delivery_fee")
     private Integer deliveryFee;
@@ -42,7 +43,18 @@ public class ReturnRule {
     private LocalDate createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "return_name_rule_id")
-    private ReturnNameRule returnNameRule;
+    @JoinColumn(name = "return_rule_name_id")
+    private ReturnRuleName returnRuleName;
+
+    public void modifyByReturnRule(ReturnRuleModifyRequest request, ReturnRuleName returnRuleName) {
+        this.deliveryFee = request.getDeliveryFee();
+        this.term = request.getTerm();
+        this.returnRuleName = returnRuleName;
+
+    }
+
+    public void modifyIsAvailable(Boolean status) {
+        this.isAvailable = status;
+    }
 
 }

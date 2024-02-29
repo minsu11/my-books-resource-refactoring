@@ -1,9 +1,9 @@
 package store.mybooks.resource.order_detail_status.repository;
 
+import com.querydsl.core.types.Projections;
 import java.util.List;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusResponse;
-import store.mybooks.resource.order_detail_status.dto.response.QOrderDetailStatusResponse;
 import store.mybooks.resource.order_detail_status.entity.QOrderDetailStatus;
 
 /**
@@ -26,7 +26,9 @@ public class OrderDetailStatusRepositoryImpl extends QuerydslRepositorySupport i
     public List<OrderDetailStatusResponse> getOrderDetailStatusResponseList() {
         QOrderDetailStatus orderDetailStatus = QOrderDetailStatus.orderDetailStatus;
         return from(orderDetailStatus)
-                .select(new QOrderDetailStatusResponse(orderDetailStatus.id))
+                .select(Projections.constructor(OrderDetailStatusResponse.class, orderDetailStatus.id))
                 .fetch();
     }
+
+    
 }
