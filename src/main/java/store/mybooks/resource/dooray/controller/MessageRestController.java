@@ -41,8 +41,6 @@ public class MessageRestController {
     @GetMapping
     public ResponseEntity<DoorayAuthResponse> getPhoneNumberAuthMessage() {
 
-        System.out.println("@@@@@@@@@@");
-
         String randomNumber = messageSenderService.sendMessage(messageBot);
         DoorayAuthResponse authRequest = new DoorayAuthResponse(randomNumber);
 

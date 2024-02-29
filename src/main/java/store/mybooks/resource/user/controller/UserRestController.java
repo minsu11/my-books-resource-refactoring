@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -170,8 +171,10 @@ public class UserRestController {
      * @return response entity
      */
     @GetMapping("/{id}")
-    public ResponseEntity<UserGetResponse> findUserById(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<UserGetResponse> findUserById(@PathVariable(name = "id") Long id
+    , @RequestHeader(name = "ddd",required = false)Long dd) {
 
+        System.out.println(dd);
         UserGetResponse getResponse = userService.findById(id);
 
         return new ResponseEntity<>(getResponse, HttpStatus.OK);
@@ -203,6 +206,7 @@ public class UserRestController {
      */
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponse> loginUser(@RequestBody UserLoginRequest userLoginRequest) {
+
         UserLoginResponse userLoginResponse = userService.loginUser(userLoginRequest);
         return new ResponseEntity<>(userLoginResponse, HttpStatus.OK);
     }
