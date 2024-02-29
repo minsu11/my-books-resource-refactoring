@@ -71,7 +71,7 @@ class AuthorRestControllerTest {
     private final String authorContent = "authorContent";
     private final String authorContent2 = "authorContent2";
 
-  @BeforeEach
+    @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,
                RestDocumentationContextProvider restDocumentation) {
 

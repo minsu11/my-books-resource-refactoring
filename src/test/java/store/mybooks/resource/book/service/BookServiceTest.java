@@ -150,7 +150,7 @@ class BookServiceTest {
     @Test
     @DisplayName("도서 수정")
     void givenBookIdAndBookModifyRequest_whenModifyBook_thenModifyBookAndReturnBookModifyResponse() {
-        BookModifyRequest request = new BookModifyRequest("판매종료", 12000, -1, false);
+        final BookModifyRequest request = new BookModifyRequest("판매종료", 12000, -1, false);
         Long bookId = 1L;
         Book book =
                 new Book(bookId, new BookStatus("판매중"), new Publisher(1, "출판사1", LocalDate.now()), "도서1",
