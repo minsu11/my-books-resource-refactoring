@@ -5,11 +5,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -26,9 +29,13 @@ import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.mapper.BookMapper;
 import store.mybooks.resource.book.repotisory.BookRepository;
+import store.mybooks.resource.book_category.dto.request.BookCategoryCreateRequest;
+import store.mybooks.resource.book_category.service.BookCategoryService;
 import store.mybooks.resource.book_status.entity.BookStatus;
 import store.mybooks.resource.book_status.exception.BookStatusNotExistException;
 import store.mybooks.resource.book_status.respository.BookStatusRepository;
+import store.mybooks.resource.book_tag.dto.request.BookTagCreateRequest;
+import store.mybooks.resource.book_tag.service.BookTagService;
 import store.mybooks.resource.publisher.entity.Publisher;
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
 import store.mybooks.resource.publisher.repository.PublisherRepository;
@@ -56,6 +63,11 @@ class BookServiceTest {
     private PublisherRepository publisherRepository;
 
     @Mock
+    public BookCategoryService bookCategoryService;
+    @Mock
+    public BookTagService bookTagService;
+
+    @Mock
     private BookMapper bookMapper;
 
     @InjectMocks
@@ -66,8 +78,8 @@ class BookServiceTest {
     void givenBookCreateRequest_whenCreateBook_thenSaveAuthorAndReturnAuthorCreateResponse() {
         BookCreateRequest request =
                 new BookCreateRequest("판매중", 1, "도서1", "1234567898764", LocalDate.of(2024, 1, 1), 100, "인덱스1", "내용1",
-                        20000, 16000,
-                        5, true);
+                        20000, 16000, 5, true, new ArrayList<Integer>(List.of(1)), new ArrayList<Integer>(List.of(1)),
+                        new ArrayList<Integer>(List.of(1)));
         BookCreateResponse response = new BookCreateResponse();
         response.setName(request.getName());
 
@@ -82,6 +94,10 @@ class BookServiceTest {
 
         given(bookRepository.save(any(Book.class))).willReturn(book);
         when(bookMapper.createResponse(any(Book.class))).thenReturn(response);
+
+
+        doNothing().when(bookCategoryService).createBookCategory(any(BookCategoryCreateRequest.class));
+        doNothing().when(bookTagService).createBookTag(any(BookTagCreateRequest.class));
 
         bookService.createBook(request);
 
@@ -98,7 +114,7 @@ class BookServiceTest {
     void givenNotExistBookStatus_whenCreateBook_thenThrowBookStatusNotExistException() {
         BookCreateRequest request =
                 new BookCreateRequest("판매중", 1, "도서1", "1234567898764", LocalDate.of(2024, 1, 1), 100, "인덱스1", "내용1",
-                        20000, 16000, 5, true);
+                        20000, 16000, 5, true, null, null, null);
 
         given(bookStatusRepository.findById(anyString())).willReturn(Optional.empty());
 
@@ -114,7 +130,7 @@ class BookServiceTest {
     void givenNotExistPublisher_whenCreateBook_thenThrowPublisherNotExistException() {
         BookCreateRequest request =
                 new BookCreateRequest("판매중", 1, "도서1", "1234567898764", LocalDate.of(2024, 1, 1), 100, "인덱스1", "내용1",
-                        20000, 16000, 5, true);
+                        20000, 16000, 5, true, null, null, null);
         BookCreateResponse response = new BookCreateResponse();
         response.setName(request.getName());
 

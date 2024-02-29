@@ -1,6 +1,7 @@
 package store.mybooks.resource.book_tag.dto.request;
 
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class BookTagCreateRequest {
     private Long bookId;
     private List<Integer> tagIdList;
