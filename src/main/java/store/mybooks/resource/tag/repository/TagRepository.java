@@ -1,5 +1,6 @@
 package store.mybooks.resource.tag.repository;
 
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,6 +20,8 @@ import store.mybooks.resource.tag.entity.Tag;
  */
 public interface TagRepository extends JpaRepository<Tag, Integer> {
     Page<TagGetResponse> findAllByOrderById(Pageable pageable);
+
+    List<TagGetResponse> findAllBy();
 
     TagGetResponse queryById(Integer id);
 
