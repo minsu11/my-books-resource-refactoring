@@ -12,6 +12,7 @@ import javax.persistence.MapsId;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.tag.entity.Tag;
@@ -29,19 +30,22 @@ import store.mybooks.resource.tag.entity.Tag;
  */
 @Entity
 @Table(name = "book_tag")
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class BookTag {
     @EmbeddedId
     private Pk pk;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tag_id")
-    @MapsId(value = "tagId")
-    private Tag tag;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     @MapsId(value = "bookId")
     private Book book;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tag_id")
+    @MapsId(value = "tagId")
+    private Tag tag;
 
     /**
      * BookTag 의 Pk .

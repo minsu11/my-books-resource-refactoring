@@ -11,8 +11,8 @@ package store.mybooks.resource.delivery_rule_name.exception;
  * -----------------------------------------------------------
  * 2/16/24        Fiat_lux       최초 생성
  */
-public class DeliveryRuleNameNotFoundException extends RuntimeException {
-    public DeliveryRuleNameNotFoundException(String message) {
+public class DeliveryRuleNameNotExistsException extends RuntimeException {
+    public DeliveryRuleNameNotExistsException(String message) {
         super(message);
     }
 }

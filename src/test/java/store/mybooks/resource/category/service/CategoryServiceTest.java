@@ -132,7 +132,7 @@ class CategoryServiceTest {
                 new PageImpl<>(categoryGetResponseList.subList(0, 2), pageable, categoryGetResponseList.size());
         when(categoryRepository.findByOrderByParentCategory_Id(any())).thenReturn(expectedPage);
         Page<CategoryGetResponse> actualPage = categoryService.getCategoriesOrderByParentCategoryId(pageable);
-        assertThat(actualPage.getContent().size()).isEqualTo(2);
+        assertThat(actualPage.getContent()).hasSize(2);
         assertThat(actualPage.getContent().get(0).getId()).isEqualTo(firstCategory.getId());
         assertThat(actualPage.getContent().get(1).getId()).isEqualTo(secondCategory.getId());
         assertThat(actualPage.getTotalPages()).isEqualTo(2);
@@ -162,8 +162,7 @@ class CategoryServiceTest {
         when(categoryRepository.findAllByParentCategoryIsNull()).thenReturn(categoryGetResponseList);
         List<CategoryGetResponse> actual = categoryService.getHighestCategories();
 
-        assertThat(actual).isNotNull();
-        assertThat(actual).hasSize(1);
+        assertThat(actual).isNotNull().hasSize(1);
 
         CategoryGetResponse actualResponse = actual.get(0);
 
@@ -212,8 +211,7 @@ class CategoryServiceTest {
         when(categoryRepository.existsById(anyInt())).thenReturn(true);
         List<CategoryGetResponse> actual = categoryService.getCategoriesByParentCategoryId(1);
 
-        assertThat(actual).isNotNull();
-        assertThat(actual).hasSize(1);
+        assertThat(actual).isNotNull().hasSize(1);
 
         CategoryGetResponse actualChildCategory = actual.get(0);
         assertThat(actualChildCategory.getId()).isEqualTo(2);
@@ -255,9 +253,10 @@ class CategoryServiceTest {
     @DisplayName("createCategory 메서드 중복된 CategoryName 의 경우")
     void givenCreateCategory_whenDuplicateName_thenThrowCategoryNameAlreadyExistsException() {
         when(categoryRepository.existsByName(anyString())).thenReturn(true);
+        CategoryCreateRequest categoryCreateRequest = new CategoryCreateRequest(null, "name");
 
         assertThrows(CategoryNameAlreadyExistsException.class,
-                () -> categoryService.createCategory(new CategoryCreateRequest(null, "name")));
+                () -> categoryService.createCategory(categoryCreateRequest));
     }
 
     @Test

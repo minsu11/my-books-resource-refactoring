@@ -1,5 +1,6 @@
 package store.mybooks.resource.tag.controller;
 
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -58,13 +59,27 @@ public class TagRestController {
     }
 
     /**
+     * methodName : getTags <br>
+     * author : damho-lee <br>
+     * description : 모든 태그 조회. <br>
+     *
+     * @return TagGetResponse
+     */
+    @GetMapping
+    public ResponseEntity<List<TagGetResponse>> getTags() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(tagService.getTags());
+    }
+
+    /**
      * methodName : getTags
      * author : damho-lee
      * description : 모든 Tag 들을 TagGetResponse 로 변환하여 반환하는 메서드.
      *
      * @return ResponseEntity
      */
-    @GetMapping
+    @GetMapping("/page")
     public ResponseEntity<Page<TagGetResponse>> getTags(@PageableDefault Pageable pageable) {
         return ResponseEntity
                 .status(HttpStatus.OK)
