@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleResponse;
 import store.mybooks.resource.return_rule.entity.QReturnRule;
+import store.mybooks.resource.return_rule.entity.ReturnRule;
 import store.mybooks.resource.return_rule_name.entity.QReturnRuleName;
 
 /**
@@ -38,9 +39,12 @@ public class ReturnRuleRepositoryImpl extends QuerydslRepositorySupport implemen
     public Optional<ReturnRuleResponse> findByReturnRuleName(String returnRuleNameId) {
         QReturnRule returnRule = QReturnRule.returnRule;
         QReturnRuleName returnRuleName = QReturnRuleName.returnRuleName;
+
         return Optional.of(
                 from(returnRule)
-                        .select(Projections.constructor(ReturnRuleResponse.class, returnRule.returnRuleName.id,
+                        .select(Projections.constructor(ReturnRuleResponse.class,
+                                returnRule.id,
+                                returnRule.returnRuleName.id,
                                 returnRule.deliveryFee,
                                 returnRule.term, returnRule.isAvailable))
                         .join(returnRule.returnRuleName, returnRuleName)
@@ -62,12 +66,26 @@ public class ReturnRuleRepositoryImpl extends QuerydslRepositorySupport implemen
         QReturnRule returnRule = QReturnRule.returnRule;
         return from(returnRule)
                 .select(Projections.constructor(ReturnRuleResponse.class,
+                        returnRule.id,
                         returnRule.returnRuleName.id,
                         returnRule.deliveryFee,
                         returnRule.term, returnRule.isAvailable
                 ))
                 .where(returnRule.isAvailable.eq(true))
                 .fetch();
+    }
+
+
+    @Override
+    public ReturnRule findByReturnRuleNameId(String returnRuleName) {
+        QReturnRule returnRule = QReturnRule.returnRule;
+
+        return
+                from(returnRule)
+                        .where(returnRule.returnRuleName.id.eq(returnRuleName).and(returnRule.isAvailable.eq(true))
+                        )
+                        .fetchOne()
+                ;
     }
 }
 
