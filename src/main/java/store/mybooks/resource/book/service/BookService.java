@@ -1,5 +1,6 @@
 package store.mybooks.resource.book.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,7 @@ import store.mybooks.resource.book.dto.request.BookModifyRequest;
 import store.mybooks.resource.book.dto.response.BookBriefResponse;
 import store.mybooks.resource.book.dto.response.BookCreateResponse;
 import store.mybooks.resource.book.dto.response.BookDetailResponse;
+import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
 import store.mybooks.resource.book.dto.response.BookModifyResponse;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.exception.BookNotExistException;
@@ -137,5 +139,10 @@ public class BookService {
                 book.getOriginalCost() / modifyRequest.getSaleCost(),
                 modifyRequest.getStock(), modifyRequest.getIsPacking());
         return bookMapper.modifyResponse(book);
+    }
+
+    @Transactional
+    public List<BookGetResponseForCoupon> getBookForCoupon() {
+        return bookRepository.getBookForCoupon();
     }
 }

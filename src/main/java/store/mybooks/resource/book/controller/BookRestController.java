@@ -1,5 +1,6 @@
 package store.mybooks.resource.book.controller;
 
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,7 @@ import store.mybooks.resource.book.dto.request.BookModifyRequest;
 import store.mybooks.resource.book.dto.response.BookBriefResponse;
 import store.mybooks.resource.book.dto.response.BookCreateResponse;
 import store.mybooks.resource.book.dto.response.BookDetailResponse;
+import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
 import store.mybooks.resource.book.dto.response.BookModifyResponse;
 import store.mybooks.resource.book.service.BookService;
 
@@ -71,6 +73,20 @@ public class BookRestController {
     }
 
     /**
+     * methodName : getBookForCoupon
+     * author : newjaehun
+     * description : 쿠폰 생성에서 사용할 도서 목록.
+     *
+     * @return responseEntity
+     */
+    @GetMapping("/for-coupon")
+    public ResponseEntity<List<BookGetResponseForCoupon>> getBookForCoupon() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookForCoupon());
+    }
+
+    /**
      * methodName : createBook
      * author : newjaehun
      * description : 도서 추가.
@@ -82,8 +98,7 @@ public class BookRestController {
      */
     @PostMapping
     public ResponseEntity<BookCreateResponse> createBook(@Valid @RequestBody BookCreateRequest createRequest,
-                                                         BindingResult bindingResult)
-            throws BindException {
+                                                         BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
         }

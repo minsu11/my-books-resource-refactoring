@@ -8,8 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import store.mybooks.resource.book.dto.response.BookBriefResponse;
 import store.mybooks.resource.book.dto.response.BookDetailResponse;
+import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.entity.QBook;
+import store.mybooks.resource.book_status.entity.QBookStatus;
 
 /**
  * packageName    : store.mybooks.resource.book.repotisory <br/>
@@ -28,6 +30,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     }
 
     QBook book = QBook.book;
+    QBookStatus bookStatus = QBookStatus.bookStatus;
 
     @Override
     public BookDetailResponse getBookDetailInfo(Long id) {
@@ -44,5 +47,13 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
         long total = from(book).fetchCount();
 
         return new PageImpl<>(lists, pageable, total);
+    }
+
+    @Override
+    public List<BookGetResponseForCoupon> getBookForCoupon() {
+        return from(book)
+                .select(Projections.constructor(BookGetResponseForCoupon.class, book.id, book.name))
+                .where(book.bookStatus.id.in("판매중", "재고없음"))
+                .fetch();
     }
 }
