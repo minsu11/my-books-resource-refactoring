@@ -1,8 +1,11 @@
 package store.mybooks.resource.book_author.controller;
 
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,13 +35,17 @@ public class BookAuthorRestController {
     /**
      * methodName : createBookAuthor
      * author : newjaehun
-     * description : BookAuthor 추가
+     * description : BookAuthor 추가.
      *
      * @param bookAuthorCreateRequest BookAuthorCreateRequest
      * @return responseEntity
      */
     @PostMapping
-    public ResponseEntity<Void> createBookAuthor(@RequestBody BookAuthorCreateRequest bookAuthorCreateRequest) {
+    public ResponseEntity<Void> createBookAuthor(@Valid @RequestBody BookAuthorCreateRequest bookAuthorCreateRequest,
+                                                 BindingResult bindingResult) throws BindException {
+        if (bindingResult.hasErrors()) {
+            throw new BindException(bindingResult);
+        }
         bookAuthorService.createBookAuthor(bookAuthorCreateRequest);
         return ResponseEntity
                 .status(HttpStatus.CREATED)

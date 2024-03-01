@@ -1,6 +1,8 @@
 package store.mybooks.resource.book_author.dto.request;
 
 import java.util.List;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +22,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookAuthorCreateRequest {
+    @NotNull
+    @Positive
     private Long bookId;
+    @NotNull
     private List<Integer> authorIdList;
 }
