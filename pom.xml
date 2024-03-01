@@ -205,6 +205,7 @@
                         <configuration>
                             <backend>html</backend>
                             <doctype>book</doctype>
+                            <sourceDocumentName>api-guide.adoc</sourceDocumentName>
                             <sourceDirectory>${project.basedir}/src/docs</sourceDirectory>
                             <outputDirectory>${project.build.directory}/generated-docs</outputDirectory>
                             <attributes>
