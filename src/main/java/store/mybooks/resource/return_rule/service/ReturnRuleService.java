@@ -1,10 +1,8 @@
 package store.mybooks.resource.return_rule.service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.return_rule.dto.mapper.ReturnRuleMapper;
@@ -31,7 +29,6 @@ import store.mybooks.resource.return_rule_name.repository.ReturnRuleNameReposito
  * -----------------------------------------------------------<br>
  * 2/21/24        minsu11       최초 생성<br>
  */
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -89,13 +86,11 @@ public class ReturnRuleService {
      */
     public ReturnRuleCreateResponse createReturnRule(ReturnRuleCreateRequest request) {
         String name = request.getReturnName();
-
         ReturnRuleName returnRuleName =
                 returnRuleNameRepository
                         .findById(request.getReturnName())
                         .orElseThrow(ReturnRuleNameNotExistException::new);
-        ReturnRule returnRule = new ReturnRule(request.getDeliveryFee(), request.getTerm(), true, LocalDate.now(), returnRuleName);
-
+        ReturnRule returnRule = new ReturnRule(request.getDeliveryFee(), request.getTerm(), returnRuleName);
 
         ReturnRule duplicateReturnRule =
                 returnRuleRepository.findByReturnRuleNameId(name);
@@ -139,8 +134,7 @@ public class ReturnRuleService {
         // 어떻게 보면 반품 규정 삭제인데 여기에 불러도 괜찮을 까요..?
         beforeReturnRule.modifyIsAvailable(false);
 
-        ReturnRule returnRule = new ReturnRule(1, request.getDeliveryFee(), request.getTerm(),
-                true, LocalDate.now(), returnRuleNameResponse);
+        ReturnRule returnRule = new ReturnRule(request.getDeliveryFee(), request.getTerm(), returnRuleNameResponse);
 
         return returnRuleMapper.mapToReturnRuleModifyResponse(returnRuleRepository.save(returnRule));
     }

@@ -53,11 +53,11 @@ public class ReturnRule {
 
     }
 
-    public ReturnRule(Integer deliveryFee, Integer term, Boolean isAvailable, LocalDate createdDate, ReturnRuleName returnRuleName) {
+    public ReturnRule(Integer deliveryFee, Integer term, ReturnRuleName returnRuleName) {
         this.deliveryFee = deliveryFee;
         this.term = term;
-        this.isAvailable = isAvailable;
-        this.createdDate = createdDate;
+        this.isAvailable = true;
+        this.createdDate = LocalDate.now();
         this.returnRuleName = returnRuleName;
     }
 

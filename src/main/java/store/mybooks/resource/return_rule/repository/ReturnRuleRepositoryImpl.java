@@ -82,7 +82,8 @@ public class ReturnRuleRepositoryImpl extends QuerydslRepositorySupport implemen
 
         return
                 from(returnRule)
-                        .where(returnRule.isAvailable.eq(true))
+                        .where(returnRule.returnRuleName.id.eq(returnRuleName).and(returnRule.isAvailable.eq(true))
+                        )
                         .fetchOne()
                 ;
     }
