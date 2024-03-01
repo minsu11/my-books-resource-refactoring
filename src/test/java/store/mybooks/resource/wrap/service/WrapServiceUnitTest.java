@@ -17,7 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import store.mybooks.resource.wrap.dto.WrapMapper;
+import store.mybooks.resource.wrap.dto.mapper.WrapMapper;
 import store.mybooks.resource.wrap.dto.request.WrapCreateRequest;
 import store.mybooks.resource.wrap.dto.request.WrapModifyRequest;
 import store.mybooks.resource.wrap.dto.response.WrapCreateResponse;

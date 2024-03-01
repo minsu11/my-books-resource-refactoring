@@ -21,8 +21,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class WrapCreateRequest {
-
-
     @Size(min = 2, max = 20)
     @NotBlank
     private String name;

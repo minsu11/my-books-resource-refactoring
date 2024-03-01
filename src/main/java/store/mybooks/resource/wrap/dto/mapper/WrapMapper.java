@@ -1,4 +1,4 @@
-package store.mybooks.resource.wrap.dto;
+package store.mybooks.resource.wrap.dto.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
