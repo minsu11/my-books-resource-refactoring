@@ -2,6 +2,7 @@ package store.mybooks.resource.coupon.entity;
 
 import java.time.LocalDate;
 import javax.persistence.*;
+import lombok.NoArgsConstructor;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.category.entity.Category;
 
@@ -18,6 +19,7 @@ import store.mybooks.resource.category.entity.Category;
  */
 @Entity
 @Table(name = "coupon")
+@NoArgsConstructor
 public class Coupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,4 +64,57 @@ public class Coupon {
     @Column(name = "coupon_created_date")
     private LocalDate createdDate;
 
+    private Coupon(String name, Book book, Category category, Integer orderMin, Integer discountCost,
+                  Integer maxDiscountCost, Integer discountRate, LocalDate startDate, LocalDate endDate, Boolean isRate,
+                  Boolean isTargetOrder) {
+        this.name = name;
+        this.book = book;
+        this.category = category;
+        this.orderMin = orderMin;
+        this.discountCost = discountCost;
+        this.maxDiscountCost = maxDiscountCost;
+        this.discountRate = discountRate;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.isRate = isRate;
+        this.isTargetOrder = isTargetOrder;
+        this.createdDate = LocalDate.now();
+    }
+
+    public static Coupon makeTotalPercentageCoupon(String name, Integer orderMin, Integer maxDiscountCost,
+                                                   Integer discountRate, LocalDate startDate, LocalDate endDate) {
+        return new Coupon(name, null, null, orderMin, null, maxDiscountCost, discountRate, startDate, endDate, true,
+                true);
+    }
+
+    public static Coupon makeFlatDiscountCoupon(String name, Integer orderMin, Integer discountCost,
+                                                LocalDate startDate, LocalDate endDate) {
+        return new Coupon(name, null, null, orderMin, discountCost, null, null, startDate, endDate, false, true);
+    }
+
+    public static Coupon makeBookPercentageCoupon(String name, Book book, Integer orderMin,
+                                                  Integer maxDiscountCost, Integer discountRate,
+                                                  LocalDate startDate, LocalDate endDate) {
+        return new Coupon(name, book, null, orderMin, null, maxDiscountCost, discountRate, startDate, endDate, true,
+                false);
+    }
+
+    public static Coupon makeBookFlatDiscountCoupon(String name, Book book, Integer orderMin, Integer discountCost,
+                                                    LocalDate startDate, LocalDate endDate) {
+        return new Coupon(name, book, null, orderMin, discountCost, null, null, startDate, endDate, false,
+                false);
+    }
+
+    public static Coupon makeCategoryPercentageCoupon(String name, Category category, Integer orderMin,
+                                                      Integer maxDiscountCost, Integer discountRate,
+                                                      LocalDate startDate, LocalDate endDate) {
+        return new Coupon(name, null, category, orderMin, null, maxDiscountCost, discountRate, startDate, endDate, true,
+                false);
+    }
+
+    public static Coupon makeCategoryFlatDiscountCoupon(String name, Category category, Integer orderMin,
+                                                        Integer discountCost, LocalDate startDate, LocalDate endDate) {
+        return new Coupon(name, null, category, orderMin, discountCost, null, null, startDate, endDate, false,
+                false);
+    }
 }
