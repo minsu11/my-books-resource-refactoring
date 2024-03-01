@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
-public class CategoryFlatDiscountCoupon {
+public class CategoryFlatDiscountCouponRequest {
     @NotBlank
     @Size(min = 1, max = 100)
     private String name;

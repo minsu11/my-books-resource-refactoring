@@ -10,7 +10,7 @@ import store.mybooks.resource.category.exception.CategoryNotExistsException;
 import store.mybooks.resource.category.repository.CategoryRepository;
 import store.mybooks.resource.coupon.dto.request.BookFlatDiscountCouponCreateRequest;
 import store.mybooks.resource.coupon.dto.request.BookPercentageCouponCreateRequest;
-import store.mybooks.resource.coupon.dto.request.CategoryFlatDiscountCoupon;
+import store.mybooks.resource.coupon.dto.request.CategoryFlatDiscountCouponRequest;
 import store.mybooks.resource.coupon.dto.request.CategoryPercentageCouponCreateRequest;
 import store.mybooks.resource.coupon.dto.request.FlatDiscountCouponCreateRequest;
 import store.mybooks.resource.coupon.dto.request.TotalPercentageCouponCreateRequest;
@@ -114,7 +114,7 @@ public class CouponService {
         couponRepository.save(coupon);
     }
 
-    public void createCategoryFlatDiscountCoupon(CategoryFlatDiscountCoupon request) {
+    public void createCategoryFlatDiscountCoupon(CategoryFlatDiscountCouponRequest request) {
         CouponUtils.validateCouponDate(request.getStartDate(), request.getEndDate());
         CouponUtils.validateCouponOrderMin(request.getOrderMin(), request.getDiscountCost());
         Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(

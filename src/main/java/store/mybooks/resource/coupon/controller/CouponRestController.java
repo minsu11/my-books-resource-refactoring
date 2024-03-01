@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.coupon.dto.request.BookFlatDiscountCouponCreateRequest;
 import store.mybooks.resource.coupon.dto.request.BookPercentageCouponCreateRequest;
-import store.mybooks.resource.coupon.dto.request.CategoryFlatDiscountCoupon;
+import store.mybooks.resource.coupon.dto.request.CategoryFlatDiscountCouponRequest;
 import store.mybooks.resource.coupon.dto.request.CategoryPercentageCouponCreateRequest;
 import store.mybooks.resource.coupon.dto.request.FlatDiscountCouponCreateRequest;
 import store.mybooks.resource.coupon.dto.request.TotalPercentageCouponCreateRequest;
@@ -85,7 +85,8 @@ public class CouponRestController {
     }
 
     @PostMapping("/category-flat-discount-coupon/register")
-    public ResponseEntity<Void> createCategoryFlatDiscountCoupon(@Valid @RequestBody CategoryFlatDiscountCoupon request,
+    public ResponseEntity<Void> createCategoryFlatDiscountCoupon(@Valid @RequestBody
+                                                                 CategoryFlatDiscountCouponRequest request,
                                                                  BindingResult bindingResult) {
         Utils.validateRequest(bindingResult);
         couponService.createCategoryFlatDiscountCoupon(request);
