@@ -7,9 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import store.mybooks.resource.author.dto.response.AuthorGetResponse;
-import store.mybooks.resource.category.dto.response.CategoryGetResponseForBookCreate;
 import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
-import store.mybooks.resource.tag.dto.response.TagGetResponse;
+import store.mybooks.resource.tag.dto.response.TagGetResponseForBookDetail;
 
 /**
  * packageName    : store.mybooks.resource.book.dto.response <br/>
@@ -58,9 +57,9 @@ public class BookDetailResponse {
 
     private String isbn;
 
-    private List<CategoryGetResponseForBookCreate> categoryList;
+//    private List<CategoryGetResponseForBookCreate> categoryList;
 
-    private List<TagGetResponse> tagList;
+    private List<TagGetResponseForBookDetail> tagList;
 
     private Integer stock;
 
