@@ -2,6 +2,7 @@ package store.mybooks.resource.coupon.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.repotisory.BookRepository;
@@ -31,6 +32,7 @@ import store.mybooks.resource.coupon.utils.CouponUtils;
  */
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CouponService {
     private final CouponRepository couponRepository;
     private final BookRepository bookRepository;
