@@ -9,3 +9,9 @@
 :sectanchors:
 
 == 카테고리 API
+
+== 카테고리 조회
+
+include::{snippets}/category-get-page/http-request.adoc[]
+
+include::{snippets}/category-get-list/http-request.adoc[]

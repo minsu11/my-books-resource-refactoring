@@ -63,9 +63,11 @@ class BookTagServiceTest {
         Tag firstTag = new Tag(1, "firstTag", LocalDate.now());
         Tag secondTag = new Tag(1, "secondTag", LocalDate.now());
         Tag thirdTag = new Tag(1, "thirdTag", LocalDate.now());
+        BookStatus bookStatus = new BookStatus("판매중");
+        Publisher publisher = new Publisher(1, "출판사1", LocalDate.now());
         Book book =
-                new Book(1L, new BookStatus("판매중"), new Publisher(1, "출판사1", LocalDate.now()), "도서1", "1234567898764",
-                        LocalDate.of(2024, 1, 1), 100, "인덱스1", "내용1", 20000, 16000, 20, 5, 0, true, LocalDate.now());
+                new Book(1L, bookStatus, publisher, "도서1", "1234567898764", LocalDate.of(2024, 1, 1), 100, "인덱스1",
+                        "내용1", 20000, 16000, 20, 5, 0, true, LocalDate.now());
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
 
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
@@ -86,7 +88,7 @@ class BookTagServiceTest {
         when(bookTagRepository.existsByPk_BookId(anyLong())).thenReturn(true);
         doNothing().when(bookTagRepository).deleteByPk_BookId(anyLong());
         bookTagService.deleteBookTag(1L);
-        verify(bookTagRepository, times(1)).deleteByPk_BookId(anyLong());
+        verify(bookTagRepository, times(1)).deleteByPk_BookId(1L);
     }
 
     @Test
@@ -94,5 +96,6 @@ class BookTagServiceTest {
     void givenNotExistsBookId_whenDeleteBookTag_thenThrowBookNotExistException() {
         when(bookTagRepository.existsByPk_BookId(anyLong())).thenReturn(false);
         assertThrows(BookNotExistException.class, () -> bookTagService.deleteBookTag(1L));
+        verify(bookTagRepository, times(0)).deleteByPk_BookId(anyLong());
     }
 }

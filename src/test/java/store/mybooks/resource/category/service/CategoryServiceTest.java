@@ -94,6 +94,7 @@ class CategoryServiceTest {
         assertThat(actualPage.getContent().get(0).getId()).isEqualTo(firstCategory.getId());
         assertThat(actualPage.getContent().get(1).getId()).isEqualTo(secondCategory.getId());
         assertThat(actualPage.getTotalPages()).isEqualTo(2);
+        verify(categoryRepository, times(1)).findByOrderByParentCategory_Id(any());
     }
 
     @Test
@@ -131,6 +132,7 @@ class CategoryServiceTest {
         assertThat(actualList.get(2).getParentCategoryName()).isEqualTo("grandParentCategory/parentCategory");
         assertThat(actualList.get(2).getId()).isEqualTo(3);
         assertThat(actualList.get(2).getName()).isEqualTo("childCategory");
+        verify(categoryRepository, times(1)).findByOrderByParentCategory_Id(any());
     }
 
     @Test
@@ -162,6 +164,7 @@ class CategoryServiceTest {
                 firstCategory.getName().concat("/")
                         .concat(secondCategory.getName()).concat("/")
                         .concat(thirdCategory.getName()));
+        verify(categoryRepository, times(1)).findAllByOrderByParentCategory_Id();
     }
 
     @Test
@@ -180,6 +183,8 @@ class CategoryServiceTest {
         assertThat(actual.getTargetCategory().getName()).isEqualTo(childCategory.getName());
         assertThat(actual.getLevelOneCategoryName()).isEqualTo(grandParentCategory.getName());
         assertThat(actual.getLevelTwoCategoryName()).isEqualTo(parentCategory.getName());
+        verify(categoryRepository, times(1)).existsById(3);
+        verify(categoryRepository, times(1)).queryById(3);
     }
 
     @Test
@@ -187,6 +192,7 @@ class CategoryServiceTest {
     void givenNotExistsCategoryId_whenGetCategoryForUpdate_thenThrowCategoryNotExistsException() {
         when(categoryRepository.existsById(any())).thenReturn(false);
         assertThrows(CategoryNotExistsException.class, () -> categoryService.getCategoryForUpdate(1));
+        verify(categoryRepository, times(1)).existsById(1);
     }
 
 
@@ -214,6 +220,7 @@ class CategoryServiceTest {
         assertThat(actualResponse.getId()).isEqualTo(1);
         assertThat(actualResponse.getParentCategory()).isNull();
         assertThat(actualResponse.getName()).isEqualTo("firstCategory");
+        verify(categoryRepository, times(1)).findAllByParentCategoryIsNull();
     }
 
     @Test
@@ -240,14 +247,16 @@ class CategoryServiceTest {
         assertThat(actualParentCategory.getId()).isEqualTo(1);
         assertThat(actualParentCategory.getName()).isEqualTo("parentCategory");
         assertThat(actualParentCategory.getParentCategory()).isNull();
+        verify(categoryRepository, times(1)).findAllByParentCategory_Id(1);
+        verify(categoryRepository, times(1)).existsById(1);
     }
 
     @Test
     @DisplayName("getCategoriesByParentCategoryId 메서드 존재하지 않는 ParentCategoryId 의 경우")
     void givenGetCategoriesByParentCategoryId_whenNotExistsParentCategoryId_thenThrowCategoryNotExistsException() {
         when(categoryRepository.existsById(anyInt())).thenReturn(false);
-
         assertThrows(CategoryNotExistsException.class, () -> categoryService.getCategoriesByParentCategoryId(1));
+        verify(categoryRepository, times(1)).existsById(1);
     }
 
     @Test
@@ -266,6 +275,8 @@ class CategoryServiceTest {
 
         assertThat(actualResponse.getParentCategory()).isNull();
         assertThat(actualResponse.getName()).isEqualTo(name);
+        verify(categoryRepository, times(1)).save(any());
+        verify(categoryMapper, times(1)).createResponse(any());
     }
 
     @Test
@@ -276,6 +287,7 @@ class CategoryServiceTest {
 
         assertThrows(CategoryNameAlreadyExistsException.class,
                 () -> categoryService.createCategory(categoryCreateRequest));
+        verify(categoryRepository, times(1)).existsByName("name");
     }
 
     @Test
@@ -288,6 +300,8 @@ class CategoryServiceTest {
 
         assertThrows(CategoryNotExistsException.class,
                 () -> categoryService.createCategory(categoryCreateRequest));
+        verify(categoryRepository, times(1)).existsByName("categoryName");
+        verify(categoryRepository, times(1)).findById(1);
     }
 
     @Test
@@ -311,6 +325,8 @@ class CategoryServiceTest {
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getParentCategoryId()).isEqualTo(expectedResponse.getParentCategoryId());
         assertThat(actualResponse.getName()).isEqualTo(categoryModifyRequest.getName());
+        verify(categoryRepository, times(1)).findById(childCategory.getId());
+        verify(categoryMapper, times(1)).modifyResponse(any());
     }
 
     @Test
@@ -321,6 +337,7 @@ class CategoryServiceTest {
         CategoryModifyRequest categoryModifyRequest = new CategoryModifyRequest("duplicatedName");
         assertThrows(CategoryNameAlreadyExistsException.class,
                 () -> categoryService.modifyCategory(1, categoryModifyRequest));
+        verify(categoryRepository, times(1)).existsByName("duplicatedName");
     }
 
     @Test
@@ -331,6 +348,8 @@ class CategoryServiceTest {
 
         CategoryModifyRequest categoryModifyRequest = new CategoryModifyRequest("categoryName");
         assertThrows(CategoryNotExistsException.class, () -> categoryService.modifyCategory(1, categoryModifyRequest));
+        verify(categoryRepository, times(1)).existsByName("categoryName");
+        verify(categoryRepository, times(1)).findById(1);
     }
 
     @Test
@@ -353,8 +372,8 @@ class CategoryServiceTest {
     @DisplayName("deleteCategory 메서드 존재하지 않는 CategoryId 의 경우")
     void givenDeleteCategory_whenNotExistsCategoryId_thenThrowCategoryNotExistsException() {
         when(categoryRepository.findById(anyInt())).thenReturn(Optional.empty());
-
         assertThrows(CategoryNotExistsException.class, () -> categoryService.deleteCategory(1));
+        verify(categoryRepository, times(1)).findById(1);
     }
 
     @Test
@@ -363,6 +382,8 @@ class CategoryServiceTest {
         when(categoryRepository.findById(anyInt())).thenReturn(Optional.of(new Category()));
         when(categoryRepository.countByParentCategory_Id(anyInt())).thenReturn(1);
         assertThrows(CannotDeleteParentCategoryException.class, () -> categoryService.deleteCategory(1));
+        verify(categoryRepository, times(1)).findById(1);
+        verify(categoryRepository, times(1)).countByParentCategory_Id(1);
     }
 
     private CategoryGetResponse makeCategoryGetResponse(Integer id, CategoryGetResponse parentCategoryGetResponse,

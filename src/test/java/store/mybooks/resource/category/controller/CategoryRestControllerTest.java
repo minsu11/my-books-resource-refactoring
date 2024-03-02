@@ -4,8 +4,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -17,10 +25,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -28,8 +38,13 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import store.mybooks.resource.category.dto.request.CategoryCreateRequest;
 import store.mybooks.resource.category.dto.request.CategoryModifyRequest;
 import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
@@ -55,8 +70,8 @@ import store.mybooks.resource.category.service.CategoryService;
  * 2/21/24          damho-lee          최초 생성
  */
 @WebMvcTest(value = CategoryRestController.class)
+@ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 class CategoryRestControllerTest {
-    @Autowired
     MockMvc mockMvc;
 
     @Autowired
@@ -64,6 +79,15 @@ class CategoryRestControllerTest {
 
     @MockBean
     CategoryService categoryService;
+
+    @BeforeEach
+    void setUp(WebApplicationContext webApplicationContext,
+               RestDocumentationContextProvider restDocumentation) {
+
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                .apply(documentationConfiguration(restDocumentation))
+                .build();
+    }
 
     @Test
     @DisplayName("ParentCategoryId 를 기준으로 오름차순 정렬된 Page<CategoryGetResponse> 반환")
@@ -77,9 +101,11 @@ class CategoryRestControllerTest {
         when(categoryService.getCategoriesOrderByParentCategoryIdForAdminPage(any())).thenReturn(
                 categoryGetResponsePage);
 
-        System.out.println("size : " + categoryGetResponseList.size());
+        String content = objectMapper.writeValueAsString(pageable);
 
-        mockMvc.perform(get("/api/categories/page"))
+        mockMvc.perform(get("/api/categories/page")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()").value(2))
                 .andExpect(jsonPath("$.content[0].id").value(1))
@@ -87,7 +113,35 @@ class CategoryRestControllerTest {
                 .andExpect(jsonPath("$.content[0].parentCategoryName", nullValue()))
                 .andExpect(jsonPath("$.content[1].id").value(2))
                 .andExpect(jsonPath("$.content[1].name").value("childCategory"))
-                .andExpect(jsonPath("$.content[1].parentCategoryName").value("parentCategory"));
+                .andExpect(jsonPath("$.content[1].parentCategoryName").value("parentCategory"))
+                .andDo(document("category-get-page",
+                        requestFields(
+                                fieldWithPath("pageNumber").description("페이지"),
+                                fieldWithPath("pageSize").description("사이즈"),
+                                fieldWithPath("sort.*").ignored(),
+                                fieldWithPath("offset").ignored(),
+                                fieldWithPath("paged").ignored(),
+                                fieldWithPath("unpaged").ignored()
+                        ),
+                        responseFields(
+                                fieldWithPath("content").description("리스트"),
+                                fieldWithPath("content[].id").description("카테고리 아이디"),
+                                fieldWithPath("content[].name").description("카테고리 이름"),
+                                fieldWithPath("content[].parentCategoryName").description("부모 카테고리 이름").optional(),
+                                fieldWithPath("pageable.sort.*").ignored(),
+                                fieldWithPath("pageable.*").ignored(),
+                                fieldWithPath("totalElements").ignored(),
+                                fieldWithPath("totalPages").ignored(),
+                                fieldWithPath("last").ignored(),
+                                fieldWithPath("numberOfElements").ignored(),
+                                fieldWithPath("size").ignored(),
+                                fieldWithPath("number").ignored(),
+                                fieldWithPath("first").ignored(),
+                                fieldWithPath("sort.*").ignored(),
+                                fieldWithPath("empty").ignored()
+                        )));
+
+        verify(categoryService, times(1)).getCategoriesOrderByParentCategoryIdForAdminPage(any());
     }
 
     @Test
@@ -115,7 +169,12 @@ class CategoryRestControllerTest {
                 .andExpect(jsonPath("$[1].id").value(parentCategory.getId()))
                 .andExpect(jsonPath("$[1].name").value(parentCategory.getName()))
                 .andExpect(jsonPath("$[2].id").value(childCategory.getId()))
-                .andExpect(jsonPath("$[2].name").value(childCategory.getName()));
+                .andExpect(jsonPath("$[2].name").value(childCategory.getName()))
+                .andDo(document("category-get-category-list",
+                        responseFields(
+                                fieldWithPath("[].id").description("카테고리 아이디"),
+                                fieldWithPath("[].name").description("전체 카테고리 이름")
+                        )));
     }
 
     @Test
@@ -137,7 +196,13 @@ class CategoryRestControllerTest {
                 .andExpect(jsonPath("$[1].parentCategory", nullValue()))
                 .andExpect(jsonPath("$[2].id").value(3))
                 .andExpect(jsonPath("$[2].name").value("thirdCategory"))
-                .andExpect(jsonPath("$[2].parentCategory", nullValue()));
+                .andExpect(jsonPath("$[2].parentCategory", nullValue()))
+                .andDo(document("category-get-highest-categories",
+                        responseFields(
+                                fieldWithPath("[].id").description("카테고리 아이디"),
+                                fieldWithPath("[].name").description("카테고리 이름"),
+                                fieldWithPath("[].parentCategory").description("부모 카테고리")
+                        )));
     }
 
     @Test
@@ -157,14 +222,28 @@ class CategoryRestControllerTest {
                 .filter(category -> category.getParentCategory() != null)
                 .collect(Collectors.toList()));
 
-        mockMvc.perform(get("/api/categories/parentCategoryId/{id}", 1))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/categories/parentCategoryId/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.size()").value(2))
                 .andExpect(jsonPath("$[0].parentCategory.id").value(parentCategory.getId()))
                 .andExpect(jsonPath("$[0].id").value(firstChildCategory.getId()))
                 .andExpect(jsonPath("$[1].parentCategory.id").value(parentCategory.getId()))
-                .andExpect(jsonPath("$[1].id").value(secondChildCategory.getId()));
+                .andExpect(jsonPath("$[1].id").value(secondChildCategory.getId()))
+                .andDo(document("get-category-list-using-ParentCategoryId",
+                        pathParameters(
+                                parameterWithName("id").description("부모 카테고리 ID")),
+                        responseFields(
+                                fieldWithPath("[].name").description("카테고리 이름"),
+                                fieldWithPath("[].id").description("카테고리 ID"),
+                                fieldWithPath("[].parentCategory").description("부모 카테고리"),
+                                fieldWithPath("[].parentCategory.parentCategory").description("부모 카테고리"),
+                                fieldWithPath("[].parentCategory.id").description("부모 카테고리 ID"),
+                                fieldWithPath("[].parentCategory.name").description("부모 카테고리 이름")
+
+                        )
+
+                ));
     }
 
     @Test
@@ -185,13 +264,25 @@ class CategoryRestControllerTest {
 
         when(categoryService.getCategoryForUpdate(anyInt())).thenReturn(categoryGetResponseForUpdate);
 
-        mockMvc.perform(get("/api/categories/categoryId/{id}", 1))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/categories/categoryId/{id}", 1))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.targetCategory.name").value("firstCategory"))
                 .andExpect(jsonPath("$.targetCategory.id").value(1))
                 .andExpect(jsonPath("$.levelOneCategoryName").value("levelOneCategoryName"))
-                .andExpect(jsonPath("$.levelTwoCategoryName").value("levelTwoCategoryName"));
+                .andExpect(jsonPath("$.levelTwoCategoryName").value("levelTwoCategoryName"))
+                .andDo(document("get-category",
+                        pathParameters(
+                                parameterWithName("id").description("카테고리 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("targetCategory").description("카테고리"),
+                                fieldWithPath("targetCategory.id").description("카테고리 ID"),
+                                fieldWithPath("targetCategory.name").description("카테고리 이름"),
+                                fieldWithPath("levelOneCategoryName").description("1단계 카테고리 이름"),
+                                fieldWithPath("levelTwoCategoryName").description("2단계 카테고리 이름")
+                        )
+                ));
     }
 
     @Test
@@ -211,7 +302,17 @@ class CategoryRestControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.name").value(categoryCreateResponse.getName()))
-                .andExpect(jsonPath("$.parentCategory").value(categoryCreateResponse.getParentCategory()));
+                .andExpect(jsonPath("$.parentCategory").value(categoryCreateResponse.getParentCategory()))
+                .andDo(document("category-create",
+                        requestFields(
+                                fieldWithPath("parentCategoryId").description("바로 윗 단계 부모 카테고리 ID"),
+                                fieldWithPath("name").description("카테고리 이름")
+                        ),
+                        responseFields(
+                                fieldWithPath("parentCategory").description("부모 카테고리").optional(),
+                                fieldWithPath("name").description("카테고리 이름")
+                        )
+                ));
     }
 
     @Test
@@ -229,7 +330,6 @@ class CategoryRestControllerTest {
 
         assertThat(mvcResult.getResolvedException()).isInstanceOfAny(CategoryValidationException.class);
     }
-
 
     @Test
     @DisplayName("카테고리 수정")
@@ -249,7 +349,17 @@ class CategoryRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.parentCategoryId").value(categoryModifyResponse.getParentCategoryId()))
                 .andExpect(jsonPath("$.parentCategoryName").value(categoryModifyResponse.getParentCategoryName()))
-                .andExpect(jsonPath("$.name").value(categoryModifyResponse.getName()));
+                .andExpect(jsonPath("$.name").value(categoryModifyResponse.getName()))
+                .andDo(document("category-modify",
+                        requestFields(
+                                fieldWithPath("name").description("카테고리 이름")
+                        ),
+                        responseFields(
+                                fieldWithPath("name").description("카테고리 이름"),
+                                fieldWithPath("parentCategoryId").description("부모 카테고리 ID"),
+                                fieldWithPath("parentCategoryName").description("부모 카테고리 이름")
+                        )
+                ));
     }
 
     @Test
@@ -275,9 +385,16 @@ class CategoryRestControllerTest {
 
         when(categoryService.deleteCategory(anyInt())).thenReturn(categoryDeleteResponse);
 
-        mockMvc.perform(delete("/api/categories/{id}", 1))
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/categories/{id}", 1))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(categoryDeleteResponse.getName()));
+                .andExpect(jsonPath("$.name").value(categoryDeleteResponse.getName()))
+                .andDo(document("category-delete",
+                        pathParameters(
+                                parameterWithName("id").description("카테고리 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("name").description("카테고리 이름")
+                        )));
     }
 
     private void initCategoryGetResponseList(List<CategoryGetResponseForView> categoryGetResponseList) {

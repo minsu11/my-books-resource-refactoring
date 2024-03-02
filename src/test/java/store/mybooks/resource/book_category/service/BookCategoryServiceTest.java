@@ -63,9 +63,11 @@ class BookCategoryServiceTest {
         Category firstCategory = new Category(1, null, null, "firstCategory", LocalDate.now());
         Category secondCategory = new Category(1, null, null, "secondCategory", LocalDate.now());
         Category thirdCategory = new Category(1, null, null, "thirdCategory", LocalDate.now());
+        BookStatus bookStatus = new BookStatus("판매중");
+        Publisher publisher = new Publisher(1, "출판사1", LocalDate.now());
         Book book =
-                new Book(1L, new BookStatus("판매중"), new Publisher(1, "출판사1", LocalDate.now()), "도서1", "1234567898764",
-                        LocalDate.of(2024, 1, 1), 100, "인덱스1", "내용1", 20000, 16000, 20, 5, 0, true, LocalDate.now());
+                new Book(1L, bookStatus, publisher, "도서1", "1234567898764", LocalDate.of(2024, 1, 1), 100, "인덱스1",
+                        "내용1", 20000, 16000, 20, 5, 0, true, LocalDate.now());
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
         when(categoryRepository.findById(1)).thenReturn(Optional.of(firstCategory));
         when(categoryRepository.findById(2)).thenReturn(Optional.of(secondCategory));
@@ -92,5 +94,6 @@ class BookCategoryServiceTest {
     void givenNotExistsBookId_whenDeleteBookCategory_thenThrowBookNotExistException() {
         when(bookCategoryRepository.existsByPk_BookId(anyLong())).thenReturn(false);
         assertThrows(BookNotExistException.class, () -> bookCategoryService.deleteBookCategory(1L));
+        verify(bookCategoryRepository, times(0)).deleteByPk_BookId(anyLong());
     }
 }
