@@ -1,4 +1,4 @@
-ㄹpackage store.mybooks.resource.book_category.dto.response;
+package store.mybooks.resource.book_category.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
