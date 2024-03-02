@@ -38,6 +38,13 @@ public class CouponService {
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
 
+    /**
+     * methodName : createTotalPercentageCoupon <br>
+     * author : damho-lee <br>
+     * description : 전체 정률 할인 쿠폰 생성.<br>
+     *
+     * @param request TotalPercentageCouponCreateRequest
+     */
     public void createTotalPercentageCoupon(TotalPercentageCouponCreateRequest request) {
         CouponUtils.validateCouponDate(request.getStartDate(), request.getEndDate());
         Coupon coupon = Coupon.makeTotalPercentageCoupon(
@@ -51,6 +58,13 @@ public class CouponService {
         couponRepository.save(coupon);
     }
 
+    /**
+     * methodName : createFlatDiscountCoupon <br>
+     * author : damho-lee <br>
+     * description : 전체 정액 할인 쿠폰 생성.<br>
+     *
+     * @param request FlatDiscountCouponCreateRequest
+     */
     public void createFlatDiscountCoupon(FlatDiscountCouponCreateRequest request) {
         CouponUtils.validateCouponDate(request.getStartDate(), request.getEndDate());
         CouponUtils.validateCouponOrderMin(request.getOrderMin(), request.getDiscountCost());
@@ -65,6 +79,13 @@ public class CouponService {
         couponRepository.save(coupon);
     }
 
+    /**
+     * methodName : createBookPercentageCoupon <br>
+     * author : damho-lee <br>
+     * description : 도서 정률 할인 쿠폰 생성.<br>
+     *
+     * @param request BookPercentageCouponCreateRequest
+     */
     public void createBookPercentageCoupon(BookPercentageCouponCreateRequest request) {
         CouponUtils.validateCouponDate(request.getStartDate(), request.getEndDate());
         Book book = bookRepository.findById(request.getBookId()).orElseThrow(
@@ -82,6 +103,13 @@ public class CouponService {
         couponRepository.save(coupon);
     }
 
+    /**
+     * methodName : createBookFlatDiscountCoupon <br>
+     * author : damho-lee <br>
+     * description : 도서 정액 할인 쿠폰 생성. <br>
+     *
+     * @param request BookFlatDiscountCouponCreateRequest
+     */
     public void createBookFlatDiscountCoupon(BookFlatDiscountCouponCreateRequest request) {
         CouponUtils.validateCouponDate(request.getStartDate(), request.getEndDate());
         CouponUtils.validateCouponOrderMin(request.getOrderMin(), request.getDiscountCost());
@@ -99,6 +127,13 @@ public class CouponService {
         couponRepository.save(coupon);
     }
 
+    /**
+     * methodName : createCategoryPercentageCoupon <br>
+     * author : damho-lee <br>
+     * description : 카테고리 정률 할인 쿠폰 생성.<br>
+     *
+     * @param request CategoryPercentageCouponCreateRequest
+     */
     public void createCategoryPercentageCoupon(CategoryPercentageCouponCreateRequest request) {
         CouponUtils.validateCouponDate(request.getStartDate(), request.getEndDate());
         Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(
@@ -116,6 +151,13 @@ public class CouponService {
         couponRepository.save(coupon);
     }
 
+    /**
+     * methodName : createCategoryFlatDiscountCoupon <br>
+     * author : damho-lee <br>
+     * description : 카테고리 정액 할인 쿠폰 생성.<br>
+     *
+     * @param request CategoryFlatDiscountCouponRequest
+     */
     public void createCategoryFlatDiscountCoupon(CategoryFlatDiscountCouponRequest request) {
         CouponUtils.validateCouponDate(request.getStartDate(), request.getEndDate());
         CouponUtils.validateCouponOrderMin(request.getOrderMin(), request.getDiscountCost());

@@ -35,6 +35,15 @@ import store.mybooks.resource.error.Utils;
 public class CouponRestController {
     private final CouponService couponService;
 
+    /**
+     * methodName : createTotalPercentageCoupon <br>
+     * author : damho-lee <br>
+     * description : 전체 % 할인 쿠폰 생성.<br>
+     *
+     * @param request TotalPercentageCouponCreateRequest
+     * @param bindingResult BindingResult
+     * @return ResponseEntity
+     */
     @PostMapping("/total-percentage-coupon")
     public ResponseEntity<Void> createTotalPercentageCoupon(
             @Valid @RequestBody TotalPercentageCouponCreateRequest request,
@@ -45,6 +54,15 @@ public class CouponRestController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    /**
+     * methodName : createFlatDiscountCoupon <br>
+     * author : damho-lee <br>
+     * description : 전체 정액 할인 쿠폰 생성.<br>
+     *
+     * @param request FlatDiscountCouponCreateRequest
+     * @param bindingResult BindingResult
+     * @return ResponseEntity
+     */
     @PostMapping("/flat-discount-coupon")
     public ResponseEntity<Void> createFlatDiscountCoupon(@Valid @RequestBody FlatDiscountCouponCreateRequest request,
                                                          BindingResult bindingResult) {
@@ -54,6 +72,15 @@ public class CouponRestController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    /**
+     * methodName : createBookPercentageCoupon <br>
+     * author : damho-lee <br>
+     * description : 도서 % 할인 쿠폰 생성.<br>
+     *
+     * @param request BookPercentageCouponCreateRequest
+     * @param bindingResult BindingResult
+     * @return ResponseEntity
+     */
     @PostMapping("/book-percentage-coupon")
     public ResponseEntity<Void> createBookPercentageCoupon(
             @Valid @RequestBody BookPercentageCouponCreateRequest request,
@@ -64,6 +91,15 @@ public class CouponRestController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    /**
+     * methodName : createBookFlatDiscountCoupon <br>
+     * author : damho-lee <br>
+     * description : 도서 정액 할인 쿠폰 생성.<br>
+     *
+     * @param request BookFlatDiscountCouponCreateRequest
+     * @param bindingResult BindingResult
+     * @return ResponseEntity
+     */
     @PostMapping("/book-flat-discount-coupon")
     public ResponseEntity<Void> createBookFlatDiscountCoupon(
             @Valid @RequestBody BookFlatDiscountCouponCreateRequest request,
@@ -74,6 +110,15 @@ public class CouponRestController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    /**
+     * methodName : createCategoryPercentageCoupon <br>
+     * author : damho-lee <br>
+     * description : 카테고리 % 할인 쿠폰 생성.<br>
+     *
+     * @param request CategoryPercentageCouponCreateRequest
+     * @param bindingResult BindingResult
+     * @return ResponseEntity
+     */
     @PostMapping("/category-percentage-coupon")
     public ResponseEntity<Void> createCategoryPercentageCoupon(
             @Valid @RequestBody CategoryPercentageCouponCreateRequest request,
@@ -84,6 +129,15 @@ public class CouponRestController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    /**
+     * methodName : createCategoryFlatDiscountCoupon <br>
+     * author : damho-lee <br>
+     * description : 카테고리 정액 할인 쿠폰 생성.<br>
+     *
+     * @param request CategoryFlatDiscountCouponRequest
+     * @param bindingResult BindingResult
+     * @return ResponseEntity
+     */
     @PostMapping("/category-flat-discount-coupon")
     public ResponseEntity<Void> createCategoryFlatDiscountCoupon(@Valid @RequestBody
                                                                  CategoryFlatDiscountCouponRequest request,
