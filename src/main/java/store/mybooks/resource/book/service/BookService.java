@@ -1,10 +1,14 @@
 package store.mybooks.resource.book.service;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.book.dto.request.BookCreateRequest;
 import store.mybooks.resource.book.dto.request.BookModifyRequest;
 import store.mybooks.resource.book.dto.response.BookBriefResponse;
@@ -23,6 +27,12 @@ import store.mybooks.resource.book_status.exception.BookStatusNotExistException;
 import store.mybooks.resource.book_status.respository.BookStatusRepository;
 import store.mybooks.resource.book_tag.dto.request.BookTagCreateRequest;
 import store.mybooks.resource.book_tag.service.BookTagService;
+import store.mybooks.resource.image.dto.response.ImageRegisterResponse;
+import store.mybooks.resource.image.service.ImageService;
+import store.mybooks.resource.image_status.entity.ImageStatus;
+import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
+import store.mybooks.resource.image_status.exception.ImageStatusNotExistException;
+import store.mybooks.resource.image_status.repository.ImageStatusRepository;
 import store.mybooks.resource.publisher.entity.Publisher;
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
 import store.mybooks.resource.publisher.repository.PublisherRepository;
@@ -48,6 +58,8 @@ public class BookService {
     private final BookTagService bookTagService;
     //    private final BookAuthorService bookAuthorService;
     private final BookMapper bookMapper;
+    private final ImageService imageService;
+    private final ImageStatusRepository imageStatusRepository;
 
     /**
      * methodName : getBookBriefInfo
@@ -87,7 +99,9 @@ public class BookService {
      * @return bookCreateResponse : 추가된 도서의 name 포함
      */
     @Transactional
-    public BookCreateResponse createBook(BookCreateRequest createRequest) {
+    public BookCreateResponse createBook(BookCreateRequest createRequest, MultipartFile thumbnail,
+                                         List<MultipartFile> content)
+            throws IOException {
         BookStatus bookStatus = bookStatusRepository.findById(createRequest.getBookStatusId())
                 .orElseThrow(() -> new BookStatusNotExistException(createRequest.getBookStatusId()));
 
@@ -112,6 +126,18 @@ public class BookService {
         if (createRequest.getTagList() != null) {
             bookTagService.createBookTag(new BookTagCreateRequest(bookId, createRequest.getTagList()));
         }
+        List<ImageRegisterResponse> imageRegisterResponseList = new ArrayList<>();
+        ImageStatus thumbnailEnum = imageStatusRepository.findById(ImageStatusEnum.THUMBNAIL.getName()).orElseThrow(
+                () -> new ImageStatusNotExistException("해당 하는 id의 이미지 상태가 없습니다."));
+        ImageRegisterResponse imageRegisterResponse = imageService.saveImage(thumbnailEnum, null, book, thumbnail);
+        imageRegisterResponseList.add(imageRegisterResponse);
+
+        ImageStatus contentEnum = imageStatusRepository.findById(ImageStatusEnum.CONTENT.getName())
+                .orElseThrow(() -> new ImageStatusNotExistException("해당 하는 id의 이미지 상태가 없습니다."));
+        for (MultipartFile file : content) {
+            imageRegisterResponseList.add(imageService.saveImage(contentEnum, null, book, file));
+        }
+        //TODO bookResponse dto에 이미지 값들도 넣어야한다
         return bookMapper.createResponse(newBook);
     }
 
