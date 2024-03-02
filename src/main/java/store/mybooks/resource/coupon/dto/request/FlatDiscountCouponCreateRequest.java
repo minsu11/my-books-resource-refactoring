@@ -3,6 +3,7 @@ package store.mybooks.resource.coupon.dto.request;
 import java.time.LocalDate;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
@@ -27,15 +28,19 @@ public class FlatDiscountCouponCreateRequest {
     @Size(min = 1, max = 100)
     private String name;
 
+    @NotNull
     @PositiveOrZero
     private Integer orderMin;
 
+    @NotNull
     @Positive
     private Integer discountCost;
 
+    @NotNull
     @FutureOrPresent
     private LocalDate startDate;
 
+    @NotNull
     @FutureOrPresent
     private LocalDate endDate;
 }
