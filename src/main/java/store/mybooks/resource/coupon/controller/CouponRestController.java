@@ -35,7 +35,7 @@ import store.mybooks.resource.error.Utils;
 public class CouponRestController {
     private final CouponService couponService;
 
-    @PostMapping("/total-percentage-coupon/register")
+    @PostMapping("/total-percentage-coupon")
     public ResponseEntity<Void> createTotalPercentageCoupon(
             @Valid @RequestBody TotalPercentageCouponCreateRequest request,
             BindingResult bindingResult) {
@@ -45,7 +45,7 @@ public class CouponRestController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PostMapping("/flat-discount-coupon/register")
+    @PostMapping("/flat-discount-coupon")
     public ResponseEntity<Void> createFlatDiscountCoupon(@Valid @RequestBody FlatDiscountCouponCreateRequest request,
                                                          BindingResult bindingResult) {
         Utils.validateRequest(bindingResult);
@@ -54,7 +54,7 @@ public class CouponRestController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PostMapping("/book-percentage-coupon/register")
+    @PostMapping("/book-percentage-coupon")
     public ResponseEntity<Void> createBookPercentageCoupon(
             @Valid @RequestBody BookPercentageCouponCreateRequest request,
             BindingResult bindingResult) {
@@ -64,7 +64,7 @@ public class CouponRestController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PostMapping("/book-flat-discount-coupon/register")
+    @PostMapping("/book-flat-discount-coupon")
     public ResponseEntity<Void> createBookFlatDiscountCoupon(
             @Valid @RequestBody BookFlatDiscountCouponCreateRequest request,
             BindingResult bindingResult) {
@@ -74,7 +74,7 @@ public class CouponRestController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PostMapping("/category-percentage-coupon/register")
+    @PostMapping("/category-percentage-coupon")
     public ResponseEntity<Void> createCategoryPercentageCoupon(
             @Valid @RequestBody CategoryPercentageCouponCreateRequest request,
             BindingResult bindingResult) {
@@ -84,7 +84,7 @@ public class CouponRestController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PostMapping("/category-flat-discount-coupon/register")
+    @PostMapping("/category-flat-discount-coupon")
     public ResponseEntity<Void> createCategoryFlatDiscountCoupon(@Valid @RequestBody
                                                                  CategoryFlatDiscountCouponRequest request,
                                                                  BindingResult bindingResult) {
