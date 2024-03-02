@@ -1,5 +1,6 @@
 package store.mybooks.resource.orders_status.entity;
 
+import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -28,6 +29,9 @@ public class OrdersStatus {
     @Id
     @Column(name = "orders_status_id")
     private String id;
+
+    @Column(name = "orders_status_created_date")
+    private LocalDate createdDate;
 
 
 }
