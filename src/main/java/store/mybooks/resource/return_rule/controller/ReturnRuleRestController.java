@@ -98,14 +98,14 @@ public class ReturnRuleRestController {
      * {@code modifyRequest}가 유효성 검사에 어긋난 경우 {@code ReturnRuleValidationFailedException}을 던짐.
      * <br> *
      *
-     * @param name          수정 할 정보의 name.
+     * @param id            수정 할 정보의 id.
      * @param modifyRequest 수정 할 정보의 {@code request body data}.
      * @param bindingResult 유효성 검사 실패 시 에러의 정보가 담김.
      * @return response entity
      */
     @PutMapping("/{id}")
     public ResponseEntity<ReturnRuleModifyResponse> modifyReturnRule(
-            @PathVariable Long id,
+            @PathVariable Integer id,
             @Valid @RequestBody ReturnRuleModifyRequest modifyRequest,
             BindingResult bindingResult
     ) {
@@ -129,7 +129,7 @@ public class ReturnRuleRestController {
      * @return response entity
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteReturnRule(@PathVariable Long id) {
+    public ResponseEntity deleteReturnRule(@PathVariable Integer id) {
         returnRuleService.deleteReturnRule(id);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
