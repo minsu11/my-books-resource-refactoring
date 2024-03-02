@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import store.mybooks.resource.author.entity.Author;
 import store.mybooks.resource.author.repository.AuthorRepository;
 import store.mybooks.resource.book.entity.Book;
@@ -54,7 +55,6 @@ class BookAuthorServiceTest {
     @Test
     @DisplayName("BookAuthor 추가")
     void givenBookAuthorCreateRequest_whenCreatBookAuthor_thenCreateBookAuthor() {
-        List<Integer> authorIdList = new ArrayList<>(List.of(1, 2, 3));
         Author author1 = new Author(1, null, null, LocalDate.now());
         Author author2 = new Author(2, null, null, LocalDate.now());
         Author author3 = new Author(3, null, null, LocalDate.now());
@@ -68,7 +68,12 @@ class BookAuthorServiceTest {
         when(authorRepository.findById(3)).thenReturn(Optional.of(author3));
         when(bookAuthorRepository.save(any())).thenReturn(null);
 
-        bookAuthorService.createBookAuthor(new BookAuthorCreateRequest(bookId, authorIdList));
+        BookAuthorCreateRequest request = new BookAuthorCreateRequest();
+        ReflectionTestUtils.setField(request, "bookId", bookId);
+        ReflectionTestUtils.setField(request, "authorIdList", new ArrayList<>(List.of(1, 2, 3)));
+
+
+        bookAuthorService.createBookAuthor(request);
         verify(bookRepository, times(1)).findById(anyLong());
         verify(authorRepository, times(1)).findById(1);
         verify(authorRepository, times(1)).findById(2);

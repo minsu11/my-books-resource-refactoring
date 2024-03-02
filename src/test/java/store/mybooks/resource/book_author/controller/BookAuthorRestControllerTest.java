@@ -28,6 +28,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -71,7 +72,11 @@ class BookAuthorRestControllerTest {
     @DisplayName("도서저자 추가(검증 성공)")
     void givenBookAuthorCreateRequest_whenCreateBookAuthor_thenReturnStatusCreated() throws Exception {
         List<Integer> authorIdList = new ArrayList<>(List.of(1, 2, 3));
-        BookAuthorCreateRequest request = new BookAuthorCreateRequest(1L, authorIdList);
+
+        BookAuthorCreateRequest request = new BookAuthorCreateRequest();
+        ReflectionTestUtils.setField(request, "bookId", 1L);
+        ReflectionTestUtils.setField(request, "authorIdList", authorIdList);
+
 
         doNothing().when(bookAuthorService).createBookAuthor(any(BookAuthorCreateRequest.class));
 
@@ -91,8 +96,9 @@ class BookAuthorRestControllerTest {
     @Test
     @DisplayName("도서저자 추가(검증 실패)")
     void givenInvalidBookAuthorCreateRequest_whenCreateBookAuthor_thenThrowBindException() throws Exception {
-        BookAuthorCreateRequest request = new BookAuthorCreateRequest(1L, null);
-
+        BookAuthorCreateRequest request = new BookAuthorCreateRequest();
+        ReflectionTestUtils.setField(request, "bookId", 1L);
+        ReflectionTestUtils.setField(request, "authorIdList", null);
         doNothing().when(bookAuthorService).createBookAuthor(any(BookAuthorCreateRequest.class));
 
         mockMvc.perform(post(url)
@@ -107,7 +113,7 @@ class BookAuthorRestControllerTest {
     void givenBookId_whenDeleteBookAuthor_thenReturnStatusOk() throws Exception {
         doNothing().when(bookAuthorService).deleteBookAuthor(anyLong());
         mockMvc.perform(RestDocumentationRequestBuilders.delete(url + "/{id}", 1L))
-                .andExpect(status().isOk())
+                .andExpect(status().isNoContent())
                 .andDo(document("book_author-delete",
                         pathParameters(
                                 parameterWithName("id").description("도서 ID")
