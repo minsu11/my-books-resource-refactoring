@@ -1,10 +1,7 @@
 package store.mybooks.resource.book.repotisory;
 
 import com.querydsl.core.types.Projections;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -17,14 +14,12 @@ import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.entity.QBook;
 import store.mybooks.resource.book_author.entity.QBookAuthor;
-import store.mybooks.resource.book_category.dto.response.CategoryGetResponseForQuery;
 import store.mybooks.resource.book_category.entity.QBookCategory;
 import store.mybooks.resource.book_status.entity.QBookStatus;
 import store.mybooks.resource.book_tag.entity.QBookTag;
-import store.mybooks.resource.category.dto.response.CategoryGetResponseForBookCreate;
 import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
 import store.mybooks.resource.publisher.entity.QPublisher;
-import store.mybooks.resource.tag.dto.response.TagGetResponse;
+import store.mybooks.resource.tag.dto.response.TagGetResponseForBookDetail;
 import store.mybooks.resource.tag.entity.QTag;
 
 /**
@@ -56,7 +51,6 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     @Override
     public BookDetailResponse getBookDetailInfo(Long id) {
         BookDetailResponse result = from(book)
-                .join(book.publisher, publisher).fetchJoin()
                 .where(book.id.eq(id))
                 .select(Projections.constructor(BookDetailResponse.class,
                         book.id, book.name, book.publishDate,
@@ -70,53 +64,53 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .select(Projections.constructor(String.class, bookStatus.id))
                 .fetchOne());
 
-        result.setAuthorList(from(bookAuthor)
-                .join(bookAuthor.author, author)
-                .where(bookAuthor.book.id.eq(id))
-                .select(Projections.constructor(AuthorGetResponse.class, author.id, author.name, author.content))
-                .fetch());
-
         result.setPublisher(from(book)
                 .join(book.publisher, publisher)
                 .where(book.id.eq(id))
                 .select(Projections.constructor(PublisherGetResponse.class, publisher.id, publisher.name))
                 .fetchOne());
 
+        result.setAuthorList(from(bookAuthor)
+                .join(bookAuthor.author, author)
+                .where(bookAuthor.book.id.eq(id))
+                .select(Projections.constructor(AuthorGetResponse.class, author.id, author.name, author.content))
+                .fetch());
+
 
         result.setTagList(from(bookTag)
                 .join(bookTag.tag, tag)
                 .where(bookTag.book.id.eq(id))
-                .select(Projections.constructor(TagGetResponse.class, tag.id, tag.name))
+                .select(Projections.constructor(TagGetResponseForBookDetail.class, tag.id, tag.name))
                 .fetch());
 
-        List<CategoryGetResponseForQuery> categoryList = from(bookCategory)
-                .where(bookCategory.book.id.eq(id))
-                .select(Projections.constructor(CategoryGetResponseForQuery.class, bookCategory.category.id,
-                        bookCategory.category.name, bookCategory.category.parentCategory.id))
-                .fetch();
-
-        Map<Integer, String> categoryIdAndFullNameMap = new HashMap<>();
-        for (CategoryGetResponseForQuery category : categoryList) {
-            StringBuilder name = new StringBuilder(category.getName());
-            Integer preParentId = category.getPreParentId();
-            while (preParentId != null) {
-                for (CategoryGetResponseForQuery preParentCategory : categoryList) {
-                    if (preParentCategory.getId().equals(preParentId)) {
-                        name.insert(0, preParentCategory.getName() + "/");
-                        preParentId = preParentCategory.getPreParentId();
-                        break;
-                    }
-                }
-            }
-            categoryIdAndFullNameMap.put(category.getId(), name.toString());
-        }
-
-        List<CategoryGetResponseForBookCreate> categoryFullNameList = new ArrayList<>();
-        for (Map.Entry<Integer, String> entry : categoryIdAndFullNameMap.entrySet()) {
-            categoryFullNameList.add(new CategoryGetResponseForBookCreate(entry.getKey(), entry.getValue()));
-        }
-
-        result.setCategoryList(categoryFullNameList);
+//        List<CategoryGetResponseForQuery> categoryList = from(bookCategory)
+//                .where(bookCategory.book.id.eq(id))
+//                .select(Projections.constructor(CategoryGetResponseForQuery.class, bookCategory.category.id,
+//                        bookCategory.category.name, bookCategory.category.parentCategory.id))
+//                .fetch();
+//
+//        Map<Integer, String> categoryIdAndFullNameMap = new HashMap<>();
+//        for (CategoryGetResponseForQuery category : categoryList) {
+//            StringBuilder name = new StringBuilder(category.getName());
+//            Integer preParentId = category.getPreParentId();
+//            while (preParentId != null) {
+//                for (CategoryGetResponseForQuery preParentCategory : categoryList) {
+//                    if (preParentCategory.getId().equals(preParentId)) {
+//                        name.insert(0, preParentCategory.getName() + "/");
+//                        preParentId = preParentCategory.getPreParentId();
+//                        break;
+//                    }
+//                }
+//            }
+//            categoryIdAndFullNameMap.put(category.getId(), name.toString());
+//        }
+//
+//        List<CategoryGetResponseForBookCreate> categoryFullNameList = new ArrayList<>();
+//        for (Map.Entry<Integer, String> entry : categoryIdAndFullNameMap.entrySet()) {
+//            categoryFullNameList.add(new CategoryGetResponseForBookCreate(entry.getKey(), entry.getValue()));
+//        }
+//
+//        result.setCategoryList(categoryFullNameList);
 
         return result;
     }
