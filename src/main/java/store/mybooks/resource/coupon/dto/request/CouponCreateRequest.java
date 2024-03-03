@@ -12,29 +12,40 @@ import lombok.NoArgsConstructor;
 
 /**
  * packageName    : store.mybooks.resource.coupon.dto.request
- * fileName       : FlatDiscountCouponCreateRequest
+ * fileName       : CouponCreateRequest
  * author         : damho-lee
- * date           : 3/1/24
+ * date           : 3/2/24
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 3/1/24          damho-lee          최초 생성
+ * 3/2/24          damho-lee          최초 생성
  */
 @Getter
 @NoArgsConstructor
-public class FlatDiscountCouponCreateRequest {
+public class CouponCreateRequest {
     @NotBlank
     @Size(min = 1, max = 100)
     private String name;
+
+    @Positive
+    private Long bookId;
+
+    @Positive
+    private Integer categoryId;
 
     @NotNull
     @PositiveOrZero
     private Integer orderMin;
 
-    @NotNull
     @Positive
     private Integer discountCost;
+
+    @Positive
+    private Integer maxDiscountCost;
+
+    @Positive
+    private Integer discountRate;
 
     @NotNull
     @FutureOrPresent

@@ -64,7 +64,22 @@ public class Coupon {
     @Column(name = "coupon_created_date")
     private LocalDate createdDate;
 
-    private Coupon(String name, Book book, Category category, Integer orderMin, Integer discountCost,
+    /**
+     * Coupon 생성자.
+     *
+     * @param name            이름
+     * @param book            도서
+     * @param category        카테고리
+     * @param orderMin        최소주문금액
+     * @param discountCost    할인금액
+     * @param maxDiscountCost 최대할인금액
+     * @param discountRate    할인율
+     * @param startDate       시작일
+     * @param endDate         종료일
+     * @param isRate          정률할인쿠폰인지
+     * @param isTargetOrder   전체적용쿠폰인지
+     */
+    public Coupon(String name, Book book, Category category, Integer orderMin, Integer discountCost,
                   Integer maxDiscountCost, Integer discountRate, LocalDate startDate, LocalDate endDate, Boolean isRate,
                   Boolean isTargetOrder) {
         this.name = name;
@@ -79,42 +94,5 @@ public class Coupon {
         this.isRate = isRate;
         this.isTargetOrder = isTargetOrder;
         this.createdDate = LocalDate.now();
-    }
-
-    public static Coupon makeTotalPercentageCoupon(String name, Integer orderMin, Integer maxDiscountCost,
-                                                   Integer discountRate, LocalDate startDate, LocalDate endDate) {
-        return new Coupon(name, null, null, orderMin, null, maxDiscountCost, discountRate, startDate, endDate, true,
-                true);
-    }
-
-    public static Coupon makeFlatDiscountCoupon(String name, Integer orderMin, Integer discountCost,
-                                                LocalDate startDate, LocalDate endDate) {
-        return new Coupon(name, null, null, orderMin, discountCost, null, null, startDate, endDate, false, true);
-    }
-
-    public static Coupon makeBookPercentageCoupon(String name, Book book, Integer orderMin,
-                                                  Integer maxDiscountCost, Integer discountRate,
-                                                  LocalDate startDate, LocalDate endDate) {
-        return new Coupon(name, book, null, orderMin, null, maxDiscountCost, discountRate, startDate, endDate, true,
-                false);
-    }
-
-    public static Coupon makeBookFlatDiscountCoupon(String name, Book book, Integer orderMin, Integer discountCost,
-                                                    LocalDate startDate, LocalDate endDate) {
-        return new Coupon(name, book, null, orderMin, discountCost, null, null, startDate, endDate, false,
-                false);
-    }
-
-    public static Coupon makeCategoryPercentageCoupon(String name, Category category, Integer orderMin,
-                                                      Integer maxDiscountCost, Integer discountRate,
-                                                      LocalDate startDate, LocalDate endDate) {
-        return new Coupon(name, null, category, orderMin, null, maxDiscountCost, discountRate, startDate, endDate, true,
-                false);
-    }
-
-    public static Coupon makeCategoryFlatDiscountCoupon(String name, Category category, Integer orderMin,
-                                                        Integer discountCost, LocalDate startDate, LocalDate endDate) {
-        return new Coupon(name, null, category, orderMin, discountCost, null, null, startDate, endDate, false,
-                false);
     }
 }
