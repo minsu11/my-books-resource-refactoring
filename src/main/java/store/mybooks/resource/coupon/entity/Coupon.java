@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.category.entity.Category;
@@ -27,6 +29,8 @@ import store.mybooks.resource.category.entity.Category;
  */
 @Entity
 @Table(name = "coupon")
+@Getter
+@AllArgsConstructor
 @NoArgsConstructor
 public class Coupon {
     @Id
