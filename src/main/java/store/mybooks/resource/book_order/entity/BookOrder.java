@@ -1,19 +1,11 @@
 package store.mybooks.resource.book_order.entity;
 
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
 import store.mybooks.resource.orders_status.entity.OrdersStatus;
 import store.mybooks.resource.user.entity.User;
@@ -48,6 +40,7 @@ public class BookOrder {
     @Column(name = "order_out_date")
     private LocalDate outDate;
 
+    @CreatedDate
     @Column(name = "order_date")
     private LocalDate date;
 
@@ -104,4 +97,30 @@ public class BookOrder {
     @JoinColumn(name = "wrap_id")
     private Wrap wrap;
 
+    public BookOrder(Long id, LocalDate outDate, String invoiceNumber, String receiverName, String receiverAddress,
+                     String receiverPhoneNumber, String receiverMessage, Integer totalCost, Integer pointCost, Integer couponCost, Boolean isCouponUsed,
+                     String number, String findPassword, User user, OrdersStatus orderStatus, DeliveryRule deliveryRule, UserCoupon userCoupon, Wrap wrap) {
+        this.id = id;
+        this.outDate = outDate;
+        this.invoiceNumber = invoiceNumber;
+        this.receiverName = receiverName;
+        this.receiverAddress = receiverAddress;
+        this.receiverPhoneNumber = receiverPhoneNumber;
+        this.receiverMessage = receiverMessage;
+        this.totalCost = totalCost;
+        this.pointCost = pointCost;
+        this.couponCost = couponCost;
+        this.isCouponUsed = isCouponUsed;
+        this.number = number;
+        this.findPassword = findPassword;
+        this.user = user;
+        this.orderStatus = orderStatus;
+        this.deliveryRule = deliveryRule;
+        this.userCoupon = userCoupon;
+        this.wrap = wrap;
+    }
+
+    public void modifyOrderStatus(OrdersStatus ordersStatus) {
+        this.orderStatus = ordersStatus;
+    }
 }
