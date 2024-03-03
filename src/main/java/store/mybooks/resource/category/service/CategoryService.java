@@ -148,7 +148,8 @@ public class CategoryService {
      */
     @Transactional(readOnly = true)
     public List<String> getCategoryNameForBookView(Long bookId) {
-        List<CategoryNameGetResponse> categoryNameGetResponseList = categoryRepository.findFullCategoryForBookViewByBookId(bookId);
+        List<CategoryNameGetResponse> categoryNameGetResponseList =
+                categoryRepository.findFullCategoryForBookViewByBookId(bookId);
         List<String> categoryNameList = new ArrayList<>();
 
         for (CategoryNameGetResponse categoryNameGetResponse : categoryNameGetResponseList) {
