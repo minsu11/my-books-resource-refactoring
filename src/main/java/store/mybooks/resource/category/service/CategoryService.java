@@ -3,6 +3,7 @@ package store.mybooks.resource.category.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,7 @@ import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
 import store.mybooks.resource.category.dto.response.CategoryIdNameGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
+import store.mybooks.resource.category.dto.response.CategoryNameGetResponse;
 import store.mybooks.resource.category.entity.Category;
 import store.mybooks.resource.category.exception.CannotDeleteParentCategoryException;
 import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
@@ -134,6 +136,33 @@ public class CategoryService {
         }
 
         return categoryGetResponseForBookCreateList;
+    }
+
+    /**
+     * methodName : getCategoryNameForBookView <br>
+     * author : damho-lee <br>
+     * description : bookId 로 CategoryName 들 찾기.<br>
+     *
+     * @param bookId long
+     * @return list
+     */
+    @Transactional(readOnly = true)
+    public List<String> getCategoryNameForBookView(Long bookId) {
+        List<CategoryNameGetResponse> categoryNameGetResponseList = categoryRepository.findFullCategoryForBookViewByBookId(bookId);
+        List<String> categoryNameList = new ArrayList<>();
+
+        for (CategoryNameGetResponse categoryNameGetResponse : categoryNameGetResponseList) {
+            StringJoiner stringJoiner = new StringJoiner("/");
+            for (String name : categoryNameGetResponse.getNames()) {
+                if (name != null) {
+                    stringJoiner.add(name);
+                }
+            }
+            categoryNameList.add(stringJoiner.toString());
+        }
+
+        return categoryNameList;
+
     }
 
     /**
