@@ -82,35 +82,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .where(bookTag.book.id.eq(id))
                 .select(Projections.constructor(TagGetResponseForBookDetail.class, tag.id, tag.name))
                 .fetch());
-
-//        List<CategoryGetResponseForQuery> categoryList = from(bookCategory)
-//                .where(bookCategory.book.id.eq(id))
-//                .select(Projections.constructor(CategoryGetResponseForQuery.class, bookCategory.category.id,
-//                        bookCategory.category.name, bookCategory.category.parentCategory.id))
-//                .fetch();
-//
-//        Map<Integer, String> categoryIdAndFullNameMap = new HashMap<>();
-//        for (CategoryGetResponseForQuery category : categoryList) {
-//            StringBuilder name = new StringBuilder(category.getName());
-//            Integer preParentId = category.getPreParentId();
-//            while (preParentId != null) {
-//                for (CategoryGetResponseForQuery preParentCategory : categoryList) {
-//                    if (preParentCategory.getId().equals(preParentId)) {
-//                        name.insert(0, preParentCategory.getName() + "/");
-//                        preParentId = preParentCategory.getPreParentId();
-//                        break;
-//                    }
-//                }
-//            }
-//            categoryIdAndFullNameMap.put(category.getId(), name.toString());
-//        }
-//
-//        List<CategoryGetResponseForBookCreate> categoryFullNameList = new ArrayList<>();
-//        for (Map.Entry<Integer, String> entry : categoryIdAndFullNameMap.entrySet()) {
-//            categoryFullNameList.add(new CategoryGetResponseForBookCreate(entry.getKey(), entry.getValue()));
-//        }
-//
-//        result.setCategoryList(categoryFullNameList);
+        
 
         return result;
     }
