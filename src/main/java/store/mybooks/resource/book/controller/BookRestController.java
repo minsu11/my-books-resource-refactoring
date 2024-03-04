@@ -24,6 +24,7 @@ import store.mybooks.resource.book.dto.response.BookDetailResponse;
 import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
 import store.mybooks.resource.book.dto.response.BookModifyResponse;
 import store.mybooks.resource.book.service.BookService;
+import store.mybooks.resource.error.RequestValidationFailedException;
 
 /**
  * packageName    : store.mybooks.resource.book.controller <br/>
@@ -116,14 +117,13 @@ public class BookRestController {
      * @param modifyRequest 수정하려는 도서 정보 포함
      * @param bindingResult bindingResult
      * @return responseEntity
-     * @throws BindException the bind exception
      */
     @PutMapping("/{id}")
     public ResponseEntity<BookModifyResponse> modifyBook(@PathVariable("id") Long bookId,
                                                          @Valid @RequestBody BookModifyRequest modifyRequest,
-                                                         BindingResult bindingResult) throws BindException {
+                                                         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new BindException(bindingResult);
+            throw new RequestValidationFailedException(bindingResult);
         }
         return ResponseEntity
                 .status(HttpStatus.OK)
