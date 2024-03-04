@@ -33,6 +33,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.HandlerResultMatchers;
+import store.mybooks.resource.config.HeaderProperties;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
 import store.mybooks.resource.user_address.dto.request.UserAddressCreateRequest;
 import store.mybooks.resource.user_address.dto.request.UserAddressModifyRequest;
@@ -84,9 +86,10 @@ class UserAddressRestControllerTest {
         when(userAddressService.createUserAddress(anyLong(), any(UserAddressCreateRequest.class))).thenReturn(
                 userAddressCreateResponse);
 
-        mockMvc.perform(post("/api/users/{userId}/addresses", 1)
+        mockMvc.perform(post("/api/users/addresses")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userAddressCreateRequest)))
+                        .content(objectMapper.writeValueAsString(userAddressCreateRequest))
+                        .header(HeaderProperties.USER_ID,"1"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.alias").exists())
                 .andExpect(jsonPath("$.roadName").exists())
@@ -111,9 +114,10 @@ class UserAddressRestControllerTest {
 
         userAddressService.modifyUserAddress(1L, 1L, userAddressModifyRequest);
 
-        mockMvc.perform(put("/api/users/{userId}/addresses/{addressId}", 1L, 1L)
+        mockMvc.perform(put("/api/users/addresses/{addressId}",  1L)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userAddressModifyRequest)))
+                        .content(objectMapper.writeValueAsString(userAddressModifyRequest))
+                        .header(HeaderProperties.USER_ID,"1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.alias").exists())
                 .andExpect(jsonPath("$.detail").exists());
@@ -126,8 +130,9 @@ class UserAddressRestControllerTest {
         UserAddressDeleteResponse userAddressDeleteResponse = new UserAddressDeleteResponse("test");
         when(userAddressService.deleteUserAddress(anyLong(), anyLong())).thenReturn(userAddressDeleteResponse);
 
-        mockMvc.perform(delete("/api/users/{userId}/addresses/{addressId}", 1L, 1L)
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete("/api/users/addresses/{addressId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HeaderProperties.USER_ID,"1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").exists());
     }
@@ -139,8 +144,9 @@ class UserAddressRestControllerTest {
 
         when(userAddressService.findByAddressId(anyLong(), anyLong())).thenReturn(userAddressGetResponse1);
 
-        mockMvc.perform(get("/api/users/{userId}/addresses/{addressId}", 1L, 1L)
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/users/addresses/{addressId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HeaderProperties.USER_ID,"1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.alias").exists())
                 .andExpect(jsonPath("$.roadName").exists())
@@ -162,7 +168,7 @@ class UserAddressRestControllerTest {
 
         when(userAddressService.findByAllUserAddress(any(Pageable.class))).thenReturn(userAddressGetResponsePage);
 
-        mockMvc.perform(get("/api/users/addresses")
+        mockMvc.perform(get("/api/users/addresses/all")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").exists())
@@ -182,8 +188,9 @@ class UserAddressRestControllerTest {
         when(userAddressService.findAllAddressByUserId(anyLong())).thenReturn(list);
 
 
-        mockMvc.perform(get("/api/users/{userId}/addresses", 1L)
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/users/addresses")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HeaderProperties.USER_ID,"1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].reference").exists())
                 .andExpect(jsonPath("$[*].number").exists())
