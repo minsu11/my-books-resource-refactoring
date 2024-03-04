@@ -1,12 +1,11 @@
 package store.mybooks.resource.category.repository;
 
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.Expressions;
 import java.util.List;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import store.mybooks.resource.book.entity.QBook;
 import store.mybooks.resource.book_category.entity.QBookCategory;
-import store.mybooks.resource.category.dto.response.CategoryNameGetResponse;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForQuerydsl;
 import store.mybooks.resource.category.entity.Category;
 import store.mybooks.resource.category.entity.QCategory;
 
@@ -27,10 +26,10 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
     }
 
     @Override
-    public List<CategoryNameGetResponse> findFullCategoryForBookViewByBookId(Long bookId) {
-        QCategory category1 = QCategory.category;
-        QCategory category2 = QCategory.category;
-        QCategory category3 = QCategory.category;
+    public List<CategoryGetResponseForQuerydsl> findFullCategoryForBookViewByBookId(Long bookId) {
+        QCategory category1 = new QCategory("category1");
+        QCategory category2 = new QCategory("category2");
+        QCategory category3 = new QCategory("category3");
         QBookCategory bookCategory = QBookCategory.bookCategory;
         QBook book = QBook.book;
 
@@ -44,11 +43,11 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
                 .leftJoin(book)
                 .on(book.id.eq(bookCategory.book.id))
                 .where(book.id.eq(bookId))
-                .select(Projections.constructor(CategoryNameGetResponse.class,
-                        Expressions.list(
-                                category1.name,
-                                category2.name,
-                                category3.name)))
+                .select(Projections.constructor(CategoryGetResponseForQuerydsl.class,
+                        category3.id,
+                        category1.name,
+                        category2.name,
+                        category3.name))
                 .fetch();
     }
 }
