@@ -141,8 +141,6 @@ public class BookService {
         book.setModifyRequest(bookStatus, modifyRequest.getSaleCost(),
                 ((book.getOriginalCost() - modifyRequest.getSaleCost()) * 100) / book.getOriginalCost(),
                 modifyRequest.getStock(), modifyRequest.getIsPacking());
-        bookAuthorService.deleteBookAuthor(bookId);
-        bookAuthorService.createBookAuthor(new BookAuthorCreateRequest(bookId, modifyRequest.getAuthorList()));
 
         bookCategoryService.deleteBookCategory(bookId);
         bookCategoryService.createBookCategory(new BookCategoryCreateRequest(bookId, modifyRequest.getCategoryList()));
