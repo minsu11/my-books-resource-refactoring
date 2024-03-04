@@ -91,6 +91,21 @@ public class CategoryRestController {
     }
 
     /**
+     * methodName : getCategoryNameForBookView <br>
+     * author : damho-lee <br>
+     * description : bookId 로 CategoryName 들 찾기.<br>
+     *
+     * @param bookId Long
+     * @return response entity
+     */
+    @GetMapping("/bookId/{bookId}")
+    public ResponseEntity<List<String>> getCategoryNameForBookView(@PathVariable("bookId") Long bookId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(categoryService.getCategoryNameForBookView(bookId));
+    }
+
+    /**
      * 메서드 이름 : getCategoriesByParentCategoryId .
      * 작성자 : damho-lee
      * 설명 : parent category id 값에 따른 카테고리 리스트 반환
