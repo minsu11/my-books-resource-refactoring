@@ -1,8 +1,18 @@
 package store.mybooks.resource.user_coupon.controller;
 
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import store.mybooks.resource.error.RequestValidationFailedException;
+import store.mybooks.resource.user_coupon.dto.request.UserCouponCreateRequest;
 import store.mybooks.resource.user_coupon.service.UserCouponService;
 
 /**
@@ -21,4 +31,61 @@ import store.mybooks.resource.user_coupon.service.UserCouponService;
 @RequestMapping("/api/user-coupon")
 public class UserCouponRestController {
     private final UserCouponService userCouponService;
+
+    /**
+     * methodName : createUserCoupon <br>
+     * author : damho-lee <br>
+     * description : 회원 쿠폰 생성.<br>
+     *
+     * @param request UserCouponCreateRequest
+     * @param bindingResult BindingResult
+     * @return response entity
+     */
+    @PostMapping
+    public ResponseEntity<Void> createUserCoupon(@Valid @RequestBody UserCouponCreateRequest request,
+                                                 BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new RequestValidationFailedException(bindingResult);
+        }
+
+        userCouponService.createUserCoupon(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * methodName : useUserCoupon <br>
+     * author : damho-lee <br>
+     * description : 쿠폰 사용.<br>
+     *
+     * @param id Long
+     * @return response entity
+     */
+    @PutMapping("/use/{userCouponId}")
+    public ResponseEntity<Void> useUserCoupon(@PathVariable("userCouponId") Long id) {
+        userCouponService.useUserCoupon(id);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
+    }
+
+    /**
+     * methodName : returnUserCoupon <br>
+     * author : damho-lee <br>
+     * description : 쿠폰 돌려주는 메서드.<br>
+     *
+     * @param id Long
+     * @return response entity
+     */
+    @PutMapping("/return/{userCouponId}")
+    public ResponseEntity<Void> giveBackUserCoupon(@PathVariable("userCouponId") Long id) {
+        userCouponService.giveBackUserCoupon(id);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
+    }
 }
