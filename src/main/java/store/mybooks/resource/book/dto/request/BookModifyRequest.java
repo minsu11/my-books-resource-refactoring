@@ -6,8 +6,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * packageName    : store.mybooks.resource.book.dto.request <br/>
@@ -21,7 +21,7 @@ import lombok.Getter;
  * 2/25/24        newjaehun       최초 생성<br/>
  */
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 public class BookModifyRequest {
     @NotNull
     @Positive
