@@ -18,10 +18,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BindingResult;
 import store.mybooks.resource.return_rule_name.dto.request.ReturnRuleNameCreateRequest;
@@ -103,8 +103,9 @@ class ReturnRuleNameControllerUnitTest {
     @DisplayName("요청 데이터를 저장한 뒤 response dto 반환")
     void givenReturnRuleNameCreateRequest_whenCreateReturnRuleName_thenReturnReturnRulenameCreateResponse()
             throws Exception {
-        String testData = "test123";
-        ReturnRuleNameCreateRequest request = new ReturnRuleNameCreateRequest(testData);
+        String testData = "test";
+        ReturnRuleNameCreateRequest request = new ReturnRuleNameCreateRequest();
+        ReflectionTestUtils.setField(request, "id", testData);
         LocalDate date = LocalDate.of(1212, 12, 12);
         ReturnRuleNameCreateResponse response = new ReturnRuleNameCreateResponse(testData, date);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -127,7 +128,8 @@ class ReturnRuleNameControllerUnitTest {
     void givenReturnNameCreateRequest_whenCreateReturnRuleName_thenReturnReturnRuleNameCreateResponse()
             throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        ReturnRuleNameCreateRequest request = new ReturnRuleNameCreateRequest("");
+        ReturnRuleNameCreateRequest request = new ReturnRuleNameCreateRequest();
+        ReflectionTestUtils.setField(request, "id", "");
         mockMvc.perform(post("/api/return_rule_names")
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
