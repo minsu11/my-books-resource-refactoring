@@ -1,5 +1,7 @@
 package store.mybooks.resource.book.controller;
 
+import java.io.IOException;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,7 +16,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.book.dto.request.BookCreateRequest;
 import store.mybooks.resource.book.dto.request.BookModifyRequest;
 import store.mybooks.resource.book.dto.response.BookBriefResponse;
@@ -81,15 +85,17 @@ public class BookRestController {
      * @throws BindException the bind exception
      */
     @PostMapping
-    public ResponseEntity<BookCreateResponse> createBook(@Valid @RequestBody BookCreateRequest createRequest,
+    public ResponseEntity<BookCreateResponse> createBook(@Valid @RequestPart("request") BookCreateRequest createRequest,
+                                                         @RequestPart("thumbnail") MultipartFile thumbnail,
+                                                         @RequestPart("content") List<MultipartFile> content,
                                                          BindingResult bindingResult)
-            throws BindException {
+            throws BindException, IOException {
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
         }
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(bookService.createBook(createRequest));
+                .body(bookService.createBook(createRequest, thumbnail, content));
     }
 
     /**
