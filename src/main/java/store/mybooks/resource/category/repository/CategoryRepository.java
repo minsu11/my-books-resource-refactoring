@@ -18,7 +18,7 @@ import store.mybooks.resource.category.entity.Category;
  * -----------------------------------------------------------
  * 2/16/24          damho-lee          최초 생성
  */
-public interface CategoryRepository extends JpaRepository<Category, Integer> {
+public interface CategoryRepository extends JpaRepository<Category, Integer>, CategoryRepositoryCustom {
     Page<CategoryGetResponse> findByOrderByParentCategory_Id(Pageable pageable);
 
     CategoryGetResponse queryById(int id);

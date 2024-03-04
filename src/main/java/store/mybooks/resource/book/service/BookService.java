@@ -13,11 +13,16 @@ import store.mybooks.resource.book.dto.response.BookDetailResponse;
 import store.mybooks.resource.book.dto.response.BookModifyResponse;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.exception.BookNotExistException;
+import store.mybooks.resource.book.exception.IsbnAlreadyExistsException;
 import store.mybooks.resource.book.mapper.BookMapper;
 import store.mybooks.resource.book.repotisory.BookRepository;
+import store.mybooks.resource.book_category.dto.request.BookCategoryCreateRequest;
+import store.mybooks.resource.book_category.service.BookCategoryService;
 import store.mybooks.resource.book_status.entity.BookStatus;
 import store.mybooks.resource.book_status.exception.BookStatusNotExistException;
 import store.mybooks.resource.book_status.respository.BookStatusRepository;
+import store.mybooks.resource.book_tag.dto.request.BookTagCreateRequest;
+import store.mybooks.resource.book_tag.service.BookTagService;
 import store.mybooks.resource.publisher.entity.Publisher;
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
 import store.mybooks.resource.publisher.repository.PublisherRepository;
@@ -39,6 +44,9 @@ public class BookService {
     private final BookRepository bookRepository;
     private final BookStatusRepository bookStatusRepository;
     private final PublisherRepository publisherRepository;
+    private final BookCategoryService bookCategoryService;
+    private final BookTagService bookTagService;
+    //    private final BookAuthorService bookAuthorService;
     private final BookMapper bookMapper;
 
     /**
@@ -87,6 +95,10 @@ public class BookService {
                 publisherRepository.findById(createRequest.getPublisherId())
                         .orElseThrow(() -> new PublisherNotExistException(createRequest.getPublisherId()));
 
+        if (bookRepository.existsByIsbn(createRequest.getIsbn())) {
+            throw new IsbnAlreadyExistsException(createRequest.getIsbn());
+        }
+
         Book book =
                 new Book(bookStatus, publisher, createRequest.getName(), createRequest.getIsbn(),
                         createRequest.getPublishDate(), createRequest.getPage(),
@@ -94,7 +106,13 @@ public class BookService {
                         createRequest.getSaleCost(), createRequest.getOriginalCost() / createRequest.getSaleCost(),
                         createRequest.getStock(),
                         createRequest.getIsPacking());
-        return bookMapper.createResponse(bookRepository.save(book));
+        Book newBook = bookRepository.save(book);
+        Long bookId = newBook.getId();
+        bookCategoryService.createBookCategory(new BookCategoryCreateRequest(bookId, createRequest.getCategoryList()));
+        if (createRequest.getTagList() != null) {
+            bookTagService.createBookTag(new BookTagCreateRequest(bookId, createRequest.getTagList()));
+        }
+        return bookMapper.createResponse(newBook);
     }
 
 

@@ -17,7 +17,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class CategoryGetResponseForUpdate {
-    private CategoryGetResponse targetCategory;
+    private CategoryIdNameGetResponse targetCategory;
     private String levelOneCategoryName;
     private String levelTwoCategoryName;
 }

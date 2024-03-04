@@ -43,7 +43,7 @@ public class AuthorService {
      */
     @Transactional(readOnly = true)
     public List<AuthorGetResponse> getAllAuthors() {
-        return authorRepository.getAllAUthors();
+        return authorRepository.getAllAuthors();
     }
 
 

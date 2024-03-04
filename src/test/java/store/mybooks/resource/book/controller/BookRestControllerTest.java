@@ -12,6 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -60,7 +62,8 @@ class BookRestControllerTest {
     void givenValidBookCreateRequest_whenCreateBook_thenSaveBookAndReturnBookCreateResponse() throws Exception {
         BookCreateRequest request =
                 new BookCreateRequest("판매중", 1, "도서1", "1234567898764", LocalDate.of(2024, 1, 1), 100, "인덱스1", "내용1",
-                        20000, 16000, 5, true);
+                        20000, 16000, 5, true, new ArrayList<Integer>(List.of(1)), new ArrayList<Integer>(List.of(1)),
+                        new ArrayList<Integer>(List.of(1)));
         BookCreateResponse response = new BookCreateResponse();
         response.setName(request.getName());
 
@@ -78,8 +81,9 @@ class BookRestControllerTest {
     @DisplayName("도서 등록(검증 실패)")
     void givenInValidBookCreateRequest_whenCreateBook_thenThrowBindException() throws Exception {
         BookCreateRequest request =
-                new BookCreateRequest("판매중", 1, "도서1", "123456789876444", LocalDate.of(2024, 1, 1), 100, "인덱스1", "내용1",
-                        20000, 16000, 5, true);
+                new BookCreateRequest("판매중", 1, "도서1", "1234567898764", LocalDate.of(2024, 1, 1), 100, "인덱스1", "내용1",
+                        20000, 16000, 5, true, null, new ArrayList<Integer>(List.of(1)),
+                        new ArrayList<Integer>(List.of(1)));
         BookCreateResponse response = new BookCreateResponse();
         response.setName(request.getName());
 
