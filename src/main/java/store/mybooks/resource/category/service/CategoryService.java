@@ -17,11 +17,11 @@ import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForBookCreate;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForQuerydsl;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
 import store.mybooks.resource.category.dto.response.CategoryIdNameGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
-import store.mybooks.resource.category.dto.response.CategoryNameGetResponse;
 import store.mybooks.resource.category.entity.Category;
 import store.mybooks.resource.category.exception.CannotDeleteParentCategoryException;
 import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
@@ -147,23 +147,40 @@ public class CategoryService {
      * @return list
      */
     @Transactional(readOnly = true)
-    public List<String> getCategoryNameForBookView(Long bookId) {
-        List<CategoryNameGetResponse> categoryNameGetResponseList =
+    public List<CategoryIdNameGetResponse> getCategoryNameForBookView(Long bookId) {
+        List<CategoryGetResponseForQuerydsl> categoryNameGetResponseList =
                 categoryRepository.findFullCategoryForBookViewByBookId(bookId);
-        List<String> categoryNameList = new ArrayList<>();
+        List<CategoryIdNameGetResponse> categoryNameList = new ArrayList<>();
 
-        for (CategoryNameGetResponse categoryNameGetResponse : categoryNameGetResponseList) {
+        for (CategoryGetResponseForQuerydsl categoryGetResponseForQuerydsl : categoryNameGetResponseList) {
             StringJoiner stringJoiner = new StringJoiner("/");
-            for (String name : categoryNameGetResponse.getNames()) {
-                if (name != null) {
-                    stringJoiner.add(name);
-                }
+
+            if (categoryGetResponseForQuerydsl.getName1() != null) {
+                stringJoiner.add(categoryGetResponseForQuerydsl.getName1());
             }
-            categoryNameList.add(stringJoiner.toString());
+
+            if (categoryGetResponseForQuerydsl.getName2() != null) {
+                stringJoiner.add(categoryGetResponseForQuerydsl.getName2());
+            }
+
+            if (categoryGetResponseForQuerydsl.getName3() != null) {
+                stringJoiner.add(categoryGetResponseForQuerydsl.getName3());
+            }
+
+            categoryNameList.add(new CategoryIdNameGetResponse() {
+                @Override
+                public Integer getId() {
+                    return categoryGetResponseForQuerydsl.getId();
+                }
+
+                @Override
+                public String getName() {
+                    return stringJoiner.toString();
+                }
+            });
         }
 
         return categoryNameList;
-
     }
 
     /**
