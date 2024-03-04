@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import store.mybooks.resource.wrap.dto.request.WrapCreateRequest;
 import store.mybooks.resource.wrap.dto.request.WrapModifyRequest;
@@ -109,7 +110,9 @@ class WrapRestControllerUnitTest {
     @Test
     @DisplayName("포장지 등록 성공 테스트(유효성 테스트 통과)")
     void givenWrapCreateRequest_whenCreateWrap_thenReturnWrapCreateResponse() throws Exception {
-        WrapCreateRequest request = new WrapCreateRequest("test1", 100);
+        WrapCreateRequest request = new WrapCreateRequest();
+        ReflectionTestUtils.setField(request, "name", "test1");
+        ReflectionTestUtils.setField(request, "cost", 100);
         WrapCreateResponse wrapCreateResponse = new WrapCreateResponse("test1", 100);
         when(wrapService.createWrap(any(WrapCreateRequest.class))).thenReturn(wrapCreateResponse);
 
@@ -128,7 +131,9 @@ class WrapRestControllerUnitTest {
     @Test
     @DisplayName("포장지 등록 실패 테스트(유효성 테스트 실패: 이릅 빈 값 )")
     void givenWrapCreateRequest_whenCreateWrap_thenThrowWrapValidationFailedException() throws Exception {
-        WrapCreateRequest wrapCreateRequest = new WrapCreateRequest("", 100);
+        WrapCreateRequest wrapCreateRequest = new WrapCreateRequest();
+        ReflectionTestUtils.setField(wrapCreateRequest, "name", "");
+        ReflectionTestUtils.setField(wrapCreateRequest, "cost", 100);
         mockMvc.perform(post("/api/wraps")
                         .content(objectMapper.writeValueAsString(wrapCreateRequest))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -140,8 +145,9 @@ class WrapRestControllerUnitTest {
     @Test
     @DisplayName("포장지 등록 실패 테스트(유효성 테스트 실패: 글자 수 최대 넘었을 때 )")
     void givenWrapCreateRequest_whenCreateWrap_thenThrowWrapValidationFailedException2() throws Exception {
-        WrapCreateRequest wrapCreateRequest =
-                new WrapCreateRequest("abcdfwqweasdasasfasfasadasdasdasdaasfasdfasdfasdfasdasdasd", 100);
+        WrapCreateRequest wrapCreateRequest = new WrapCreateRequest();
+        ReflectionTestUtils.setField(wrapCreateRequest, "name", "abcdfwqweasdasasfasfasadasdasdasdaasfasdfasdfasdfasdasdasd");
+        ReflectionTestUtils.setField(wrapCreateRequest, "cost", 100);
         mockMvc.perform(post("/api/wraps")
                         .content(objectMapper.writeValueAsString(wrapCreateRequest))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -153,7 +159,9 @@ class WrapRestControllerUnitTest {
     @Test
     @DisplayName("포장지 등록 실패 테스트(유효성 테스트 실패: cost 음수)")
     void givenWrapCreateRequest_whenCreateWrap_thenThrowWrapValidationFailedException3() throws Exception {
-        WrapCreateRequest wrapCreateRequest = new WrapCreateRequest("test", -1);
+        WrapCreateRequest wrapCreateRequest = new WrapCreateRequest();
+        ReflectionTestUtils.setField(wrapCreateRequest, "name", "test");
+        ReflectionTestUtils.setField(wrapCreateRequest, "cost", -1);
         mockMvc.perform(post("/api/wraps")
                         .content(objectMapper.writeValueAsString(wrapCreateRequest))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -165,7 +173,9 @@ class WrapRestControllerUnitTest {
     @Test
     @DisplayName("포장지 등록 실패 테스트(유효성 테스트 실패: cost 최댓값 넘을 떄 )")
     void givenWrapCreateRequest_whenCreateWrap_thenThrowWrapValidationFailedException4() throws Exception {
-        WrapCreateRequest wrapCreateRequest = new WrapCreateRequest("test", 100001);
+        WrapCreateRequest wrapCreateRequest = new WrapCreateRequest();
+        ReflectionTestUtils.setField(wrapCreateRequest, "name", "test");
+        ReflectionTestUtils.setField(wrapCreateRequest, "cost", 100001);
         mockMvc.perform(post("/api/wraps")
                         .content(objectMapper.writeValueAsString(wrapCreateRequest))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -178,12 +188,15 @@ class WrapRestControllerUnitTest {
     @Test
     @DisplayName("포장지 수정 성공 테스트(유효성 성공 테스트)")
     void givenWrapModifyRequest_whenModifyWrap_thenReturnWrapModifyResponse() throws Exception {
+        WrapModifyRequest request = new WrapModifyRequest();
+        ReflectionTestUtils.setField(request, "name", "test");
+        ReflectionTestUtils.setField(request, "cost", 1000);
         WrapModifyResponse modifyResponse = new WrapModifyResponse("test", 1000);
         when(wrapService.modifyWrap(any(WrapModifyRequest.class), any())).thenReturn(modifyResponse);
 
         mockMvc.perform(put("/api/wraps/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new WrapModifyRequest("test", 1000))))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.name").value(modifyResponse.getName()))
@@ -194,10 +207,12 @@ class WrapRestControllerUnitTest {
     @Test
     @DisplayName("포장지 수정 실패 테스트(유효성 실패 테스트(이름이 빈 값)")
     void givenWrapModifyRequest_whenModifyWrap_thenThrowWrapValidationFailedException() throws Exception {
-
+        WrapModifyRequest modifyRequest = new WrapModifyRequest();
+        ReflectionTestUtils.setField(modifyRequest, "name", "");
+        ReflectionTestUtils.setField(modifyRequest, "cost", 1000);
         mockMvc.perform(put("/api/wraps/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new WrapModifyRequest("", 1000))))
+                        .content(objectMapper.writeValueAsString(modifyRequest)))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
         verify(wrapService, never()).modifyWrap(any(), any());
@@ -206,10 +221,12 @@ class WrapRestControllerUnitTest {
     @Test
     @DisplayName("포장지 수정 실패 테스트(유효성 실패 테스트(이름 글자 수 최대 길이 넘김)")
     void givenWrapModifyRequest_whenModifyWrap_thenThrowWrapValidationFailedException2() throws Exception {
-
+        WrapModifyRequest request = new WrapModifyRequest();
+        ReflectionTestUtils.setField(request, "name", "test1test2test3test4t");
+        ReflectionTestUtils.setField(request, "cost", 1000);
         mockMvc.perform(put("/api/wraps/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new WrapModifyRequest("test1test2test3test4t", 1000))))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
 
@@ -219,10 +236,12 @@ class WrapRestControllerUnitTest {
     @Test
     @DisplayName("포장지 수정 실패 테스트(유효성 실패 테스트(cost 음수)")
     void givenWrapModifyRequest_whenModifyWrap_thenThrowWrapValidationFailedException3() throws Exception {
-
+        WrapModifyRequest request = new WrapModifyRequest();
+        ReflectionTestUtils.setField(request, "name", "test");
+        ReflectionTestUtils.setField(request, "cost", -1);
         mockMvc.perform(put("/api/wraps/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new WrapModifyRequest("test", -1))))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
 
@@ -232,10 +251,12 @@ class WrapRestControllerUnitTest {
     @Test
     @DisplayName("포장지 수정 실패 테스트(유효성 실패 테스트(cost가 최댓 값 넘긴 경우)")
     void givenWrapModifyRequest_whenModifyWrap_thenThrowWrapValidationFailedException4() throws Exception {
-
+        WrapModifyRequest request = new WrapModifyRequest();
+        ReflectionTestUtils.setField(request, "name", "test");
+        ReflectionTestUtils.setField(request, "cost", 100001);
         mockMvc.perform(put("/api/wraps/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new WrapModifyRequest("test", 100001))))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
         verify(wrapService, never()).modifyWrap(any(), any());
