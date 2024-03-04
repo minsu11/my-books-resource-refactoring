@@ -18,6 +18,8 @@ import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.exception.IsbnAlreadyExistsException;
 import store.mybooks.resource.book.mapper.BookMapper;
 import store.mybooks.resource.book.repotisory.BookRepository;
+import store.mybooks.resource.book_author.dto.request.BookAuthorCreateRequest;
+import store.mybooks.resource.book_author.service.BookAuthorService;
 import store.mybooks.resource.book_category.dto.request.BookCategoryCreateRequest;
 import store.mybooks.resource.book_category.service.BookCategoryService;
 import store.mybooks.resource.book_status.entity.BookStatus;
@@ -48,7 +50,7 @@ public class BookService {
     private final PublisherRepository publisherRepository;
     private final BookCategoryService bookCategoryService;
     private final BookTagService bookTagService;
-    //    private final BookAuthorService bookAuthorService;
+    private final BookAuthorService bookAuthorService;
     private final BookMapper bookMapper;
 
     /**
@@ -110,6 +112,7 @@ public class BookService {
                         createRequest.getIsPacking());
         Book newBook = bookRepository.save(book);
         Long bookId = newBook.getId();
+        bookAuthorService.createBookAuthor(new BookAuthorCreateRequest(bookId, createRequest.getAuthorList()));
         bookCategoryService.createBookCategory(new BookCategoryCreateRequest(bookId, createRequest.getCategoryList()));
         if (createRequest.getTagList() != null) {
             bookTagService.createBookTag(new BookTagCreateRequest(bookId, createRequest.getTagList()));
@@ -136,8 +139,18 @@ public class BookService {
                 .orElseThrow(() -> new BookStatusNotExistException(modifyRequest.getBookStatusId()));
 
         book.setModifyRequest(bookStatus, modifyRequest.getSaleCost(),
-                book.getOriginalCost() / modifyRequest.getSaleCost(),
+                ((book.getOriginalCost() - modifyRequest.getSaleCost()) * 100) / book.getOriginalCost(),
                 modifyRequest.getStock(), modifyRequest.getIsPacking());
+        bookAuthorService.deleteBookAuthor(bookId);
+        bookAuthorService.createBookAuthor(new BookAuthorCreateRequest(bookId, modifyRequest.getAuthorList()));
+
+        bookCategoryService.deleteBookCategory(bookId);
+        bookCategoryService.createBookCategory(new BookCategoryCreateRequest(bookId, modifyRequest.getCategoryList()));
+
+        bookTagService.deleteBookTag(bookId);
+        if (modifyRequest.getTagList() != null) {
+            bookTagService.createBookTag(new BookTagCreateRequest(bookId, modifyRequest.getTagList()));
+        }
         return bookMapper.modifyResponse(book);
     }
 
