@@ -21,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import store.mybooks.resource.book.dto.request.BookCreateRequest;
 import store.mybooks.resource.book.dto.request.BookModifyRequest;
 import store.mybooks.resource.book.dto.response.BookCreateResponse;
@@ -29,6 +30,8 @@ import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.mapper.BookMapper;
 import store.mybooks.resource.book.repotisory.BookRepository;
+import store.mybooks.resource.book_author.dto.request.BookAuthorCreateRequest;
+import store.mybooks.resource.book_author.service.BookAuthorService;
 import store.mybooks.resource.book_category.dto.request.BookCategoryCreateRequest;
 import store.mybooks.resource.book_category.service.BookCategoryService;
 import store.mybooks.resource.book_status.entity.BookStatus;
@@ -64,6 +67,10 @@ class BookServiceTest {
 
     @Mock
     public BookCategoryService bookCategoryService;
+
+    @Mock
+    public BookAuthorService bookAuthorService;
+
     @Mock
     public BookTagService bookTagService;
 
@@ -98,7 +105,8 @@ class BookServiceTest {
 
         doNothing().when(bookCategoryService).createBookCategory(any(BookCategoryCreateRequest.class));
         doNothing().when(bookTagService).createBookTag(any(BookTagCreateRequest.class));
-
+        doNothing().when(bookAuthorService).createBookAuthor(any(BookAuthorCreateRequest.class));
+        
         bookService.createBook(request);
 
         Assertions.assertThat(response.getName()).isEqualTo(request.getName());
@@ -150,7 +158,13 @@ class BookServiceTest {
     @Test
     @DisplayName("도서 수정")
     void givenBookIdAndBookModifyRequest_whenModifyBook_thenModifyBookAndReturnBookModifyResponse() {
-        final BookModifyRequest request = new BookModifyRequest("판매종료", 12000, -1, false);
+        BookModifyRequest request = new BookModifyRequest();
+        ReflectionTestUtils.setField(request, "saleCost", 1);
+        ReflectionTestUtils.setField(request, "bookStatusId", "판매종료");
+        ReflectionTestUtils.setField(request, "stock", 0);
+        ReflectionTestUtils.setField(request, "isPacking", true);
+        ReflectionTestUtils.setField(request, "categoryList", new ArrayList<>(List.of(1)));
+        ReflectionTestUtils.setField(request, "tagList", null);
         Long bookId = 1L;
         Book book =
                 new Book(bookId, new BookStatus("판매중"), new Publisher(1, "출판사1", LocalDate.now()), "도서1",
@@ -180,7 +194,13 @@ class BookServiceTest {
     @DisplayName("도서 수정(존재하지 않는 도서ID)")
     void givenNotExistBookId_whenModifyBook_thenThrowBookNotExistException() {
         Long bookId = 1L;
-        BookModifyRequest request = new BookModifyRequest("판매종료", 12000, -1, false);
+        BookModifyRequest request = new BookModifyRequest();
+        ReflectionTestUtils.setField(request, "saleCost", 1);
+        ReflectionTestUtils.setField(request, "bookStatusId", "판매종료");
+        ReflectionTestUtils.setField(request, "stock", 0);
+        ReflectionTestUtils.setField(request, "isPacking", true);
+        ReflectionTestUtils.setField(request, "categoryList", new ArrayList<>(List.of(1)));
+        ReflectionTestUtils.setField(request, "tagList", null);
 
         given(bookRepository.findById(bookId)).willReturn(Optional.empty());
 
@@ -195,7 +215,13 @@ class BookServiceTest {
     @DisplayName("도서 수정(존재하지 않는 도서상태)")
     void givenNotExistBookStatus_whenModifyBook_thenThrowBookStatusNotExistException() {
         Long bookId = 1L;
-        BookModifyRequest request = new BookModifyRequest("판매종료", 12000, -1, false);
+        BookModifyRequest request = new BookModifyRequest();
+        ReflectionTestUtils.setField(request, "saleCost", 1);
+        ReflectionTestUtils.setField(request, "bookStatusId", "판매종료");
+        ReflectionTestUtils.setField(request, "stock", 0);
+        ReflectionTestUtils.setField(request, "isPacking", true);
+        ReflectionTestUtils.setField(request, "categoryList", new ArrayList<>(List.of(1)));
+        ReflectionTestUtils.setField(request, "tagList", null);
 
         Book book =
                 new Book(bookId, new BookStatus("판매중"), new Publisher(1, "출판사1", LocalDate.now()), "도서1",
