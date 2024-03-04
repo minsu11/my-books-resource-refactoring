@@ -1,7 +1,8 @@
 package store.mybooks.resource.book_order.dto.response;
 
+import java.time.LocalDate;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 
 /**
@@ -16,9 +17,9 @@ import lombok.Setter;
  * 3/2/24        minsu11       최초 생성<br>
  */
 @Getter
-@Setter
-
-public class BookOrderModifyOrderStatusResponse {
+@AllArgsConstructor
+public class BookOrderAdminModifyResponse {
     private Long id;
     private String statusId;
+    private LocalDate outDate;
 }

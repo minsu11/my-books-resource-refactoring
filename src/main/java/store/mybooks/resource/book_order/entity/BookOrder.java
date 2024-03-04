@@ -97,11 +97,11 @@ public class BookOrder {
     @JoinColumn(name = "wrap_id")
     private Wrap wrap;
 
-    public BookOrder(Long id, LocalDate outDate, String invoiceNumber, String receiverName, String receiverAddress,
+    public BookOrder(Long id, String invoiceNumber, String receiverName, String receiverAddress,
                      String receiverPhoneNumber, String receiverMessage, Integer totalCost, Integer pointCost, Integer couponCost, Boolean isCouponUsed,
                      String number, String findPassword, User user, OrdersStatus orderStatus, DeliveryRule deliveryRule, UserCoupon userCoupon, Wrap wrap) {
         this.id = id;
-        this.outDate = outDate;
+        this.outDate = null;
         this.invoiceNumber = invoiceNumber;
         this.receiverName = receiverName;
         this.receiverAddress = receiverAddress;
@@ -120,7 +120,8 @@ public class BookOrder {
         this.wrap = wrap;
     }
 
-    public void modifyOrderStatus(OrdersStatus ordersStatus) {
+    public void modifyBookOrderAdmin(OrdersStatus ordersStatus) {
         this.orderStatus = ordersStatus;
+        this.outDate = LocalDate.now();
     }
 }

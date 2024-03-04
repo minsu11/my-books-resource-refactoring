@@ -18,10 +18,12 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
-public class BookOrderModifyOrderStatusRequest {
+public class BookOrderAdminModifyRequest {
     @NotBlank
     private Long id;
+
     @Size(min = 2, max = 20)
     @NotBlank
     private String statusId;
+
 }

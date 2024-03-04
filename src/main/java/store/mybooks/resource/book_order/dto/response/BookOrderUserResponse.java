@@ -1,8 +1,8 @@
 package store.mybooks.resource.book_order.dto.response;
 
 import java.time.LocalDate;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 
 /**
@@ -17,8 +17,7 @@ import lombok.Setter;
  * 2/15/24        minsu11       최초 생성
  */
 @Getter
-@Setter
-
+@AllArgsConstructor
 public class BookOrderUserResponse {
     // 주문 내역 조회할 때
     private Long userId;

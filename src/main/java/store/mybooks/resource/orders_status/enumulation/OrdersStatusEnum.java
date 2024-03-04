@@ -13,7 +13,7 @@ package store.mybooks.resource.orders_status.enumulation;
  */
 public enum OrdersStatusEnum {
 
-    WAIT("대기"),
+    WAIT("주문 대기"),
 
     DELIVERY("배송 중"),
     DELIVERY_COMPLETE("배송 완료"),

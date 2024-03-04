@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import store.mybooks.resource.book_order.dto.request.BookOrderModifyOrderStatusRequest;
+import store.mybooks.resource.book_order.dto.request.BookOrderAdminModifyRequest;
+import store.mybooks.resource.book_order.dto.response.BookOrderAdminModifyResponse;
 import store.mybooks.resource.book_order.dto.response.BookOrderAdminResponse;
-import store.mybooks.resource.book_order.dto.response.BookOrderModifyOrderStatusResponse;
 import store.mybooks.resource.book_order.dto.response.BookOrderUserResponse;
 import store.mybooks.resource.book_order.service.BookOrderService;
 
@@ -66,7 +66,7 @@ public class BookOrderRestController {
     }
 
     @PutMapping("admin/status")
-    public ResponseEntity<BookOrderModifyOrderStatusResponse> modifyOrderStatus(@RequestBody BookOrderModifyOrderStatusRequest request) {
+    public ResponseEntity<BookOrderAdminModifyResponse> modifyOrderStatus(@RequestBody BookOrderAdminModifyRequest request) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookOrderService.modifyBookOrderStatus(request));

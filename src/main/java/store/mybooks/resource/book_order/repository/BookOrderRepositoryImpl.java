@@ -69,6 +69,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                                         bookOrder.user.id,
                                         bookOrder.orderStatus.id,
                                         bookOrder.date,
+                                        bookOrder.outDate,
                                         bookOrder.invoiceNumber,
                                         bookOrder.number))
                                 .where(bookOrder.orderStatus.id.eq(OrdersStatusEnum.WAIT.toString())))

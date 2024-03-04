@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.book_order.dto.mapper.BookOrderMapper;
-import store.mybooks.resource.book_order.dto.request.BookOrderModifyOrderStatusRequest;
+import store.mybooks.resource.book_order.dto.request.BookOrderAdminModifyRequest;
+import store.mybooks.resource.book_order.dto.response.BookOrderAdminModifyResponse;
 import store.mybooks.resource.book_order.dto.response.BookOrderAdminResponse;
-import store.mybooks.resource.book_order.dto.response.BookOrderModifyOrderStatusResponse;
 import store.mybooks.resource.book_order.dto.response.BookOrderUserResponse;
 import store.mybooks.resource.book_order.entity.BookOrder;
 import store.mybooks.resource.book_order.exception.BookOrderNotExistException;
@@ -67,12 +67,12 @@ public class BookOrderService {
      * @param request 변경할 주문 상태가 들어있느 DTO
      * @return book order modify order status request
      */
-    public BookOrderModifyOrderStatusResponse modifyBookOrderStatus(BookOrderModifyOrderStatusRequest request) {
+    public BookOrderAdminModifyResponse modifyBookOrderStatus(BookOrderAdminModifyRequest request) {
         OrdersStatus ordersStatus = ordersStatusRepository.findById(request.getStatusId())
                 .orElseThrow(OrdersStatusNotExistException::new);
 
         BookOrder bookOrder = bookOrderRepository.findById(request.getId()).orElseThrow(BookOrderNotExistException::new);
-        bookOrder.modifyOrderStatus(ordersStatus);
+        bookOrder.modifyBookOrderAdmin(ordersStatus);
         return bookOrderMapper.mapToBookOrderModifyOrderStatusResponse(bookOrder);
     }
 }

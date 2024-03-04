@@ -3,7 +3,7 @@ package store.mybooks.resource.book_order.dto.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
-import store.mybooks.resource.book_order.dto.response.BookOrderModifyOrderStatusResponse;
+import store.mybooks.resource.book_order.dto.response.BookOrderAdminModifyResponse;
 import store.mybooks.resource.book_order.entity.BookOrder;
 
 /**
@@ -20,6 +20,6 @@ import store.mybooks.resource.book_order.entity.BookOrder;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface BookOrderMapper {
     @Mapping(source = "orderStatus.id", target = "statusId")
-    BookOrderModifyOrderStatusResponse mapToBookOrderModifyOrderStatusResponse(BookOrder bookOrder);
+    BookOrderAdminModifyResponse mapToBookOrderModifyOrderStatusResponse(BookOrder bookOrder);
 
 }

@@ -1,7 +1,7 @@
 package store.mybooks.resource.book_order.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 
 /**
@@ -16,7 +16,7 @@ import lombok.Setter;
  * 3/2/24        minsu11       최초 생성<br>
  */
 @Getter
-@Setter
+@AllArgsConstructor
 public class BookOrderCreateResponse {
     private String statusName;
 

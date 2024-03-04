@@ -1,13 +1,9 @@
 package store.mybooks.resource.book_order.dto.response;
 
 import java.time.LocalDate;
-<<<<<<< HEAD
-import lombok.Getter;
-import lombok.Setter;
-=======
 import lombok.AllArgsConstructor;
 import lombok.Getter;
->>>>>>> dev
+
 
 /**
  * packageName    : store.mybooks.resource.book_order.dto.response<br>
@@ -22,11 +18,7 @@ import lombok.Getter;
  * 3/2/24        minsu11       최초 생성<br>
  */
 @Getter
-<<<<<<< HEAD
-@Setter
-=======
 @AllArgsConstructor
->>>>>>> dev
 public class BookOrderAdminResponse {
     private Long userId;
     private String statusId;
