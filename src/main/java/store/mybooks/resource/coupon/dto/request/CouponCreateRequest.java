@@ -32,21 +32,18 @@ public class CouponCreateRequest {
     private Long bookId;
 
     @Positive
-    private Long categoryId;
+    private Integer categoryId;
 
     @NotNull
     @PositiveOrZero
     private Integer orderMin;
 
-    @NotNull
     @Positive
     private Integer discountCost;
 
-    @NotNull
     @Positive
     private Integer maxDiscountCost;
 
-    @NotNull
     @Positive
     private Integer discountRate;
 

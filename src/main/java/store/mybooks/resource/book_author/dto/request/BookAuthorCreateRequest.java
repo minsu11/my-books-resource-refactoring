@@ -3,7 +3,7 @@ package store.mybooks.resource.book_author.dto.request;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
+import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,11 +20,11 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class BookAuthorCreateRequest {
     @NotNull
     @Positive
     private Long bookId;
     @NotNull
+    @Size(min = 1)
     private List<Integer> authorIdList;
 }

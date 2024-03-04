@@ -1,7 +1,18 @@
 package store.mybooks.resource.coupon.entity;
 
 import java.time.LocalDate;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.category.entity.Category;
 
@@ -18,6 +29,9 @@ import store.mybooks.resource.category.entity.Category;
  */
 @Entity
 @Table(name = "coupon")
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Coupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,4 +76,35 @@ public class Coupon {
     @Column(name = "coupon_created_date")
     private LocalDate createdDate;
 
+    /**
+     * Coupon 생성자.
+     *
+     * @param name            이름
+     * @param book            도서
+     * @param category        카테고리
+     * @param orderMin        최소주문금액
+     * @param discountCost    할인금액
+     * @param maxDiscountCost 최대할인금액
+     * @param discountRate    할인율
+     * @param startDate       시작일
+     * @param endDate         종료일
+     * @param isRate          정률할인쿠폰인지
+     * @param isTargetOrder   전체적용쿠폰인지
+     */
+    public Coupon(String name, Book book, Category category, Integer orderMin, Integer discountCost,
+                  Integer maxDiscountCost, Integer discountRate, LocalDate startDate, LocalDate endDate, Boolean isRate,
+                  Boolean isTargetOrder) {
+        this.name = name;
+        this.book = book;
+        this.category = category;
+        this.orderMin = orderMin;
+        this.discountCost = discountCost;
+        this.maxDiscountCost = maxDiscountCost;
+        this.discountRate = discountRate;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.isRate = isRate;
+        this.isTargetOrder = isTargetOrder;
+        this.createdDate = LocalDate.now();
+    }
 }

@@ -4,7 +4,6 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.book_author.dto.request.BookAuthorCreateRequest;
 import store.mybooks.resource.book_author.service.BookAuthorService;
+import store.mybooks.resource.error.RequestValidationFailedException;
 
 /**
  * packageName    : store.mybooks.resource.book_author.controller <br/>
@@ -42,9 +42,9 @@ public class BookAuthorRestController {
      */
     @PostMapping
     public ResponseEntity<Void> createBookAuthor(@Valid @RequestBody BookAuthorCreateRequest bookAuthorCreateRequest,
-                                                 BindingResult bindingResult) throws BindException {
+                                                 BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new BindException(bindingResult);
+            throw new RequestValidationFailedException(bindingResult);
         }
         bookAuthorService.createBookAuthor(bookAuthorCreateRequest);
         return ResponseEntity
@@ -65,7 +65,7 @@ public class BookAuthorRestController {
     public ResponseEntity<Void> deleteBookAuthor(@PathVariable("id") Long bookId) {
         bookAuthorService.deleteBookAuthor(bookId);
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(HttpStatus.NO_CONTENT)
                 .build();
     }
 }
