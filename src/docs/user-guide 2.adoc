@@ -1,0 +1,21 @@
+= User
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectnums:
+:sectlinks:
+:sectanchors:
+
+== 회원 API
+
+== 주소 API
+
+== 회원-등급 API
+
+== 회원-등급명 API
+
+== 회원-상태  API
+
+== 회원-쿠폰 API
