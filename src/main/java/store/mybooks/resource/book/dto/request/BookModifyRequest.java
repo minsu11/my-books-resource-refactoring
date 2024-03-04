@@ -35,8 +35,7 @@ public class BookModifyRequest {
     @NotNull
     private Boolean isPacking;
     @NotNull
-    private List<Integer> authorList;
-    @NotNull
+    @Size(min = 1)
     private List<Integer> categoryList;
 
     private List<Integer> tagList;
