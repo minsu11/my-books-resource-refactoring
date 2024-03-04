@@ -53,7 +53,7 @@ public class BookOrder {
     @Column(name = "order_receiver_address")
     private String receiverAddress;
 
-    @Column(name = "order_receiver_phonenumber")
+    @Column(name = "order_receiver_phone_number")
     private String receiverPhoneNumber;
 
     @Column(name = "order_receiver_message")

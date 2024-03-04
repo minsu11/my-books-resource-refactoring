@@ -1,7 +1,6 @@
 package store.mybooks.resource.book_order.dto.request;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,9 +20,4 @@ import lombok.NoArgsConstructor;
 public class BookOrderAdminModifyRequest {
     @NotBlank
     private Long id;
-
-    @Size(min = 2, max = 20)
-    @NotBlank
-    private String statusId;
-
 }

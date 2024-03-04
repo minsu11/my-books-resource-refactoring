@@ -66,6 +66,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
         List<BookOrderAdminResponse> bookOrderAdminResponseList =
                 getQuerydsl().applyPagination(pageable, from(bookOrder)
                                 .select(Projections.constructor(BookOrderAdminResponse.class,
+                                        bookOrder.id,
                                         bookOrder.user.id,
                                         bookOrder.orderStatus.id,
                                         bookOrder.date,

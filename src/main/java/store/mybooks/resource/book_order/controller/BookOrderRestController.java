@@ -65,11 +65,11 @@ public class BookOrderRestController {
                 .body(bookOrderAdminResponses);
     }
 
-    @PutMapping("admin/status")
+    @PutMapping("/admin/status")
     public ResponseEntity<BookOrderAdminModifyResponse> modifyOrderStatus(@RequestBody BookOrderAdminModifyRequest request) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(bookOrderService.modifyBookOrderStatus(request));
+                .body(bookOrderService.modifyBookOrderAdminStatus(request));
     }
 
 }

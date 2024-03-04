@@ -1,6 +1,7 @@
 package store.mybooks.resource.book_order.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import store.mybooks.resource.book_order.entity.BookOrder;
 import store.mybooks.resource.book_order.exception.BookOrderNotExistException;
 import store.mybooks.resource.book_order.repository.BookOrderRepository;
 import store.mybooks.resource.orders_status.entity.OrdersStatus;
+import store.mybooks.resource.orders_status.enumulation.OrdersStatusEnum;
 import store.mybooks.resource.orders_status.exception.OrdersStatusNotExistException;
 import store.mybooks.resource.orders_status.repository.OrdersStatusRepository;
 
@@ -28,6 +30,7 @@ import store.mybooks.resource.orders_status.repository.OrdersStatusRepository;
  * -----------------------------------------------------------<br>
  * 3/2/24        minsu11       최초 생성<br>
  */
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -67,9 +70,12 @@ public class BookOrderService {
      * @param request 변경할 주문 상태가 들어있느 DTO
      * @return book order modify order status request
      */
-    public BookOrderAdminModifyResponse modifyBookOrderStatus(BookOrderAdminModifyRequest request) {
-        OrdersStatus ordersStatus = ordersStatusRepository.findById(request.getStatusId())
+    public BookOrderAdminModifyResponse modifyBookOrderAdminStatus(BookOrderAdminModifyRequest request) {
+        log.info("enum value:{}", OrdersStatusEnum.DELIVERY.toString());
+        OrdersStatus ordersStatus = ordersStatusRepository.findById(OrdersStatusEnum.DELIVERY.toString())
                 .orElseThrow(OrdersStatusNotExistException::new);
+        log.info("enum value:{}", ordersStatus.getId());
+        log.info("request value:{}", request.getId());
 
         BookOrder bookOrder = bookOrderRepository.findById(request.getId()).orElseThrow(BookOrderNotExistException::new);
         bookOrder.modifyBookOrderAdmin(ordersStatus);

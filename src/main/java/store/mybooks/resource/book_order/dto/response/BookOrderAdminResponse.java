@@ -20,6 +20,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class BookOrderAdminResponse {
+    private Long id;
     private Long userId;
     private String statusId;
     private LocalDate date;
