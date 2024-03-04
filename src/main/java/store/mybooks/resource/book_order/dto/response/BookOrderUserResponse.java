@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
 
+
 /**
  * packageName    : store.mybooks.resource.book_order.dto.response
  * fileName       : BookOrderResponse
@@ -17,6 +18,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+
 public class BookOrderUserResponse {
     // 주문 내역 조회할 때
     private Long userId;

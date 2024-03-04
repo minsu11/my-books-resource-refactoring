@@ -17,7 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import store.mybooks.resource.wrap.dto.WrapMapper;
+import org.springframework.test.util.ReflectionTestUtils;
+import store.mybooks.resource.wrap.dto.mapper.WrapMapper;
 import store.mybooks.resource.wrap.dto.request.WrapCreateRequest;
 import store.mybooks.resource.wrap.dto.request.WrapModifyRequest;
 import store.mybooks.resource.wrap.dto.response.WrapCreateResponse;
@@ -121,7 +122,9 @@ class WrapServiceUnitTest {
     @Test
     @DisplayName("포장지 등록 성공 테스트")
     void givenWrapCreateRequest_whenSave_thenReturnWrapCreateResponse(@Mock Wrap wrap) {
-        WrapCreateRequest request = new WrapCreateRequest("test", 100);
+        WrapCreateRequest request = new WrapCreateRequest();
+        ReflectionTestUtils.setField(request, "name", "test");
+        ReflectionTestUtils.setField(request, "cost", 100);
         WrapCreateResponse expected = new WrapCreateResponse("test", 100);
 
         when(wrapRepository.existWrap(anyString())).thenReturn(false);
@@ -140,7 +143,9 @@ class WrapServiceUnitTest {
     @Test
     @DisplayName("포장지 등록 실패 테스트")
     void givenWrapCreateRequest_whenSave_thenThrowWrapAlreadyExistException() {
-        WrapCreateRequest request = new WrapCreateRequest("test", 100);
+        WrapCreateRequest request = new WrapCreateRequest();
+        ReflectionTestUtils.setField(request, "name", "test");
+        ReflectionTestUtils.setField(request, "cost", 100);
         when(wrapRepository.existWrap(anyString())).thenReturn(true);
 
         Assertions.assertThrows(WrapAlreadyExistException.class, () -> wrapService.createWrap(request));
@@ -154,7 +159,9 @@ class WrapServiceUnitTest {
     @Test
     @DisplayName("포장지 수정 성공 테스트")
     void givenWrapModifyReqeustAndIntegerId_whenModifyWrap_thenReturnWrapModifyResponse(@Mock Wrap wrap) {
-        WrapModifyRequest request = new WrapModifyRequest("test", 100);
+        WrapModifyRequest request = new WrapModifyRequest();
+        ReflectionTestUtils.setField(request, "name", "test");
+        ReflectionTestUtils.setField(request, "cost", 100);
         WrapModifyResponse expected = new WrapModifyResponse("test", 100);
         when(wrapRepository.findById(any())).thenReturn(Optional.of(wrap));
         when(wrapMapper.mapToWrapModifyResponse(any(Wrap.class))).thenReturn(expected);
@@ -170,7 +177,9 @@ class WrapServiceUnitTest {
     @Test
     @DisplayName("포장지 수정 실패 테스트")
     void givenWrapModifyReqeustAndIntegerId_whenModifyWrap_thenThrowWrapNotExistException(@Mock Wrap wrap) {
-        WrapModifyRequest request = new WrapModifyRequest("test", 100);
+        WrapModifyRequest request = new WrapModifyRequest();
+        ReflectionTestUtils.setField(request, "name", "test");
+        ReflectionTestUtils.setField(request, "cost", 100);
         when(wrapRepository.findById(any())).thenReturn(Optional.empty());
         Assertions.assertThrows(WrapNotExistException.class, () -> wrapService.modifyWrap(request, 1));
 

@@ -1,13 +1,12 @@
 package store.mybooks.resource.wrap.service;
 
-import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import store.mybooks.resource.wrap.dto.WrapMapper;
+import store.mybooks.resource.wrap.dto.mapper.WrapMapper;
 import store.mybooks.resource.wrap.dto.request.WrapCreateRequest;
 import store.mybooks.resource.wrap.dto.request.WrapModifyRequest;
 import store.mybooks.resource.wrap.dto.response.WrapCreateResponse;
@@ -98,7 +97,7 @@ public class WrapService {
         if (Boolean.TRUE.equals(wrapRepository.existWrap(request.getName()))) {
             throw new WrapAlreadyExistException();
         }
-        Wrap wrap = new Wrap(1, request.getName(), request.getCost(), LocalDate.now(), true);
+        Wrap wrap = new Wrap(request.getName(), request.getCost());
         return wrapMapper.mapToWrapCreateResponse(wrapRepository.save(wrap));
     }
 

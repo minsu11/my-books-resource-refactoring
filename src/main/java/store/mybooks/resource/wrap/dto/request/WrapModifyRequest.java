@@ -4,8 +4,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * packageName    : store.mybooks.resource.wrap.dto.request<br>
@@ -19,7 +19,7 @@ import lombok.Getter;
  * 2/27/24        minsu11       최초 생성<br>
  */
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 public class WrapModifyRequest {
 
     @NotBlank

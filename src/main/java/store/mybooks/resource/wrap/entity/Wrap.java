@@ -41,6 +41,13 @@ public class Wrap {
     @Column(name = "is_available")
     private Boolean isAvailable;
 
+    public Wrap(String name, Integer cost) {
+        this.name = name;
+        this.cost = cost;
+        this.createdDate = LocalDate.now();
+        this.isAvailable = true;
+    }
+
     public void modifyWrap(WrapModifyRequest wrapModifyRequest) {
         this.name = wrapModifyRequest.getName();
         this.cost = wrapModifyRequest.getCost();

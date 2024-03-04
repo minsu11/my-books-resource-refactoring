@@ -143,7 +143,7 @@ public class WrapRestController {
     public ResponseEntity deleteWrap(@PathVariable Integer id) {
         wrapService.deleteWrap(id);
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(HttpStatus.NO_CONTENT)
                 .build();
 
 

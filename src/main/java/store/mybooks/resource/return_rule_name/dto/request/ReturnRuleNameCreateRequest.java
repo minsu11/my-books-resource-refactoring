@@ -1,10 +1,9 @@
 package store.mybooks.resource.return_rule_name.dto.request;
 
 import javax.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
+import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 
 /**
  * packageName    : store.mybooks.resource.return_rule_name.dto.request<br>
@@ -19,10 +18,9 @@ import org.hibernate.validator.constraints.Length;
  */
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ReturnRuleNameCreateRequest {
 
     @NotBlank
-    @Length(min = 2, max = 10)
+    @Size(min = 2, max = 10)
     private String id;
 }
