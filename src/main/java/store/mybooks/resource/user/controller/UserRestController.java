@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import store.mybooks.resource.config.HeaderProperties;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.request.UserGradeModifyRequest;
 import store.mybooks.resource.user.dto.request.UserLoginRequest;
@@ -57,8 +58,6 @@ public class UserRestController {
 
     private final UserService userService;
 
-    private static final String USER_ID = "X-User-Id";
-
 
     /**
      * methodName : createUser
@@ -88,7 +87,7 @@ public class UserRestController {
      * @return response entity
      */
     @PutMapping
-    public ResponseEntity<UserModifyResponse> modifyUser(@RequestHeader(name = USER_ID) Long id,
+    public ResponseEntity<UserModifyResponse> modifyUser(@RequestHeader(name = HeaderProperties.USER_ID) Long id,
                                                          @RequestBody UserModifyRequest modifyRequest) {
 
         UserModifyResponse modifyResponse = userService.modifyUser(id, modifyRequest);
@@ -141,7 +140,7 @@ public class UserRestController {
      * @return response entity
      */
     @PutMapping("/password")
-    public ResponseEntity<UserPasswordModifyResponse> modifyUserPassword(@RequestHeader(name = USER_ID) Long id,
+    public ResponseEntity<UserPasswordModifyResponse> modifyUserPassword(@RequestHeader(name = HeaderProperties.USER_ID) Long id,
                                                                          @RequestBody
                                                                          UserPasswordModifyRequest modifyRequest) {
 
@@ -159,7 +158,7 @@ public class UserRestController {
      * @return response entity
      */
     @DeleteMapping
-    public ResponseEntity<UserDeleteResponse> deleteUser(@RequestHeader(name = USER_ID) Long id) {
+    public ResponseEntity<UserDeleteResponse> deleteUser(@RequestHeader(name = HeaderProperties.USER_ID) Long id) {
         UserDeleteResponse deleteResponse = userService.deleteUser(id);
 
         return new ResponseEntity<>(deleteResponse, HttpStatus.OK);
@@ -175,7 +174,7 @@ public class UserRestController {
      * @return response entity
      */
     @GetMapping
-    public ResponseEntity<UserGetResponse> findUserById(@RequestHeader(name = USER_ID) Long id) {
+    public ResponseEntity<UserGetResponse> findUserById(@RequestHeader(name = HeaderProperties.USER_ID) Long id) {
 
         UserGetResponse getResponse = userService.findById(id);
         return new ResponseEntity<>(getResponse, HttpStatus.OK);
