@@ -40,7 +40,7 @@ public class UserCoupon {
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
 
-    @Column(name = "user_coupon_created_at")
+    @Column(name = "user_coupon_created_date")
     private LocalDate createdAt;
 
     @Column(name = "user_coupon_date")
