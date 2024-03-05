@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import store.mybooks.resource.config.HeaderProperties;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.request.UserGradeModifyRequest;
 import store.mybooks.resource.user.dto.request.UserLoginRequest;
@@ -57,6 +58,7 @@ public class UserRestController {
 
     private final UserService userService;
 
+
     /**
      * methodName : createUser
      * author : masiljangajji
@@ -80,12 +82,12 @@ public class UserRestController {
      * author : masiljangajji
      * description : 유저의 정보를 변경함 (이름,전화번호)
      *
-     * @param id     id
+     * @param id            id
      * @param modifyRequest request
      * @return response entity
      */
-    @PutMapping("/{id}")
-    public ResponseEntity<UserModifyResponse> modifyUser(@PathVariable(name = "id") Long id,
+    @PutMapping
+    public ResponseEntity<UserModifyResponse> modifyUser(@RequestHeader(name = HeaderProperties.USER_ID) Long id,
                                                          @RequestBody UserModifyRequest modifyRequest) {
 
         UserModifyResponse modifyResponse = userService.modifyUser(id, modifyRequest);
@@ -98,16 +100,16 @@ public class UserRestController {
      * author : masiljangajji
      * description : 유저의 등급을 변경함
      *
-     * @param id id
+     * @param id            id
      * @param modifyRequest request
      * @return response entity
      */
     @PutMapping("/{id}/grade")
-    public ResponseEntity<UserGradeModifyResponse> modifyUserGrade(@PathVariable(name="id")Long id,
-                                                                   @RequestBody UserGradeModifyRequest modifyRequest){
+    public ResponseEntity<UserGradeModifyResponse> modifyUserGrade(@PathVariable(name = "id") Long id,
+                                                                   @RequestBody UserGradeModifyRequest modifyRequest) {
 
-        UserGradeModifyResponse modifyResponse = userService.modifyUserGrade(id,modifyRequest);
-        return new ResponseEntity<>(modifyResponse,HttpStatus.OK);
+        UserGradeModifyResponse modifyResponse = userService.modifyUserGrade(id, modifyRequest);
+        return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
     }
 
     /**
@@ -115,16 +117,17 @@ public class UserRestController {
      * author : masiljangajji
      * description : 유저의 상태를 변경
      *
-     * @param id id
+     * @param id            id
      * @param modifyRequest request
      * @return response entity
      */
     @PutMapping("/{id}/status")
-    public ResponseEntity<UserStatusModifyResponse> modifyUserStatus(@PathVariable(name="id")Long id,
-                                                                    @RequestBody UserStatusModifyRequest modifyRequest){
+    public ResponseEntity<UserStatusModifyResponse> modifyUserStatus(@PathVariable(name = "id") Long id,
+                                                                     @RequestBody
+                                                                     UserStatusModifyRequest modifyRequest) {
 
-        UserStatusModifyResponse modifyResponse = userService.modifyUserStatus(id,modifyRequest);
-        return new ResponseEntity<>(modifyResponse,HttpStatus.OK);
+        UserStatusModifyResponse modifyResponse = userService.modifyUserStatus(id, modifyRequest);
+        return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
     }
 
     /**
@@ -132,17 +135,17 @@ public class UserRestController {
      * author : masiljangajji
      * description : 유저의 비밀번호를 변경
      *
-     * @param id id
+     * @param id            id
      * @param modifyRequest request
      * @return response entity
      */
-    @PutMapping("/{id}/password")
-    public ResponseEntity<UserPasswordModifyResponse> modifyUserPassword(@PathVariable(name="id")Long id,
-                                                                       @RequestBody
-                                                                       UserPasswordModifyRequest modifyRequest){
+    @PutMapping("/password")
+    public ResponseEntity<UserPasswordModifyResponse> modifyUserPassword(@RequestHeader(name = HeaderProperties.USER_ID) Long id,
+                                                                         @RequestBody
+                                                                         UserPasswordModifyRequest modifyRequest) {
 
-        UserPasswordModifyResponse modifyResponse = userService.modifyUserPassword(id,modifyRequest);
-        return new ResponseEntity<>(modifyResponse,HttpStatus.OK);
+        UserPasswordModifyResponse modifyResponse = userService.modifyUserPassword(id, modifyRequest);
+        return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
     }
 
 
@@ -154,8 +157,8 @@ public class UserRestController {
      * @param id id
      * @return response entity
      */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<UserDeleteResponse> deleteUser(@PathVariable(name = "id") Long id) {
+    @DeleteMapping
+    public ResponseEntity<UserDeleteResponse> deleteUser(@RequestHeader(name = HeaderProperties.USER_ID) Long id) {
         UserDeleteResponse deleteResponse = userService.deleteUser(id);
 
         return new ResponseEntity<>(deleteResponse, HttpStatus.OK);
@@ -170,13 +173,10 @@ public class UserRestController {
      * @param id id
      * @return response entity
      */
-    @GetMapping("/{id}")
-    public ResponseEntity<UserGetResponse> findUserById(@PathVariable(name = "id") Long id
-    , @RequestHeader(name = "ddd",required = false)Long dd) {
+    @GetMapping
+    public ResponseEntity<UserGetResponse> findUserById(@RequestHeader(name = HeaderProperties.USER_ID) Long id) {
 
-        System.out.println(dd);
         UserGetResponse getResponse = userService.findById(id);
-
         return new ResponseEntity<>(getResponse, HttpStatus.OK);
     }
 
@@ -189,7 +189,7 @@ public class UserRestController {
      * @param pageable pageable
      * @return response entity
      */
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<Page<UserGetResponse>> findAllUser(Pageable pageable) {
 
         Page<UserGetResponse> paginationUsr = userService.findAllUser(pageable);
