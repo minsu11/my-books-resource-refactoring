@@ -28,7 +28,6 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -73,9 +72,7 @@ class BookAuthorRestControllerTest {
     void givenBookAuthorCreateRequest_whenCreateBookAuthor_thenReturnStatusCreated() throws Exception {
         List<Integer> authorIdList = new ArrayList<>(List.of(1, 2, 3));
 
-        BookAuthorCreateRequest request = new BookAuthorCreateRequest();
-        ReflectionTestUtils.setField(request, "bookId", 1L);
-        ReflectionTestUtils.setField(request, "authorIdList", authorIdList);
+        BookAuthorCreateRequest request = new BookAuthorCreateRequest(1L, authorIdList);
 
 
         doNothing().when(bookAuthorService).createBookAuthor(any(BookAuthorCreateRequest.class));
@@ -96,9 +93,7 @@ class BookAuthorRestControllerTest {
     @Test
     @DisplayName("도서저자 추가(검증 실패)")
     void givenInvalidBookAuthorCreateRequest_whenCreateBookAuthor_thenThrowBindException() throws Exception {
-        BookAuthorCreateRequest request = new BookAuthorCreateRequest();
-        ReflectionTestUtils.setField(request, "bookId", 1L);
-        ReflectionTestUtils.setField(request, "authorIdList", null);
+        BookAuthorCreateRequest request = new BookAuthorCreateRequest(1L, null);
         doNothing().when(bookAuthorService).createBookAuthor(any(BookAuthorCreateRequest.class));
 
         mockMvc.perform(post(url)
