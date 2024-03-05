@@ -66,6 +66,12 @@ public class BookService {
         return bookRepository.getBookBriefInfo(pageable);
     }
 
+    @Transactional
+    public Page<BookBriefResponse> getActiveBookBriefInfo(Pageable pageable) {
+        return bookRepository.getActiveBookBriefInfo(pageable);
+    }
+
+
     /**
      * methodName : getBookDetailInfo
      * author : newjaehun
@@ -156,4 +162,6 @@ public class BookService {
     public List<BookGetResponseForCoupon> getBookForCoupon() {
         return bookRepository.getBookForCoupon();
     }
+
+
 }

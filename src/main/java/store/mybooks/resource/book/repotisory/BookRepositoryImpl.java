@@ -82,7 +82,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .where(bookTag.book.id.eq(id))
                 .select(Projections.constructor(TagGetResponseForBookDetail.class, tag.id, tag.name))
                 .fetch());
-        
+
 
         return result;
     }
@@ -93,6 +93,22 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                         from(book)
                                 .select(Projections.constructor(BookBriefResponse.class,
                                         book.id, book.name, book.saleCost)))
+                .fetch();
+
+        long total = from(book).fetchCount();
+
+        return new PageImpl<>(lists, pageable, total);
+    }
+
+
+    @Override
+    public Page<BookBriefResponse> getActiveBookBriefInfo(Pageable pageable) {
+        List<BookBriefResponse> lists = getQuerydsl().applyPagination(pageable,
+                        from(book)
+                                .join(book.bookStatus, bookStatus)
+                                .select(Projections.constructor(BookBriefResponse.class,
+                                        book.id, book.name, book.saleCost)))
+                .where(bookStatus.id.in("판매중", "재고없음"))
                 .fetch();
 
         long total = from(book).fetchCount();

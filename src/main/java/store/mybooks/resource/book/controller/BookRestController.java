@@ -59,6 +59,21 @@ public class BookRestController {
     }
 
     /**
+     * methodName : getActiveBookBrief
+     * author : newjaehun
+     * description : 활성상태인 간략한 도서 리스트 반환.
+     *
+     * @param pageable pageable
+     * @return response entity
+     */
+    @GetMapping("/active")
+    public ResponseEntity<Page<BookBriefResponse>> getActiveBookBrief(Pageable pageable) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getActiveBookBriefInfo(pageable));
+    }
+
+    /**
      * methodName : getBookDetail
      * author : newjaehun
      * description : 도서 상세보기.

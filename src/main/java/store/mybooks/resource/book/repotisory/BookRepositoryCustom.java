@@ -25,5 +25,8 @@ public interface BookRepositoryCustom {
 
     Page<BookBriefResponse> getBookBriefInfo(Pageable pageable);
 
+    Page<BookBriefResponse> getActiveBookBriefInfo(Pageable pageable);
+
     List<BookGetResponseForCoupon> getBookForCoupon();
+
 }
