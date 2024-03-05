@@ -18,8 +18,11 @@ import store.mybooks.resource.coupon.dto.request.CouponCreateRequest;
 import store.mybooks.resource.coupon.dto.response.CouponGetResponse;
 import store.mybooks.resource.coupon.dto.response.CouponGetResponseForQuerydsl;
 import store.mybooks.resource.coupon.entity.Coupon;
+import store.mybooks.resource.coupon.exception.CouponCannotDeleteException;
+import store.mybooks.resource.coupon.exception.CouponNotExistsException;
 import store.mybooks.resource.coupon.repository.CouponRepository;
 import store.mybooks.resource.coupon.utils.CouponUtils;
+import store.mybooks.resource.user_coupon.repository.UserCouponRepository;
 
 /**
  * packageName    : store.mybooks.resource.coupon.entity.service
@@ -39,6 +42,7 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
+    private final UserCouponRepository userCouponRepository;
 
     @Transactional(readOnly = true)
     public Page<CouponGetResponse> getCoupons(Pageable pageable) {
@@ -102,6 +106,7 @@ public class CouponService {
         }
 
         return new CouponGetResponse(
+                response.getId(),
                 response.getName(),
                 range,
                 target,
@@ -112,6 +117,25 @@ public class CouponService {
                 response.getStartDate(),
                 response.getEndDate()
         );
+    }
+
+    /**
+     * methodName : deleteCoupon <br>
+     * author : damho-lee <br>
+     * description : 쿠폰 삭제. 쿠폰을 받은 회원이 있다면 지울 수 없다.<br>
+     *
+     * @param id Long
+     */
+    public void deleteCoupon(Long id) {
+        if (!couponRepository.existsById(id)) {
+            throw new CouponNotExistsException(id);
+        }
+
+        if (userCouponRepository.countByCoupon_Id(id) > 0) {
+            throw new CouponCannotDeleteException(id);
+        }
+
+        couponRepository.deleteById(id);
     }
 
     private Book findBook(long bookId) {
