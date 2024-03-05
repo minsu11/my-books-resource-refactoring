@@ -7,8 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import store.mybooks.resource.book_order.dto.request.BookOrderAdminModifyRequest;
+import store.mybooks.resource.book_order.dto.request.BookOrderRegisterInvoiceRequest;
 import store.mybooks.resource.book_order.dto.response.BookOrderAdminModifyResponse;
 import store.mybooks.resource.book_order.dto.response.BookOrderAdminResponse;
+import store.mybooks.resource.book_order.dto.response.BookOrderRegisterInvoiceResponse;
 import store.mybooks.resource.book_order.dto.response.BookOrderUserResponse;
 import store.mybooks.resource.book_order.service.BookOrderService;
 
@@ -72,4 +74,10 @@ public class BookOrderRestController {
                 .body(bookOrderService.modifyBookOrderAdminStatus(request));
     }
 
+    @PutMapping("/admin/invoiceNumber")
+    public ResponseEntity<BookOrderRegisterInvoiceResponse> registerInvoiceNumber(@RequestBody BookOrderRegisterInvoiceRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookOrderService.registerBookOrderInvoiceNumber(request));
+    }
 }

@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.book_order.dto.mapper.BookOrderMapper;
 import store.mybooks.resource.book_order.dto.request.BookOrderAdminModifyRequest;
+import store.mybooks.resource.book_order.dto.request.BookOrderRegisterInvoiceRequest;
 import store.mybooks.resource.book_order.dto.response.BookOrderAdminModifyResponse;
 import store.mybooks.resource.book_order.dto.response.BookOrderAdminResponse;
+import store.mybooks.resource.book_order.dto.response.BookOrderRegisterInvoiceResponse;
 import store.mybooks.resource.book_order.dto.response.BookOrderUserResponse;
 import store.mybooks.resource.book_order.entity.BookOrder;
 import store.mybooks.resource.book_order.exception.BookOrderNotExistException;
@@ -71,14 +73,18 @@ public class BookOrderService {
      * @return book order modify order status request
      */
     public BookOrderAdminModifyResponse modifyBookOrderAdminStatus(BookOrderAdminModifyRequest request) {
-        log.info("enum value:{}", OrdersStatusEnum.DELIVERY.toString());
         OrdersStatus ordersStatus = ordersStatusRepository.findById(OrdersStatusEnum.DELIVERY.toString())
                 .orElseThrow(OrdersStatusNotExistException::new);
-        log.info("enum value:{}", ordersStatus.getId());
-        log.info("request value:{}", request.getId());
 
         BookOrder bookOrder = bookOrderRepository.findById(request.getId()).orElseThrow(BookOrderNotExistException::new);
         bookOrder.modifyBookOrderAdmin(ordersStatus);
         return bookOrderMapper.mapToBookOrderModifyOrderStatusResponse(bookOrder);
+    }
+
+    public BookOrderRegisterInvoiceResponse registerBookOrderInvoiceNumber(BookOrderRegisterInvoiceRequest request) {
+        BookOrder bookOrder = bookOrderRepository.findById(request.getId()).orElseThrow(BookOrderNotExistException::new);
+
+        bookOrder.registerBookOrderInvoiceNumber(request.getInvoiceNumber());
+        return bookOrderMapper.mapToBookOrderRegisterInvoiceResponse(bookOrder);
     }
 }

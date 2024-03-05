@@ -124,4 +124,8 @@ public class BookOrder {
         this.orderStatus = ordersStatus;
         this.outDate = LocalDate.now();
     }
+
+    public void registerBookOrderInvoiceNumber(String invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
+    }
 }
