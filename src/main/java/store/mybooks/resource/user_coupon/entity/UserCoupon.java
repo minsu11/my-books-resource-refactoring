@@ -14,6 +14,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import store.mybooks.resource.coupon.entity.Coupon;
 import store.mybooks.resource.user.entity.User;
+import store.mybooks.resource.user_coupon.exception.UserCouponAlreadyUsedException;
+import store.mybooks.resource.user_coupon.exception.UserCouponNotUsedException;
 
 /**
  * packageName    : store.mybooks.resource.user_coupon.entity
@@ -67,12 +69,30 @@ public class UserCoupon {
         this.isUsed = false;
     }
 
+    /**
+     * methodName : use <br>
+     * author : damho-lee <br>
+     * description : 쿠폰 사용 메서드.<br>
+     */
     public void use() {
+        if (this.date != null && this.isUsed) {
+            throw new UserCouponAlreadyUsedException(this.id);
+        }
+
         this.date = LocalDate.now();
         this.isUsed = true;
     }
 
+    /**
+     * methodName : giveBack <br>
+     * author : damho-lee <br>
+     * description : 쿠폰 되돌려주는 메서드.<br>
+     */
     public void giveBack() {
+        if (this.date == null && !this.isUsed) {
+            throw new UserCouponNotUsedException(this.id);
+        }
+
         this.date = null;
         this.isUsed = false;
     }
