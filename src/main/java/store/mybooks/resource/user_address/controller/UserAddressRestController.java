@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import store.mybooks.resource.config.HeaderProperties;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
@@ -45,7 +47,7 @@ import store.mybooks.resource.user_address.service.UserAddressService;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/users")
+@RequestMapping("/api/users/addresses")
 public class UserAddressRestController {
 
     private final UserAddressService userAddressService;
@@ -55,13 +57,13 @@ public class UserAddressRestController {
      * author : masiljangajji
      * description : 유저의 주소를 등록함
      *
-     * @param userId   id
+     * @param userId        id
      * @param createRequest request
      * @return response entity
      */
-    @PostMapping("/{userId}/addresses")
+    @PostMapping
     public ResponseEntity<UserAddressCreateResponse> createUserAddress(
-            @PathVariable(name = "userId") Long userId,
+            @RequestHeader(name = HeaderProperties.USER_ID) Long userId,
             @RequestBody UserAddressCreateRequest createRequest) {
 
         UserAddressCreateResponse createResponse =
@@ -76,14 +78,14 @@ public class UserAddressRestController {
      * author : masiljangajji
      * description : 유저의 주소를 변경함 (별명,상세주소)
      *
-     * @param userId    id
-     * @param addressId id
-     * @param modifyRequest  request
+     * @param userId        id
+     * @param addressId     id
+     * @param modifyRequest request
      * @return response entity
      */
-    @PutMapping("/{userId}/addresses/{addressId}")
+    @PutMapping("/{addressId}")
     public ResponseEntity<UserAddressModifyResponse> modifyUserAddress(
-            @PathVariable(name = "userId") Long userId,
+            @RequestHeader(name = HeaderProperties.USER_ID) Long userId,
             @PathVariable(name = "addressId") Long addressId,
             @RequestBody UserAddressModifyRequest modifyRequest) {
 
@@ -102,9 +104,9 @@ public class UserAddressRestController {
      * @param addressId id
      * @return response entity
      */
-    @DeleteMapping("/{userId}/addresses/{addressId}")
+    @DeleteMapping("/{addressId}")
     public ResponseEntity<UserAddressDeleteResponse> deleteUserAddress(
-            @PathVariable(name = "userId") Long userId,
+            @RequestHeader(name = HeaderProperties.USER_ID) Long userId,
             @PathVariable(name = "addressId") Long addressId) {
 
         UserAddressDeleteResponse deleteResponse =
@@ -123,9 +125,9 @@ public class UserAddressRestController {
      * @param addressId id
      * @return response entity
      */
-    @GetMapping("/{userId}/addresses/{addressId}")
+    @GetMapping("/{addressId}")
     public ResponseEntity<UserAddressGetResponse> findUserAddressByAddressId(
-            @PathVariable(name = "userId") Long userId,
+            @RequestHeader(name = HeaderProperties.USER_ID) Long userId,
             @PathVariable(name = "addressId") Long addressId) {
 
         UserAddressGetResponse getResponse =
@@ -142,7 +144,7 @@ public class UserAddressRestController {
      * @param pageable pageable
      * @return response entity
      */
-    @GetMapping("/addresses")
+    @GetMapping("/all")
     public ResponseEntity<Page<UserAddressGetResponse>> findAllUserAddress(Pageable pageable) {
 
         Page<UserAddressGetResponse> paginationUserAddress = userAddressService.findByAllUserAddress(pageable);
@@ -157,9 +159,10 @@ public class UserAddressRestController {
      * @param userId id
      * @return response entity
      */
-    @GetMapping("/{userId}/addresses")
-    public ResponseEntity<List<UserAddressGetResponse>> findAllAddressByUserId(@PathVariable(name = "userId") Long
-                                                                                       userId) {
+    @GetMapping
+    public ResponseEntity<List<UserAddressGetResponse>> findAllAddressByUserId(
+            @RequestHeader(name = HeaderProperties.USER_ID) Long
+                    userId) {
 
         List<UserAddressGetResponse> userGetResponseList =
                 userAddressService.findAllAddressByUserId(userId);

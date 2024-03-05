@@ -1,7 +1,7 @@
 package store.mybooks.resource.category.repository;
 
 import java.util.List;
-import store.mybooks.resource.category.dto.response.CategoryNameGetResponse;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForQuerydsl;
 
 /**
  * packageName    : store.mybooks.resource.category.repository
@@ -15,5 +15,5 @@ import store.mybooks.resource.category.dto.response.CategoryNameGetResponse;
  * 3/3/24          damho-lee          최초 생성
  */
 public interface CategoryRepositoryCustom {
-    List<CategoryNameGetResponse> findFullCategoryForBookViewByBookId(Long bookId);
+    List<CategoryGetResponseForQuerydsl> findFullCategoryForBookViewByBookId(Long bookId);
 }
