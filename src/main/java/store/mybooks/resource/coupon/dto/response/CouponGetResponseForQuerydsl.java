@@ -18,6 +18,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class CouponGetResponseForQuerydsl {
+    private Long id;
     private String name;
     private Integer orderMin;
     private Integer discountCost;
