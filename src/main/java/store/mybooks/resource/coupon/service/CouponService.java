@@ -44,6 +44,14 @@ public class CouponService {
     private final CategoryRepository categoryRepository;
     private final UserCouponRepository userCouponRepository;
 
+    /**
+     * methodName : getCoupons <br>
+     * author : damho-lee <br>
+     * description : 쿠폰 페이지 요청. <br>
+     *
+     * @param pageable Pageable
+     * @return page
+     */
     @Transactional(readOnly = true)
     public Page<CouponGetResponse> getCoupons(Pageable pageable) {
         Page<CouponGetResponseForQuerydsl> couponPage = couponRepository.getCoupons(pageable);
