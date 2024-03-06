@@ -15,6 +15,6 @@ import javax.validation.ValidationException;
  */
 public class OrderMinLessThanDiscountCostException extends ValidationException {
     public OrderMinLessThanDiscountCostException(Integer orderMin, Integer discountCost) {
-        super(String.format("최소 주문 금액(%d) 은 정액할인액%d 보다 커야합니다.", orderMin, discountCost));
+        super(String.format("최소 주문 금액(%d) 은 정액할인액(%d) 보다 커야합니다.", orderMin, discountCost));
     }
 }
