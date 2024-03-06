@@ -6,26 +6,27 @@ import lombok.Getter;
 
 /**
  * packageName    : store.mybooks.resource.user_coupon.dto.response
- * fileName       : CouponGetResponse
+ * fileName       : UserCouponGetResponseForQuerydsl
  * author         : damho-lee
- * date           : 3/4/24
+ * date           : 3/5/24
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 3/4/24          damho-lee          최초 생성
+ * 3/5/24          damho-lee          최초 생성
  */
 @Getter
 @AllArgsConstructor
-public class UserCouponGetResponse {
+public class UserCouponGetResponseForMyPageQuerydsl {
     private Long id;
     private String name;
-    private String range;
-    private String target;
     private Integer orderMin;
-    private Integer discountRateOrCost;
+    private Integer discountCost;
     private Integer maxDiscountCost;
+    private Integer discountRate;
     private Boolean isRate;
     private LocalDate startDate;
     private LocalDate endDate;
+    private String bookName;
+    private String categoryName;
 }
