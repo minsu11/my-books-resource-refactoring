@@ -23,7 +23,7 @@ public class PointRuleNameRepositoryImpl extends QuerydslRepositorySupport imple
         super(PointRuleNameResponse.class);
     }
 
-    private final QPointRuleName pointRuleName = QPointRuleName.pointRuleName;
+    private static final QPointRuleName pointRuleName = QPointRuleName.pointRuleName;
 
     @Override
     public Optional<PointRuleNameResponse> getPointRuleNameById(String id) {
