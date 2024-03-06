@@ -86,7 +86,7 @@ class UserRestControllerTest {
         UserCreateRequest userCreateRequest =
                 new UserCreateRequest("test", "test", "test", "test@naver.com", LocalDate.now(), false);
 
-        UserCreateResponse userCreateResponse = new UserCreateResponse("test", "test", LocalDate.now(), "test", "test");
+        UserCreateResponse userCreateResponse = new UserCreateResponse("test", "test", 1000, "01-01", "test", "test");
 
         when(userService.createUser(any(UserCreateRequest.class))).thenReturn(userCreateResponse);
 
@@ -96,7 +96,8 @@ class UserRestControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").exists())
                 .andExpect(jsonPath("$.email").exists())
-                .andExpect(jsonPath("$.birth").exists())
+                .andExpect(jsonPath("$.birthYear").exists())
+                .andExpect(jsonPath("$.birthMonthDay").exists())
                 .andExpect(jsonPath("$.userStatusName").exists())
                 .andExpect(jsonPath("$.userGradeName").exists());
     }
@@ -192,7 +193,8 @@ class UserRestControllerTest {
                 .andExpect(jsonPath("$.latestLogin").exists())
                 .andExpect(jsonPath("$.gradeChangedDate").exists())
                 .andExpect(jsonPath("$.email").exists())
-                .andExpect(jsonPath("$.birth").exists())
+                .andExpect(jsonPath("$.birthYear").exists())
+                .andExpect(jsonPath("$.birthMonthDay").exists())
                 .andExpect(jsonPath("$.userGradeUserGradeNameId").exists());
 
     }
@@ -250,9 +252,15 @@ class UserRestControllerTest {
             }
 
             @Override
-            public LocalDate getBirth() {
-                return LocalDate.now();
+            public Integer getBirthYear() {
+                return 1000;
             }
+
+            @Override
+            public String getBirthMonthDay() {
+                return "01-01";
+            }
+
 
             @Override
             public LocalDateTime getCreatedAt() {
@@ -298,8 +306,13 @@ class UserRestControllerTest {
             }
 
             @Override
-            public LocalDate getBirth() {
-                return LocalDate.now();
+            public Integer getBirthYear() {
+                return 1000;
+            }
+
+            @Override
+            public String getBirthMonthDay() {
+                return "01-01";
             }
 
             @Override
