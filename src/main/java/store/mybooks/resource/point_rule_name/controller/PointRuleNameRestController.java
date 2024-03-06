@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import store.mybooks.resource.point_rule_name.dto.response.PointRuleNameResponse;
 import store.mybooks.resource.point_rule_name.service.PointRuleNameService;
@@ -36,13 +37,21 @@ public class PointRuleNameRestController {
      * @param id
      * @return response entity
      */
-    @GetMapping("{id")
-    public ResponseEntity<PointRuleNameResponse> getPointRuleName(String id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<PointRuleNameResponse> getPointRuleName(@PathVariable String id) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(pointRuleNameService.getPointRuleName(id));
     }
 
+    /**
+     * methodName : getPointRuleNameList<br>
+     * author : minsu11<br>
+     * description : 전체 포인트 명 조회.
+     * <br> *
+     *
+     * @return response entity
+     */
     @GetMapping
     public ResponseEntity<List<PointRuleNameResponse>> getPointRuleNameList() {
         return ResponseEntity

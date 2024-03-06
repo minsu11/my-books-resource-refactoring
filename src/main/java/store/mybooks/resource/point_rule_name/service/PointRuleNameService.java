@@ -3,6 +3,7 @@ package store.mybooks.resource.point_rule_name.service;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.point_rule_name.dto.response.PointRuleNameResponse;
 import store.mybooks.resource.point_rule_name.exception.PointRuleNameNotExistException;
 import store.mybooks.resource.point_rule_name.repository.PointRuleNameRepository;
@@ -19,6 +20,7 @@ import store.mybooks.resource.point_rule_name.repository.PointRuleNameRepository
  * 3/7/24        minsu11       최초 생성<br>
  */
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class PointRuleNameService {
     private final PointRuleNameRepository pointRuleNameRepository;
@@ -32,6 +34,7 @@ public class PointRuleNameService {
      * @param id 조회할 아이디
      * @return point rule name response
      */
+    @Transactional(readOnly = true)
     public PointRuleNameResponse getPointRuleName(String id) {
         return pointRuleNameRepository.getPointRuleNameById(id).orElseThrow(PointRuleNameNotExistException::new);
     }
@@ -44,7 +47,10 @@ public class PointRuleNameService {
      *
      * @return list
      */
+    @Transactional(readOnly = true)
     public List<PointRuleNameResponse> getPointRuleNameList() {
         return pointRuleNameRepository.getPointRuleNameList();
     }
+
+
 }
