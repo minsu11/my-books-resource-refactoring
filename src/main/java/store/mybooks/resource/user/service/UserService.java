@@ -1,21 +1,23 @@
 package store.mybooks.resource.user.service;
 
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.user.dto.mapper.UserMapper;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
+import store.mybooks.resource.user.dto.request.UserEmailRequest;
 import store.mybooks.resource.user.dto.request.UserGradeModifyRequest;
-import store.mybooks.resource.user.dto.request.UserLoginRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
+import store.mybooks.resource.user.dto.request.UserOauthCreateRequest;
+import store.mybooks.resource.user.dto.request.UserOauthLoginRequest;
 import store.mybooks.resource.user.dto.request.UserPasswordModifyRequest;
 import store.mybooks.resource.user.dto.request.UserStatusModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
+import store.mybooks.resource.user.dto.response.UserEncryptedPasswordResponse;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
 import store.mybooks.resource.user.dto.response.UserGradeModifyResponse;
 import store.mybooks.resource.user.dto.response.UserLoginResponse;
@@ -63,6 +65,7 @@ public class UserService {
 
     private final UserMapper userMapper;
 
+
     /**
      * methodName : createUser
      * author : masiljangajji
@@ -100,6 +103,11 @@ public class UserService {
 
         return userMapper.toUserCreateResponse(user);
     }
+
+
+
+  
+
 
     /**
      * methodName : modifyUser
@@ -225,7 +233,6 @@ public class UserService {
      */
     @Transactional(readOnly = true)
     public UserGetResponse findById(Long id) {
-
         return userRepository.queryById(id).orElseThrow(() -> new UserNotExistException(id));
     }
 
@@ -249,15 +256,23 @@ public class UserService {
      * author : masiljangajji
      * description : 로그인요청 처리
      *
-     * @param userLoginRequest login request
      * @return user login response
      * @throws UserLoginFailException     로그인 실패하는 경우
      * @throws UserAlreadyResignException 이미 탈퇴한 유저인 경우
      */
-    public UserLoginResponse loginUser(UserLoginRequest userLoginRequest) {
+    public UserLoginResponse completeLoginProcess(UserEmailRequest request) {
+
+        // 로그인 인증은 프론트에서 하도록
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(UserLoginFailException::new);
+
+        return new UserLoginResponse(true, user.getIsAdmin(), user.getId(), user.getUserStatus().getId());
+    }
+
+    public UserEncryptedPasswordResponse verifyUserStatusByEmail(UserEmailRequest request) {
 
         // 아이디 확인
-        User user = userRepository.findByEmail(userLoginRequest.getEmail())
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(UserLoginFailException::new);
 
         // 탈퇴한 회원인지 확인
@@ -265,16 +280,8 @@ public class UserService {
             throw new UserAlreadyResignException();
         }
 
-        // 비밀번호 확인
-        if (userLoginRequest.getPassword().equals(user.getPassword())) {
-            throw new UserLoginFailException();
-        }
-
-
-        user.modifyLatestLogin();
-        return new UserLoginResponse(true, user.getIsAdmin(), user.getId(), user.getUserStatus().getId());
+        return new UserEncryptedPasswordResponse(user.getPassword());
     }
-
 
 }
 
