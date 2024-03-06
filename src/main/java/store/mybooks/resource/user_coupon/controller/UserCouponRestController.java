@@ -62,7 +62,7 @@ public class UserCouponRestController {
     /**
      * methodName : getUsableUserCouponsByBookId <br>
      * author : damho-lee <br>
-     * description : 사용 가능한 회원 쿠폰 조회.<br>
+     * description : 사용 가능한 회원 쿠폰 조회. 각 도서에 적용할 수 있는 쿠폰.<br>
      *
      * @param userId Long
      * @param bookId Long
@@ -74,6 +74,22 @@ public class UserCouponRestController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(userCouponService.getUsableUserCouponsByBookId(userId, bookId));
+    }
+
+    /**
+     * methodName : getUsableTotalCoupons <br>
+     * author : damho-lee <br>
+     * description : 사용 가능한 회원 쿠폰 조회. 전체 적용 쿠폰.<br>
+     *
+     * @param userId Long
+     * @return response entity
+     */
+    @GetMapping("/usable-coupon")
+    public ResponseEntity<List<UserCouponGetResponseForOrder>> getUsableTotalCoupons(
+            @RequestHeader(name = HeaderProperties.USER_ID) Long userId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(userCouponService.getUsableTotalCoupons(userId));
     }
 
     /**

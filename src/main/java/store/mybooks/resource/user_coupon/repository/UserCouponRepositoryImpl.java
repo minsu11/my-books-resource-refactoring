@@ -141,4 +141,29 @@ public class UserCouponRepositoryImpl extends QuerydslRepositorySupport implemen
                         coupon.endDate))
                 .fetch();
     }
+
+    @Override
+    public List<UserCouponGetResponseForOrderQuerydsl> getUsableTotalCoupons(Long userId) {
+        QUserCoupon userCoupon = QUserCoupon.userCoupon;
+        QCoupon coupon = QCoupon.coupon;
+
+        return from(userCoupon)
+                .leftJoin(coupon)
+                .on(userCoupon.coupon.id.eq(coupon.id))
+                .where(userCoupon.user.id.eq(userId))
+                .where(userCoupon.isUsed.isFalse())
+                .where(coupon.startDate.loe(LocalDate.now()))
+                .where(coupon.endDate.goe(LocalDate.now()))
+                .select(Projections.constructor(UserCouponGetResponseForOrderQuerydsl.class,
+                        userCoupon.id,
+                        coupon.name,
+                        coupon.orderMin,
+                        coupon.discountCost,
+                        coupon.maxDiscountCost,
+                        coupon.discountRate,
+                        coupon.isRate,
+                        coupon.startDate,
+                        coupon.endDate))
+                .fetch();
+    }
 }
