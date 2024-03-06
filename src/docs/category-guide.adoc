@@ -14,4 +14,4 @@
 
 include::{snippets}/category-get-page/http-request.adoc[]
 
-include::{snippets}/category-get-list/http-request.adoc[]
+include::{snippets}/category-get-category-list/http-request.adoc[]
