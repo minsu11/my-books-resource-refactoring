@@ -74,7 +74,21 @@ public class UserRestController {
     }
 
 
+    @PostMapping("/oauth/login")
+    public ResponseEntity<UserLoginResponse> loginOauthUser(
+            @RequestBody UserOauthLoginRequest loginRequest) {
 
+        UserLoginResponse loginResponse = userService.loginOauthUser(loginRequest);
+        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/oauth")
+    public ResponseEntity<UserCreateResponse> createOauthUser(
+            @RequestBody UserOauthCreateRequest createRequest) {
+
+        UserCreateResponse createResponse = userService.createOauthUser(createRequest);
+        return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
+    }
 
     /**
      * methodName : modifyUser
