@@ -26,4 +26,9 @@ public class PointRuleName {
 
     @Column(name = "point_rule_name_created_date")
     private LocalDate createdDate;
+
+    public PointRuleName(String id) {
+        this.id = id;
+        this.createdDate = LocalDate.now();
+    }
 }

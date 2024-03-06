@@ -5,9 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import store.mybooks.resource.error.Utils;
+import store.mybooks.resource.point_rule_name.dto.request.PointRuleNameRequest;
+import store.mybooks.resource.point_rule_name.dto.response.PointRuleNameCreateResponse;
 import store.mybooks.resource.point_rule_name.dto.response.PointRuleNameResponse;
 import store.mybooks.resource.point_rule_name.service.PointRuleNameService;
 
@@ -31,7 +33,7 @@ public class PointRuleNameRestController {
     /**
      * methodName : getPointRuleName<br>
      * author : minsu11<br>
-     * description : id에 대한 포인트 이름 명 조회.
+     * description : id에 대한 포인트 규정 명 조회.
      * <br> *
      *
      * @param id
@@ -47,7 +49,7 @@ public class PointRuleNameRestController {
     /**
      * methodName : getPointRuleNameList<br>
      * author : minsu11<br>
-     * description : 전체 포인트 명 조회.
+     * description : 전체 포인트 규정 명 조회.
      * <br> *
      *
      * @return response entity
@@ -57,6 +59,25 @@ public class PointRuleNameRestController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(pointRuleNameService.getPointRuleNameList());
+    }
+
+    /**
+     * methodName : createPointRuleName<br>
+     * author : minsu11<br>
+     * description : 포인트 규정 명 생성
+     * <br> *
+     *
+     * @param request
+     * @param binding result
+     * @return response entity
+     */
+    @PostMapping
+    public ResponseEntity<PointRuleNameCreateResponse> createPointRuleName(@RequestBody PointRuleNameRequest request,
+                                                                           BindingResult bindingResult) {
+        Utils.validateRequest(bindingResult);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(pointRuleNameService.createPointRuleName(request));
     }
 
 
