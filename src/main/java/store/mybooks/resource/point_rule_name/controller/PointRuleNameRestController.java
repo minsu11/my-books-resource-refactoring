@@ -64,11 +64,11 @@ public class PointRuleNameRestController {
     /**
      * methodName : createPointRuleName<br>
      * author : minsu11<br>
-     * description : 포인트 규정 명 생성
+     * description : 포인트 규정 명 생성.
      * <br> *
      *
-     * @param request
-     * @param binding result
+     * @param request       생성할 포인트 규정 명.
+     * @param bindingResult 유효성 검사
      * @return response entity
      */
     @PostMapping
