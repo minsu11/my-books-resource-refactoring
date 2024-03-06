@@ -100,8 +100,8 @@ public class UserCouponRepositoryImpl extends QuerydslRepositorySupport implemen
                 .on(userCoupon.coupon.id.eq(coupon.id))
                 .where(userCoupon.user.id.eq(userId))
                 .where(coupon.category.id.in(categoryIdSet))
-                .where(coupon.startDate.goe(LocalDate.now()))
-                .where(coupon.endDate.loe(LocalDate.now()))
+                .where(coupon.startDate.loe(LocalDate.now()))
+                .where(coupon.endDate.goe(LocalDate.now()))
                 .select(Projections.constructor(UserCouponGetResponseForOrderQuerydsl.class,
                         userCoupon.id,
                         coupon.name,
@@ -125,8 +125,8 @@ public class UserCouponRepositoryImpl extends QuerydslRepositorySupport implemen
                 .on(userCoupon.coupon.id.eq(coupon.id))
                 .where(userCoupon.user.id.eq(userId))
                 .where(coupon.book.id.eq(bookId))
-                .where(coupon.startDate.goe(LocalDate.now()))
-                .where(coupon.endDate.loe(LocalDate.now()))
+                .where(coupon.startDate.loe(LocalDate.now()))
+                .where(coupon.endDate.goe(LocalDate.now()))
                 .select(Projections.constructor(UserCouponGetResponseForOrderQuerydsl.class,
                         userCoupon.id,
                         coupon.name,
