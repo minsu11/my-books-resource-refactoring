@@ -41,7 +41,10 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport implements C
                 .on(coupon.category.id.eq(category.id))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .orderBy(coupon.endDate.desc())
+                .orderBy(coupon.createdDate.desc())
                 .select(Projections.constructor(CouponGetResponseForQuerydsl.class,
+                        coupon.id,
                         coupon.name,
                         coupon.orderMin,
                         coupon.discountCost,

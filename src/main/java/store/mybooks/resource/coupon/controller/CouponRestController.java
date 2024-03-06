@@ -8,7 +8,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +37,14 @@ import store.mybooks.resource.error.Utils;
 public class CouponRestController {
     private final CouponService couponService;
 
+    /**
+     * methodName : getCoupons <br>
+     * author : damho-lee <br>
+     * description : 쿠폰 페이지 요청.<br>
+     *
+     * @param pageable Pageable
+     * @return response entity
+     */
     @GetMapping("/page")
     public ResponseEntity<Page<CouponGetResponse>> getCoupons(@PageableDefault Pageable pageable) {
         return ResponseEntity
@@ -52,12 +62,27 @@ public class CouponRestController {
      * @return ResponseEntity
      */
     @PostMapping
-    public ResponseEntity<Void> createTotalPercentageCoupon(
+    public ResponseEntity<Void> createCoupon(
             @Valid @RequestBody CouponCreateRequest request,
             BindingResult bindingResult) {
         Utils.validateRequest(bindingResult);
         couponService.createCoupon(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
+     * methodName : deleteCoupon <br>
+     * author : damho-lee <br>
+     * description : 쿠폰 삭제.<br>
+     *
+     * @param id Long
+     * @return response entity
+     */
+    @DeleteMapping("/{couponId}")
+    public ResponseEntity<Void> deleteCoupon(@PathVariable("couponId") Long id) {
+        couponService.deleteCoupon(id);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

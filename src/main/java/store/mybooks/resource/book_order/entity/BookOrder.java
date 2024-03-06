@@ -41,6 +41,9 @@ public class BookOrder {
     private LocalDate outDate;
 
     @CreatedDate
+    @Column(name = "order_delivery_date")
+    private LocalDate deliveryDate;
+
     @Column(name = "order_date")
     private LocalDate date;
 
