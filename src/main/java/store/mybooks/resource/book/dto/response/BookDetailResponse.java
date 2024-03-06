@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import store.mybooks.resource.author.dto.response.AuthorGetResponse;
+import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
+import store.mybooks.resource.tag.dto.response.TagGetResponseForBookDetail;
 
 /**
  * packageName    : store.mybooks.resource.book.dto.response <br/>
@@ -26,13 +29,15 @@ import lombok.Setter;
 public class BookDetailResponse {
     private Long id;
 
-    private String bookImage;
+//    private String bookImage;
 
     private String name;
 
-    private String authorName;
+    private String bookStatus;
 
-    private String publisherName;
+    private List<AuthorGetResponse> authorList;
+
+    private PublisherGetResponse publisher;
 
     private LocalDate publishDate;
 
@@ -40,9 +45,11 @@ public class BookDetailResponse {
 
     private Integer originalCost;
 
-    private Double totalRate;
+    private Integer disCountRate;
 
-    private Integer reviewCount;
+//    private Double totalRate;
+
+//    private Integer reviewCount;
 
     private Boolean isPacking;
 
@@ -50,9 +57,9 @@ public class BookDetailResponse {
 
     private String isbn;
 
-    private List<String> category;
+//    private List<CategoryGetResponseForBookCreate> categoryList;
 
-    private List<String> tag;
+    private List<TagGetResponseForBookDetail> tagList;
 
     private Integer stock;
 
@@ -60,8 +67,25 @@ public class BookDetailResponse {
 
     private String content;
 
-    private String bookContentImage;
+//    private String bookContentImage;
 
 //    private List<ReviewDetailResponse> review;
-    
+
+    public BookDetailResponse(Long id, String name, LocalDate publishDate, Integer saleCost,
+                              Integer originalCost, Integer disCountRate, Boolean isPacking, Integer page, String isbn,
+                              Integer stock, String index, String content) {
+        this.id = id;
+        this.name = name;
+        this.publishDate = publishDate;
+        this.saleCost = saleCost;
+        this.originalCost = originalCost;
+        this.disCountRate = disCountRate;
+        this.isPacking = isPacking;
+        this.page = page;
+        this.isbn = isbn;
+        this.stock = stock;
+        this.index = index;
+        this.content = content;
+    }
 }
+

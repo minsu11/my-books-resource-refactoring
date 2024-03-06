@@ -14,12 +14,15 @@ import store.mybooks.resource.book.dto.request.BookModifyRequest;
 import store.mybooks.resource.book.dto.response.BookBriefResponse;
 import store.mybooks.resource.book.dto.response.BookCreateResponse;
 import store.mybooks.resource.book.dto.response.BookDetailResponse;
+import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
 import store.mybooks.resource.book.dto.response.BookModifyResponse;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.exception.IsbnAlreadyExistsException;
 import store.mybooks.resource.book.mapper.BookMapper;
 import store.mybooks.resource.book.repotisory.BookRepository;
+import store.mybooks.resource.book_author.dto.request.BookAuthorCreateRequest;
+import store.mybooks.resource.book_author.service.BookAuthorService;
 import store.mybooks.resource.book_category.dto.request.BookCategoryCreateRequest;
 import store.mybooks.resource.book_category.service.BookCategoryService;
 import store.mybooks.resource.book_status.entity.BookStatus;
@@ -56,7 +59,7 @@ public class BookService {
     private final PublisherRepository publisherRepository;
     private final BookCategoryService bookCategoryService;
     private final BookTagService bookTagService;
-    //    private final BookAuthorService bookAuthorService;
+    private final BookAuthorService bookAuthorService;
     private final BookMapper bookMapper;
     private final ImageService imageService;
     private final ImageStatusRepository imageStatusRepository;
@@ -75,6 +78,20 @@ public class BookService {
     }
 
     /**
+     * methodName : getActiveBookBriefInfo
+     * author : newjaehun
+     * description : 활성화된 간단 도서 정보 찾기.
+     *
+     * @param pageable pageable
+     * @return page
+     */
+    @Transactional
+    public Page<BookBriefResponse> getActiveBookBriefInfo(Pageable pageable) {
+        return bookRepository.getActiveBookBriefInfo(pageable);
+    }
+
+
+    /**
      * methodName : getBookDetailInfo
      * author : newjaehun
      * description : 특정 도서 정보 검색.
@@ -84,7 +101,7 @@ public class BookService {
      */
     @Transactional(readOnly = true)
     public BookDetailResponse getBookDetailInfo(Long bookId) {
-        if (bookRepository.existsById(bookId)) {
+        if (!bookRepository.existsById(bookId)) {
             throw new BookNotExistException(bookId);
         }
         return bookRepository.getBookDetailInfo(bookId);
@@ -122,6 +139,7 @@ public class BookService {
                         createRequest.getIsPacking());
         Book newBook = bookRepository.save(book);
         Long bookId = newBook.getId();
+        bookAuthorService.createBookAuthor(new BookAuthorCreateRequest(bookId, createRequest.getAuthorList()));
         bookCategoryService.createBookCategory(new BookCategoryCreateRequest(bookId, createRequest.getCategoryList()));
         if (createRequest.getTagList() != null) {
             bookTagService.createBookTag(new BookTagCreateRequest(bookId, createRequest.getTagList()));
@@ -160,8 +178,23 @@ public class BookService {
                 .orElseThrow(() -> new BookStatusNotExistException(modifyRequest.getBookStatusId()));
 
         book.setModifyRequest(bookStatus, modifyRequest.getSaleCost(),
-                book.getOriginalCost() / modifyRequest.getSaleCost(),
+                ((book.getOriginalCost() - modifyRequest.getSaleCost()) * 100) / book.getOriginalCost(),
                 modifyRequest.getStock(), modifyRequest.getIsPacking());
+
+        bookCategoryService.deleteBookCategory(bookId);
+        bookCategoryService.createBookCategory(new BookCategoryCreateRequest(bookId, modifyRequest.getCategoryList()));
+
+        bookTagService.deleteBookTag(bookId);
+        if (modifyRequest.getTagList() != null) {
+            bookTagService.createBookTag(new BookTagCreateRequest(bookId, modifyRequest.getTagList()));
+        }
         return bookMapper.modifyResponse(book);
     }
+
+    @Transactional
+    public List<BookGetResponseForCoupon> getBookForCoupon() {
+        return bookRepository.getBookForCoupon();
+    }
+
+
 }

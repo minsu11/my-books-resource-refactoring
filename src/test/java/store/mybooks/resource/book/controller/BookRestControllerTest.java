@@ -19,10 +19,10 @@
 //import org.junit.jupiter.api.extension.ExtendWith;
 //import org.mockito.junit.jupiter.MockitoExtension;
 //import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 //import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 //import org.springframework.boot.test.mock.mockito.MockBean;
 //import org.springframework.http.MediaType;
+//import org.springframework.test.util.ReflectionTestUtils;
 //import org.springframework.test.web.servlet.MockMvc;
 //import store.mybooks.resource.book.dto.request.BookCreateRequest;
 //import store.mybooks.resource.book.dto.request.BookModifyRequest;
@@ -102,8 +102,17 @@
 //    void givenBookIdAndValidBookModifyRequest_whenModifyBook_thenModifyBookAndReturnBookModifyResponse()
 //            throws Exception {
 //        Long bookId = 3L;
-//        BookModifyRequest request = new BookModifyRequest("판매종료", 13000, 1, false);
+//        BookModifyRequest request = new BookModifyRequest();
+//        ReflectionTestUtils.setField(request, "saleCost", 1);
+//        ReflectionTestUtils.setField(request, "bookStatusId", "판매종료");
+//        ReflectionTestUtils.setField(request, "stock", 0);
+//        ReflectionTestUtils.setField(request, "isPacking", true);
+//        ReflectionTestUtils.setField(request, "categoryList", new ArrayList<>(List.of(1)));
+//        ReflectionTestUtils.setField(request, "tagList", null);
+//
 //        BookModifyResponse response = new BookModifyResponse();
+//
+//
 //        response.setName("도서명");
 //
 //        when(bookService.modifyBook(eq(bookId), any(BookModifyRequest.class))).thenReturn(response);
@@ -122,7 +131,14 @@
 //    @DisplayName("도서 수정(검증 실패)")
 //    void givenBookIdAndInValidBookModifyRequest_whenModifyBook_thenThrowBindException() throws Exception {
 //        Long bookId = 3L;
-//        BookModifyRequest request = new BookModifyRequest("판매종료", 12000, -1, false);
+//        BookModifyRequest request = new BookModifyRequest();
+//        ReflectionTestUtils.setField(request, "saleCost", 1);
+//        ReflectionTestUtils.setField(request, "bookStatusId", "판매종료");
+//        ReflectionTestUtils.setField(request, "stock", 0);
+//        ReflectionTestUtils.setField(request, "isPacking", true);
+//        ReflectionTestUtils.setField(request, "categoryList", null);
+//        ReflectionTestUtils.setField(request, "tagList", null);
+//
 //        BookModifyResponse response = new BookModifyResponse();
 //        response.setName("도서명");
 //

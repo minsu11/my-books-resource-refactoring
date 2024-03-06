@@ -1,6 +1,11 @@
 package store.mybooks.resource.coupon.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.book.entity.Book;
@@ -10,6 +15,8 @@ import store.mybooks.resource.category.entity.Category;
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
 import store.mybooks.resource.category.repository.CategoryRepository;
 import store.mybooks.resource.coupon.dto.request.CouponCreateRequest;
+import store.mybooks.resource.coupon.dto.response.CouponGetResponse;
+import store.mybooks.resource.coupon.dto.response.CouponGetResponseForQuerydsl;
 import store.mybooks.resource.coupon.entity.Coupon;
 import store.mybooks.resource.coupon.repository.CouponRepository;
 import store.mybooks.resource.coupon.utils.CouponUtils;
@@ -32,6 +39,18 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
+
+    @Transactional(readOnly = true)
+    public Page<CouponGetResponse> getCoupons(Pageable pageable) {
+        Page<CouponGetResponseForQuerydsl> couponPage = couponRepository.getCoupons(pageable);
+        List<CouponGetResponse> couponGetResponseList = new ArrayList<>();
+
+        for (CouponGetResponseForQuerydsl response : couponPage.getContent()) {
+            couponGetResponseList.add(makeCouponGetResponse(response));
+        }
+
+        return new PageImpl<>(couponGetResponseList, couponPage.getPageable(), couponPage.getTotalElements());
+    }
 
     /**
      * methodName : createCoupon <br>
@@ -61,6 +80,38 @@ public class CouponService {
         );
 
         couponRepository.save(coupon);
+    }
+
+    private CouponGetResponse makeCouponGetResponse(CouponGetResponseForQuerydsl response) {
+        Integer discountRateOrCost =
+                response.getIsRate() ? response.getDiscountRate() : response.getDiscountCost();
+        Integer maxDiscountCost =
+                response.getIsRate() ?  response.getMaxDiscountCost() : response.getDiscountCost();
+
+        String range;
+        String target;
+        if (response.getCategoryName() == null && response.getBookName() == null) {
+            range = "전체";
+            target = "전체 도서";
+        } else if (response.getBookName() != null) {
+            range = "도서";
+            target = response.getBookName();
+        } else {
+            range = "카테고리";
+            target = response.getCategoryName();
+        }
+
+        return new CouponGetResponse(
+                response.getName(),
+                range,
+                target,
+                response.getOrderMin(),
+                discountRateOrCost,
+                maxDiscountCost,
+                response.getIsRate(),
+                response.getStartDate(),
+                response.getEndDate()
+        );
     }
 
     private Book findBook(long bookId) {

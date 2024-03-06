@@ -14,5 +14,5 @@ import store.mybooks.resource.coupon.entity.Coupon;
  * -----------------------------------------------------------
  * 3/1/24          damho-lee          최초 생성
  */
-public interface CouponRepository extends JpaRepository<Coupon, Long> {
+public interface CouponRepository extends JpaRepository<Coupon, Long>, CouponRepositoryCustom {
 }
