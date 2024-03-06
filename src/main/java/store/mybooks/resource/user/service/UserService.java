@@ -104,9 +104,37 @@ public class UserService {
         return userMapper.toUserCreateResponse(user);
     }
 
+    public UserCreateResponse createOauthUser(UserOauthCreateRequest createRequest) {
 
+        String userStatusName = UserStatusEnum.ACTIVE.toString();
+        String userGradeName = UserGradeNameEnum.NORMAL.toString();
 
-  
+        UserStatus userStatus = userStatusRepository.findById(userStatusName)
+                .orElseThrow(() -> new UserStatusNotExistException(userStatusName));
+
+        UserGrade userGrade = userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(userGradeName)
+                .orElseThrow(() -> new UserGradeNameNotExistException(userGradeName));
+
+        User user = new User(createRequest.getEmail(), null, createRequest.getBirthMonthDay(), "dummy",
+                createRequest.getPhoneNumber(), false, createRequest.getName(), userStatus, userGrade);
+
+        userRepository.save(user);
+        return userMapper.toUserCreateResponse(user);
+    }
+
+    public UserLoginResponse loginOauthUser(UserOauthLoginRequest loginRequest) {
+
+        Optional<User> user = userRepository.findByEmail(loginRequest.getEmail());
+
+        if (user.isPresent()) { // 이미 있으면 = 회원가입한 회원이면
+            User existUser = user.get();
+            return new UserLoginResponse(true, existUser.getIsAdmin(), existUser.getId(),
+                    existUser.getUserStatus().getId()); // 로그인 response 보내기
+        }
+
+        return new UserLoginResponse(false, false, null, null);
+
+    }
 
 
     /**
