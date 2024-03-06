@@ -1,6 +1,7 @@
 package store.mybooks.resource.point_rule_name.repository;
 
 import com.querydsl.core.types.Projections;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import store.mybooks.resource.point_rule_name.dto.response.PointRuleNameResponse;
@@ -31,5 +32,12 @@ public class PointRuleNameRepositoryImpl extends QuerydslRepositorySupport imple
                 from(pointRuleName)
                         .select(Projections.constructor(PointRuleNameResponse.class, pointRuleName.id))
                         .fetchOne());
+    }
+
+    @Override
+    public List<PointRuleNameResponse> getPointRuleNameList() {
+        return from(pointRuleName)
+                .select(Projections.constructor(PointRuleNameResponse.class, pointRuleName.id))
+                .fetch();
     }
 }

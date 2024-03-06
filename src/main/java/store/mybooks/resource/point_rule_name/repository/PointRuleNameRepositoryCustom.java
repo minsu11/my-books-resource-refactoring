@@ -1,5 +1,6 @@
 package store.mybooks.resource.point_rule_name.repository;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.repository.NoRepositoryBean;
 import store.mybooks.resource.point_rule_name.dto.response.PointRuleNameResponse;
@@ -18,4 +19,6 @@ import store.mybooks.resource.point_rule_name.dto.response.PointRuleNameResponse
 @NoRepositoryBean
 public interface PointRuleNameRepositoryCustom {
     Optional<PointRuleNameResponse> getPointRuleNameById(String id);
+
+    List<PointRuleNameResponse> getPointRuleNameList();
 }

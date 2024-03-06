@@ -1,5 +1,6 @@
 package store.mybooks.resource.point_rule_name.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,5 +43,12 @@ public class PointRuleNameRestController {
                 .body(pointRuleNameService.getPointRuleName(id));
     }
 
-    
+    @GetMapping
+    public ResponseEntity<List<PointRuleNameResponse>> getPointRuleNameList() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(pointRuleNameService.getPointRuleNameList());
+    }
+
+
 }

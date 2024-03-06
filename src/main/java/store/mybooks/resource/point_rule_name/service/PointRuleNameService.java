@@ -1,5 +1,6 @@
 package store.mybooks.resource.point_rule_name.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import store.mybooks.resource.point_rule_name.dto.response.PointRuleNameResponse;
@@ -22,9 +23,28 @@ import store.mybooks.resource.point_rule_name.repository.PointRuleNameRepository
 public class PointRuleNameService {
     private final PointRuleNameRepository pointRuleNameRepository;
 
+    /**
+     * methodName : getPointRuleName<br>
+     * author : minsu11<br>
+     * description : 아이디에 맞는 포인트 명 조회.
+     * <br> *
+     *
+     * @param id 조회할 아이디
+     * @return point rule name response
+     */
     public PointRuleNameResponse getPointRuleName(String id) {
-
         return pointRuleNameRepository.getPointRuleNameById(id).orElseThrow(PointRuleNameNotExistException::new);
+    }
 
+    /**
+     * methodName : getPointRuleNameList<br>
+     * author : minsu11<br>
+     * description : 포인트 명 전체 조회. 조회할 목록이 없다면 {@code empty list}반환
+     * <br> *
+     *
+     * @return list
+     */
+    public List<PointRuleNameResponse> getPointRuleNameList() {
+        return pointRuleNameRepository.getPointRuleNameList();
     }
 }
