@@ -16,6 +16,7 @@ import store.mybooks.resource.book.dto.response.BookCreateResponse;
 import store.mybooks.resource.book.dto.response.BookDetailResponse;
 import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
 import store.mybooks.resource.book.dto.response.BookModifyResponse;
+import store.mybooks.resource.book.dto.response.BookResponseForOrder;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.exception.IsbnAlreadyExistsException;
@@ -108,6 +109,23 @@ public class BookService {
     }
 
     /**
+     * methodName : getBookForOrder
+     * author : newjaehun
+     * description : 주문에서 사용할 도서 정보.
+     *
+     * @param bookId 검색할 도서 ID
+     * @return book response for order
+     */
+    @Transactional(readOnly = true)
+    public BookResponseForOrder getBookForOrder(Long bookId) {
+        if (!bookRepository.existsById(bookId)) {
+            throw new BookNotExistException(bookId);
+        }
+        return bookRepository.getBookForOrder(bookId);
+
+    }
+
+    /**
      * methodName : createBook
      * author : newjaehun
      * description : 도서 추가하는 메서드.
@@ -195,6 +213,5 @@ public class BookService {
     public List<BookGetResponseForCoupon> getBookForCoupon() {
         return bookRepository.getBookForCoupon();
     }
-
 
 }
