@@ -37,6 +37,13 @@ import store.mybooks.resource.error.Utils;
 public class CouponRestController {
     private final CouponService couponService;
 
+    @GetMapping("/page")
+    public ResponseEntity<Page<CouponGetResponse>> getCoupons(@PageableDefault Pageable pageable) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(couponService.getCoupons(pageable));
+    }
+
     /**
      * methodName : getCoupons <br>
      * author : damho-lee <br>

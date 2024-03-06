@@ -64,6 +64,18 @@ public class CouponService {
         return new PageImpl<>(couponGetResponseList, couponPage.getPageable(), couponPage.getTotalElements());
     }
 
+    @Transactional(readOnly = true)
+    public Page<CouponGetResponse> getCoupons(Pageable pageable) {
+        Page<CouponGetResponseForQuerydsl> couponPage = couponRepository.getCoupons(pageable);
+        List<CouponGetResponse> couponGetResponseList = new ArrayList<>();
+
+        for (CouponGetResponseForQuerydsl response : couponPage.getContent()) {
+            couponGetResponseList.add(makeCouponGetResponse(response));
+        }
+
+        return new PageImpl<>(couponGetResponseList, couponPage.getPageable(), couponPage.getTotalElements());
+    }
+
     /**
      * methodName : createCoupon <br>
      * author : damho-lee <br>
