@@ -18,7 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import store.mybooks.resource.author.entity.Author;
 import store.mybooks.resource.author.repository.AuthorRepository;
 import store.mybooks.resource.book.entity.Book;
@@ -68,9 +67,7 @@ class BookAuthorServiceTest {
         when(authorRepository.findById(3)).thenReturn(Optional.of(author3));
         when(bookAuthorRepository.save(any())).thenReturn(null);
 
-        BookAuthorCreateRequest request = new BookAuthorCreateRequest();
-        ReflectionTestUtils.setField(request, "bookId", bookId);
-        ReflectionTestUtils.setField(request, "authorIdList", new ArrayList<>(List.of(1, 2, 3)));
+        BookAuthorCreateRequest request = new BookAuthorCreateRequest(bookId, new ArrayList<>(List.of(1, 2, 3)));
 
 
         bookAuthorService.createBookAuthor(request);

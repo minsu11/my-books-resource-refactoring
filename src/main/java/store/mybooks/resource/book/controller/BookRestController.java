@@ -24,8 +24,10 @@ import store.mybooks.resource.book.dto.request.BookModifyRequest;
 import store.mybooks.resource.book.dto.response.BookBriefResponse;
 import store.mybooks.resource.book.dto.response.BookCreateResponse;
 import store.mybooks.resource.book.dto.response.BookDetailResponse;
+import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
 import store.mybooks.resource.book.dto.response.BookModifyResponse;
 import store.mybooks.resource.book.service.BookService;
+import store.mybooks.resource.error.RequestValidationFailedException;
 
 /**
  * packageName    : store.mybooks.resource.book.controller <br/>
@@ -60,6 +62,21 @@ public class BookRestController {
     }
 
     /**
+     * methodName : getActiveBookBrief
+     * author : newjaehun
+     * description : 활성상태인 간략한 도서 리스트 반환.
+     *
+     * @param pageable pageable
+     * @return response entity
+     */
+    @GetMapping("/active")
+    public ResponseEntity<Page<BookBriefResponse>> getActiveBookBrief(Pageable pageable) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getActiveBookBriefInfo(pageable));
+    }
+
+    /**
      * methodName : getBookDetail
      * author : newjaehun
      * description : 도서 상세보기.
@@ -72,6 +89,20 @@ public class BookRestController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookService.getBookDetailInfo(bookId));
+    }
+
+    /**
+     * methodName : getBookForCoupon
+     * author : newjaehun
+     * description : 쿠폰 생성에서 사용할 도서 목록.
+     *
+     * @return responseEntity
+     */
+    @GetMapping("/for-coupon")
+    public ResponseEntity<List<BookGetResponseForCoupon>> getBookForCoupon() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookForCoupon());
     }
 
     /**
@@ -107,14 +138,13 @@ public class BookRestController {
      * @param modifyRequest 수정하려는 도서 정보 포함
      * @param bindingResult bindingResult
      * @return responseEntity
-     * @throws BindException the bind exception
      */
     @PutMapping("/{id}")
     public ResponseEntity<BookModifyResponse> modifyBook(@PathVariable("id") Long bookId,
                                                          @Valid @RequestBody BookModifyRequest modifyRequest,
-                                                         BindingResult bindingResult) throws BindException {
+                                                         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new BindException(bindingResult);
+            throw new RequestValidationFailedException(bindingResult);
         }
         return ResponseEntity
                 .status(HttpStatus.OK)

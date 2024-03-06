@@ -59,8 +59,11 @@ public class User {
     private String email;
 
 
-    @Column(name = "user_birth")
-    private LocalDate birth;
+    @Column(name = "user_birth_year")
+    private int birthYear;
+
+    @Column(name = "user_birth_month_day")
+    private String birthMonthDay;
 
 
     @Column(name = "is_admin")
@@ -83,7 +86,9 @@ public class User {
                 UserStatus userStatus,
                 UserGrade userGrade) {
         this.email = email;
-        this.birth = birth;
+
+        this.birthYear=birth.getYear();
+        this.birthMonthDay = String.format("%02d-%02d", birth.getMonthValue(), birth.getDayOfMonth());
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.isAdmin = isAdmin;

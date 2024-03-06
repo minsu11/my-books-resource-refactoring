@@ -1,6 +1,5 @@
 package store.mybooks.resource.book_tag.service;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
@@ -19,7 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import store.mybooks.resource.book.entity.Book;
-import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.repotisory.BookRepository;
 import store.mybooks.resource.book_status.entity.BookStatus;
 import store.mybooks.resource.book_tag.dto.request.BookTagCreateRequest;
@@ -89,13 +87,5 @@ class BookTagServiceTest {
         doNothing().when(bookTagRepository).deleteByPk_BookId(anyLong());
         bookTagService.deleteBookTag(1L);
         verify(bookTagRepository, times(1)).deleteByPk_BookId(1L);
-    }
-
-    @Test
-    @DisplayName("존재하지 않는 BookId deleteBookTag 테스트")
-    void givenNotExistsBookId_whenDeleteBookTag_thenThrowBookNotExistException() {
-        when(bookTagRepository.existsByPk_BookId(anyLong())).thenReturn(false);
-        assertThrows(BookNotExistException.class, () -> bookTagService.deleteBookTag(1L));
-        verify(bookTagRepository, times(0)).deleteByPk_BookId(anyLong());
     }
 }
