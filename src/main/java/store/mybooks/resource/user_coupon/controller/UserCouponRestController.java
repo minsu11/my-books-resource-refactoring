@@ -1,5 +1,6 @@
 package store.mybooks.resource.user_coupon.controller;
 
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,7 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.config.HeaderProperties;
 import store.mybooks.resource.error.RequestValidationFailedException;
 import store.mybooks.resource.user_coupon.dto.request.UserCouponCreateRequest;
-import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponse;
+import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForMyPage;
+import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForOrder;
 import store.mybooks.resource.user_coupon.service.UserCouponService;
 
 /**
@@ -49,12 +51,29 @@ public class UserCouponRestController {
      * @return response entity
      */
     @GetMapping("/page")
-    public ResponseEntity<Page<UserCouponGetResponse>> getUserCoupons(
+    public ResponseEntity<Page<UserCouponGetResponseForMyPage>> getUserCoupons(
             @RequestHeader(name = HeaderProperties.USER_ID) Long userId,
             @PageableDefault Pageable pageable) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(userCouponService.getUserCoupons(userId, pageable));
+    }
+
+    /**
+     * methodName : getUsableUserCouponsByBookId <br>
+     * author : damho-lee <br>
+     * description : 사용 가능한 회원 쿠폰 조회.<br>
+     *
+     * @param userId Long
+     * @param bookId Long
+     * @return response entity
+     */
+    @GetMapping("/usable-coupon/{bookId}")
+    public ResponseEntity<List<UserCouponGetResponseForOrder>> getUsableUserCouponsByBookId(
+            @RequestHeader(name = HeaderProperties.USER_ID) Long userId, @PathVariable("bookId") Long bookId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(userCouponService.getUsableUserCouponsByBookId(userId, bookId));
     }
 
     /**
