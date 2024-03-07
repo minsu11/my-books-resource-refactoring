@@ -13,6 +13,6 @@ package store.mybooks.resource.point_rule_name.exception;
  */
 public class PointRuleNameNotExistException extends RuntimeException {
     public PointRuleNameNotExistException() {
-        super("존재하지 않는 포인트 이름 명입니다.");
+        super("존재하지 않는 포인트 규정 명입니다.");
     }
 }
