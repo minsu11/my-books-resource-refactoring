@@ -44,7 +44,7 @@ class BookLikeRepositoryTest {
     void givenBookId_whenCountBookLikeByPk_BookId_thenReturnCount() {
         Long bookId = 1L;
         bookLikeRepository.save(new BookLike(new BookLike.Pk(2L, bookId), new User(), new Book()));
-        Assertions.assertEquals(bookLikeRepository.countBookLikeByPk_BookId(bookId), 1);
+        Assertions.assertEquals(1, bookLikeRepository.countBookLikeByPk_BookId(bookId));
     }
 
     @Test
@@ -57,7 +57,7 @@ class BookLikeRepositoryTest {
 
         User user = userRepository.save(new User());
         Long userId = user.getId();
-        
+
         BookLike bookLike1 = new BookLike(new BookLike.Pk(userId, bookId1), user, book1);
         BookLike bookLike2 = new BookLike(new BookLike.Pk(userId, bookId2), user, book2);
         bookLikeRepository.save(bookLike1);
