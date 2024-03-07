@@ -18,7 +18,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import store.mybooks.resource.book_order.dto.response.BookOrderUserResponse;
@@ -35,7 +34,7 @@ import store.mybooks.resource.book_order.service.BookOrderService;
  * -----------------------------------------------------------<br>
  * 3/3/24        minsu11       최초 생성<br>
  */
-@ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
+@ExtendWith({MockitoExtension.class})
 @WebMvcTest(BookOrderRestController.class)
 class BookOrderRestControllerTest {
     @MockBean
@@ -44,13 +43,6 @@ class BookOrderRestControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-//    @BeforeEach
-//    void setUp(WebApplicationContext webApplicationContext,
-//               RestDocumentationContextProvider restDocumentationContextProvider) {
-//        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-//                .apply(documentationConfiguration(restDocumentationContextProvider))
-//                .build();
-//    }
 
     @Test
     @DisplayName("주문 내역")
