@@ -19,3 +19,43 @@
 == 도서-태그 API
 
 == 도서-좋아요 API
+
+=== 도서 좋아요 요청
+
+==== HTTP Request
+
+include::{snippets}/bookLike-update/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/bookLike-update/http-response.adoc[]
+
+==== Request Headers
+
+include::{snippets}/bookLike-update/request-headers.adoc[]
+
+==== Path Parameters
+
+include::{snippets}/bookLike-update/path-parameters.adoc[]
+
+=== 사용자가 좋아요한 도서 조회
+
+==== HTTP Request
+
+include::{snippets}/bookLike-getBookListByUserId/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/bookLike-getBookListByUserId/http-response.adoc[]
+
+==== Request Headers
+
+include::{snippets}/bookLike-getBookListByUserId/request-headers.adoc[]
+
+==== Request Parameters
+
+include::{snippets}/bookLike-getBookListByUserId/request-parameters.adoc[]
+
+==== Response Fields
+
+include::{snippets}/bookLike-getBookListByUserId/response-fields.adoc[]
