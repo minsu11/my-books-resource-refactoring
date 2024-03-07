@@ -58,8 +58,8 @@ public class BookLikeService {
      * @return boolean
      */
     public Boolean updateUserBookLike(Long userId, Long bookId) {
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotExistException(bookId));
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotExistException(bookId));
 
         BookLike.Pk pk = new BookLike.Pk(userId, bookId);
         if (!bookLikeRepository.existsById(pk)) {
