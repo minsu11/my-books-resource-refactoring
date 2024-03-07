@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.repository.NoRepositoryBean;
 import store.mybooks.resource.point_rule.dto.response.PointRuleResponse;
+import store.mybooks.resource.point_rule.entity.PointRule;
 
 /**
  * packageName    : store.mybooks.resource.point_rule.repository<br>
@@ -38,4 +39,6 @@ public interface PointRuleRepositoryCustom {
      * @return list
      */
     List<PointRuleResponse> getPointRuleList();
+
+    Optional<PointRule> findPointRuleByPointRuleName(String pointRuleName);
 }

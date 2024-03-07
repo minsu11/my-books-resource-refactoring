@@ -4,10 +4,11 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import store.mybooks.resource.error.Utils;
+import store.mybooks.resource.point_rule.dto.request.PointRuleCreateRequest;
+import store.mybooks.resource.point_rule.dto.response.PointRuleCreateResponse;
 import store.mybooks.resource.point_rule.dto.response.PointRuleResponse;
 import store.mybooks.resource.point_rule.service.PointRuleService;
 
@@ -59,5 +60,12 @@ public class PointRuleController {
                 .body(pointRuleService.getPointRuleList());
     }
 
-    
+    @PostMapping
+    public ResponseEntity<PointRuleCreateResponse> createResponseResponse(@RequestBody PointRuleCreateRequest request,
+                                                                          BindingResult bindingResult) {
+        Utils.validateRequest(bindingResult);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(pointRuleService.createPointRuleResponse(request));
+    }
 }

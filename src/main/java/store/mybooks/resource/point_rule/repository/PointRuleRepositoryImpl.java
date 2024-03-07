@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import store.mybooks.resource.point_rule.dto.response.PointRuleResponse;
+import store.mybooks.resource.point_rule.entity.PointRule;
 import store.mybooks.resource.point_rule.entity.QPointRule;
 
 /**
@@ -50,5 +51,15 @@ public class PointRuleRepositoryImpl extends QuerydslRepositorySupport implement
                         pointRule.cost))
                 .where(pointRule.isAvailable.eq(true))
                 .fetch();
+    }
+
+    @Override
+    public Optional<PointRule> findPointRuleByPointRuleName(String pointRuleName) {
+        return Optional.of(
+                from(pointRule)
+                        .where(pointRule.isAvailable.eq(true)
+                                .and(
+                                        pointRule.pointRuleName.id.eq(pointRuleName)))
+                        .fetchOne());
     }
 }
