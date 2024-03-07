@@ -3,7 +3,6 @@ package store.mybooks.resource.book.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * packageName    : store.mybooks.resource.book.dto.response <br/>
@@ -17,7 +16,6 @@ import lombok.Setter;
  * 3/5/24        Fiat_lux       최초 생성<br/>
  */
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookCartResponse {
