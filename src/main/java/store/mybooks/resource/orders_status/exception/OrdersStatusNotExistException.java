@@ -11,11 +11,9 @@ package store.mybooks.resource.orders_status.exception;
  * -----------------------------------------------------------
  * 2/15/24        minsu11       최초 생성
  */
-public class OrdersStatusNotFoundException extends RuntimeException {
-    public OrdersStatusNotFoundException() {
+public class OrdersStatusNotExistException extends RuntimeException {
+    public OrdersStatusNotExistException() {
+        super("주문 상태가 없음");
     }
 
-    public OrdersStatusNotFoundException(String message) {
-        super(message);
-    }
 }
