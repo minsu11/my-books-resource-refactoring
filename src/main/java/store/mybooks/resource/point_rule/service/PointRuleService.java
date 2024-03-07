@@ -68,7 +68,7 @@ public class PointRuleService {
     /**
      * methodName : getPointRuleResponsePage<br>
      * author : minsu11<br>
-     * description : 포인트 규정 페이징
+     * description : 포인트 규정 페이징.
      * <br> *
      *
      * @param pageable 페이징

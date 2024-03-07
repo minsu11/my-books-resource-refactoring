@@ -27,7 +27,7 @@ public interface PointRuleRepositoryCustom {
      * description : id로 포인트 규정 조회.
      * <br> *
      *
-     * @param id
+     * @param id 조회할 포인트 규정 아이디
      * @return optional
      */
     Optional<PointRuleResponse> getPointRuleById(Integer id);
@@ -53,6 +53,15 @@ public interface PointRuleRepositoryCustom {
      */
     PointRule findPointRuleByPointRuleName(String pointRuleName);
 
+    /**
+     * methodName : getPointRuleResponsePage<br>
+     * author : minsu11<br>
+     * description : 포인트 규정 페이징.
+     * <br> *
+     *
+     * @param pageable 페이징
+     * @return page
+     */
     Page<PointRuleResponse> getPointRuleResponsePage(Pageable pageable);
 
 
