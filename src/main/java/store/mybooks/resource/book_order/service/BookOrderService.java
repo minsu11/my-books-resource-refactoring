@@ -81,6 +81,15 @@ public class BookOrderService {
         return bookOrderMapper.mapToBookOrderModifyOrderStatusResponse(bookOrder);
     }
 
+    /**
+     * methodName : registerBookOrderInvoiceNumber<br>
+     * author : minsu11<br>
+     * description : 주문의 송장 번호 등록. 주문이 없을 시 {@code BookorderNotExistException}을 던짐.
+     * <br> *
+     *
+     * @param request 등록할 송장 번호.
+     * @return book order register invoice response
+     */
     public BookOrderRegisterInvoiceResponse registerBookOrderInvoiceNumber(BookOrderRegisterInvoiceRequest request) {
         BookOrder bookOrder = bookOrderRepository.findById(request.getId()).orElseThrow(BookOrderNotExistException::new);
 
