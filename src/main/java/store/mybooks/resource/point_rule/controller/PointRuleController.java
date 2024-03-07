@@ -1,5 +1,6 @@
 package store.mybooks.resource.point_rule.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,4 +43,21 @@ public class PointRuleController {
                 .status(HttpStatus.OK)
                 .body(pointRuleService.getPointRuleResponse(id));
     }
+
+    /**
+     * methodName : getPointRuleResponseList<br>
+     * author : minsu11<br>
+     * description : 전체 포인트 규정 조회.
+     * <br> *
+     *
+     * @return response entity
+     */
+    @GetMapping
+    public ResponseEntity<List<PointRuleResponse>> getPointRuleResponseList() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(pointRuleService.getPointRuleList());
+    }
+
+    
 }
