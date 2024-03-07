@@ -58,9 +58,8 @@ public class User {
     @Column(name = "user_email")
     private String email;
 
-
     @Column(name = "user_birth_year")
-    private int birthYear;
+    private Integer birthYear;
 
     @Column(name = "user_birth_month_day")
     private String birthMonthDay;
@@ -87,7 +86,7 @@ public class User {
                 UserGrade userGrade) {
         this.email = email;
 
-        this.birthYear=birth.getYear();
+        this.birthYear = birth.getYear();
         this.birthMonthDay = String.format("%02d-%02d", birth.getMonthValue(), birth.getDayOfMonth());
         this.password = password;
         this.phoneNumber = phoneNumber;
@@ -96,6 +95,24 @@ public class User {
         this.userStatus = userStatus;
         this.userGrade = userGrade;
 
+        this.createdAt = LocalDateTime.now();
+        this.gradeChangedDate = null;
+        this.deletedAt = null;
+        this.latestLogin = null;
+    }
+
+    public User(String email, Integer birthYear, String birthMonthDay, String password, String phoneNumber,
+                Boolean isAdmin, String name, UserStatus userStatus, UserGrade userGrade) {
+
+        this.email = email;
+        this.birthYear = birthYear;
+        this.birthMonthDay = birthMonthDay.replaceAll("(\\d{2})(\\d{2})", "$1-$2");
+        this.password = password;
+        this.phoneNumber = phoneNumber.replaceFirst("8210", "010");
+        this.isAdmin = isAdmin;
+        this.name = name;
+        this.userStatus = userStatus;
+        this.userGrade = userGrade;
         this.createdAt = LocalDateTime.now();
         this.gradeChangedDate = null;
         this.deletedAt = null;
