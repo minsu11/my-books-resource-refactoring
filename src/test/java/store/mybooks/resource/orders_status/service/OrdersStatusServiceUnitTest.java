@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import store.mybooks.resource.orders_status.dto.mapper.OrdersStatusMapper;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 import store.mybooks.resource.orders_status.entity.OrdersStatus;
-import store.mybooks.resource.orders_status.exception.OrdersStatusNotFoundException;
+import store.mybooks.resource.orders_status.exception.OrdersStatusNotExistException;
 import store.mybooks.resource.orders_status.repository.OrdersStatusRepository;
 
 /**
@@ -50,7 +50,7 @@ class OrdersStatusServiceUnitTest {
         when(mapper.mapToResponse(any())).thenReturn(new OrdersStatusResponse(ordersStatusId));
 
         //when
-        OrdersStatus ordersStatus = repository.findById("test").orElseThrow(OrdersStatusNotFoundException::new);
+        OrdersStatus ordersStatus = repository.findById("test").orElseThrow(OrdersStatusNotExistException::new);
         OrdersStatusResponse actual = mapper.mapToResponse(ordersStatus);
         OrdersStatusResponse expected = new OrdersStatusResponse(ordersStatusId);
 
@@ -65,10 +65,10 @@ class OrdersStatusServiceUnitTest {
     @DisplayName("요청한 id의 값이 데이터 베이스에 없을 경우")
     void givenOrderStatus_whenCallFind_thenReturnOrdersStatus() {
         String orderStatusId = "test";
-        when(repository.findById(orderStatusId)).thenThrow(OrdersStatusNotFoundException.class);
+        when(repository.findById(orderStatusId)).thenThrow(OrdersStatusNotExistException.class);
 
 
-        Assertions.assertThrows(OrdersStatusNotFoundException.class, () -> repository.findById("test"));
+        Assertions.assertThrows(OrdersStatusNotExistException.class, () -> repository.findById("test"));
         verify(repository, times(1)).findById(anyString());
     }
 
