@@ -3,6 +3,8 @@ package store.mybooks.resource.point_rule.service;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import store.mybooks.resource.point_rule.dto.mapper.PointRuleMapper;
 import store.mybooks.resource.point_rule.dto.request.PointRuleCreateRequest;
@@ -51,17 +53,38 @@ public class PointRuleService {
                 .orElseThrow(PointRuleNotExistException::new);
     }
 
+    /**
+     * methodName : getPointRuleList<br>
+     * author : minsu11<br>
+     * description : 전체 포인트 규정 조회.
+     * <br> *
+     *
+     * @return list
+     */
     public List<PointRuleResponse> getPointRuleList() {
         return pointRuleRepository.getPointRuleList();
     }
 
     /**
-     * methodName : createPointRuleResponse<br>
+     * methodName : getPointRuleResponsePage<br>
      * author : minsu11<br>
-     * description :
+     * description : 포인트 규정 페이징
      * <br> *
      *
-     * @param request
+     * @param pageable 페이징
+     * @return page
+     */
+    public Page<PointRuleResponse> getPointRuleResponsePage(Pageable pageable) {
+        return pointRuleRepository.getPointRuleResponsePage(pageable);
+    }
+
+    /**
+     * methodName : createPointRuleResponse<br>
+     * author : minsu11<br>
+     * description : 포인트 규정 등록.
+     * <br> *
+     *
+     * @param request 등록할 포인트 규정
      * @return point rule create response
      */
     public PointRuleCreateResponse createPointRuleResponse(PointRuleCreateRequest request) {

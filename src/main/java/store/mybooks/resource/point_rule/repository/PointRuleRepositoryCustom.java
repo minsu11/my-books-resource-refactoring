@@ -2,6 +2,8 @@ package store.mybooks.resource.point_rule.repository;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
 import store.mybooks.resource.point_rule.dto.response.PointRuleResponse;
 import store.mybooks.resource.point_rule.entity.PointRule;
@@ -50,6 +52,8 @@ public interface PointRuleRepositoryCustom {
      * @return point rule
      */
     PointRule findPointRuleByPointRuleName(String pointRuleName);
+
+    Page<PointRuleResponse> getPointRuleResponsePage(Pageable pageable);
 
 
 }

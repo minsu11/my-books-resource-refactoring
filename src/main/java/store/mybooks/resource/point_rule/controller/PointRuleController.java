@@ -2,6 +2,8 @@ package store.mybooks.resource.point_rule.controller;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -61,6 +63,23 @@ public class PointRuleController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(pointRuleService.getPointRuleList());
+    }
+
+
+    /**
+     * methodName : getPointRuleResponsePage<br>
+     * author : minsu11<br>
+     * description : 포인트 규정 페이징.
+     * <br> *
+     *
+     * @param pageable 페이징
+     * @return response entity
+     */
+    @GetMapping("/page")
+    public ResponseEntity<Page<PointRuleResponse>> getPointRuleResponsePage(Pageable pageable) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(pointRuleService.getPointRuleResponsePage(pageable));
     }
 
     /**
