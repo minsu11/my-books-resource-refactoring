@@ -1,12 +1,13 @@
 package store.mybooks.resource.book_order.dto.response;
 
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 
 /**
  * packageName    : store.mybooks.resource.book_order.dto.response<br>
- * fileName       : BookOrderCreateResponse<br>
+ * fileName       : BookOrderModifyOrderStatusResponse<br>
  * author         : minsu11<br>
  * date           : 3/2/24<br>
  * description    :
@@ -17,7 +18,8 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public class BookOrderCreateResponse {
-    private String statusName;
-
+public class BookOrderAdminModifyResponse {
+    private Long id;
+    private String statusId;
+    private LocalDate outDate;
 }

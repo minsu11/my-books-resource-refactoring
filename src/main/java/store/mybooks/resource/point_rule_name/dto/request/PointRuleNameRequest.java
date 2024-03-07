@@ -1,4 +1,4 @@
-package store.mybooks.resource.book_order.dto.request;
+package store.mybooks.resource.point_rule_name.dto.request;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -6,22 +6,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * packageName    : store.mybooks.resource.book_order.dto.request<br>
- * fileName       : BookOrderModifyOrderStatusReqeust<br>
+ * packageName    : store.mybooks.resource.point_rule_name.dto.request<br>
+ * fileName       : PointRuleRequest<br>
  * author         : minsu11<br>
- * date           : 3/2/24<br>
+ * date           : 3/7/24<br>
  * description    :
  * ===========================================================<br>
  * DATE              AUTHOR             NOTE<br>
  * -----------------------------------------------------------<br>
- * 3/2/24        minsu11       최초 생성<br>
+ * 3/7/24        minsu11       최초 생성<br>
  */
 @Getter
 @NoArgsConstructor
-public class BookOrderModifyOrderStatusRequest {
+public class PointRuleNameRequest {
     @NotBlank
-    private Long id;
-    @Size(min = 2, max = 20)
-    @NotBlank
-    private String statusId;
+    @Size(min = 5, max = 50)
+    private String id;
 }
