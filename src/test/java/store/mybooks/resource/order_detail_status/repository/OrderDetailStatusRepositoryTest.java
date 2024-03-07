@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusResponse;
 import store.mybooks.resource.order_detail_status.entity.OrderDetailStatus;
-import store.mybooks.resource.orders_status.exception.OrdersStatusNotFoundException;
+import store.mybooks.resource.orders_status.exception.OrdersStatusNotExistException;
 
 /**
  * packageName    : store.mybooks.resource.order_detail_status.repository<br>
@@ -39,7 +39,7 @@ class OrderDetailStatusRepositoryTest {
     void givenStringId_whenFindById_thenReturnOrderDetailStatus() {
         String testData = "test1";
         OrderDetailStatus expected = new OrderDetailStatus(testData);
-        OrderDetailStatus actual = orderDetailStatusRepository.findById(testData).orElseThrow(OrdersStatusNotFoundException::new);
+        OrderDetailStatus actual = orderDetailStatusRepository.findById(testData).orElseThrow(OrdersStatusNotExistException::new);
 
         Assertions.assertEquals(expected.getId(), actual.getId());
     }

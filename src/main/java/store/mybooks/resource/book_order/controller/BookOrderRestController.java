@@ -41,7 +41,8 @@ public class BookOrderRestController {
      * @param pageable
      * @return response entity
      */
-    @GetMapping("/user/{id}")
+
+    @GetMapping("/users/{id}")
     public ResponseEntity<Page<BookOrderUserResponse>> getBookOrderPageById(@PathVariable Long id, Pageable pageable
     ) {
         Page<BookOrderUserResponse> bookOrderResponses = bookOrderService.getBookOrderResponseList(id, pageable);
@@ -67,14 +68,15 @@ public class BookOrderRestController {
                 .body(bookOrderAdminResponses);
     }
 
-    @PutMapping("/admin/status")
+
+    @PutMapping("/admin/statuses")
     public ResponseEntity<BookOrderAdminModifyResponse> modifyOrderStatus(@RequestBody BookOrderAdminModifyRequest request) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookOrderService.modifyBookOrderAdminStatus(request));
     }
 
-    @PutMapping("/admin/invoiceNumber")
+    @PutMapping("/admin/invoiceNumbers")
     public ResponseEntity<BookOrderRegisterInvoiceResponse> registerInvoiceNumber(@RequestBody BookOrderRegisterInvoiceRequest request) {
         return ResponseEntity
                 .status(HttpStatus.OK)
