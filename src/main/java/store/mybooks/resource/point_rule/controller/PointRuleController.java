@@ -82,6 +82,17 @@ public class PointRuleController {
                 .body(pointRuleService.createPointRuleResponse(request));
     }
 
+    /**
+     * methodName : modifyPointRuleResponse<br>
+     * author : minsu11<br>
+     * description : {@code id}의 포인트 규정 수정.
+     * <br> *
+     *
+     * @param request       수정 할 포인트 규정
+     * @param id            수정할 포인트 규정 {@code id}
+     * @param bindingResult 유효성 검사
+     * @return response entity
+     */
     @PutMapping("/{id}")
     public ResponseEntity<PointRuleModifyResponse> modifyPointRuleResponse(@RequestBody PointRuleModifyRequest request,
                                                                            @PathVariable Integer id,
