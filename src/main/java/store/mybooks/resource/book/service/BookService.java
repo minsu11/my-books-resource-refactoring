@@ -26,6 +26,7 @@ import store.mybooks.resource.book_author.dto.request.BookAuthorCreateRequest;
 import store.mybooks.resource.book_author.service.BookAuthorService;
 import store.mybooks.resource.book_category.dto.request.BookCategoryCreateRequest;
 import store.mybooks.resource.book_category.service.BookCategoryService;
+import store.mybooks.resource.book_like.repository.BookLikeRepository;
 import store.mybooks.resource.book_status.entity.BookStatus;
 import store.mybooks.resource.book_status.exception.BookStatusNotExistException;
 import store.mybooks.resource.book_status.respository.BookStatusRepository;
@@ -64,6 +65,7 @@ public class BookService {
     private final BookMapper bookMapper;
     private final ImageService imageService;
     private final ImageStatusRepository imageStatusRepository;
+    private final BookLikeRepository bookLikeRepository;
 
     /**
      * methodName : getBookBriefInfo
@@ -105,7 +107,9 @@ public class BookService {
         if (!bookRepository.existsById(bookId)) {
             throw new BookNotExistException(bookId);
         }
-        return bookRepository.getBookDetailInfo(bookId);
+        BookDetailResponse response = bookRepository.getBookDetailInfo(bookId);
+        response.setLikeCount(bookLikeRepository.countBookLikeByPk_BookId(bookId));
+        return response;
     }
 
     /**
