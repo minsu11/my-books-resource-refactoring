@@ -3,6 +3,7 @@ package store.mybooks.resource.book_like.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,7 @@ import store.mybooks.resource.config.HeaderProperties;
 
 /**
  * packageName    : store.mybooks.resource.book_like.controller <br/>
- * fileName       : BookLikeController<br/>
+ * fileName       : BookLikeRestController<br/>
  * author         : newjaehun <br/>
  * date           : 3/7/24<br/>
  * description    :<br/>
@@ -28,8 +29,8 @@ import store.mybooks.resource.config.HeaderProperties;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/book-like")
-public class BookLikeController {
+@RequestMapping("/api/book-likes")
+public class BookLikeRestController {
     private final BookLikeService bookLikeService;
 
     /**
@@ -43,7 +44,7 @@ public class BookLikeController {
      */
     @GetMapping
     public ResponseEntity<Page<BookBriefResponse>> getUserBookLike(
-            @RequestHeader(name = HeaderProperties.USER_ID) Long userId, Pageable pageable) {
+            @RequestHeader(name = HeaderProperties.USER_ID) Long userId, @PageableDefault Pageable pageable) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookLikeService.getUserBookLike(userId, pageable));
