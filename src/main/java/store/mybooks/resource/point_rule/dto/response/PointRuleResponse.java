@@ -18,7 +18,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class PointRuleResponse {
     private Integer id;
-    private String nameId;
+    private String pointRuleName;
     private Integer rate;
     private Integer cost;
 }

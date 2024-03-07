@@ -2,6 +2,7 @@ package store.mybooks.resource.point_rule.controller;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ import store.mybooks.resource.point_rule.service.PointRuleService;
  * 3/7/24        minsu11       최초 생성<br>
  */
 
+@Slf4j
 @RestController
 @RequestMapping("/api/point-rules")
 @RequiredArgsConstructor
@@ -116,6 +118,8 @@ public class PointRuleController {
     public ResponseEntity<PointRuleModifyResponse> modifyPointRuleResponse(@RequestBody PointRuleModifyRequest request,
                                                                            @PathVariable Integer id,
                                                                            BindingResult bindingResult) {
+        log.info("id value: {}", id);
+        
         Utils.validateRequest(bindingResult);
         return ResponseEntity
                 .status(HttpStatus.OK)
