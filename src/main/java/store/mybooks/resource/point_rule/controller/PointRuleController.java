@@ -102,4 +102,19 @@ public class PointRuleController {
                 .status(HttpStatus.OK)
                 .body(pointRuleService.modifyPointRuleResponse(request, id));
     }
+
+    /**
+     * methodName : deletePointRuleResponse<br>
+     * author : minsu11<br>
+     * description : 포인트 규정 삭제.
+     * <br> *
+     *
+     * @param id 삭제할 포인트 규정 아이디
+     * @return response entity
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deletePointRuleResponse(@PathVariable Integer id) {
+        pointRuleService.deletePointRuleResponse(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }

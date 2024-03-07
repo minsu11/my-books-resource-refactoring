@@ -105,4 +105,17 @@ public class PointRuleService {
         return pointRuleMapper.mapToPointRuleModifyResponse(pointRuleRepository.save(pointRule));
     }
 
+    /**
+     * methodName : deletePointRuleResponse<br>
+     * author : minsu11<br>
+     * description : 포인트 규정 삭제. 실제 삭제가 아닌 사용 중 상태를 {@code false}를 하여 약 삭제.
+     * <br> *
+     *
+     * @param id 삭제할 포인트 규정 아이디
+     */
+    public void deletePointRuleResponse(Integer id) {
+        PointRule pointRule = pointRuleRepository.findById(id).orElseThrow(PointRuleNotExistException::new);
+        pointRule.modifyPointRuleIsAvailable(false);
+    }
+
 }
