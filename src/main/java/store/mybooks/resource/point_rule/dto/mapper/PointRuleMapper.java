@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import store.mybooks.resource.point_rule.dto.response.PointRuleCreateResponse;
+import store.mybooks.resource.point_rule.dto.response.PointRuleModifyResponse;
 import store.mybooks.resource.point_rule.entity.PointRule;
 
 /**
@@ -21,4 +22,7 @@ import store.mybooks.resource.point_rule.entity.PointRule;
 public interface PointRuleMapper {
     @Mapping(source = "pointRuleName.id", target = "pointRuleName")
     PointRuleCreateResponse mapToPointRuleCreateResponse(PointRule pointRule);
+
+    @Mapping(source = "pointRuleName.id", target = "pointRuleName")
+    PointRuleModifyResponse mapToPointRuleModifyResponse(PointRule pointRule);
 }

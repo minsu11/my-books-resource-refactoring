@@ -8,7 +8,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import store.mybooks.resource.error.Utils;
 import store.mybooks.resource.point_rule.dto.request.PointRuleCreateRequest;
+import store.mybooks.resource.point_rule.dto.request.PointRuleModifyRequest;
 import store.mybooks.resource.point_rule.dto.response.PointRuleCreateResponse;
+import store.mybooks.resource.point_rule.dto.response.PointRuleModifyResponse;
 import store.mybooks.resource.point_rule.dto.response.PointRuleResponse;
 import store.mybooks.resource.point_rule.service.PointRuleService;
 
@@ -72,11 +74,21 @@ public class PointRuleController {
      * @return response entity
      */
     @PostMapping
-    public ResponseEntity<PointRuleCreateResponse> createResponseResponse(@RequestBody PointRuleCreateRequest request,
-                                                                          BindingResult bindingResult) {
+    public ResponseEntity<PointRuleCreateResponse> createPointRuleResponse(@RequestBody PointRuleCreateRequest request,
+                                                                           BindingResult bindingResult) {
         Utils.validateRequest(bindingResult);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(pointRuleService.createPointRuleResponse(request));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PointRuleModifyResponse> modifyPointRuleResponse(@RequestBody PointRuleModifyRequest request,
+                                                                           @PathVariable Integer id,
+                                                                           BindingResult bindingResult) {
+        Utils.validateRequest(bindingResult);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(pointRuleService.modifyPointRuleResponse(request, id));
     }
 }

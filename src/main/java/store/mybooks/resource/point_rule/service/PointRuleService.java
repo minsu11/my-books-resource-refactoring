@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import store.mybooks.resource.point_rule.dto.mapper.PointRuleMapper;
 import store.mybooks.resource.point_rule.dto.request.PointRuleCreateRequest;
+import store.mybooks.resource.point_rule.dto.request.PointRuleModifyRequest;
 import store.mybooks.resource.point_rule.dto.response.PointRuleCreateResponse;
+import store.mybooks.resource.point_rule.dto.response.PointRuleModifyResponse;
 import store.mybooks.resource.point_rule.dto.response.PointRuleResponse;
 import store.mybooks.resource.point_rule.entity.PointRule;
 import store.mybooks.resource.point_rule.exception.PointRuleNotExistException;
@@ -76,5 +78,31 @@ public class PointRuleService {
         return pointRuleMapper.mapToPointRuleCreateResponse(pointRuleRepository.save(pointRule));
     }
 
+    /**
+     * methodName : modifyPointRuleResponse<br>
+     * author : minsu11<br>
+     * description : 포인트 규정 수정. 포인트 규정과 포인트 규정 명에 저장되지 않은 값이 들어오면
+     * {@code NotExistException}을 던짐
+     * <br> *
+     *
+     * @param request 수정할 포인트 규정
+     * @param id      수정 할 포인트 규정 아이디
+     * @return point rule modify response
+     * @throws PointRuleNotExistException     포인트 규정을 찾지 못한 경우
+     * @throws PointRuleNameNotExistException 포인트 규정 명을 찾지 못한 경우
+     */
+    public PointRuleModifyResponse modifyPointRuleResponse(PointRuleModifyRequest request, Integer id) {
+        PointRule beforePointRule = pointRuleRepository.findById(id).orElseThrow(PointRuleNotExistException::new);
+
+        String name = request.getPointRuleName();
+        PointRuleName pointRuleName = pointRuleNameRepository.findById(name)
+                .orElseThrow(PointRuleNameNotExistException::new);
+
+        PointRule pointRule = new PointRule(pointRuleName, request.getRate(), request.getCost());
+
+        beforePointRule.modifyPointRuleIsAvailable(false);
+
+        return pointRuleMapper.mapToPointRuleModifyResponse(pointRuleRepository.save(pointRule));
+    }
 
 }
