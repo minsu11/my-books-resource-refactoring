@@ -5,6 +5,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * packageName    : store.mybooks.resource.point_name_rule.entity
@@ -17,8 +19,10 @@ import javax.persistence.Table;
  * -----------------------------------------------------------
  * 2/13/24        damho       최초 생성
  */
+@Getter
 @Entity
 @Table(name = "point_rule_name")
+@NoArgsConstructor
 public class PointRuleName {
     @Id
     @Column(name = "point_rule_name_id")

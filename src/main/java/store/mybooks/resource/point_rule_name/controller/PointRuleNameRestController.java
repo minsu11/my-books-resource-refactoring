@@ -4,7 +4,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import store.mybooks.resource.error.Utils;
@@ -24,7 +23,7 @@ import store.mybooks.resource.point_rule_name.service.PointRuleNameService;
  * -----------------------------------------------------------<br>
  * 3/7/24        minsu11       최초 생성<br>
  */
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/point-rule-names")
 public class PointRuleNameRestController {
@@ -40,7 +39,7 @@ public class PointRuleNameRestController {
      * @return response entity
      */
     @GetMapping("/{id}")
-    public ResponseEntity<PointRuleNameResponse> getPointRuleName(@PathVariable String id) {
+    public ResponseEntity<PointRuleNameResponse> getPointRuleName(@PathVariable(name = "id") String id) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(pointRuleNameService.getPointRuleName(id));

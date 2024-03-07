@@ -15,6 +15,7 @@ import lombok.Getter;
  * 3/7/24        minsu11       최초 생성<br>
  */
 @Getter
+
 @AllArgsConstructor
 public class PointRuleNameResponse {
     private String id;
