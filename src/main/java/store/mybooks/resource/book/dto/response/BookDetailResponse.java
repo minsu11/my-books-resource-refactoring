@@ -51,6 +51,8 @@ public class BookDetailResponse {
 
 //    private Integer reviewCount;
 
+    private Integer likeCount;
+
     private Boolean isPacking;
 
     private Integer page;
