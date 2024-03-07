@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.point_rule.dto.mapper.PointRuleMapper;
 import store.mybooks.resource.point_rule.dto.request.PointRuleCreateRequest;
 import store.mybooks.resource.point_rule.dto.request.PointRuleModifyRequest;
@@ -32,6 +33,7 @@ import store.mybooks.resource.point_rule_name.repository.PointRuleNameRepository
  */
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class PointRuleService {
     private final PointRuleRepository pointRuleRepository;
@@ -48,6 +50,7 @@ public class PointRuleService {
      * @param id 조회할 포인트 규정 {@code id}
      * @return point rule response
      */
+    @Transactional(readOnly = true)
     public PointRuleResponse getPointRuleResponse(Integer id) {
         return pointRuleRepository.getPointRuleById(id)
                 .orElseThrow(PointRuleNotExistException::new);
@@ -61,6 +64,7 @@ public class PointRuleService {
      *
      * @return list
      */
+    @Transactional(readOnly = true)
     public List<PointRuleResponse> getPointRuleList() {
         return pointRuleRepository.getPointRuleList();
     }
@@ -74,6 +78,7 @@ public class PointRuleService {
      * @param pageable 페이징
      * @return page
      */
+    @Transactional(readOnly = true)
     public Page<PointRuleResponse> getPointRuleResponsePage(Pageable pageable) {
         return pointRuleRepository.getPointRuleResponsePage(pageable);
     }
