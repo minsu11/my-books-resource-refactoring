@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.book.dto.request.BookCreateRequest;
 import store.mybooks.resource.book.dto.request.BookModifyRequest;
 import store.mybooks.resource.book.dto.response.BookBriefResponse;
+import store.mybooks.resource.book.dto.response.BookCartResponse;
 import store.mybooks.resource.book.dto.response.BookCreateResponse;
 import store.mybooks.resource.book.dto.response.BookDetailResponse;
 import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
@@ -31,6 +32,9 @@ import store.mybooks.resource.book_status.respository.BookStatusRepository;
 import store.mybooks.resource.book_tag.dto.request.BookTagCreateRequest;
 import store.mybooks.resource.book_tag.service.BookTagService;
 import store.mybooks.resource.image.dto.response.ImageRegisterResponse;
+import store.mybooks.resource.image.entity.Image;
+import store.mybooks.resource.image.exception.ImageNotExistsException;
+import store.mybooks.resource.image.repository.ImageRepository;
 import store.mybooks.resource.image.service.ImageService;
 import store.mybooks.resource.image_status.entity.ImageStatus;
 import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
@@ -63,6 +67,7 @@ public class BookService {
     private final BookMapper bookMapper;
     private final ImageService imageService;
     private final ImageStatusRepository imageStatusRepository;
+    private final ImageRepository imageRepository;
 
     /**
      * methodName : getBookBriefInfo
@@ -189,6 +194,25 @@ public class BookService {
             bookTagService.createBookTag(new BookTagCreateRequest(bookId, modifyRequest.getTagList()));
         }
         return bookMapper.modifyResponse(book);
+    }
+
+    /**
+     * methodName : getBookInCart
+     * author : Fiat_lux
+     * description : 장바구니 안에 있는 책의 필요한 정보 가져오는 메서드
+     *
+     * @param bookId the book id
+     * @return BookCartResponse dto
+     */
+    @Transactional(readOnly = true)
+    public BookCartResponse getBookInCart(Long bookId) {
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotExistException(bookId));
+        Image image = imageRepository.findImageByBook_IdAndImageStatus_Id(bookId, ImageStatusEnum.THUMBNAIL.getName())
+                .orElseThrow(() -> new ImageNotExistsException("해당하는 id의 이미지가 없습니다"));
+
+
+        String url = image.getPath() + image.getFileName() + image.getExtension();
+        return new BookCartResponse(book.getId(), book.getName(), url, book.getSaleCost());
     }
 
     @Transactional
