@@ -41,7 +41,7 @@ public class BookOrderRestController {
      * @param pageable
      * @return response entity
      */
-    @GetMapping("/user/{id}")
+    @GetMapping("/users/{id}")
     public ResponseEntity<Page<BookOrderUserResponse>> getBookOrderPageById(@PathVariable Long id, Pageable pageable
     ) {
         Page<BookOrderUserResponse> bookOrderResponses = bookOrderService.getBookOrderResponseList(id, pageable);
