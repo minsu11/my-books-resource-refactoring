@@ -67,14 +67,14 @@ public class BookOrderRestController {
                 .body(bookOrderAdminResponses);
     }
 
-    @PutMapping("/admin/status")
+    @PutMapping("/admin/statuses")
     public ResponseEntity<BookOrderAdminModifyResponse> modifyOrderStatus(@RequestBody BookOrderAdminModifyRequest request) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookOrderService.modifyBookOrderAdminStatus(request));
     }
 
-    @PutMapping("/admin/invoiceNumber")
+    @PutMapping("/admin/invoiceNumbers")
     public ResponseEntity<BookOrderRegisterInvoiceResponse> registerInvoiceNumber(@RequestBody BookOrderRegisterInvoiceRequest request) {
         return ResponseEntity
                 .status(HttpStatus.OK)
