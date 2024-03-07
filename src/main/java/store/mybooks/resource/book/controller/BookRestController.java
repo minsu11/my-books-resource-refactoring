@@ -152,7 +152,7 @@ public class BookRestController {
                 .body(bookService.modifyBook(bookId, modifyRequest));
     }
 
-    @GetMapping("/cartinbooks/{id}")
+    @GetMapping("/cart-books/{id}")
     public ResponseEntity<BookCartResponse> getBookInCart(@PathVariable("id") Long bookId) {
         return ResponseEntity
                 .status(HttpStatus.OK)
