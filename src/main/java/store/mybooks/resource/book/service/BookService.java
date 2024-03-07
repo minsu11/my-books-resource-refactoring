@@ -196,6 +196,15 @@ public class BookService {
         return bookMapper.modifyResponse(book);
     }
 
+    /**
+     * methodName : getBookInCart
+     * author : Fiat_lux
+     * description : 장바구니 안에 있는 책의 필요한 정보 가져오는 메서드
+     *
+     * @param bookId the book id
+     * @return BookCartResponse dto
+     */
+    @Transactional(readOnly = true)
     public BookCartResponse getBookInCart(Long bookId) {
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotExistException(bookId));
         Image image = imageRepository.findImageByBook_IdAndImageStatus_Id(bookId, ImageStatusEnum.THUMBNAIL.getName())
