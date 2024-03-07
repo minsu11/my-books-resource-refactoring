@@ -54,12 +54,12 @@ public class PointRuleRepositoryImpl extends QuerydslRepositorySupport implement
     }
 
     @Override
-    public Optional<PointRule> findPointRuleByPointRuleName(String pointRuleName) {
-        return Optional.of(
+    public PointRule findPointRuleByPointRuleName(String pointRuleName) {
+        return
                 from(pointRule)
                         .where(pointRule.isAvailable.eq(true)
                                 .and(
                                         pointRule.pointRuleName.id.eq(pointRuleName)))
-                        .fetchOne());
+                        .fetchOne();
     }
 }

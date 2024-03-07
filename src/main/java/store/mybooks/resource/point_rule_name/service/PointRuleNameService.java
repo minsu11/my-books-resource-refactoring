@@ -72,6 +72,7 @@ public class PointRuleNameService {
             throw new PointRuleNameAlreadyExistException();
         }
         PointRuleName pointRuleName = new PointRuleName(request.getId());
+        pointRuleNameRepository.save(pointRuleName);
 
         return pointRuleNameMapper.mapToPointRuleNameCreateResponse(pointRuleName);
     }

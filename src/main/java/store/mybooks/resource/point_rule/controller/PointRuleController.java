@@ -23,6 +23,7 @@ import store.mybooks.resource.point_rule.service.PointRuleService;
  * -----------------------------------------------------------<br>
  * 3/7/24        minsu11       최초 생성<br>
  */
+
 @RestController
 @RequestMapping("/api/point-rules")
 @RequiredArgsConstructor
@@ -60,6 +61,16 @@ public class PointRuleController {
                 .body(pointRuleService.getPointRuleList());
     }
 
+    /**
+     * methodName : createResponseResponse<br>
+     * author : minsu11<br>
+     * description : 포인트 규정 등록.
+     * <br> *
+     *
+     * @param request       등록할 포인트 규정
+     * @param bindingResult 유효성 검사
+     * @return response entity
+     */
     @PostMapping
     public ResponseEntity<PointRuleCreateResponse> createResponseResponse(@RequestBody PointRuleCreateRequest request,
                                                                           BindingResult bindingResult) {

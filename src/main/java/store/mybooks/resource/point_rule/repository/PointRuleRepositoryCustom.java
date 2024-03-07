@@ -40,5 +40,5 @@ public interface PointRuleRepositoryCustom {
      */
     List<PointRuleResponse> getPointRuleList();
 
-    Optional<PointRule> findPointRuleByPointRuleName(String pointRuleName);
+    PointRule findPointRuleByPointRuleName(String pointRuleName);
 }

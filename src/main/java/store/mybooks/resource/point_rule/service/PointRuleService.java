@@ -26,6 +26,7 @@ import store.mybooks.resource.point_rule_name.repository.PointRuleNameRepository
  * -----------------------------------------------------------<br>
  * 3/7/24        minsu11       최초 생성<br>
  */
+
 @Service
 @RequiredArgsConstructor
 public class PointRuleService {
@@ -52,14 +53,22 @@ public class PointRuleService {
         return pointRuleRepository.getPointRuleList();
     }
 
+    /**
+     * methodName : createPointRuleResponse<br>
+     * author : minsu11<br>
+     * description :
+     * <br> *
+     *
+     * @param request
+     * @return point rule create response
+     */
     public PointRuleCreateResponse createPointRuleResponse(PointRuleCreateRequest request) {
         String name = request.getPointRuleName();
         PointRuleName pointRuleName = pointRuleNameRepository.findById(request.getPointRuleName())
                 .orElseThrow(PointRuleNameNotExistException::new);
         PointRule pointRule = new PointRule(pointRuleName, request.getRate(), request.getCost());
 
-        PointRule beforePointRule = pointRuleRepository.findPointRuleByPointRuleName(name)
-                .orElse(null);
+        PointRule beforePointRule = pointRuleRepository.findPointRuleByPointRuleName(name);
         if (Objects.nonNull(beforePointRule)) {
             beforePointRule.modifyPointRuleIsAvailable(false);
         }
