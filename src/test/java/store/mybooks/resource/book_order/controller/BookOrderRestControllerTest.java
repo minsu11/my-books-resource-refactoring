@@ -57,7 +57,7 @@ class BookOrderRestControllerTest {
                 new PageImpl<>(bookOrderUserResponses, pageable, bookOrderUserResponses.size());
 
         when(bookOrderService.getBookOrderResponseList(any(), any())).thenReturn(bookOrderPage);
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/orders/user/{id}", 1L))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/orders/users/{id}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].userId").value(1L))
                 .andExpect(jsonPath("$.content[0].statusId").value("test"))
