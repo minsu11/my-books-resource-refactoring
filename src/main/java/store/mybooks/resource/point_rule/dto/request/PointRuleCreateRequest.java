@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
  * fileName       : PointRuleCreateRequest<br>
  * author         : minsu11<br>
  * date           : 3/7/24<br>
- * description    :
+ * description    : 등록할 포인트 규정 dto.<br>
  * ===========================================================<br>
  * DATE              AUTHOR             NOTE<br>
  * -----------------------------------------------------------<br>

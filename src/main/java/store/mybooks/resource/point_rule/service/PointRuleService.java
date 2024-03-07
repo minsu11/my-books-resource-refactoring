@@ -22,7 +22,7 @@ import store.mybooks.resource.point_rule_name.repository.PointRuleNameRepository
  * fileName       : PointRuleService<br>
  * author         : minsu11<br>
  * date           : 3/7/24<br>
- * description    :
+ * description    : 포인트 규정에 관한 로직 처리하는 {@code service}.
  * ===========================================================<br>
  * DATE              AUTHOR             NOTE<br>
  * -----------------------------------------------------------<br>

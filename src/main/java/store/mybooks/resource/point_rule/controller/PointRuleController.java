@@ -19,7 +19,7 @@ import store.mybooks.resource.point_rule.service.PointRuleService;
  * fileName       : PointRuleController<br>
  * author         : minsu11<br>
  * date           : 3/7/24<br>
- * description    :
+ * description    : 포인트 규정에 대한 요청과 응답을 주는 {@code controller}.<br>
  * ===========================================================<br>
  * DATE              AUTHOR             NOTE<br>
  * -----------------------------------------------------------<br>

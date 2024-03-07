@@ -8,7 +8,7 @@ import lombok.Getter;
  * fileName       : PointRuleModifyResponse<br>
  * author         : minsu11<br>
  * date           : 3/7/24<br>
- * description    :
+ * description    : 수정한 포인트 규정 dto
  * ===========================================================<br>
  * DATE              AUTHOR             NOTE<br>
  * -----------------------------------------------------------<br>

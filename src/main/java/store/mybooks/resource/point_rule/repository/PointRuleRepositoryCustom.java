@@ -40,6 +40,15 @@ public interface PointRuleRepositoryCustom {
      */
     List<PointRuleResponse> getPointRuleList();
 
+    /**
+     * methodName : findPointRuleByPointRuleName<br>
+     * author : minsu11<br>
+     * description : 포인트 규정 명으로 사용 중인 포인트 규정 조회.
+     * <br> *
+     *
+     * @param pointRuleName 포인트 규정 명
+     * @return point rule
+     */
     PointRule findPointRuleByPointRuleName(String pointRuleName);
 
 
