@@ -2,6 +2,9 @@ package store.mybooks.resource.point_rule.entity;
 
 import java.time.LocalDate;
 import javax.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import store.mybooks.resource.point_rule_name.entity.PointRuleName;
 
 /**
@@ -15,8 +18,11 @@ import store.mybooks.resource.point_rule_name.entity.PointRuleName;
  * -----------------------------------------------------------
  * 2/13/24        damho       최초 생성
  */
+@Getter
 @Entity
 @Table(name = "point_rule")
+@NoArgsConstructor
+@AllArgsConstructor
 public class PointRule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,4 +44,26 @@ public class PointRule {
 
     @Column(name = "is_available")
     private Boolean isAvailable;
+
+    /**
+     * 생성자.
+     *
+     * @param pointRuleName the point rule name
+     * @param rate          the rate
+     * @param cost          the cost
+     */
+    public PointRule(PointRuleName pointRuleName, Integer rate, Integer cost) {
+        this.pointRuleName = pointRuleName;
+        this.rate = rate;
+        this.cost = cost;
+        this.createdDate = LocalDate.now();
+        this.isAvailable = true;
+    }
+
+    public void modifyPointRuleIsAvailable(Boolean isAvailable) {
+        this.isAvailable = isAvailable;
+
+    }
+
+
 }
