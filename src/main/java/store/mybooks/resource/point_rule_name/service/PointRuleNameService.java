@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.point_rule_name.dto.mapper.PointRuleNameMapper;
-import store.mybooks.resource.point_rule_name.dto.request.PointRuleNameRequest;
+import store.mybooks.resource.point_rule_name.dto.request.PointRuleNameCreateRequest;
 import store.mybooks.resource.point_rule_name.dto.response.PointRuleNameCreateResponse;
 import store.mybooks.resource.point_rule_name.dto.response.PointRuleNameResponse;
 import store.mybooks.resource.point_rule_name.entity.PointRuleName;
@@ -67,7 +67,7 @@ public class PointRuleNameService {
      * @param request 생성할 포인트 명 <br>
      * @return point rule name create response
      */
-    public PointRuleNameCreateResponse createPointRuleName(PointRuleNameRequest request) {
+    public PointRuleNameCreateResponse createPointRuleName(PointRuleNameCreateRequest request) {
         if (pointRuleNameRepository.existsById(request.getId())) {
             throw new PointRuleNameAlreadyExistException();
         }

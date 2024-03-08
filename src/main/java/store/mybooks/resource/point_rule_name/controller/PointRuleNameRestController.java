@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import store.mybooks.resource.error.Utils;
-import store.mybooks.resource.point_rule_name.dto.request.PointRuleNameRequest;
+import store.mybooks.resource.point_rule_name.dto.request.PointRuleNameCreateRequest;
 import store.mybooks.resource.point_rule_name.dto.response.PointRuleNameCreateResponse;
 import store.mybooks.resource.point_rule_name.dto.response.PointRuleNameResponse;
 import store.mybooks.resource.point_rule_name.service.PointRuleNameService;
@@ -71,7 +71,7 @@ public class PointRuleNameRestController {
      * @return response entity
      */
     @PostMapping
-    public ResponseEntity<PointRuleNameCreateResponse> createPointRuleName(@RequestBody PointRuleNameRequest request,
+    public ResponseEntity<PointRuleNameCreateResponse> createPointRuleName(@RequestBody PointRuleNameCreateRequest request,
                                                                            BindingResult bindingResult) {
         Utils.validateRequest(bindingResult);
         return ResponseEntity
