@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.orders_status.dto.mapper.OrdersStatusMapper;
 import store.mybooks.resource.orders_status.dto.response.OrdersStatusResponse;
 import store.mybooks.resource.orders_status.entity.OrdersStatus;
-import store.mybooks.resource.orders_status.exception.OrdersStatusNotFoundException;
+import store.mybooks.resource.orders_status.exception.OrdersStatusNotExistException;
 import store.mybooks.resource.orders_status.repository.OrdersStatusRepository;
 
 /**
@@ -39,12 +39,12 @@ public class OrdersStatusService {
      *
      * @param ordersStatusId <br>
      * @return orders status response<br>
-     * @throws OrdersStatusNotFoundException id와 동일한 주문 상태 데이터가 없는 경우<br>
+     * @throws OrdersStatusNotExistException id와 동일한 주문 상태 데이터가 없는 경우<br>
      */
     public OrdersStatusResponse getOrdersStatusById(String ordersStatusId) {
 
         OrdersStatus ordersStatus = ordersStatusRepository.findById(
-                ordersStatusId).orElseThrow(() -> new OrdersStatusNotFoundException("주문 상태를 찾을 수 없음"));
+                ordersStatusId).orElseThrow(OrdersStatusNotExistException::new);
         return mapper.mapToResponse(ordersStatus);
     }
 

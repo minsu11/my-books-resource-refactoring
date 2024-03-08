@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.book.dto.request.BookCreateRequest;
 import store.mybooks.resource.book.dto.request.BookModifyRequest;
 import store.mybooks.resource.book.dto.response.BookBriefResponse;
+import store.mybooks.resource.book.dto.response.BookCartResponse;
 import store.mybooks.resource.book.dto.response.BookCreateResponse;
 import store.mybooks.resource.book.dto.response.BookDetailResponse;
 import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
@@ -166,4 +167,12 @@ public class BookRestController {
                 .status(HttpStatus.OK)
                 .body(bookService.modifyBook(bookId, modifyRequest));
     }
+
+    @GetMapping("/cart-books/{id}")
+    public ResponseEntity<BookCartResponse> getBookInCart(@PathVariable("id") Long bookId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookInCart(bookId));
+    }
+
 }
