@@ -156,7 +156,6 @@ class AuthorServiceTest {
         given(authorRepository.findById(id)).willReturn(Optional.of(author));
 
         doNothing().when(authorRepository).deleteById(id);
-        when(authorMapper.deleteResponse(any(Author.class))).thenReturn(deleteResponse);
 
         authorService.deleteAuthor(id);
 
@@ -164,6 +163,5 @@ class AuthorServiceTest {
 
         verify(authorRepository, times(1)).findById(id);
         verify(authorRepository, times(1)).deleteById(id);
-        verify(authorMapper, times(1)).deleteResponse(any(Author.class));
     }
 }
