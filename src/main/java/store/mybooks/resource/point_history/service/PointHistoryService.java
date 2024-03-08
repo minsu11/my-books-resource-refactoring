@@ -1,8 +1,11 @@
 package store.mybooks.resource.point_history.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import store.mybooks.resource.point_history.dto.response.PointHistoryResponse;
 import store.mybooks.resource.point_history.dto.response.PointResponse;
 import store.mybooks.resource.point_history.repository.PointHistoryRepository;
 
@@ -26,7 +29,7 @@ public class PointHistoryService {
     /**
      * methodName : getRemainingPoint<br>
      * author : minsu11<br>
-     * description : 유저의 잔여 포인트 조회
+     * description : 유저의 잔여 포인트 조회.
      * <br> *
      *
      * @param userId 잔여 포인트 조회 할 회원 {@code id}
@@ -34,8 +37,22 @@ public class PointHistoryService {
      */
     @Transactional(readOnly = true)
     public PointResponse getRemainingPoint(Long userId) {
-        // 포인트에서 유저인지 아닌지 확인을 해야하나?
         return pointHistoryRepository.getRemainingPoint(userId);
+    }
+
+    /**
+     * methodName : getPointHistory<br>
+     * author : minsu11<br>
+     * description : 포인트 내역.
+     * <br> *
+     *
+     * @param pageable 페이징
+     * @param userId
+     * @return page
+     */
+    @Transactional(readOnly = true)
+    public Page<PointHistoryResponse> getPointHistory(Pageable pageable, Long userId) {
+        return pointHistoryRepository.getPointHistoryByUserId(pageable, userId);
     }
 
 }

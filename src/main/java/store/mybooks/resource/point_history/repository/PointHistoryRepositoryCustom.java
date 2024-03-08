@@ -1,6 +1,9 @@
 package store.mybooks.resource.point_history.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
+import store.mybooks.resource.point_history.dto.response.PointHistoryResponse;
 import store.mybooks.resource.point_history.dto.response.PointResponse;
 
 /**
@@ -26,4 +29,7 @@ public interface PointHistoryRepositoryCustom {
      * @return point response
      */
     PointResponse getRemainingPoint(Long userId);
+
+    Page<PointHistoryResponse> getPointHistoryByUserId(Pageable pageable, Long userId);
+
 }
