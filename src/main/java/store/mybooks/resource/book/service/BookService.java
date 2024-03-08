@@ -17,6 +17,7 @@ import store.mybooks.resource.book.dto.response.BookCreateResponse;
 import store.mybooks.resource.book.dto.response.BookDetailResponse;
 import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
 import store.mybooks.resource.book.dto.response.BookModifyResponse;
+import store.mybooks.resource.book.dto.response.BookResponseForOrder;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.exception.IsbnAlreadyExistsException;
@@ -31,6 +32,7 @@ import store.mybooks.resource.book_status.exception.BookStatusNotExistException;
 import store.mybooks.resource.book_status.respository.BookStatusRepository;
 import store.mybooks.resource.book_tag.dto.request.BookTagCreateRequest;
 import store.mybooks.resource.book_tag.service.BookTagService;
+import store.mybooks.resource.category.service.CategoryService;
 import store.mybooks.resource.image.dto.response.ImageRegisterResponse;
 import store.mybooks.resource.image.entity.Image;
 import store.mybooks.resource.image.exception.ImageNotExistsException;
@@ -67,6 +69,7 @@ public class BookService {
     private final BookMapper bookMapper;
     private final ImageService imageService;
     private final ImageStatusRepository imageStatusRepository;
+    private final CategoryService categoryService;
     private final ImageRepository imageRepository;
 
     /**
@@ -109,7 +112,26 @@ public class BookService {
         if (!bookRepository.existsById(bookId)) {
             throw new BookNotExistException(bookId);
         }
-        return bookRepository.getBookDetailInfo(bookId);
+        BookDetailResponse response = bookRepository.getBookDetailInfo(bookId);
+        response.setCategoryList(categoryService.getCategoryNameForBookView(bookId));
+        return response;
+    }
+
+    /**
+     * methodName : getBookForOrder
+     * author : newjaehun
+     * description : 주문에서 사용할 도서 정보.
+     *
+     * @param bookId 검색할 도서 ID
+     * @return book response for order
+     */
+    @Transactional(readOnly = true)
+    public BookResponseForOrder getBookForOrder(Long bookId) {
+        if (!bookRepository.existsById(bookId)) {
+            throw new BookNotExistException(bookId);
+        }
+        return bookRepository.getBookForOrder(bookId);
+
     }
 
     /**
@@ -219,6 +241,5 @@ public class BookService {
     public List<BookGetResponseForCoupon> getBookForCoupon() {
         return bookRepository.getBookForCoupon();
     }
-
 
 }

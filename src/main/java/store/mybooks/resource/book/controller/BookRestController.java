@@ -27,6 +27,7 @@ import store.mybooks.resource.book.dto.response.BookCreateResponse;
 import store.mybooks.resource.book.dto.response.BookDetailResponse;
 import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
 import store.mybooks.resource.book.dto.response.BookModifyResponse;
+import store.mybooks.resource.book.dto.response.BookResponseForOrder;
 import store.mybooks.resource.book.service.BookService;
 import store.mybooks.resource.error.RequestValidationFailedException;
 
@@ -90,6 +91,21 @@ public class BookRestController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookService.getBookDetailInfo(bookId));
+    }
+
+    /**
+     * methodName : getBookForOrder
+     * author : newjaehun
+     * description : 주문에서 사용할 도서 정보.
+     *
+     * @param bookId 조회하려는 도서 ID
+     * @return response entity
+     */
+    @GetMapping("/{id}/order")
+    public ResponseEntity<BookResponseForOrder> getBookForOrder(@PathVariable("id") Long bookId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookForOrder(bookId));
     }
 
     /**
