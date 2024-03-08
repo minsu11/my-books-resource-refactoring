@@ -2,6 +2,8 @@ package store.mybooks.resource.user_coupon.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -139,6 +141,7 @@ class UserCouponRestControllerTest {
                 .andExpect(jsonPath("$.content[0].userCouponId").value(thirdUserCoupon.getUserCouponId()))
                 .andExpect(jsonPath("$.content[1].userCouponId").value(fourthUserCoupon.getUserCouponId()));
 
+        ;verify(userCouponService, times(1)).getUserCoupons(anyLong(), any());
     }
 }
 
