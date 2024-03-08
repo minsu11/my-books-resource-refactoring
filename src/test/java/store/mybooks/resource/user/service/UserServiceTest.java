@@ -12,6 +12,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import org.hibernate.validator.constraints.time.DurationMax;
 import org.junit.jupiter.api.DisplayName;
@@ -95,6 +96,7 @@ class UserServiceTest {
 
         when(userCreateRequest.getEmail()).thenReturn("test");
         when(userCreateRequest.getPassword()).thenReturn("test");
+        when(userCreateRequest.getBirth()).thenReturn(LocalDate.parse("1000-01-01"));
         when(userRepository.existsByEmail("test")).thenReturn(false);
         when(userStatusRepository.findById(anyString())).thenReturn(Optional.of(userStatus));
         when(userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(anyString())).thenReturn(

@@ -10,8 +10,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import store.mybooks.resource.coupon.entity.Coupon;
 import store.mybooks.resource.user.entity.User;
+import store.mybooks.resource.user_coupon.exception.UserCouponAlreadyUsedException;
+import store.mybooks.resource.user_coupon.exception.UserCouponNotUsedException;
 
 /**
  * packageName    : store.mybooks.resource.user_coupon.entity
@@ -26,6 +30,8 @@ import store.mybooks.resource.user.entity.User;
  */
 @Entity
 @Table(name = "user_coupon")
+@Getter
+@NoArgsConstructor
 public class UserCoupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,12 +46,54 @@ public class UserCoupon {
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
 
-    @Column(name = "user_coupon_created_at")
-    private LocalDate createdAt;
+    @Column(name = "user_coupon_created_date")
+    private LocalDate createdDate;
 
     @Column(name = "user_coupon_date")
     private LocalDate date;
 
     @Column(name = "is_used")
     private Boolean isUsed;
+
+    /**
+     * UserCoupon 생성자.
+     *
+     * @param user   회원
+     * @param coupon 쿠폰
+     */
+    public UserCoupon(User user, Coupon coupon) {
+        this.user = user;
+        this.coupon = coupon;
+        this.createdDate = LocalDate.now();
+        this.date = null;
+        this.isUsed = false;
+    }
+
+    /**
+     * methodName : use <br>
+     * author : damho-lee <br>
+     * description : 쿠폰 사용 메서드.<br>
+     */
+    public void use() {
+        if (this.date != null && this.isUsed) {
+            throw new UserCouponAlreadyUsedException(this.id);
+        }
+
+        this.date = LocalDate.now();
+        this.isUsed = true;
+    }
+
+    /**
+     * methodName : giveBack <br>
+     * author : damho-lee <br>
+     * description : 쿠폰 되돌려주는 메서드.<br>
+     */
+    public void giveBack() {
+        if (this.date == null && !this.isUsed) {
+            throw new UserCouponNotUsedException(this.id);
+        }
+
+        this.date = null;
+        this.isUsed = false;
+    }
 }

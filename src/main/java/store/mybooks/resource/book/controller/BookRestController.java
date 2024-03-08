@@ -1,5 +1,7 @@
 package store.mybooks.resource.book.controller;
 
+import java.io.IOException;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,14 +16,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.book.dto.request.BookCreateRequest;
 import store.mybooks.resource.book.dto.request.BookModifyRequest;
 import store.mybooks.resource.book.dto.response.BookBriefResponse;
+import store.mybooks.resource.book.dto.response.BookCartResponse;
 import store.mybooks.resource.book.dto.response.BookCreateResponse;
 import store.mybooks.resource.book.dto.response.BookDetailResponse;
+import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
 import store.mybooks.resource.book.dto.response.BookModifyResponse;
+import store.mybooks.resource.book.dto.response.BookResponseForOrder;
 import store.mybooks.resource.book.service.BookService;
+import store.mybooks.resource.error.RequestValidationFailedException;
 
 /**
  * packageName    : store.mybooks.resource.book.controller <br/>
@@ -56,6 +64,21 @@ public class BookRestController {
     }
 
     /**
+     * methodName : getActiveBookBrief
+     * author : newjaehun
+     * description : 활성상태인 간략한 도서 리스트 반환.
+     *
+     * @param pageable pageable
+     * @return response entity
+     */
+    @GetMapping("/active")
+    public ResponseEntity<Page<BookBriefResponse>> getActiveBookBrief(Pageable pageable) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getActiveBookBriefInfo(pageable));
+    }
+
+    /**
      * methodName : getBookDetail
      * author : newjaehun
      * description : 도서 상세보기.
@@ -71,6 +94,35 @@ public class BookRestController {
     }
 
     /**
+     * methodName : getBookForOrder
+     * author : newjaehun
+     * description : 주문에서 사용할 도서 정보.
+     *
+     * @param bookId 조회하려는 도서 ID
+     * @return response entity
+     */
+    @GetMapping("/{id}/order")
+    public ResponseEntity<BookResponseForOrder> getBookForOrder(@PathVariable("id") Long bookId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookForOrder(bookId));
+    }
+
+    /**
+     * methodName : getBookForCoupon
+     * author : newjaehun
+     * description : 쿠폰 생성에서 사용할 도서 목록.
+     *
+     * @return responseEntity
+     */
+    @GetMapping("/for-coupon")
+    public ResponseEntity<List<BookGetResponseForCoupon>> getBookForCoupon() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookForCoupon());
+    }
+
+    /**
      * methodName : createBook
      * author : newjaehun
      * description : 도서 추가.
@@ -81,15 +133,17 @@ public class BookRestController {
      * @throws BindException the bind exception
      */
     @PostMapping
-    public ResponseEntity<BookCreateResponse> createBook(@Valid @RequestBody BookCreateRequest createRequest,
+    public ResponseEntity<BookCreateResponse> createBook(@Valid @RequestPart("request") BookCreateRequest createRequest,
+                                                         @RequestPart("thumbnail") MultipartFile thumbnail,
+                                                         @RequestPart("content") List<MultipartFile> content,
                                                          BindingResult bindingResult)
-            throws BindException {
+            throws BindException, IOException {
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
         }
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(bookService.createBook(createRequest));
+                .body(bookService.createBook(createRequest, thumbnail, content));
     }
 
     /**
@@ -101,17 +155,24 @@ public class BookRestController {
      * @param modifyRequest 수정하려는 도서 정보 포함
      * @param bindingResult bindingResult
      * @return responseEntity
-     * @throws BindException the bind exception
      */
     @PutMapping("/{id}")
     public ResponseEntity<BookModifyResponse> modifyBook(@PathVariable("id") Long bookId,
                                                          @Valid @RequestBody BookModifyRequest modifyRequest,
-                                                         BindingResult bindingResult) throws BindException {
+                                                         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new BindException(bindingResult);
+            throw new RequestValidationFailedException(bindingResult);
         }
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookService.modifyBook(bookId, modifyRequest));
     }
+
+    @GetMapping("/cart-books/{id}")
+    public ResponseEntity<BookCartResponse> getBookInCart(@PathVariable("id") Long bookId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookInCart(bookId));
+    }
+
 }

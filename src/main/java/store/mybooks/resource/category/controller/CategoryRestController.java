@@ -25,6 +25,7 @@ import store.mybooks.resource.category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForBookCreate;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
+import store.mybooks.resource.category.dto.response.CategoryIdNameGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 import store.mybooks.resource.category.exception.CategoryValidationException;
 import store.mybooks.resource.category.service.CategoryService;
@@ -88,6 +89,22 @@ public class CategoryRestController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(categoryService.getHighestCategories());
+    }
+
+    /**
+     * methodName : getCategoryNameForBookView <br>
+     * author : damho-lee <br>
+     * description : bookId 로 CategoryName 들 찾기.<br>
+     *
+     * @param bookId Long
+     * @return response entity
+     */
+    @GetMapping("/bookId/{bookId}")
+    public ResponseEntity<List<CategoryIdNameGetResponse>> getCategoryNameForBookView(
+            @PathVariable("bookId") Long bookId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(categoryService.getCategoryNameForBookView(bookId));
     }
 
     /**

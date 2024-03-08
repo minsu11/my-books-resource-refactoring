@@ -1,6 +1,7 @@
 package store.mybooks.resource.error;
 
 import java.util.stream.Collectors;
+import javax.validation.ValidationException;
 import org.springframework.validation.BindingResult;
 
 /**
@@ -14,7 +15,7 @@ import org.springframework.validation.BindingResult;
  * -----------------------------------------------------------<br/>
  * 2/29/24        Fiat_lux       최초 생성<br/>
  */
-public class RequestValidationFailedException extends RuntimeException {
+public class RequestValidationFailedException extends ValidationException {
     public RequestValidationFailedException(BindingResult bindingResult) {
         super(bindingResult.getAllErrors()
                 .stream()

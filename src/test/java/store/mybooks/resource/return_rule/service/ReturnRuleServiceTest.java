@@ -22,7 +22,6 @@ import store.mybooks.resource.return_rule.dto.response.ReturnRuleCreateResponse;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleModifyResponse;
 import store.mybooks.resource.return_rule.dto.response.ReturnRuleResponse;
 import store.mybooks.resource.return_rule.entity.ReturnRule;
-import store.mybooks.resource.return_rule.exception.ReturnRuleAlreadyExistException;
 import store.mybooks.resource.return_rule.exception.ReturnRuleNotExistException;
 import store.mybooks.resource.return_rule.repository.ReturnRuleRepository;
 import store.mybooks.resource.return_rule_name.entity.ReturnRuleName;
@@ -59,7 +58,7 @@ class ReturnRuleServiceTest {
     @DisplayName("id의 값으로 사용 중인 반품 규정 조회 성공 테스트")
     void givenReturnRuleName_whenFindByReturnRuleName_thenReturnReturnRuleResponse() {
         String test = "test";
-        ReturnRuleResponse expected = new ReturnRuleResponse("test", 1000, 10, true);
+        ReturnRuleResponse expected = new ReturnRuleResponse(1, "test", 1000, 10, true);
         when(returnRuleRepository.findByReturnRuleName(test)).thenReturn(Optional.of(expected));
         ReturnRuleResponse actual = returnRuleService.getReturnRuleResponseByReturnRuleName(test);
         assertEquals(expected, actual);
@@ -80,7 +79,7 @@ class ReturnRuleServiceTest {
     @DisplayName("전체 반품 규정 조회 성공 테스트")
     void given_whenGetReturnRuleResponseList_thenReturnReturnRuleResponseList() {
 
-        List<ReturnRuleResponse> expected = List.of(new ReturnRuleResponse("test", 1000, 10, true));
+        List<ReturnRuleResponse> expected = List.of(new ReturnRuleResponse(1, "test", 1000, 10, true));
         when(returnRuleRepository.getReturnRuleResponseList()).thenReturn(expected);
         List<ReturnRuleResponse> actual = returnRuleService.getReturnRuleResponseList();
 
@@ -102,15 +101,15 @@ class ReturnRuleServiceTest {
 
     @Test
     @DisplayName("반품 정책 등록 성공 테스트")
-    void givenReturnRuleCreateRequest_whenSave_thenReturnReturnRuleCreateResponse() {
+    void givenReturnRuleCreateRequest_whenSave_thenReturnReturnRuleCreateResponse(@Mock ReturnRule returnRule) {
         String testId = "test";
         ReturnRuleName expectedReturnRuleName = new ReturnRuleName(testId, LocalDate.of(1212, 12, 12));
-        ReturnRule expectedReturnRule = new ReturnRule(1L, 1000, 10, true,
+        ReturnRule expectedReturnRule = new ReturnRule(1, 1000, 10, true,
                 LocalDate.of(1212, 12, 12), expectedReturnRuleName);
         ReturnRuleCreateResponse expected = new ReturnRuleCreateResponse(expectedReturnRuleName.getId(),
                 expectedReturnRule.getDeliveryFee(), expectedReturnRule.getTerm(), expectedReturnRule.getIsAvailable());
 
-        when(returnRuleRepository.findByReturnRuleName(anyString())).thenReturn(Optional.empty());
+        when(returnRuleRepository.findByReturnRuleNameId(any())).thenReturn(returnRule);
         when(returnRuleNameRepository.findById(anyString())).thenReturn(Optional.of(expectedReturnRuleName));
         when(returnRuleRepository.save(any(ReturnRule.class))).thenReturn(expectedReturnRule);
         when(returnRuleMapper.mapToReturnRuleCreateResponse(any(ReturnRule.class))).thenReturn(expected);
@@ -125,43 +124,17 @@ class ReturnRuleServiceTest {
 
     }
 
-    @Test
-    @DisplayName("반품 규정 등록 실패 테스트(반품 규정이 존재)")
-    void givenReturnCreateRequest_whenFindByReturnRuleName_thenThrowReturnRuleNameAlreadyExistException() {
-        when(returnRuleRepository.findByReturnRuleName(anyString())).thenReturn(Optional.of(new ReturnRuleResponse("test", 10, 10, true)));
-        assertThrows(ReturnRuleAlreadyExistException.class,
-                () -> returnRuleService.createReturnRule(new ReturnRuleCreateRequest("test", 10, 10)));
-
-        verify(returnRuleRepository, times(1)).findByReturnRuleName(anyString());
-        verify(returnRuleNameRepository, never()).findById(anyString());
-        verify(returnRuleRepository, never()).save(any());
-        verify(returnRuleMapper, never()).mapToReturnRuleCreateResponse(any());
-    }
-
-
-    @Test
-    @DisplayName("반품 규정 등록 실패 테스트(반품 규정 명이 존재하지 않음")
-    void givneReturnCreateRequest_whenReturnRuleNameRepositoryFindById_thenThrowReturnRuleNameNotExistException() {
-        when(returnRuleRepository.findByReturnRuleName(anyString())).thenReturn(Optional.empty());
-        when(returnRuleNameRepository.findById(anyString())).thenThrow(ReturnRuleNameNotExistException.class);
-
-        Assertions.assertThrows(ReturnRuleNameNotExistException.class, () -> returnRuleService.createReturnRule(new ReturnRuleCreateRequest("test", 10, 10)));
-
-        verify(returnRuleRepository, times(1)).findByReturnRuleName(anyString());
-        verify(returnRuleNameRepository, times(1)).findById(anyString());
-
-    }
 
     @Test
     @DisplayName("반품 규정 수정 성공 테스트")
     void givenReturnRuleModifyRequest_whenModifyByReturnRule_thenReturnRetrunRuleModifyResponse() {
         String expectedBeforeName = "test123";
         ReturnRuleName expectedBeforeReturnRuleName = new ReturnRuleName(expectedBeforeName, LocalDate.of(1212, 11, 12));
-        ReturnRule expectedBeforeReturnRule = new ReturnRule(1L, 1000, 10, true, LocalDate.of(1212, 12, 12), expectedBeforeReturnRuleName);
+        ReturnRule expectedBeforeReturnRule = new ReturnRule(1, 1000, 10, true, LocalDate.of(1212, 12, 12), expectedBeforeReturnRuleName);
 
         String expectedName = "test";
         ReturnRuleName expectedReturnRuleName = new ReturnRuleName(expectedName, LocalDate.of(1212, 12, 12));
-        ReturnRule expectedReturnRule = new ReturnRule(1L, 100, 10, true, LocalDate.of(1212, 12, 12), expectedReturnRuleName);
+        ReturnRule expectedReturnRule = new ReturnRule(1, 100, 10, true, LocalDate.of(1212, 12, 12), expectedReturnRuleName);
         ReturnRuleModifyResponse expectedReturnRuleModifyResponse = new ReturnRuleModifyResponse(expectedName, 100, 10, true);
 
         when(returnRuleRepository.findById(any())).thenReturn(Optional.of(expectedBeforeReturnRule));
@@ -169,7 +142,7 @@ class ReturnRuleServiceTest {
         when(returnRuleRepository.save(any(ReturnRule.class))).thenReturn(expectedReturnRule);
         when(returnRuleMapper.mapToReturnRuleModifyResponse(any())).thenReturn(expectedReturnRuleModifyResponse);
 
-        ReturnRuleModifyResponse actual = returnRuleService.modifyReturnRule(new ReturnRuleModifyRequest(expectedName, 1000, 10), 1L);
+        ReturnRuleModifyResponse actual = returnRuleService.modifyReturnRule(new ReturnRuleModifyRequest(expectedName, 1000, 10), 1);
         Assertions.assertEquals(expectedReturnRuleModifyResponse, actual);
 
         verify(returnRuleRepository, times(1)).findById(any());
@@ -181,10 +154,10 @@ class ReturnRuleServiceTest {
     @Test
     @DisplayName("반품 규정 수정 실패 테스트(id에 대한 반품 규정이 존재하지 않을 때)")
     void givenReturnRuleModifyRequestAndLongId_whenReturnRuleRepositoryFindById_thenThrowReturnRuleNotExistException() {
-        when(returnRuleRepository.findById(1L)).thenThrow(ReturnRuleNotExistException.class);
+        when(returnRuleRepository.findById(1)).thenThrow(ReturnRuleNotExistException.class);
 
         ReturnRuleModifyRequest request = new ReturnRuleModifyRequest("test", 100, 10);
-        Assertions.assertThrows(ReturnRuleNotExistException.class, () -> returnRuleService.modifyReturnRule(request, 1L));
+        Assertions.assertThrows(ReturnRuleNotExistException.class, () -> returnRuleService.modifyReturnRule(request, 1));
 
         verify(returnRuleRepository, times(1)).findById(any());
         verify(returnRuleNameRepository, never()).findById(any());
@@ -195,10 +168,10 @@ class ReturnRuleServiceTest {
     @Test
     @DisplayName("반품 규정 수정 실패 테스트(기존의 반품 규정 명이 존재하지 않을 때)")
     void givenReturnRuleModifyRequestAndLongId_whenReturnRuleNameRepositoryFindById_thenThrowReturnRuleNameNotExistException() {
-        when(returnRuleRepository.findById(1L)).thenReturn(Optional.of(new ReturnRule()));
+        when(returnRuleRepository.findById(1)).thenReturn(Optional.of(new ReturnRule()));
         when(returnRuleNameRepository.findById(any())).thenThrow(ReturnRuleNameNotExistException.class);
         ReturnRuleModifyRequest request = new ReturnRuleModifyRequest("test", 100, 10);
-        Assertions.assertThrows(ReturnRuleNameNotExistException.class, () -> returnRuleService.modifyReturnRule(request, 1L));
+        Assertions.assertThrows(ReturnRuleNameNotExistException.class, () -> returnRuleService.modifyReturnRule(request, 1));
 
         verify(returnRuleRepository, times(1)).findById(any());
         verify(returnRuleNameRepository, times(1)).findById(any());
@@ -211,7 +184,7 @@ class ReturnRuleServiceTest {
     void givenLongId_whenReturnRuleModifyIsAvailable_thenReturnReturnRuleDeleteResponse(@Mock ReturnRule returnRule) {
 
         when(returnRuleRepository.findById(any())).thenReturn(Optional.of(returnRule));
-        returnRuleService.deleteReturnRule(1L);
+        returnRuleService.deleteReturnRule(1);
         verify(returnRule, times(1)).modifyIsAvailable(any());
     }
 
@@ -219,6 +192,6 @@ class ReturnRuleServiceTest {
     @DisplayName("반품 규정 삭제 실패 테스트(반품 규정이 존재 하지 않을 때)")
     void givenLongId_whenReturnRuleRepositoryFindById_thenThrowReturnRuleNotExistException() {
         when(returnRuleRepository.findById(any())).thenThrow(ReturnRuleNotExistException.class);
-        assertThrows(ReturnRuleNotExistException.class, () -> returnRuleService.deleteReturnRule(1L));
+        assertThrows(ReturnRuleNotExistException.class, () -> returnRuleService.deleteReturnRule(1));
     }
 }

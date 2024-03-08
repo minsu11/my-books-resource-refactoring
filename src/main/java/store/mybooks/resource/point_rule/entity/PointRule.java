@@ -1,15 +1,10 @@
 package store.mybooks.resource.point_rule.entity;
 
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import store.mybooks.resource.point_rule_name.entity.PointRuleName;
 
 /**
@@ -23,8 +18,11 @@ import store.mybooks.resource.point_rule_name.entity.PointRuleName;
  * -----------------------------------------------------------
  * 2/13/24        damho       최초 생성
  */
+@Getter
 @Entity
 @Table(name = "point_rule")
+@NoArgsConstructor
+@AllArgsConstructor
 public class PointRule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,4 +41,29 @@ public class PointRule {
 
     @Column(name = "point_rule_created_date")
     private LocalDate createdDate;
+
+    @Column(name = "is_available")
+    private Boolean isAvailable;
+
+    /**
+     * 생성자.
+     *
+     * @param pointRuleName the point rule name
+     * @param rate          the rate
+     * @param cost          the cost
+     */
+    public PointRule(PointRuleName pointRuleName, Integer rate, Integer cost) {
+        this.pointRuleName = pointRuleName;
+        this.rate = rate;
+        this.cost = cost;
+        this.createdDate = LocalDate.now();
+        this.isAvailable = true;
+    }
+
+    public void modifyPointRuleIsAvailable(Boolean isAvailable) {
+        this.isAvailable = isAvailable;
+
+    }
+
+
 }

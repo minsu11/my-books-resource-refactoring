@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import store.mybooks.resource.tag.dto.request.TagModifyRequest;
@@ -25,6 +26,7 @@ import store.mybooks.resource.tag.dto.request.TagModifyRequest;
 @Entity
 @Table(name = "tag")
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 public class Tag {
     @Id

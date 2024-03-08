@@ -21,7 +21,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ReturnRuleModifyRequest {
     @NotBlank
-    private String returnRuleNameId;
+    private String returnName;
     @Min(0)
     @Max(1000)
     private Integer deliveryFee;

@@ -4,7 +4,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import store.mybooks.resource.author.dto.response.AuthorCreateResponse;
-import store.mybooks.resource.author.dto.response.AuthorDeleteResponse;
 import store.mybooks.resource.author.dto.response.AuthorModifyResponse;
 import store.mybooks.resource.author.entity.Author;
 
@@ -26,7 +25,4 @@ public interface AuthorMapper {
     @Mapping(source = "name", target = "changedName")
     @Mapping(source = "content", target = "changedContent")
     AuthorModifyResponse modifyResponse(Author author);
-
-    AuthorDeleteResponse deleteResponse(Author author);
-
 }

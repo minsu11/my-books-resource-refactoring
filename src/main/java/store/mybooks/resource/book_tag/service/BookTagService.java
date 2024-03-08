@@ -40,6 +40,10 @@ public class BookTagService {
      * @param bookTagCreateRequest BookTagCreateRequest
      */
     public void createBookTag(BookTagCreateRequest bookTagCreateRequest) {
+        if (bookTagCreateRequest.getTagIdList() == null || bookTagCreateRequest.getTagIdList().isEmpty()) {
+            return;
+        }
+
         Long bookId = bookTagCreateRequest.getBookId();
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotExistException(bookId));
 
@@ -58,9 +62,8 @@ public class BookTagService {
      * @param bookId long
      */
     public void deleteBookTag(Long bookId) {
-        if (!bookTagRepository.existsByPk_BookId(bookId)) {
-            throw new BookNotExistException(bookId);
+        if (bookTagRepository.existsByPk_BookId(bookId)) {
+            bookTagRepository.deleteByPk_BookId(bookId);
         }
-        bookTagRepository.deleteByPk_BookId(bookId);
     }
 }

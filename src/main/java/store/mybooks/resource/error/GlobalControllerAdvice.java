@@ -9,6 +9,7 @@ import store.mybooks.resource.book.exception.IsbnAlreadyExistsException;
 import store.mybooks.resource.category.exception.CannotDeleteParentCategoryException;
 import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
+import store.mybooks.resource.coupon.exception.CouponCannotDeleteException;
 import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotExistsException;
 import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameAlreadyExistsException;
 import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotExistsException;
@@ -18,7 +19,6 @@ import store.mybooks.resource.return_rule.exception.ReturnRuleValidationFailedEx
 import store.mybooks.resource.return_rule_name.exception.ReturnRuleNameRequestValidationFailedException;
 import store.mybooks.resource.tag.exception.TagNameAlreadyExistsException;
 import store.mybooks.resource.tag.exception.TagNotExistsException;
-import store.mybooks.resource.wrap.exception.WrapValidationFailedException;
 
 /**
  * packageName    : store.mybooks.resource.error
@@ -75,8 +75,6 @@ public class GlobalControllerAdvice {
      * @param exception ValidationException.
      * @return ResponseEntity
      */
-
-
     @ExceptionHandler({ValidationException.class, ReturnRuleNameRequestValidationFailedException.class,
             ReturnRuleValidationFailedException.class, RequestValidationFailedException.class})
     public ResponseEntity<String> validationException(Exception exception) {
@@ -93,8 +91,8 @@ public class GlobalControllerAdvice {
      * @param exception CannotDeleteParentCategoryException
      * @return ResponseEntity
      */
-    @ExceptionHandler(CannotDeleteParentCategoryException.class)
-    public ResponseEntity<String> cannotDeleteParentCategoryException(CannotDeleteParentCategoryException exception) {
+    @ExceptionHandler({CannotDeleteParentCategoryException.class, CouponCannotDeleteException.class})
+    public ResponseEntity<String> cannotDeleteParentCategoryException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());

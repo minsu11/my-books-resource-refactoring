@@ -3,6 +3,7 @@ package store.mybooks.resource.category.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForBookCreate;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForQuerydsl;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
 import store.mybooks.resource.category.dto.response.CategoryIdNameGetResponse;
@@ -134,6 +136,51 @@ public class CategoryService {
         }
 
         return categoryGetResponseForBookCreateList;
+    }
+
+    /**
+     * methodName : getCategoryNameForBookView <br>
+     * author : damho-lee <br>
+     * description : bookId 로 CategoryName 들 찾기.<br>
+     *
+     * @param bookId long
+     * @return list
+     */
+    @Transactional(readOnly = true)
+    public List<CategoryIdNameGetResponse> getCategoryNameForBookView(Long bookId) {
+        List<CategoryGetResponseForQuerydsl> categoryNameGetResponseList =
+                categoryRepository.findFullCategoryForBookViewByBookId(bookId);
+        List<CategoryIdNameGetResponse> categoryNameList = new ArrayList<>();
+
+        for (CategoryGetResponseForQuerydsl categoryGetResponseForQuerydsl : categoryNameGetResponseList) {
+            StringJoiner stringJoiner = new StringJoiner("/");
+
+            if (categoryGetResponseForQuerydsl.getName1() != null) {
+                stringJoiner.add(categoryGetResponseForQuerydsl.getName1());
+            }
+
+            if (categoryGetResponseForQuerydsl.getName2() != null) {
+                stringJoiner.add(categoryGetResponseForQuerydsl.getName2());
+            }
+
+            if (categoryGetResponseForQuerydsl.getName3() != null) {
+                stringJoiner.add(categoryGetResponseForQuerydsl.getName3());
+            }
+
+            categoryNameList.add(new CategoryIdNameGetResponse() {
+                @Override
+                public Integer getId() {
+                    return categoryGetResponseForQuerydsl.getId();
+                }
+
+                @Override
+                public String getName() {
+                    return stringJoiner.toString();
+                }
+            });
+        }
+
+        return categoryNameList;
     }
 
     /**

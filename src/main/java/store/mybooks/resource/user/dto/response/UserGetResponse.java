@@ -40,7 +40,9 @@ public interface UserGetResponse {
 
     String getEmail();
 
-    LocalDate getBirth();
+    Integer getBirthYear();
+
+    String getBirthMonthDay();
 
     LocalDateTime getCreatedAt();
 

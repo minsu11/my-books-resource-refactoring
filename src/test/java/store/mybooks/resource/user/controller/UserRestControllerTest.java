@@ -37,6 +37,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import store.mybooks.resource.config.HeaderProperties;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.request.UserGradeModifyRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
@@ -85,7 +86,7 @@ class UserRestControllerTest {
         UserCreateRequest userCreateRequest =
                 new UserCreateRequest("test", "test", "test", "test@naver.com", LocalDate.now(), false);
 
-        UserCreateResponse userCreateResponse = new UserCreateResponse("test", "test", LocalDate.now(), "test", "test");
+        UserCreateResponse userCreateResponse = new UserCreateResponse("test", "test", 1000, "01-01", "test", "test");
 
         when(userService.createUser(any(UserCreateRequest.class))).thenReturn(userCreateResponse);
 
@@ -95,7 +96,8 @@ class UserRestControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").exists())
                 .andExpect(jsonPath("$.email").exists())
-                .andExpect(jsonPath("$.birth").exists())
+                .andExpect(jsonPath("$.birthYear").exists())
+                .andExpect(jsonPath("$.birthMonthDay").exists())
                 .andExpect(jsonPath("$.userStatusName").exists())
                 .andExpect(jsonPath("$.userGradeName").exists());
     }
@@ -112,9 +114,10 @@ class UserRestControllerTest {
 
         when(userService.modifyUser(anyLong(), any(UserModifyRequest.class))).thenReturn(userModifyResponse);
 
-        mockMvc.perform(put("/api/users/{userId}", 1L)
+        mockMvc.perform(put("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userModifyRequest)))
+                        .content(objectMapper.writeValueAsString(userModifyRequest))
+                        .header(HeaderProperties.USER_ID, "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").exists())
                 .andExpect(jsonPath("$.phoneNumber").exists());
@@ -163,20 +166,24 @@ class UserRestControllerTest {
 
         when(userService.deleteUser(anyLong())).thenReturn(userDeleteResponse);
 
-        mockMvc.perform(delete("/api/users/{userId}", 1L)
-                        .contentType(MediaType.APPLICATION_JSON))
+
+        mockMvc.perform(delete("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HeaderProperties.USER_ID, "1")) // 헤더 추가
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").exists());
+
     }
 
     @Test
-    @DisplayName("UserId 로 findUserByEmail 실행시 UserGetResponse 반환")
-    void givenUserId_whenCallFindUserByEmail_thenReturnUserGetResponse() throws Exception {
+    @DisplayName("UserId 로 findUserById 실행시 UserGetResponse 반환")
+    void givenUserId_whenCallFindUserById_thenReturnUserGetResponse() throws Exception {
 
 
         when(userService.findById(anyLong())).thenReturn(userGetResponse1);
 
-        mockMvc.perform(get("/api/users/{userId}", 1L)
+        mockMvc.perform(get("/api/users")
+                        .header(HeaderProperties.USER_ID, "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").exists())
@@ -186,7 +193,8 @@ class UserRestControllerTest {
                 .andExpect(jsonPath("$.latestLogin").exists())
                 .andExpect(jsonPath("$.gradeChangedDate").exists())
                 .andExpect(jsonPath("$.email").exists())
-                .andExpect(jsonPath("$.birth").exists())
+                .andExpect(jsonPath("$.birthYear").exists())
+                .andExpect(jsonPath("$.birthMonthDay").exists())
                 .andExpect(jsonPath("$.userGradeUserGradeNameId").exists());
 
     }
@@ -203,7 +211,7 @@ class UserRestControllerTest {
 
         when(userService.findAllUser(any(Pageable.class))).thenReturn(userGetResponsePage);
 
-        mockMvc.perform(get("/api/users")
+        mockMvc.perform(get("/api/users/all")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").exists())
@@ -244,9 +252,15 @@ class UserRestControllerTest {
             }
 
             @Override
-            public LocalDate getBirth() {
-                return LocalDate.now();
+            public Integer getBirthYear() {
+                return 1000;
             }
+
+            @Override
+            public String getBirthMonthDay() {
+                return "01-01";
+            }
+
 
             @Override
             public LocalDateTime getCreatedAt() {
@@ -292,8 +306,13 @@ class UserRestControllerTest {
             }
 
             @Override
-            public LocalDate getBirth() {
-                return LocalDate.now();
+            public Integer getBirthYear() {
+                return 1000;
+            }
+
+            @Override
+            public String getBirthMonthDay() {
+                return "01-01";
             }
 
             @Override

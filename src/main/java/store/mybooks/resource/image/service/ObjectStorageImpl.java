@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
@@ -22,10 +21,8 @@ import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.book.entity.Book;
-import store.mybooks.resource.book.repotisory.BookRepository;
 import store.mybooks.resource.config.ObjectStorageProperties;
 import store.mybooks.resource.image.dto.mapper.ImageMapper;
-import store.mybooks.resource.image.dto.request.ImageRegisterRequest;
 import store.mybooks.resource.image.dto.request.ImageTokenRequest;
 import store.mybooks.resource.image.dto.response.ImageGetResponse;
 import store.mybooks.resource.image.dto.response.ImageRegisterResponse;
@@ -34,10 +31,7 @@ import store.mybooks.resource.image.entity.Image;
 import store.mybooks.resource.image.exception.ImageNotExistsException;
 import store.mybooks.resource.image.repository.ImageRepository;
 import store.mybooks.resource.image_status.entity.ImageStatus;
-import store.mybooks.resource.image_status.exception.ImageStatusNotExistException;
-import store.mybooks.resource.image_status.repository.ImageStatusRepository;
 import store.mybooks.resource.review.entity.Review;
-import store.mybooks.resource.review.repository.ReviewRepository;
 
 
 /**
@@ -57,9 +51,6 @@ import store.mybooks.resource.review.repository.ReviewRepository;
 public class ObjectStorageImpl implements ImageService {
     private final ObjectStorageProperties objectStorageProperties;
     private final ImageRepository imageRepository;
-    private final BookRepository bookRepository;
-    private final ReviewRepository reviewRepository;
-    private final ImageStatusRepository imageStatusRepository;
     private final ImageMapper imageMapper;
     private final RestTemplate restTemplate;
     private static final String X_AUTH_TOKEN = "X-Auth-Token";
@@ -87,8 +78,8 @@ public class ObjectStorageImpl implements ImageService {
     }
 
     @Override
-    public ImageRegisterResponse saveImage(ImageRegisterRequest imageRegisterRequest, MultipartFile file)
-            throws IOException {
+    public ImageRegisterResponse saveImage(ImageStatus imageStatus, Review review, Book book,
+                                           MultipartFile file) throws IOException {
         String imageName = file.getOriginalFilename();
         int dot = Objects.requireNonNull(imageName).lastIndexOf(".");
         String extension = imageName.substring(dot);
@@ -111,27 +102,10 @@ public class ObjectStorageImpl implements ImageService {
         HttpMessageConverterExtractor<String> responseExtractor
                 = new HttpMessageConverterExtractor<>(String.class, restTemplates.getMessageConverters());
 
-        // API 호출
         restTemplates.execute(url, HttpMethod.PUT, requestCallback, responseExtractor);
-
-        ImageStatus imageStatus = imageStatusRepository.findById(imageRegisterRequest.getImageStatusId()).orElseThrow(
-                () -> new ImageStatusNotExistException("해당하는 이미지 상태의 값이 없습니다"));
-
-        Optional<Book> optionalBook;
-        Optional<Review> optionalReview;
-
-        if (Objects.nonNull(imageRegisterRequest.getBookId())) {
-            optionalBook = bookRepository.findById(imageRegisterRequest.getBookId());
-            optionalReview = Optional.empty();
-        } else if (Objects.nonNull(imageRegisterRequest.getReviewId())) {
-            optionalBook = Optional.empty();
-            optionalReview = reviewRepository.findById(imageRegisterRequest.getReviewId());
-        } else {
-            throw new RuntimeException("");
-        }
-
-        Image image = new Image(getPath(), nameSave, extension, optionalBook.orElse(null), optionalReview.orElse(null),
-                imageStatus);
+        Image image =
+                new Image(getPath(), nameSave, extension, book, review,
+                        imageStatus);
 
         return imageMapper.mapToResponse(imageRepository.save(image));
     }
