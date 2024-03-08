@@ -94,6 +94,25 @@ public class CouponService {
         couponRepository.save(coupon);
     }
 
+    /**
+     * methodName : deleteCoupon <br>
+     * author : damho-lee <br>
+     * description : 쿠폰 삭제. 쿠폰을 받은 회원이 있다면 지울 수 없다.<br>
+     *
+     * @param id Long
+     */
+    public void deleteCoupon(Long id) {
+        if (!couponRepository.existsById(id)) {
+            throw new CouponNotExistsException(id);
+        }
+
+        if (userCouponRepository.countByCoupon_Id(id) > 0) {
+            throw new CouponCannotDeleteException(id);
+        }
+
+        couponRepository.deleteById(id);
+    }
+
     private CouponGetResponse makeCouponGetResponse(CouponGetResponseForQuerydsl response) {
         Integer discountRateOrCost =
                 response.getIsRate() ? response.getDiscountRate() : response.getDiscountCost();
@@ -125,25 +144,6 @@ public class CouponService {
                 response.getStartDate(),
                 response.getEndDate()
         );
-    }
-
-    /**
-     * methodName : deleteCoupon <br>
-     * author : damho-lee <br>
-     * description : 쿠폰 삭제. 쿠폰을 받은 회원이 있다면 지울 수 없다.<br>
-     *
-     * @param id Long
-     */
-    public void deleteCoupon(Long id) {
-        if (!couponRepository.existsById(id)) {
-            throw new CouponNotExistsException(id);
-        }
-
-        if (userCouponRepository.countByCoupon_Id(id) > 0) {
-            throw new CouponCannotDeleteException(id);
-        }
-
-        couponRepository.deleteById(id);
     }
 
     private Book findBook(long bookId) {

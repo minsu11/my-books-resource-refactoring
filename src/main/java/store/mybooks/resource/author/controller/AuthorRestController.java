@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.author.dto.request.AuthorCreateRequest;
 import store.mybooks.resource.author.dto.request.AuthorModifyRequest;
 import store.mybooks.resource.author.dto.response.AuthorCreateResponse;
-import store.mybooks.resource.author.dto.response.AuthorDeleteResponse;
 import store.mybooks.resource.author.dto.response.AuthorGetResponse;
 import store.mybooks.resource.author.dto.response.AuthorModifyResponse;
 import store.mybooks.resource.author.service.AuthorService;
@@ -138,9 +137,10 @@ public class AuthorRestController {
      * @return ResponseEntity
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<AuthorDeleteResponse> deleteAuthor(@PathVariable("id") Integer authorId) {
+    public ResponseEntity<Void> deleteAuthor(@PathVariable("id") Integer authorId) {
+        authorService.deleteAuthor(authorId);
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(authorService.deleteAuthor(authorId));
+                .status(HttpStatus.NO_CONTENT)
+                .build();
     }
 }

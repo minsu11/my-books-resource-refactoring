@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.coupon.entity.Coupon;
 import store.mybooks.resource.coupon.exception.CouponNotExistsException;
 import store.mybooks.resource.coupon.repository.CouponRepository;
@@ -14,8 +15,10 @@ import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user.exception.UserNotExistException;
 import store.mybooks.resource.user.repository.UserRepository;
 import store.mybooks.resource.user_coupon.dto.request.UserCouponCreateRequest;
-import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponse;
-import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForQuerydsl;
+import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForMyPage;
+import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForMyPageQuerydsl;
+import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForOrder;
+import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForOrderQuerydsl;
 import store.mybooks.resource.user_coupon.entity.UserCoupon;
 import store.mybooks.resource.user_coupon.exception.UserCouponNotExistsException;
 import store.mybooks.resource.user_coupon.repository.UserCouponRepository;
@@ -33,6 +36,7 @@ import store.mybooks.resource.user_coupon.repository.UserCouponRepository;
  */
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserCouponService {
     private final UserCouponRepository userCouponRepository;
     private final UserRepository userRepository;
@@ -47,23 +51,75 @@ public class UserCouponService {
      * @param pageable Pageable
      * @return page
      */
-    public Page<UserCouponGetResponse> getUserCoupons(Long userId, Pageable pageable) {
+    @Transactional(readOnly = true)
+    public Page<UserCouponGetResponseForMyPage> getUserCoupons(Long userId, Pageable pageable) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotExistException(userId);
         }
 
-        Page<UserCouponGetResponseForQuerydsl> userCouponGetResponsesPage =
+        Page<UserCouponGetResponseForMyPageQuerydsl> userCouponGetResponsesPage =
                 userCouponRepository.getUserCoupons(userId, pageable);
-        List<UserCouponGetResponse> userCouponGetResponseList = new ArrayList<>();
+        List<UserCouponGetResponseForMyPage> userCouponGetResponseForMyPageList = new ArrayList<>();
 
-        for (UserCouponGetResponseForQuerydsl userCouponGetResponseForQuerydsl : userCouponGetResponsesPage.getContent()) {
-            userCouponGetResponseList.add(makeCouponGetResponse(userCouponGetResponseForQuerydsl));
+        for (UserCouponGetResponseForMyPageQuerydsl userCouponGetResponseForMyPageQuerydsl : userCouponGetResponsesPage.getContent()) {
+            userCouponGetResponseForMyPageList.add(makeCouponGetResponse(userCouponGetResponseForMyPageQuerydsl));
         }
 
         return new PageImpl<>(
-                userCouponGetResponseList,
+                userCouponGetResponseForMyPageList,
                 userCouponGetResponsesPage.getPageable(),
                 userCouponGetResponsesPage.getTotalElements());
+    }
+
+    /**
+     * methodName : getUsableUserCouponsByBookId <br>
+     * author : damho-lee <br>
+     * description : 사용가능한 회원 쿠폰 리스트 반환.<br>
+     *
+     * @param userId Long
+     * @param bookId Long
+     * @return list
+     */
+    @Transactional(readOnly = true)
+    public List<UserCouponGetResponseForOrder> getUsableUserCouponsByBookId(Long userId, Long bookId) {
+        List<UserCouponGetResponseForOrderQuerydsl> categoryCouponList =
+                userCouponRepository.getUsableUserCategoryCouponsByBookId(userId, bookId);
+        List<UserCouponGetResponseForOrderQuerydsl> bookCouponList =
+                userCouponRepository.getUsableUserBookCouponsByBookId(userId, bookId);
+        List<UserCouponGetResponseForOrder> userCouponGetResponseForOrderList = new ArrayList<>();
+
+        for (UserCouponGetResponseForOrderQuerydsl userCouponGetResponseForOrderQuerydsl : bookCouponList) {
+            userCouponGetResponseForOrderList.add(
+                    makeCouponGetResponseForOrder(userCouponGetResponseForOrderQuerydsl));
+        }
+        for (UserCouponGetResponseForOrderQuerydsl userCouponGetResponseForOrderQuerydsl : categoryCouponList) {
+            userCouponGetResponseForOrderList.add(
+                    makeCouponGetResponseForOrder(userCouponGetResponseForOrderQuerydsl));
+        }
+
+        return userCouponGetResponseForOrderList;
+    }
+
+    /**
+     * methodName : getUsableTotalCoupons <br>
+     * author : damho-lee <br>
+     * description : 사용 가능한 전체 쿠폰 리스트 반환.<br>
+     *
+     * @param userId Long
+     * @return list
+     */
+    @Transactional(readOnly = true)
+    public List<UserCouponGetResponseForOrder> getUsableTotalCoupons(Long userId) {
+        List<UserCouponGetResponseForOrderQuerydsl> totalCouponList =
+                userCouponRepository.getUsableTotalCoupons(userId);
+        List<UserCouponGetResponseForOrder> userCouponGetResponseForOrderList = new ArrayList<>();
+
+        for (UserCouponGetResponseForOrderQuerydsl userCouponGetResponseForOrderQuerydsl : totalCouponList) {
+            userCouponGetResponseForOrderList.add(
+                    makeCouponGetResponseForOrder(userCouponGetResponseForOrderQuerydsl));
+        }
+
+        return userCouponGetResponseForOrderList;
     }
 
     /**
@@ -110,11 +166,11 @@ public class UserCouponService {
         userCoupon.giveBack();
     }
 
-    private UserCouponGetResponse makeCouponGetResponse(UserCouponGetResponseForQuerydsl response) {
+    private UserCouponGetResponseForMyPage makeCouponGetResponse(UserCouponGetResponseForMyPageQuerydsl response) {
         Integer discountRateOrCost =
                 response.getIsRate() ? response.getDiscountRate() : response.getDiscountCost();
         Integer maxDiscountCost =
-                response.getIsRate() ?  response.getMaxDiscountCost() : response.getDiscountCost();
+                response.getIsRate() ? response.getMaxDiscountCost() : response.getDiscountCost();
 
         String range;
         String target;
@@ -129,11 +185,30 @@ public class UserCouponService {
             target = response.getCategoryName();
         }
 
-        return new UserCouponGetResponse(
+        return new UserCouponGetResponseForMyPage(
                 response.getId(),
                 response.getName(),
                 range,
                 target,
+                response.getOrderMin(),
+                discountRateOrCost,
+                maxDiscountCost,
+                response.getIsRate(),
+                response.getStartDate(),
+                response.getEndDate()
+        );
+    }
+
+    private UserCouponGetResponseForOrder makeCouponGetResponseForOrder(
+            UserCouponGetResponseForOrderQuerydsl response) {
+        Integer discountRateOrCost =
+                response.getIsRate() ? response.getDiscountRate() : response.getDiscountCost();
+        Integer maxDiscountCost =
+                response.getIsRate() ? response.getMaxDiscountCost() : response.getDiscountCost();
+
+        return new UserCouponGetResponseForOrder(
+                response.getUserCouponId(),
+                response.getName(),
                 response.getOrderMin(),
                 discountRateOrCost,
                 maxDiscountCost,
