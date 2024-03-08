@@ -46,7 +46,6 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
     QBookTag bookTag = QBookTag.bookTag;
 
-
     @Override
     public BookDetailResponse getBookDetailInfo(Long id) {
         BookDetailResponse result = from(book)

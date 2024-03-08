@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import store.mybooks.resource.author.entity.Author;
+import store.mybooks.resource.author.repository.AuthorRepository;
 import store.mybooks.resource.book.entity.Book;
+import store.mybooks.resource.book.repotisory.BookRepository;
 import store.mybooks.resource.book_author.entity.BookAuthor;
 
 /**
@@ -26,35 +28,42 @@ class BookAuthorRepositoryTest {
     @Autowired
     private BookAuthorRepository bookAuthorRepository;
 
-    private BookAuthor bookAuthor1;
-    private BookAuthor bookAuthor2;
+    @Autowired
+    private BookRepository bookRepository;
+    @Autowired
+    private AuthorRepository authorRepository;
 
-    private final Long bookId1 = 1L;
+
+    private Long bookId;
 
     @BeforeEach
     public void setUp() {
-        bookAuthor1 = new BookAuthor(new BookAuthor.Pk(bookId1, 1), new Book(), new Author());
-        bookAuthor2 = new BookAuthor(new BookAuthor.Pk(2L, 1), new Book(), new Author());
-        bookAuthorRepository.save(bookAuthor1);
-        bookAuthorRepository.save(bookAuthor2);
+        Book book = bookRepository.save(new Book());
+        Author author1 = authorRepository.save(new Author());
+        Author author2 = authorRepository.save(new Author());
+
+        bookId = book.getId();
+
+        bookAuthorRepository.save(new BookAuthor(new BookAuthor.Pk(bookId, author1.getId()), book, author1));
+        bookAuthorRepository.save(new BookAuthor(new BookAuthor.Pk(bookId, author1.getId()), book, author2));
     }
 
     @Test
     @DisplayName("도서 ID가 있는 경우")
     void givenBookId_whenExistsByPkBookId_thenReturnTrue() {
-        Assertions.assertTrue(bookAuthorRepository.existsByPk_BookId(bookId1));
+        Assertions.assertTrue(bookAuthorRepository.existsByPk_BookId(bookId));
     }
 
     @Test
     @DisplayName("도서 ID가 없는 경우")
     void givenNotExistsBookId_whenExistsByPkBookId_thenReturnFalse() {
-        Assertions.assertFalse(bookAuthorRepository.existsByPk_BookId(3L));
+        Assertions.assertFalse(bookAuthorRepository.existsByPk_BookId(100L));
     }
 
 
     @Test
     void deleteByPk_BookId() {
-        bookAuthorRepository.deleteByPk_BookId(bookId1);
-        Assertions.assertFalse(bookAuthorRepository.existsByPk_BookId(bookId1));
+        bookAuthorRepository.deleteByPk_BookId(bookId);
+        Assertions.assertFalse(bookAuthorRepository.existsByPk_BookId(bookId));
     }
 }
