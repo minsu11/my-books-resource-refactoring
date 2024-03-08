@@ -1,6 +1,7 @@
 package store.mybooks.resource.author.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
@@ -28,10 +29,10 @@ import org.springframework.data.domain.Pageable;
 import store.mybooks.resource.author.dto.request.AuthorCreateRequest;
 import store.mybooks.resource.author.dto.request.AuthorModifyRequest;
 import store.mybooks.resource.author.dto.response.AuthorCreateResponse;
-import store.mybooks.resource.author.dto.response.AuthorDeleteResponse;
 import store.mybooks.resource.author.dto.response.AuthorGetResponse;
 import store.mybooks.resource.author.dto.response.AuthorModifyResponse;
 import store.mybooks.resource.author.entity.Author;
+import store.mybooks.resource.author.exception.AuthorNotExistException;
 import store.mybooks.resource.author.mapper.AuthorMapper;
 import store.mybooks.resource.author.repository.AuthorRepository;
 
@@ -148,20 +149,26 @@ class AuthorServiceTest {
     }
 
     @Test
-    @DisplayName("저자 삭제")
+    @DisplayName("저자 삭제(저자 존재)")
     void givenAuthorId_whenDeleteAuthor_thenDeleteAuthorAndReturnAuthorDeleteResponse() {
-        AuthorDeleteResponse deleteResponse = new AuthorDeleteResponse();
-        deleteResponse.setName(name);
-
-        given(authorRepository.findById(id)).willReturn(Optional.of(author));
+        given(authorRepository.existsById(id)).willReturn(true);
 
         doNothing().when(authorRepository).deleteById(id);
 
         authorService.deleteAuthor(id);
 
-        assertThat(deleteResponse.getName()).isEqualTo(author.getName());
-
-        verify(authorRepository, times(1)).findById(id);
+        verify(authorRepository, times(1)).existsById(id);
         verify(authorRepository, times(1)).deleteById(id);
+    }
+
+    @Test
+    @DisplayName("저자 삭제(저자 미존재)")
+    void givenNotExistedAuthorId_whenDeleteAuthor_thenThrowAuthorNotExistException() {
+        given(authorRepository.existsById(id)).willReturn(false);
+
+        assertThrows(AuthorNotExistException.class, () -> authorService.deleteAuthor(id));
+
+        verify(authorRepository, times(1)).existsById(id);
+        verify(authorRepository, times(0)).deleteById(id);
     }
 }
