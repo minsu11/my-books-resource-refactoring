@@ -28,7 +28,6 @@ import org.springframework.data.domain.Pageable;
 import store.mybooks.resource.publisher.dto.request.PublisherCreateRequest;
 import store.mybooks.resource.publisher.dto.request.PublisherModifyRequest;
 import store.mybooks.resource.publisher.dto.response.PublisherCreateResponse;
-import store.mybooks.resource.publisher.dto.response.PublisherDeleteResponse;
 import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
 import store.mybooks.resource.publisher.dto.response.PublisherModifyResponse;
 import store.mybooks.resource.publisher.entity.Publisher;
@@ -194,29 +193,25 @@ class PublisherServiceTest {
     @Test
     @DisplayName("출판사 삭제")
     void givenPublisherId_whenDeletePublisher_thenDeletePublisherAndReturnPublisherDeleteResponse() {
-        given(publisherRepository.findById(id)).willReturn(Optional.of(publisher));
-        PublisherDeleteResponse deleteResponse = new PublisherDeleteResponse();
-        deleteResponse.setName(name);
+        given(publisherRepository.existsById(id)).willReturn(true);
+        
         doNothing().when(publisherRepository).deleteById(id);
-        when(publisherMapper.deleteResponse(publisher)).thenReturn(deleteResponse);
 
         publisherService.deletePublisher(id);
 
-        verify(publisherRepository, times(1)).findById(id);
+        verify(publisherRepository, times(1)).existsById(id);
         verify(publisherRepository, times(1)).deleteById(id);
-        verify(publisherMapper, times(1)).deleteResponse(any(Publisher.class));
 
     }
 
     @Test
     @DisplayName("존재하지 않는 출판사 삭제")
     void givenPublisherId_whenNotExistsPublisherDelete_thenThrowPublisherNotExistException() {
-        given(publisherRepository.findById(id)).willReturn(Optional.empty());
+        given(publisherRepository.existsById(id)).willReturn(false);
 
         assertThrows(PublisherNotExistException.class, () -> publisherService.deletePublisher(id));
 
-        verify(publisherRepository, times(1)).findById(id);
+        verify(publisherRepository, times(1)).existsById(id);
         verify(publisherRepository, times(0)).deleteById(id);
-        verify(publisherMapper, times(0)).deleteResponse(any(Publisher.class));
     }
 }

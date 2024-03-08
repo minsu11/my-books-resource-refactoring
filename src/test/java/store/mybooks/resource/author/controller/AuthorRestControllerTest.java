@@ -2,6 +2,7 @@ package store.mybooks.resource.author.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -24,7 +25,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -37,7 +37,6 @@ import org.springframework.web.context.WebApplicationContext;
 import store.mybooks.resource.author.dto.request.AuthorCreateRequest;
 import store.mybooks.resource.author.dto.request.AuthorModifyRequest;
 import store.mybooks.resource.author.dto.response.AuthorCreateResponse;
-import store.mybooks.resource.author.dto.response.AuthorDeleteResponse;
 import store.mybooks.resource.author.dto.response.AuthorModifyResponse;
 import store.mybooks.resource.author.entity.Author;
 import store.mybooks.resource.author.service.AuthorService;
@@ -181,21 +180,15 @@ class AuthorRestControllerTest {
     @Test
     @DisplayName("저자 삭제")
     void givenAuthorId_whenDeleteAuthor_thenDeleteAuthorAndReturnAuthorDeleteResponse() throws Exception {
-        AuthorDeleteResponse deleteResponse = new AuthorDeleteResponse();
-        deleteResponse.setName(authorName);
-
-        when(authorService.deleteAuthor(authorId)).thenReturn(deleteResponse);
+        doNothing().when(authorService).deleteAuthor(authorId);
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete(url + "/{id}", authorId)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(deleteResponse.getName()))
+                .andExpect(status().isNoContent())
                 .andDo((document("author-delete",
                         pathParameters(
-                                parameterWithName("id").description("저자 ID")),
-                        responseFields(
-                                fieldWithPath("name").description("삭제된 도서명")
-                        ))));
+                                parameterWithName("id").description("저자 ID"))
+                )));
 
         verify(authorService, times(1)).deleteAuthor(authorId);
     }
