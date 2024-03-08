@@ -62,7 +62,7 @@ public class BookAuthorRestController {
      * @return responseEntity
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteBookAuthor(@PathVariable("id") Long bookId) {
+    public ResponseEntity<Void> deleteBookAuthor(@PathVariable("id") Long bookId) {
         bookAuthorService.deleteBookAuthor(bookId);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)

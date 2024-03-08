@@ -137,7 +137,7 @@ public class AuthorRestController {
      * @return ResponseEntity
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteAuthor(@PathVariable("id") Integer authorId) {
+    public ResponseEntity<Void> deleteAuthor(@PathVariable("id") Integer authorId) {
         authorService.deleteAuthor(authorId);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)

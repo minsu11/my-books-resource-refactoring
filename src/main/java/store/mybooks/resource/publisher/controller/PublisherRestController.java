@@ -124,7 +124,7 @@ public class PublisherRestController {
      * @return ResponseEntity
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity deletePublisher(@PathVariable("id") Integer publisherId) {
+    public ResponseEntity<Void> deletePublisher(@PathVariable("id") Integer publisherId) {
         publisherService.deletePublisher(publisherId);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
