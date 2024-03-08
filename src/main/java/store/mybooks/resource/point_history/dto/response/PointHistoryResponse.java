@@ -3,8 +3,6 @@ package store.mybooks.resource.point_history.dto.response;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * packageName    : store.mybooks.resource.point_history.dto.response<br>
@@ -18,8 +16,6 @@ import lombok.Setter;
  * 3/8/24        minsu11       최초 생성<br>
  */
 @Getter
-@Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class PointHistoryResponse {
     private String orderNumber;
