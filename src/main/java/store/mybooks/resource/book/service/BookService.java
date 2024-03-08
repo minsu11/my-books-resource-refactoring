@@ -33,6 +33,7 @@ import store.mybooks.resource.book_status.exception.BookStatusNotExistException;
 import store.mybooks.resource.book_status.respository.BookStatusRepository;
 import store.mybooks.resource.book_tag.dto.request.BookTagCreateRequest;
 import store.mybooks.resource.book_tag.service.BookTagService;
+import store.mybooks.resource.category.service.CategoryService;
 import store.mybooks.resource.image.dto.response.ImageRegisterResponse;
 import store.mybooks.resource.image.entity.Image;
 import store.mybooks.resource.image.exception.ImageNotExistsException;
@@ -69,6 +70,7 @@ public class BookService {
     private final BookMapper bookMapper;
     private final ImageService imageService;
     private final ImageStatusRepository imageStatusRepository;
+    private final CategoryService categoryService;
     private final ImageRepository imageRepository;
     private final BookLikeRepository bookLikeRepository;
 
@@ -114,6 +116,7 @@ public class BookService {
         }
         BookDetailResponse response = bookRepository.getBookDetailInfo(bookId);
         response.setLikeCount(bookLikeRepository.countBookLikeByPk_BookId(bookId));
+        response.setCategoryList(categoryService.getCategoryNameForBookView(bookId));
         return response;
     }
 
