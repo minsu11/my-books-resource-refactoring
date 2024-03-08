@@ -1,15 +1,22 @@
 package store.mybooks.resource.user_coupon.repository;
 
 import com.querydsl.core.types.Projections;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import store.mybooks.resource.book.entity.QBook;
+import store.mybooks.resource.book_category.entity.QBookCategory;
 import store.mybooks.resource.category.entity.QCategory;
 import store.mybooks.resource.coupon.entity.QCoupon;
-import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForQuerydsl;
+import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForMyPageQuerydsl;
+import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForOrderQuerydsl;
 import store.mybooks.resource.user_coupon.entity.QUserCoupon;
 import store.mybooks.resource.user_coupon.entity.UserCoupon;
 
@@ -31,13 +38,13 @@ public class UserCouponRepositoryImpl extends QuerydslRepositorySupport implemen
 
 
     @Override
-    public Page<UserCouponGetResponseForQuerydsl> getUserCoupons(Long userId, Pageable pageable) {
+    public Page<UserCouponGetResponseForMyPageQuerydsl> getUserCoupons(Long userId, Pageable pageable) {
         QUserCoupon userCoupon = QUserCoupon.userCoupon;
         QCoupon coupon = QCoupon.coupon;
         QBook book = QBook.book;
         QCategory category = QCategory.category;
 
-        List<UserCouponGetResponseForQuerydsl> userCouponGetResponseList =
+        List<UserCouponGetResponseForMyPageQuerydsl> userCouponGetResponseList =
                 from(userCoupon)
                         .leftJoin(coupon)
                         .on(userCoupon.coupon.id.eq(coupon.id))
@@ -46,8 +53,8 @@ public class UserCouponRepositoryImpl extends QuerydslRepositorySupport implemen
                         .leftJoin(category)
                         .on(coupon.category.id.eq(category.id))
                         .where(userCoupon.user.id.eq(userId))
-                        .select(Projections.constructor(UserCouponGetResponseForQuerydsl.class,
-                                coupon.id,
+                        .select(Projections.constructor(UserCouponGetResponseForMyPageQuerydsl.class,
+                                userCoupon.id,
                                 coupon.name,
                                 coupon.orderMin,
                                 coupon.discountCost,
@@ -65,5 +72,98 @@ public class UserCouponRepositoryImpl extends QuerydslRepositorySupport implemen
                 .fetchCount();
 
         return new PageImpl<>(userCouponGetResponseList, pageable, total);
+    }
+
+    @Override
+    public List<UserCouponGetResponseForOrderQuerydsl> getUsableUserCategoryCouponsByBookId(Long userId, Long bookId) {
+        QCategory category1 = new QCategory("category1");
+        QCategory category2 = new QCategory("category2");
+        QCategory category3 = new QCategory("category3");
+        QBookCategory bookCategory = QBookCategory.bookCategory;
+        QUserCoupon userCoupon = QUserCoupon.userCoupon;
+        QCoupon coupon = QCoupon.coupon;
+
+        Set<Integer> categoryIdSet = from(category1)
+                .leftJoin(category2).on(category1.parentCategory.id.eq(category2.id))
+                .leftJoin(category3).on(category2.parentCategory.id.eq(category3.id))
+                .leftJoin(bookCategory).on(category1.id.eq(bookCategory.category.id))
+                .where(bookCategory.book.id.eq(bookId))
+                .select(category1.id, category2.id, category3.id)
+                .fetch()
+                .stream()
+                .flatMap(tuple -> Stream.of(tuple.get(category1.id), tuple.get(category2.id),
+                        tuple.get(category3.id))).filter(Objects::nonNull)
+                .map(Number::intValue).collect(Collectors.toSet());
+
+        return from(userCoupon)
+                .leftJoin(coupon)
+                .on(userCoupon.coupon.id.eq(coupon.id))
+                .where(userCoupon.user.id.eq(userId))
+                .where(userCoupon.isUsed.isFalse())
+                .where(coupon.category.id.in(categoryIdSet))
+                .where(coupon.startDate.loe(LocalDate.now()))
+                .where(coupon.endDate.goe(LocalDate.now()))
+                .select(Projections.constructor(UserCouponGetResponseForOrderQuerydsl.class,
+                        userCoupon.id,
+                        coupon.name,
+                        coupon.orderMin,
+                        coupon.discountCost,
+                        coupon.maxDiscountCost,
+                        coupon.discountRate,
+                        coupon.isRate,
+                        coupon.startDate,
+                        coupon.endDate))
+                .fetch();
+    }
+
+    @Override
+    public List<UserCouponGetResponseForOrderQuerydsl> getUsableUserBookCouponsByBookId(Long userId, Long bookId) {
+        QUserCoupon userCoupon = QUserCoupon.userCoupon;
+        QCoupon coupon = QCoupon.coupon;
+
+        return from(userCoupon)
+                .leftJoin(coupon)
+                .on(userCoupon.coupon.id.eq(coupon.id))
+                .where(userCoupon.user.id.eq(userId))
+                .where(coupon.book.id.eq(bookId))
+                .where(userCoupon.isUsed.isFalse())
+                .where(coupon.startDate.loe(LocalDate.now()))
+                .where(coupon.endDate.goe(LocalDate.now()))
+                .select(Projections.constructor(UserCouponGetResponseForOrderQuerydsl.class,
+                        userCoupon.id,
+                        coupon.name,
+                        coupon.orderMin,
+                        coupon.discountCost,
+                        coupon.maxDiscountCost,
+                        coupon.discountRate,
+                        coupon.isRate,
+                        coupon.startDate,
+                        coupon.endDate))
+                .fetch();
+    }
+
+    @Override
+    public List<UserCouponGetResponseForOrderQuerydsl> getUsableTotalCoupons(Long userId) {
+        QUserCoupon userCoupon = QUserCoupon.userCoupon;
+        QCoupon coupon = QCoupon.coupon;
+
+        return from(userCoupon)
+                .leftJoin(coupon)
+                .on(userCoupon.coupon.id.eq(coupon.id))
+                .where(userCoupon.user.id.eq(userId))
+                .where(userCoupon.isUsed.isFalse())
+                .where(coupon.startDate.loe(LocalDate.now()))
+                .where(coupon.endDate.goe(LocalDate.now()))
+                .select(Projections.constructor(UserCouponGetResponseForOrderQuerydsl.class,
+                        userCoupon.id,
+                        coupon.name,
+                        coupon.orderMin,
+                        coupon.discountCost,
+                        coupon.maxDiscountCost,
+                        coupon.discountRate,
+                        coupon.isRate,
+                        coupon.startDate,
+                        coupon.endDate))
+                .fetch();
     }
 }

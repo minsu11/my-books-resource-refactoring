@@ -77,12 +77,12 @@ public class CouponRestController {
      * description : 쿠폰 삭제.<br>
      *
      * @param id Long
-     * @return response entity
+     * @return ResponseEntity
      */
     @DeleteMapping("/{couponId}")
     public ResponseEntity<Void> deleteCoupon(@PathVariable("couponId") Long id) {
         couponService.deleteCoupon(id);
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
