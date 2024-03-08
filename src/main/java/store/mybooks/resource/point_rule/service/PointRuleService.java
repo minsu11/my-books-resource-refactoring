@@ -3,7 +3,6 @@ package store.mybooks.resource.point_rule.service;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,6 @@ import store.mybooks.resource.point_rule_name.repository.PointRuleNameRepository
  * -----------------------------------------------------------<br>
  * 3/7/24        minsu11       최초 생성<br>
  */
-@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -122,7 +120,6 @@ public class PointRuleService {
      */
     public PointRuleModifyResponse modifyPointRuleResponse(PointRuleModifyRequest request, Integer id) {
         PointRule beforePointRule = pointRuleRepository.findById(id).orElseThrow(PointRuleNotExistException::new);
-        log.info("request value: {}", request.getPointRuleName());
         String name = request.getPointRuleName();
 
         PointRuleName pointRuleName = pointRuleNameRepository.findById(name)
