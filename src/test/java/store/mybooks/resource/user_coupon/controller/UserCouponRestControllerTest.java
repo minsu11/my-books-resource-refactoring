@@ -1,6 +1,7 @@
 package store.mybooks.resource.user_coupon.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -127,15 +128,16 @@ class UserCouponRestControllerTest {
                 pageable,
                 userCouponList.size()
         );
-        when(userCouponService.getUserCoupons(1L, any())).thenReturn(userCouponPage);
+        when(userCouponService.getUserCoupons(anyLong(), any())).thenReturn(userCouponPage);
 
         mockMvc.perform(
                         get("/api/user-coupon/page?page=" + pageable.getPageNumber() + "&size=" + pageable.getPageSize())
                                 .header("X-USER-ID", 1)
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].id").value(thirdUserCoupon.getUserCouponId()))
-                .andExpect(jsonPath("$.content[1].id").value(fourthUserCoupon.getUserCouponId()));
+                .andExpect(jsonPath("$.content.size()").value(2))
+                .andExpect(jsonPath("$.content[0].userCouponId").value(thirdUserCoupon.getUserCouponId()))
+                .andExpect(jsonPath("$.content[1].userCouponId").value(fourthUserCoupon.getUserCouponId()));
 
     }
 }
