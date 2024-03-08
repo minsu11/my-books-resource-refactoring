@@ -72,11 +72,15 @@ public class BookDetailResponse {
 
 //    private List<ReviewDetailResponse> review;
 
-    public BookDetailResponse(Long id, String name, LocalDate publishDate, Integer saleCost,
-                              Integer originalCost, Integer disCountRate, Boolean isPacking, Integer page, String isbn,
-                              Integer stock, String index, String content) {
+
+    public BookDetailResponse(Long id, String name, String bookStatus, PublisherGetResponse publisher,
+                              LocalDate publishDate, Integer saleCost, Integer originalCost, Integer disCountRate,
+                              Boolean isPacking, Integer page, String isbn, Integer stock, String index,
+                              String content) {
         this.id = id;
         this.name = name;
+        this.bookStatus = bookStatus;
+        this.publisher = publisher;
         this.publishDate = publishDate;
         this.saleCost = saleCost;
         this.originalCost = originalCost;

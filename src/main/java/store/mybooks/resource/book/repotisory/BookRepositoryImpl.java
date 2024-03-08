@@ -15,7 +15,6 @@ import store.mybooks.resource.book.dto.response.BookResponseForOrder;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.entity.QBook;
 import store.mybooks.resource.book_author.entity.QBookAuthor;
-import store.mybooks.resource.book_category.entity.QBookCategory;
 import store.mybooks.resource.book_status.entity.QBookStatus;
 import store.mybooks.resource.book_tag.entity.QBookTag;
 import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
@@ -45,31 +44,22 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     QPublisher publisher = QPublisher.publisher;
     QTag tag = QTag.tag;
     QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
-    QBookCategory bookCategory = QBookCategory.bookCategory;
     QBookTag bookTag = QBookTag.bookTag;
 
 
     @Override
     public BookDetailResponse getBookDetailInfo(Long id) {
         BookDetailResponse result = from(book)
-                .where(book.id.eq(id))
-                .select(Projections.constructor(BookDetailResponse.class,
-                        book.id, book.name, book.publishDate,
-                        book.saleCost, book.originalCost, book.discountRate, book.isPackaging, book.page, book.isbn,
-                        book.stock, book.index, book.content))
-                .fetchOne();
-
-        result.setBookStatus(from(book)
                 .join(book.bookStatus, bookStatus)
-                .where(book.id.eq(id))
-                .select(Projections.constructor(String.class, bookStatus.id))
-                .fetchOne());
-
-        result.setPublisher(from(book)
                 .join(book.publisher, publisher)
                 .where(book.id.eq(id))
-                .select(Projections.constructor(PublisherGetResponse.class, publisher.id, publisher.name))
-                .fetchOne());
+                .select(Projections.constructor(BookDetailResponse.class,
+                        book.id, book.name, Projections.constructor(String.class, bookStatus.id),
+                        Projections.constructor(PublisherGetResponse.class, publisher.id, publisher.name),
+                        book.publishDate, book.saleCost, book.originalCost, book.discountRate, book.isPackaging,
+                        book.page, book.isbn, book.stock, book.index, book.content))
+                .fetchOne();
+
 
         result.setAuthorList(from(bookAuthor)
                 .join(bookAuthor.author, author)
@@ -83,7 +73,6 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .where(bookTag.book.id.eq(id))
                 .select(Projections.constructor(TagGetResponseForBookDetail.class, tag.id, tag.name))
                 .fetch());
-
 
         return result;
     }
