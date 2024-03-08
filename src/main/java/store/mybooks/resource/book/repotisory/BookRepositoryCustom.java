@@ -7,6 +7,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 import store.mybooks.resource.book.dto.response.BookBriefResponse;
 import store.mybooks.resource.book.dto.response.BookDetailResponse;
 import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
+import store.mybooks.resource.book.dto.response.BookResponseForOrder;
 
 /**
  * packageName    : store.mybooks.resource.book.repotisory <br/>
@@ -29,4 +30,5 @@ public interface BookRepositoryCustom {
 
     List<BookGetResponseForCoupon> getBookForCoupon();
 
+    BookResponseForOrder getBookForOrder(Long bookId);
 }

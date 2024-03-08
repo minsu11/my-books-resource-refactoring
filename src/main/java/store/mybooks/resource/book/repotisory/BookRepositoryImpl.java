@@ -11,10 +11,10 @@ import store.mybooks.resource.author.entity.QAuthor;
 import store.mybooks.resource.book.dto.response.BookBriefResponse;
 import store.mybooks.resource.book.dto.response.BookDetailResponse;
 import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
+import store.mybooks.resource.book.dto.response.BookResponseForOrder;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.entity.QBook;
 import store.mybooks.resource.book_author.entity.QBookAuthor;
-import store.mybooks.resource.book_category.entity.QBookCategory;
 import store.mybooks.resource.book_status.entity.QBookStatus;
 import store.mybooks.resource.book_tag.entity.QBookTag;
 import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
@@ -44,9 +44,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     QPublisher publisher = QPublisher.publisher;
     QTag tag = QTag.tag;
     QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
-    QBookCategory bookCategory = QBookCategory.bookCategory;
     QBookTag bookTag = QBookTag.bookTag;
-
 
     @Override
     public BookDetailResponse getBookDetailInfo(Long id) {
@@ -82,8 +80,6 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .where(bookTag.book.id.eq(id))
                 .select(Projections.constructor(TagGetResponseForBookDetail.class, tag.id, tag.name))
                 .fetch());
-
-
         return result;
     }
 
@@ -122,5 +118,14 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .select(Projections.constructor(BookGetResponseForCoupon.class, book.id, book.name))
                 .where(book.bookStatus.id.in("판매중", "재고없음"))
                 .fetch();
+    }
+
+    @Override
+    public BookResponseForOrder getBookForOrder(Long bookId) {
+        return from(book)
+                .select(Projections.constructor(BookResponseForOrder.class, book.name, book.saleCost, book.originalCost,
+                        book.discountRate, book.isPackaging, book.stock))
+                .where(book.id.eq(bookId))
+                .fetchOne();
     }
 }

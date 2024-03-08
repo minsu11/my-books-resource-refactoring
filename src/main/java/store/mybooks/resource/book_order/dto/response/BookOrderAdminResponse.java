@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+
 /**
  * packageName    : store.mybooks.resource.book_order.dto.response<br>
  * fileName       : BookOrderAdminResponse<br>
@@ -19,6 +20,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class BookOrderAdminResponse {
+    private Long id;
     private Long userId;
     private String statusId;
     private LocalDate date;
