@@ -72,7 +72,7 @@ public class ReturnRuleNameRestController {
      */
     @PostMapping
     public ResponseEntity<ReturnRuleNameCreateResponse> createReturnRuleName(
-            @RequestBody @Valid ReturnRuleNameCreateRequest request,
+            @Valid @RequestBody ReturnRuleNameCreateRequest request,
             BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
