@@ -90,14 +90,14 @@ class PointRuleNameRestControllerTest {
     @DisplayName("포인트 규정 명 전체 조회")
     void given_whenGetPointRuleNameList_thenReturnPointRuleNameResponseList() throws Exception {
         List<PointRuleNameResponse> pointRuleNameResponseList = List.of(
-                new PointRuleNameResponse("test")
+                new PointRuleNameResponse("test12")
         );
         when(pointRuleNameService.getPointRuleNameList()).thenReturn(pointRuleNameResponseList);
 
         mockMvc.perform(get("/api/point-rule-names"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id").value("test"))
+                .andExpect(jsonPath("$[0].id").value("test12"))
                 .andDo(document("point-rule-name-list",
                         responseFields(
                                 fieldWithPath("[].id").description("포인트 규정")
@@ -108,8 +108,8 @@ class PointRuleNameRestControllerTest {
     @DisplayName("포인트 규정 명 생성 테스트")
     void givenPointRuleNameCreateRequest_whenCreatePointRuleName_thenReturnPointRuleNameCreateResponse() throws Exception {
         PointRuleNameCreateRequest request = new PointRuleNameCreateRequest();
-        ReflectionTestUtils.setField(request, "id", "test");
-        PointRuleNameCreateResponse response = new PointRuleNameCreateResponse("test");
+        ReflectionTestUtils.setField(request, "id", "test12");
+        PointRuleNameCreateResponse response = new PointRuleNameCreateResponse("test12");
         when(pointRuleNameService.createPointRuleName(any())).thenReturn(response);
 
         mockMvc.perform(post("/api/point-rule-names")
@@ -117,7 +117,7 @@ class PointRuleNameRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value("test"))
+                .andExpect(jsonPath("$.id").value("test12"))
                 .andDo(document("point-rule-name-create",
                         requestFields(
                                 fieldWithPath("id").description("포인트 규정 명")
