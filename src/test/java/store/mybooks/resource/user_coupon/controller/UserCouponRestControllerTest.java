@@ -1,12 +1,24 @@
 package store.mybooks.resource.user_coupon.controller;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,10 +41,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import store.mybooks.resource.error.RequestValidationFailedException;
+import store.mybooks.resource.user_coupon.dto.request.UserCouponCreateRequest;
 import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForMyPage;
+import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForOrder;
 import store.mybooks.resource.user_coupon.service.UserCouponService;
 
 /**
@@ -133,15 +150,253 @@ class UserCouponRestControllerTest {
         when(userCouponService.getUserCoupons(anyLong(), any())).thenReturn(userCouponPage);
 
         mockMvc.perform(
-                        get("/api/user-coupon/page?page=" + pageable.getPageNumber() + "&size=" + pageable.getPageSize())
+                        get("/api/user-coupon/page")
                                 .header("X-USER-ID", 1)
+                                .param("page", String.valueOf(pageable.getPageNumber()))
+                                .param("size", String.valueOf(pageable.getPageSize()))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()").value(2))
                 .andExpect(jsonPath("$.content[0].userCouponId").value(thirdUserCoupon.getUserCouponId()))
                 .andExpect(jsonPath("$.content[1].userCouponId").value(fourthUserCoupon.getUserCouponId()));
+//                .andDo(document("user-coupon-page",
+//                        requestFields(
+//                                fieldWithPath("pageNumber").description("페이지"),
+//                                fieldWithPath("pageSize").description("사이즈"),
+//                                fieldWithPath("X-USER-ID").description("회원 아이디")
+//                        ),
+//                        responseFields(
+//                                fieldWithPath("[].userCouponId").description("회원 쿠폰 아이디"),
+//                                fieldWithPath("[].name").description("쿠폰 이름"),
+//                                fieldWithPath("[].range").description("쿠폰 범위"),
+//                                fieldWithPath("[].target").description("쿠폰 적용 대상"),
+//                                fieldWithPath("[].orderMin").description("최소 주문 금액"),
+//                                fieldWithPath("[].discountRateOrCost").description("할인율 / 할인금액"),
+//                                fieldWithPath("[].maxDiscountCost").description("최대 할인 금액 (정액할인쿠폰인 경우 할인 금액과 같음)"),
+//                                fieldWithPath("[].isRate").description("정률할인쿠폰인지 여부"),
+//                                fieldWithPath("[].startDate").description("쿠폰 사용기간(시작일)"),
+//                                fieldWithPath("[].endDate").description("쿠폰 사용기간(종료일)")
+//                        )));
 
-        ;verify(userCouponService, times(1)).getUserCoupons(anyLong(), any());
+        verify(userCouponService, times(1)).getUserCoupons(anyLong(), any());
+    }
+
+    @Test
+    @DisplayName("적용 가능한 회원 쿠폰 조회")
+    void givenUserIDAndBookId_whenGetUsableUserCouponsByBookId_thenReturnListOfUserCouponGetResponseForOrder()
+            throws Exception {
+        List<UserCouponGetResponseForOrder> userCouponList = new ArrayList<>();
+        UserCouponGetResponseForOrder firstUserCoupon =
+                new UserCouponGetResponseForOrder(
+                        1L,
+                        "firstUserCoupon",
+                        0,
+                        20,
+                        10000,
+                        true,
+                        LocalDate.now().plusDays(2),
+                        LocalDate.now().plusDays(4)
+                );
+        UserCouponGetResponseForOrder secondUserCoupon =
+                new UserCouponGetResponseForOrder(
+                        1L,
+                        "secondUserCoupon",
+                        0,
+                        20,
+                        10000,
+                        true,
+                        LocalDate.now().plusDays(2),
+                        LocalDate.now().plusDays(4)
+                );
+        UserCouponGetResponseForOrder thirdUserCoupon =
+                new UserCouponGetResponseForOrder(
+                        1L,
+                        "thirdUserCoupon",
+                        0,
+                        20,
+                        10000,
+                        true,
+                        LocalDate.now().plusDays(2),
+                        LocalDate.now().plusDays(4)
+                );
+        UserCouponGetResponseForOrder fourthUserCoupon =
+                new UserCouponGetResponseForOrder(
+                        1L,
+                        "fourthUserCoupon",
+                        0,
+                        20,
+                        10000,
+                        true,
+                        LocalDate.now().plusDays(2),
+                        LocalDate.now().plusDays(4)
+                );
+        userCouponList.add(firstUserCoupon);
+        userCouponList.add(secondUserCoupon);
+        userCouponList.add(thirdUserCoupon);
+        userCouponList.add(fourthUserCoupon);
+
+        when(userCouponService.getUsableUserCouponsByBookId(anyLong(), anyLong())).thenReturn(userCouponList);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/user-coupon/usable-coupon/{bookId}", 1)
+                        .header("X-USER-ID", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(userCouponList.size()))
+                .andExpect(jsonPath("$[0].userCouponId").value(firstUserCoupon.getUserCouponId()))
+                .andExpect(jsonPath("$[1].userCouponId").value(secondUserCoupon.getUserCouponId()))
+                .andExpect(jsonPath("$[2].userCouponId").value(thirdUserCoupon.getUserCouponId()))
+                .andExpect(jsonPath("$[3].userCouponId").value(fourthUserCoupon.getUserCouponId()))
+                .andDo(document("user-coupon-list",
+                        requestHeaders(
+                                headerWithName("X-USER-ID").description("회원 아이디")
+                        ),
+                        pathParameters(
+                                parameterWithName("bookId").description("도서 아이디")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].userCouponId").description("회원 쿠폰 아이디"),
+                                fieldWithPath("[].name").description("쿠폰 이름"),
+                                fieldWithPath("[].orderMin").description("최소 주문 금액"),
+                                fieldWithPath("[].discountRateOrCost").description("할인율 / 할인금액"),
+                                fieldWithPath("[].maxDiscountCost").description("최대 할인 금액 (정액할인쿠폰인 경우 할인 금액과 같음)"),
+                                fieldWithPath("[].isRate").description("정률할인쿠폰인지 여부"),
+                                fieldWithPath("[].startDate").description("쿠폰 사용기간(시작일)"),
+                                fieldWithPath("[].endDate").description("쿠폰 사용기간(종료일)")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("적용 가능한 전체 회원 쿠폰 조회")
+    void givenUserId_whenGetUsableTotalCoupons_thenReturnListOfUserCouponGetResponseForOrder() throws Exception {
+        List<UserCouponGetResponseForOrder> userCouponList = new ArrayList<>();
+        UserCouponGetResponseForOrder firstUserCoupon =
+                new UserCouponGetResponseForOrder(
+                        1L,
+                        "firstUserCoupon",
+                        0,
+                        20,
+                        10000,
+                        true,
+                        LocalDate.now().plusDays(2),
+                        LocalDate.now().plusDays(4)
+                );
+        UserCouponGetResponseForOrder secondUserCoupon =
+                new UserCouponGetResponseForOrder(
+                        1L,
+                        "secondUserCoupon",
+                        0,
+                        20,
+                        10000,
+                        true,
+                        LocalDate.now().plusDays(2),
+                        LocalDate.now().plusDays(4)
+                );
+        UserCouponGetResponseForOrder thirdUserCoupon =
+                new UserCouponGetResponseForOrder(
+                        1L,
+                        "thirdUserCoupon",
+                        0,
+                        20,
+                        10000,
+                        true,
+                        LocalDate.now().plusDays(2),
+                        LocalDate.now().plusDays(4)
+                );
+        UserCouponGetResponseForOrder fourthUserCoupon =
+                new UserCouponGetResponseForOrder(
+                        1L,
+                        "fourthUserCoupon",
+                        0,
+                        20,
+                        10000,
+                        true,
+                        LocalDate.now().plusDays(2),
+                        LocalDate.now().plusDays(4)
+                );
+        userCouponList.add(firstUserCoupon);
+        userCouponList.add(secondUserCoupon);
+        userCouponList.add(thirdUserCoupon);
+        userCouponList.add(fourthUserCoupon);
+
+        when(userCouponService.getUsableTotalCoupons(anyLong())).thenReturn(userCouponList);
+
+        mockMvc.perform(get("/api/user-coupon/usable-coupon")
+                        .header("X-USER-ID", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(userCouponList.size()))
+                .andExpect(jsonPath("$[0].userCouponId").value(firstUserCoupon.getUserCouponId()))
+                .andExpect(jsonPath("$[1].userCouponId").value(secondUserCoupon.getUserCouponId()))
+                .andExpect(jsonPath("$[2].userCouponId").value(thirdUserCoupon.getUserCouponId()))
+                .andExpect(jsonPath("$[3].userCouponId").value(fourthUserCoupon.getUserCouponId()));
+    }
+
+    @Test
+    @DisplayName("회원 쿠폰 생성")
+    void givenUserCouponCreateRequest_whenCreateUserCoupon_thenCreateUserCoupon() throws Exception {
+        UserCouponCreateRequest userCouponCreateRequest = new UserCouponCreateRequest();
+        ReflectionTestUtils.setField(userCouponCreateRequest, "userId", 1L);
+        ReflectionTestUtils.setField(userCouponCreateRequest, "couponId", 1L);
+        String content = objectMapper.writeValueAsString(userCouponCreateRequest);
+        doNothing().when(userCouponService).createUserCoupon(any());
+
+        mockMvc.perform(post("/api/user-coupon")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isCreated())
+                .andDo(document("user-coupon-create",
+                        requestFields(
+                                fieldWithPath("userId").description("회원 아이디"),
+                                fieldWithPath("couponId").description("쿠폰 아이디")
+                        )));
+
+        verify(userCouponService, times(1)).createUserCoupon(any());
+    }
+
+    @Test
+    @DisplayName("회원 쿠폰 생성 - Validation 실패")
+    void givenWrongUserCouponCreateRequest_whenCreateUserCoupon_thenThrowRequestValidationFailedException()
+            throws Exception {
+        UserCouponCreateRequest userCouponCreateRequest = new UserCouponCreateRequest();
+        ReflectionTestUtils.setField(userCouponCreateRequest, "userId", -1L);
+        ReflectionTestUtils.setField(userCouponCreateRequest, "couponId", 1L);
+        String content = objectMapper.writeValueAsString(userCouponCreateRequest);
+
+        mockMvc.perform(post("/api/user-coupon")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isBadRequest());
+
+        verify(userCouponService, times(0)).createUserCoupon(any());
+    }
+
+    @Test
+    @DisplayName("회원 쿠폰 사용")
+    void givenUserCouponId_whenUseUserCoupon_thenModifyUserCoupon() throws Exception {
+        doNothing().when(userCouponService).useUserCoupon(anyLong());
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/user-coupon/use/{userCouponId}", 1L))
+                .andExpect(status().isOk())
+                .andDo(document("user-coupon-use",
+                        pathParameters(
+                                parameterWithName("userCouponId").description("회원 쿠폰 아이디")
+                        )));
+
+        verify(userCouponService, times(1)).useUserCoupon(anyLong());
+    }
+
+    @Test
+    @DisplayName("회원 쿠폰 돌려줌")
+    void givenUserCouponId_whenGiveBackUserCoupon_thenModifyUserCoupon() throws Exception {
+        doNothing().when(userCouponService).giveBackUserCoupon(anyLong());
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/user-coupon/return/{userCouponId}", 1L))
+                .andExpect(status().isOk())
+                .andDo(document("user-coupon-use",
+                        pathParameters(
+                                parameterWithName("userCouponId").description("회원 쿠폰 아이디")
+                        )));
+
+        verify(userCouponService, times(1)).giveBackUserCoupon(anyLong());
     }
 }
 
