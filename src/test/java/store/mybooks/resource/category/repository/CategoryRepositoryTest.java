@@ -55,8 +55,7 @@ class CategoryRepositoryTest {
         List<CategoryGetResponse> childCategoryList =
                 categoryRepository.findAllByParentCategory_Id(actualParentCategory.getId());
 
-        assertThat(childCategoryList).isNotNull();
-        assertThat(childCategoryList).hasSize(1);
+        assertThat(childCategoryList).isNotNull().hasSize(1);
         assertThat(childCategoryList.get(0).getName()).isEqualTo("secondCategory");
         assertThat(childCategoryList.get(0).getParentCategory().getId()).isEqualTo(actualParentCategory.getId());
     }
