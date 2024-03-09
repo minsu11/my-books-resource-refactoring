@@ -4,7 +4,7 @@ import com.querydsl.core.types.Projections;
 import java.util.List;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import store.mybooks.resource.book.entity.QBook;
-import store.mybooks.resource.book_category.entity.QBookCategory;
+import store.mybooks.resource.bookcategory.entity.QBookCategory;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForQuerydsl;
 import store.mybooks.resource.category.entity.Category;
 import store.mybooks.resource.category.entity.QCategory;

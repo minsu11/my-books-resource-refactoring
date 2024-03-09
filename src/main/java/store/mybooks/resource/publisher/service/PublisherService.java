@@ -107,7 +107,6 @@ public class PublisherService {
      * description : 출판사 삭제하는 메서드.
      *
      * @param publisherId 삭제하려는 publisher 의 id, 존재하지 않으면 PublisherNotExistException 발생
-     * @return publisherDeleteResponse: 삭제된 name 포함
      */
     @Transactional
     public void deletePublisher(Integer publisherId) {
