@@ -32,5 +32,5 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
      * @param userId the user id
      * @return the optional
      */
-    Optional<CartDto> findCartByUserId(Long userId);
+    Optional<Cart> findCartByUserId(Long userId);
 }
