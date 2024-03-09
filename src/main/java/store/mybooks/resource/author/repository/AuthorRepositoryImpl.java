@@ -37,11 +37,11 @@ public class AuthorRepositoryImpl extends QuerydslRepositorySupport implements A
 
     @Override
     public Page<AuthorGetResponse> getAllPagedAuthors(Pageable pageable) {
-        List<AuthorGetResponse> lists = getQuerydsl().applyPagination(pageable,
-                        from(author)
-                                .select(
-                                        Projections.constructor(AuthorGetResponse.class, author.id, author.name,
-                                                author.content)))
+        List<AuthorGetResponse> lists = from(author)
+                .select(Projections.constructor(AuthorGetResponse.class,
+                        author.id, author.name, author.content))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
         long total = from(author).fetchCount();
