@@ -1,4 +1,4 @@
-package store.mybooks.resource.book_order.exception;
+package store.mybooks.resource.bookorder.exception;
 
 /**
  * packageName    : store.mybooks.resource.book_order.exception<br>

@@ -1,4 +1,4 @@
-package store.mybooks.resource.book_order.dto.request;
+package store.mybooks.resource.bookorder.dto.request;
 
 import javax.validation.constraints.NotBlank;
 import lombok.Getter;

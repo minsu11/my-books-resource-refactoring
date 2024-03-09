@@ -15,7 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import store.mybooks.resource.book.entity.Book;
-import store.mybooks.resource.book_order.entity.BookOrder;
+import store.mybooks.resource.bookorder.entity.BookOrder;
 import store.mybooks.resource.order_detail_status.entity.OrderDetailStatus;
 import store.mybooks.resource.user_coupon.entity.UserCoupon;
 

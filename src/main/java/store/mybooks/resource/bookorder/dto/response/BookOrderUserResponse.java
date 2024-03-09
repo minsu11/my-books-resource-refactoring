@@ -1,4 +1,4 @@
-package store.mybooks.resource.book_order.dto.response;
+package store.mybooks.resource.bookorder.dto.response;
 
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
