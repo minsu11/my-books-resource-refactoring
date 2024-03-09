@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import store.mybooks.resource.book_status.entity.BookStatus;
+import store.mybooks.resource.bookstatus.entity.BookStatus;
 import store.mybooks.resource.publisher.entity.Publisher;
 
 /**
