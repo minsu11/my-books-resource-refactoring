@@ -53,6 +53,8 @@ public class UserCouponRepositoryImpl extends QuerydslRepositorySupport implemen
                         .leftJoin(category)
                         .on(coupon.category.id.eq(category.id))
                         .where(userCoupon.user.id.eq(userId))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
                         .select(Projections.constructor(UserCouponGetResponseForMyPageQuerydsl.class,
                                 userCoupon.id,
                                 coupon.name,
@@ -152,6 +154,8 @@ public class UserCouponRepositoryImpl extends QuerydslRepositorySupport implemen
                 .on(userCoupon.coupon.id.eq(coupon.id))
                 .where(userCoupon.user.id.eq(userId))
                 .where(userCoupon.isUsed.isFalse())
+                .where(coupon.book.isNull())
+                .where(coupon.category.isNull())
                 .where(coupon.startDate.loe(LocalDate.now()))
                 .where(coupon.endDate.goe(LocalDate.now()))
                 .select(Projections.constructor(UserCouponGetResponseForOrderQuerydsl.class,
