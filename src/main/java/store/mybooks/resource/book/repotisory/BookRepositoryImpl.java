@@ -85,10 +85,11 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
 
     @Override
     public Page<BookBriefResponse> getBookBriefInfo(Pageable pageable) {
-        List<BookBriefResponse> lists = getQuerydsl().applyPagination(pageable,
-                        from(book)
-                                .select(Projections.constructor(BookBriefResponse.class,
-                                        book.id, book.name, book.saleCost)))
+        List<BookBriefResponse> lists = from(book)
+                .select(Projections.constructor(BookBriefResponse.class,
+                        book.id, book.name, book.saleCost))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
         long total = from(book).fetchCount();
@@ -99,16 +100,21 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
 
     @Override
     public Page<BookBriefResponse> getActiveBookBriefInfo(Pageable pageable) {
-        List<BookBriefResponse> lists = getQuerydsl().applyPagination(pageable,
-                        from(book)
-                                .join(book.bookStatus, bookStatus)
-                                .select(Projections.constructor(BookBriefResponse.class,
-                                        book.id, book.name, book.saleCost)))
+        List<BookBriefResponse> lists =
+                from(book)
+                        .join(book.bookStatus, bookStatus)
+                        .select(Projections.constructor(BookBriefResponse.class,
+                                book.id, book.name, book.saleCost))
+                        .where(bookStatus.id.in("판매중", "재고없음"))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .fetch();
+
+        long total = from(book)
+                .join(book.bookStatus, bookStatus)
                 .where(bookStatus.id.in("판매중", "재고없음"))
-                .fetch();
-
-        long total = from(book).fetchCount();
-
+                .fetchCount();
+        
         return new PageImpl<>(lists, pageable, total);
     }
 
