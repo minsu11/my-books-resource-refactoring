@@ -2,6 +2,7 @@ package store.mybooks.resource.publisher.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -34,7 +34,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import store.mybooks.resource.publisher.dto.request.PublisherCreateRequest;
 import store.mybooks.resource.publisher.dto.request.PublisherModifyRequest;
 import store.mybooks.resource.publisher.dto.response.PublisherCreateResponse;
-import store.mybooks.resource.publisher.dto.response.PublisherDeleteResponse;
 import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
 import store.mybooks.resource.publisher.dto.response.PublisherModifyResponse;
 import store.mybooks.resource.publisher.entity.Publisher;
@@ -190,14 +189,11 @@ public class PublisherRestControllerTest {
     @Test
     @DisplayName("출판사 삭제")
     void givenPublisherId_whenDeletePublisher_thenDeletePublisherAndReturnPublisherDeleteResponse() throws Exception {
-        PublisherDeleteResponse response = new PublisherDeleteResponse();
-        response.setName(name);
-        when(publisherService.deletePublisher(id)).thenReturn(response);
+        doNothing().when(publisherService).deletePublisher(id);
 
-        mockMvc.perform(delete(url + "/{id}", id).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(response.getName()));
+        mockMvc.perform(delete(url + "/{id}", id).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
 
         verify(publisherService, times(1)).deletePublisher(id);
-
     }
 }

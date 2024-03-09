@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.publisher.dto.request.PublisherCreateRequest;
 import store.mybooks.resource.publisher.dto.request.PublisherModifyRequest;
 import store.mybooks.resource.publisher.dto.response.PublisherCreateResponse;
-import store.mybooks.resource.publisher.dto.response.PublisherDeleteResponse;
 import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
 import store.mybooks.resource.publisher.dto.response.PublisherModifyResponse;
 import store.mybooks.resource.publisher.service.PublisherService;
@@ -125,9 +124,10 @@ public class PublisherRestController {
      * @return ResponseEntity
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<PublisherDeleteResponse> deletePublisher(@PathVariable("id") Integer publisherId) {
+    public ResponseEntity<Void> deletePublisher(@PathVariable("id") Integer publisherId) {
+        publisherService.deletePublisher(publisherId);
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(publisherService.deletePublisher(publisherId));
+                .status(HttpStatus.NO_CONTENT)
+                .build();
     }
 }

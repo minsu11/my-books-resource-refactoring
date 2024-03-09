@@ -5,10 +5,10 @@ import lombok.Getter;
 
 /**
  * packageName    : store.mybooks.resource.point_rule.dto.response<br>
- * fileName       : PointRuleResponse<br>
+ * fileName       : PointRuleCreateResponse<br>
  * author         : minsu11<br>
  * date           : 3/7/24<br>
- * description    : 포인트 규정 응답 dto.
+ * description    : 등록한 포인트 규정 dto.<br>
  * ===========================================================<br>
  * DATE              AUTHOR             NOTE<br>
  * -----------------------------------------------------------<br>
@@ -16,8 +16,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public class PointRuleResponse {
-    private Integer id;
+public class PointRuleCreateResponse {
     private String pointRuleName;
     private Integer rate;
     private Integer cost;

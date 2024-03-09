@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.publisher.dto.request.PublisherCreateRequest;
 import store.mybooks.resource.publisher.dto.request.PublisherModifyRequest;
 import store.mybooks.resource.publisher.dto.response.PublisherCreateResponse;
-import store.mybooks.resource.publisher.dto.response.PublisherDeleteResponse;
 import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
 import store.mybooks.resource.publisher.dto.response.PublisherModifyResponse;
 import store.mybooks.resource.publisher.entity.Publisher;
@@ -111,12 +110,11 @@ public class PublisherService {
      * @return publisherDeleteResponse: 삭제된 name 포함
      */
     @Transactional
-    public PublisherDeleteResponse deletePublisher(Integer publisherId) {
-        Publisher publisher =
-                publisherRepository.findById(publisherId)
-                        .orElseThrow(() -> new PublisherNotExistException(publisherId));
+    public void deletePublisher(Integer publisherId) {
+        if (!publisherRepository.existsById(publisherId)) {
+            throw new PublisherNotExistException(publisherId);
+        }
         publisherRepository.deleteById(publisherId);
-        return publisherMapper.deleteResponse(publisher);
     }
 
 }

@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.author.dto.request.AuthorCreateRequest;
 import store.mybooks.resource.author.dto.request.AuthorModifyRequest;
 import store.mybooks.resource.author.dto.response.AuthorCreateResponse;
-import store.mybooks.resource.author.dto.response.AuthorDeleteResponse;
 import store.mybooks.resource.author.dto.response.AuthorGetResponse;
 import store.mybooks.resource.author.dto.response.AuthorModifyResponse;
 import store.mybooks.resource.author.entity.Author;
@@ -112,13 +111,12 @@ public class AuthorService {
      * description : 저자 삭제하는 메서드.
      *
      * @param authorId 저자 ID
-     * @return AuthorDeleteResponse
      */
     @Transactional
-    public AuthorDeleteResponse deleteAuthor(Integer authorId) {
-        Author author =
-                authorRepository.findById(authorId).orElseThrow(() -> new AuthorNotExistException(authorId));
+    public void deleteAuthor(Integer authorId) {
+        if (!authorRepository.existsById(authorId)) {
+            throw new AuthorNotExistException(authorId);
+        }
         authorRepository.deleteById(authorId);
-        return authorMapper.deleteResponse(author);
     }
 }
