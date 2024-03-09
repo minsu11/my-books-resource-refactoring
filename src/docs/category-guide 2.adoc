@@ -1,0 +1,17 @@
+= Category
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectnums:
+:sectlinks:
+:sectanchors:
+
+== 카테고리 API
+
+== 카테고리 조회
+
+include::{snippets}/category-get-page/http-request.adoc[]
+
+include::{snippets}/category-get-category-list/http-request.adoc[]

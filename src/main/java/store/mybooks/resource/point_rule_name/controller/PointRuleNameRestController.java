@@ -1,6 +1,7 @@
 package store.mybooks.resource.point_rule_name.controller;
 
 import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,8 +72,9 @@ public class PointRuleNameRestController {
      * @return response entity
      */
     @PostMapping
-    public ResponseEntity<PointRuleNameCreateResponse> createPointRuleName(@RequestBody PointRuleNameCreateRequest request,
-                                                                           BindingResult bindingResult) {
+    public ResponseEntity<PointRuleNameCreateResponse> createPointRuleName(
+            @Valid @RequestBody PointRuleNameCreateRequest request,
+            BindingResult bindingResult) {
         Utils.validateRequest(bindingResult);
         return ResponseEntity
                 .status(HttpStatus.CREATED)

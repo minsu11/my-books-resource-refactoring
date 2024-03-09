@@ -2,10 +2,12 @@ package store.mybooks.resource.point_rule.repository;
 
 import com.querydsl.core.types.Projections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import store.mybooks.resource.point_rule.dto.response.PointRuleResponse;
 import store.mybooks.resource.point_rule.entity.PointRule;
@@ -40,7 +42,8 @@ public class PointRuleRepositoryImpl extends QuerydslRepositorySupport implement
                         pointRule.pointRuleName.id,
                         pointRule.rate,
                         pointRule.cost))
-                .where(pointRule.isAvailable.eq(true))
+                .where(pointRule.isAvailable.eq(true)
+                        .and(pointRule.id.eq(id)))
                 .fetchOne());
     }
 
@@ -68,7 +71,11 @@ public class PointRuleRepositoryImpl extends QuerydslRepositorySupport implement
 
     @Override
     public Page<PointRuleResponse> getPointRuleResponsePage(Pageable pageable) {
-        List<PointRuleResponse> pointRuleResponseList = getQuerydsl().applyPagination(pageable,
+        Querydsl querydsl = getQuerydsl();
+        if (Objects.isNull(querydsl)) {
+            throw new NullPointerException("query dsl null");
+        }
+        List<PointRuleResponse> pointRuleResponseList = querydsl.applyPagination(pageable,
                 from(pointRule)
                         .select(Projections.constructor(PointRuleResponse.class,
                                 pointRule.id,

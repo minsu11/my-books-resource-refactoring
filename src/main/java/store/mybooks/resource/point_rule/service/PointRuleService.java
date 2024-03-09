@@ -119,9 +119,9 @@ public class PointRuleService {
      * @throws PointRuleNameNotExistException 포인트 규정 명을 찾지 못한 경우
      */
     public PointRuleModifyResponse modifyPointRuleResponse(PointRuleModifyRequest request, Integer id) {
+
         PointRule beforePointRule = pointRuleRepository.findById(id).orElseThrow(PointRuleNotExistException::new);
         String name = request.getPointRuleName();
-
         PointRuleName pointRuleName = pointRuleNameRepository.findById(name)
                 .orElseThrow(PointRuleNameNotExistException::new);
 

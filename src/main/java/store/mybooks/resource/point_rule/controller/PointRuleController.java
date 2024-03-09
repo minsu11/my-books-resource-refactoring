@@ -1,6 +1,7 @@
 package store.mybooks.resource.point_rule.controller;
 
 import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -92,8 +93,9 @@ public class PointRuleController {
      * @return response entity
      */
     @PostMapping
-    public ResponseEntity<PointRuleCreateResponse> createPointRuleResponse(@RequestBody PointRuleCreateRequest request,
-                                                                           BindingResult bindingResult) {
+    public ResponseEntity<PointRuleCreateResponse> createPointRuleResponse(
+            @Valid @RequestBody PointRuleCreateRequest request,
+            BindingResult bindingResult) {
         Utils.validateRequest(bindingResult);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -112,7 +114,7 @@ public class PointRuleController {
      * @return response entity
      */
     @PutMapping("/{id}")
-    public ResponseEntity<PointRuleModifyResponse> modifyPointRuleResponse(@RequestBody PointRuleModifyRequest request,
+    public ResponseEntity<PointRuleModifyResponse> modifyPointRuleResponse(@Valid @RequestBody PointRuleModifyRequest request,
                                                                            @PathVariable Integer id,
                                                                            BindingResult bindingResult) {
         Utils.validateRequest(bindingResult);

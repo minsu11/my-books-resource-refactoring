@@ -133,10 +133,10 @@ class PointRuleNameRestControllerTest {
     void givenPointRuleNameCreateRequest_whenUtilsValidateRequest_thenReturnBadRequest() throws Exception {
         PointRuleNameCreateRequest request = new PointRuleNameCreateRequest();
         ReflectionTestUtils.setField(request, "id", "");
-        mockMvc.perform(post("/api/point-rule-name")
+        mockMvc.perform(post("/api/point-rule-names")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
         verify(pointRuleNameService, never()).createPointRuleName(any());
     }
 }
