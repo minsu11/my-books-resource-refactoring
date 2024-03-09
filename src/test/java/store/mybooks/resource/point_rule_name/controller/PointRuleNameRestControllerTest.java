@@ -4,13 +4,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,10 +24,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import store.mybooks.resource.point_rule_name.dto.request.PointRuleNameCreateRequest;
+import store.mybooks.resource.point_rule_name.dto.response.PointRuleNameCreateResponse;
 import store.mybooks.resource.point_rule_name.dto.response.PointRuleNameResponse;
 import store.mybooks.resource.point_rule_name.service.PointRuleNameService;
 
@@ -66,7 +70,7 @@ class PointRuleNameRestControllerTest {
     void givenId_whenGetPointRuleName_thenReturnPointRuleNameResponse() throws Exception {
         PointRuleNameResponse pointRuleNameResponse = new PointRuleNameResponse("test");
         when(pointRuleNameService.getPointRuleName(any())).thenReturn(pointRuleNameResponse);
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/point-rule-names/{id}", "test"))
+        mockMvc.perform(get("/api/point-rule-names/{id}", "test"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value("test"))
@@ -80,15 +84,59 @@ class PointRuleNameRestControllerTest {
 
 
         verify(pointRuleNameService, times(1)).getPointRuleName(any());
-
     }
 
     @Test
     @DisplayName("포인트 규정 명 전체 조회")
-    void getPointRuleNameList() {
+    void given_whenGetPointRuleNameList_thenReturnPointRuleNameResponseList() throws Exception {
+        List<PointRuleNameResponse> pointRuleNameResponseList = List.of(
+                new PointRuleNameResponse("test")
+        );
+        when(pointRuleNameService.getPointRuleNameList()).thenReturn(pointRuleNameResponseList);
+
+        mockMvc.perform(get("/api/point-rule-names"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value("test"))
+                .andDo(document("point-rule-name-list",
+                        responseFields(
+                                fieldWithPath("[].id").description("포인트 규정")
+                        )));
     }
 
     @Test
-    void createPointRuleName() {
+    @DisplayName("포인트 규정 명 생성 테스트")
+    void givenPointRuleNameCreateRequest_whenCreatePointRuleName_thenReturnPointRuleNameCreateResponse() throws Exception {
+        PointRuleNameCreateRequest request = new PointRuleNameCreateRequest();
+        ReflectionTestUtils.setField(request, "id", "test");
+        PointRuleNameCreateResponse response = new PointRuleNameCreateResponse("test");
+        when(pointRuleNameService.createPointRuleName(any())).thenReturn(response);
+
+        mockMvc.perform(post("/api/point-rule-names")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value("test"))
+                .andDo(document("point-rule-name-create",
+                        requestFields(
+                                fieldWithPath("id").description("포인트 규정 명")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").description("포인트 규정 명")
+                        )));
+        verify(pointRuleNameService, times(1)).createPointRuleName(any());
+    }
+
+    @Test
+    @DisplayName("포인트 규정 명 생성 시 유효성 검사 테스트")
+    void givenPointRuleNameCreateRequest_whenUtilsValidateRequest_thenReturnBadRequest() throws Exception {
+        PointRuleNameCreateRequest request = new PointRuleNameCreateRequest();
+        ReflectionTestUtils.setField(request, "id", "");
+        mockMvc.perform(post("/api/point-rule-name")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+        verify(pointRuleNameService, never()).createPointRuleName(any());
     }
 }

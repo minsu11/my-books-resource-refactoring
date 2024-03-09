@@ -31,6 +31,7 @@ public class PointRuleNameRepositoryImpl extends QuerydslRepositorySupport imple
         return Optional.of(
                 from(pointRuleName)
                         .select(Projections.constructor(PointRuleNameResponse.class, pointRuleName.id))
+                        .where(pointRuleName.id.eq(id))
                         .fetchOne());
     }
 

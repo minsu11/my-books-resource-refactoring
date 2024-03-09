@@ -3,7 +3,6 @@ package store.mybooks.resource.publisher.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 import store.mybooks.resource.publisher.dto.response.PublisherCreateResponse;
-import store.mybooks.resource.publisher.dto.response.PublisherDeleteResponse;
 import store.mybooks.resource.publisher.dto.response.PublisherModifyResponse;
 import store.mybooks.resource.publisher.entity.Publisher;
 
@@ -23,6 +22,4 @@ public interface PublisherMapper {
     PublisherCreateResponse createResponse(Publisher publisher);
 
     PublisherModifyResponse modifyResponse(Publisher publisher);
-
-    PublisherDeleteResponse deleteResponse(Publisher publisher);
 }

@@ -17,8 +17,8 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public class UserCouponGetResponse {
-    private Long id;
+public class UserCouponGetResponseForMyPage {
+    private Long userCouponId;
     private String name;
     private String range;
     private String target;

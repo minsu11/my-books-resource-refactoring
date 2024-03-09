@@ -71,7 +71,7 @@ public class CouponUtils {
      * @throw CouponInCompatibleType BookId 와 CategoryId 둘 다 설정 되어 있는 경우.
      */
     private static void validateCouponType(CouponCreateRequest request) {
-        if (!isPercentageCoupon(request) && isFlatCoupon(request)) {
+        if (!isPercentageCoupon(request) && !isFlatCoupon(request)) {
             throw new CouponInCompatibleType();
         }
     }
