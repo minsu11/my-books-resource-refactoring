@@ -1,4 +1,4 @@
-package store.mybooks.resource.user_coupon.service;
+package store.mybooks.resource.usercoupon.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,14 +14,14 @@ import store.mybooks.resource.coupon.repository.CouponRepository;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user.exception.UserNotExistException;
 import store.mybooks.resource.user.repository.UserRepository;
-import store.mybooks.resource.user_coupon.dto.request.UserCouponCreateRequest;
-import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForMyPage;
-import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForMyPageQuerydsl;
-import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForOrder;
-import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForOrderQuerydsl;
-import store.mybooks.resource.user_coupon.entity.UserCoupon;
-import store.mybooks.resource.user_coupon.exception.UserCouponNotExistsException;
-import store.mybooks.resource.user_coupon.repository.UserCouponRepository;
+import store.mybooks.resource.usercoupon.dto.request.UserCouponCreateRequest;
+import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForMyPage;
+import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForMyPageQuerydsl;
+import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForOrder;
+import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForOrderQuerydsl;
+import store.mybooks.resource.usercoupon.entity.UserCoupon;
+import store.mybooks.resource.usercoupon.exception.UserCouponNotExistsException;
+import store.mybooks.resource.usercoupon.repository.UserCouponRepository;
 
 /**
  * packageName    : store.mybooks.resource.user_coupon.service
@@ -61,7 +61,8 @@ public class UserCouponService {
                 userCouponRepository.getUserCoupons(userId, pageable);
         List<UserCouponGetResponseForMyPage> userCouponGetResponseForMyPageList = new ArrayList<>();
 
-        for (UserCouponGetResponseForMyPageQuerydsl userCouponGetResponseForMyPageQuerydsl : userCouponGetResponsesPage.getContent()) {
+        for (UserCouponGetResponseForMyPageQuerydsl userCouponGetResponseForMyPageQuerydsl
+                : userCouponGetResponsesPage.getContent()) {
             userCouponGetResponseForMyPageList.add(makeCouponGetResponse(userCouponGetResponseForMyPageQuerydsl));
         }
 

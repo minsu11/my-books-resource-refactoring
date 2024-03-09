@@ -1,4 +1,4 @@
-package store.mybooks.resource.user_coupon.dto.request;
+package store.mybooks.resource.usercoupon.dto.request;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;

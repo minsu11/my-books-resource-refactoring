@@ -1,4 +1,4 @@
-package store.mybooks.resource.user_coupon.entity;
+package store.mybooks.resource.usercoupon.entity;
 
 import java.time.LocalDate;
 import javax.persistence.Column;
@@ -14,8 +14,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import store.mybooks.resource.coupon.entity.Coupon;
 import store.mybooks.resource.user.entity.User;
-import store.mybooks.resource.user_coupon.exception.UserCouponAlreadyUsedException;
-import store.mybooks.resource.user_coupon.exception.UserCouponNotUsedException;
+import store.mybooks.resource.usercoupon.exception.UserCouponAlreadyUsedException;
+import store.mybooks.resource.usercoupon.exception.UserCouponNotUsedException;
 
 /**
  * packageName    : store.mybooks.resource.user_coupon.entity

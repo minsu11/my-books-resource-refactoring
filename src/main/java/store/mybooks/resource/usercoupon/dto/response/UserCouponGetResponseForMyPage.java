@@ -1,30 +1,31 @@
-package store.mybooks.resource.user_coupon.dto.response;
+package store.mybooks.resource.usercoupon.dto.response;
 
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * packageName    : store.mybooks.resource.user_coupon.dto.request
- * fileName       : UserCategoryCouponGetResponse
+ * packageName    : store.mybooks.resource.user_coupon.dto.response
+ * fileName       : CouponGetResponse
  * author         : damho-lee
- * date           : 3/6/24
+ * date           : 3/4/24
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 3/6/24          damho-lee          최초 생성
+ * 3/4/24          damho-lee          최초 생성
  */
 @Getter
 @AllArgsConstructor
-public class UserCouponGetResponseForOrderQuerydsl {
+public class UserCouponGetResponseForMyPage {
     private Long userCouponId;
     private String name;
+    private String range;
+    private String target;
     private Integer orderMin;
-    private Integer discountCost;
+    private Integer discountRateOrCost;
     private Integer maxDiscountCost;
-    private Integer discountRate;
-    private boolean isRate;
+    private Boolean isRate;
     private LocalDate startDate;
     private LocalDate endDate;
 }

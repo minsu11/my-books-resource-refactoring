@@ -1,4 +1,4 @@
-package store.mybooks.resource.user_coupon.repository;
+package store.mybooks.resource.usercoupon.repository;
 
 import com.querydsl.core.types.Projections;
 import java.time.LocalDate;
@@ -15,10 +15,10 @@ import store.mybooks.resource.book.entity.QBook;
 import store.mybooks.resource.book_category.entity.QBookCategory;
 import store.mybooks.resource.category.entity.QCategory;
 import store.mybooks.resource.coupon.entity.QCoupon;
-import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForMyPageQuerydsl;
-import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForOrderQuerydsl;
-import store.mybooks.resource.user_coupon.entity.QUserCoupon;
-import store.mybooks.resource.user_coupon.entity.UserCoupon;
+import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForMyPageQuerydsl;
+import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForOrderQuerydsl;
+import store.mybooks.resource.usercoupon.entity.QUserCoupon;
+import store.mybooks.resource.usercoupon.entity.UserCoupon;
 
 /**
  * packageName    : store.mybooks.resource.user_coupon.repository

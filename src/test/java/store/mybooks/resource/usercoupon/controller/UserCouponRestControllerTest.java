@@ -1,4 +1,4 @@
-package store.mybooks.resource.user_coupon.controller;
+package store.mybooks.resource.usercoupon.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -44,10 +44,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import store.mybooks.resource.user_coupon.dto.request.UserCouponCreateRequest;
-import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForMyPage;
-import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForOrder;
-import store.mybooks.resource.user_coupon.service.UserCouponService;
+import store.mybooks.resource.usercoupon.dto.request.UserCouponCreateRequest;
+import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForMyPage;
+import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForOrder;
+import store.mybooks.resource.usercoupon.service.UserCouponService;
 
 /**
  * packageName    : store.mybooks.resource.user_coupon.controller

@@ -1,7 +1,7 @@
-package store.mybooks.resource.user_coupon.repository;
+package store.mybooks.resource.usercoupon.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import store.mybooks.resource.user_coupon.entity.UserCoupon;
+import store.mybooks.resource.usercoupon.entity.UserCoupon;
 
 /**
  * packageName    : store.mybooks.resource.user_coupon.repository

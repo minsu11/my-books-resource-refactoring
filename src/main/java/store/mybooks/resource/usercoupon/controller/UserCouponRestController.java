@@ -1,4 +1,4 @@
-package store.mybooks.resource.user_coupon.controller;
+package store.mybooks.resource.usercoupon.controller;
 
 import java.util.List;
 import javax.validation.Valid;
@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.config.HeaderProperties;
 import store.mybooks.resource.error.RequestValidationFailedException;
-import store.mybooks.resource.user_coupon.dto.request.UserCouponCreateRequest;
-import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForMyPage;
-import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForOrder;
-import store.mybooks.resource.user_coupon.service.UserCouponService;
+import store.mybooks.resource.usercoupon.dto.request.UserCouponCreateRequest;
+import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForMyPage;
+import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForOrder;
+import store.mybooks.resource.usercoupon.service.UserCouponService;
 
 /**
  * packageName    : store.mybooks.resource.user_coupon.controller
