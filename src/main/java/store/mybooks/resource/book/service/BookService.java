@@ -185,7 +185,6 @@ public class BookService {
         for (MultipartFile file : content) {
             imageRegisterResponseList.add(imageService.saveImage(contentEnum, null, book, file));
         }
-        //TODO bookResponse dto에 이미지 값들도 넣어야한다
         return bookMapper.createResponse(newBook);
     }
 
