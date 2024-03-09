@@ -34,14 +34,16 @@ public class BookLikeRepositoryImpl extends QuerydslRepositorySupport implements
 
     @Override
     public Page<BookBriefResponse> getUserBookLike(Long userId, Pageable pageable) {
-        List<BookBriefResponse> lists = getQuerydsl().applyPagination(pageable,
-                        from(bookLike)
-                                .join(bookLike.user, user)
-                                .join(bookLike.book, book)
-                                .where(bookLike.user.id.eq(userId))
-                                .select(Projections.constructor(BookBriefResponse.class,
-                                        book.id, book.name, book.saleCost)))
-                .fetch();
+        List<BookBriefResponse> lists =
+                from(bookLike)
+                        .join(bookLike.user, user)
+                        .join(bookLike.book, book)
+                        .where(bookLike.user.id.eq(userId))
+                        .select(Projections.constructor(BookBriefResponse.class,
+                                book.id, book.name, book.saleCost))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .fetch();
 
         long total = from(bookLike)
                 .join(bookLike.user, user)
