@@ -57,10 +57,11 @@ class BookAuthorServiceTest {
         Author author1 = new Author(1, null, null, LocalDate.now());
         Author author2 = new Author(2, null, null, LocalDate.now());
         Author author3 = new Author(3, null, null, LocalDate.now());
-        Book book =
-                new Book(bookId, null, null, null, null,
-                        null, null, null, null, null, null, null, null, null, null, null);
 
+        Book book = Book.builder()
+                .id(bookId)
+                .build();
+        
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
         when(authorRepository.findById(1)).thenReturn(Optional.of(author1));
         when(authorRepository.findById(2)).thenReturn(Optional.of(author2));

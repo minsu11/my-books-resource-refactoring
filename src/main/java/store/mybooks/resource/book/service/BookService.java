@@ -160,13 +160,22 @@ public class BookService {
             throw new IsbnAlreadyExistsException(createRequest.getIsbn());
         }
 
-        Book book =
-                new Book(bookStatus, publisher, createRequest.getName(), createRequest.getIsbn(),
-                        createRequest.getPublishDate(), createRequest.getPage(),
-                        createRequest.getIndex(), createRequest.getContent(), createRequest.getOriginalCost(),
-                        createRequest.getSaleCost(), createRequest.getOriginalCost() / createRequest.getSaleCost(),
-                        createRequest.getStock(),
-                        createRequest.getIsPacking());
+        Book book = Book.builder()
+                .bookStatus(bookStatus)
+                .publisher(publisher)
+                .name(createRequest.getName())
+                .isbn(createRequest.getIsbn())
+                .publishDate(createRequest.getPublishDate())
+                .page(createRequest.getPage())
+                .index(createRequest.getIndex())
+                .content(createRequest.getContent())
+                .originalCost(createRequest.getOriginalCost())
+                .saleCost(createRequest.getSaleCost())
+                .discountRate(createRequest.getOriginalCost() / createRequest.getSaleCost())
+                .stock(createRequest.getStock())
+                .isPackaging(createRequest.getIsPacking())
+                .build();
+
         Book newBook = bookRepository.save(book);
         Long bookId = newBook.getId();
         bookAuthorService.createBookAuthor(new BookAuthorCreateRequest(bookId, createRequest.getAuthorList()));
