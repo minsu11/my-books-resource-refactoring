@@ -15,6 +15,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -155,25 +156,38 @@ class UserCouponRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()").value(2))
                 .andExpect(jsonPath("$.content[0].userCouponId").value(thirdUserCoupon.getUserCouponId()))
-                .andExpect(jsonPath("$.content[1].userCouponId").value(fourthUserCoupon.getUserCouponId()));
-//                .andDo(document("user-coupon-page",
-//                        requestFields(
-//                                fieldWithPath("pageNumber").description("페이지"),
-//                                fieldWithPath("pageSize").description("사이즈"),
-//                                fieldWithPath("X-USER-ID").description("회원 아이디")
-//                        ),
-//                        responseFields(
-//                                fieldWithPath("[].userCouponId").description("회원 쿠폰 아이디"),
-//                                fieldWithPath("[].name").description("쿠폰 이름"),
-//                                fieldWithPath("[].range").description("쿠폰 범위"),
-//                                fieldWithPath("[].target").description("쿠폰 적용 대상"),
-//                                fieldWithPath("[].orderMin").description("최소 주문 금액"),
-//                                fieldWithPath("[].discountRateOrCost").description("할인율 / 할인금액"),
-//                                fieldWithPath("[].maxDiscountCost").description("최대 할인 금액 (정액할인쿠폰인 경우 할인 금액과 같음)"),
-//                                fieldWithPath("[].isRate").description("정률할인쿠폰인지 여부"),
-//                                fieldWithPath("[].startDate").description("쿠폰 사용기간(시작일)"),
-//                                fieldWithPath("[].endDate").description("쿠폰 사용기간(종료일)")
-//                        )));
+                .andExpect(jsonPath("$.content[1].userCouponId").value(fourthUserCoupon.getUserCouponId()))
+                .andDo(document("user-coupon-page",
+                        requestHeaders(
+                                headerWithName("X-USER-ID").description("회원 아이디")
+                        ),
+                        requestParameters(
+                                parameterWithName("page").description("페이지"),
+                                parameterWithName("size").description("사이즈")
+                        ),
+                        responseFields(
+                                fieldWithPath("content[].userCouponId").description("회원 쿠폰 아이디"),
+                                fieldWithPath("content[].name").description("쿠폰 이름"),
+                                fieldWithPath("content[].range").description("쿠폰 범위"),
+                                fieldWithPath("content[].target").description("쿠폰 적용 대상"),
+                                fieldWithPath("content[].orderMin").description("최소 주문 금액"),
+                                fieldWithPath("content[].discountRateOrCost").description("할인율 / 할인금액"),
+                                fieldWithPath("content[].maxDiscountCost").description("최대 할인 금액 (정액할인쿠폰인 경우 할인 금액과 같음)"),
+                                fieldWithPath("content[].isRate").description("정률할인쿠폰인지 여부"),
+                                fieldWithPath("content[].startDate").description("쿠폰 사용기간(시작일)"),
+                                fieldWithPath("content[].endDate").description("쿠폰 사용기간(종료일)"),
+                                fieldWithPath("pageable.sort.*").ignored(),
+                                fieldWithPath("pageable.*").ignored(),
+                                fieldWithPath("totalElements").ignored(),
+                                fieldWithPath("totalPages").ignored(),
+                                fieldWithPath("last").ignored(),
+                                fieldWithPath("numberOfElements").ignored(),
+                                fieldWithPath("size").ignored(),
+                                fieldWithPath("number").ignored(),
+                                fieldWithPath("first").ignored(),
+                                fieldWithPath("sort.*").ignored(),
+                                fieldWithPath("empty").ignored()
+                        )));
 
         verify(userCouponService, times(1)).getUserCoupons(anyLong(), any());
     }
@@ -255,7 +269,7 @@ class UserCouponRestControllerTest {
                                 fieldWithPath("[].orderMin").description("최소 주문 금액"),
                                 fieldWithPath("[].discountRateOrCost").description("할인율 / 할인금액"),
                                 fieldWithPath("[].maxDiscountCost").description("최대 할인 금액 (정액할인쿠폰인 경우 할인 금액과 같음)"),
-                                fieldWithPath("[].isRate").description("정률할인쿠폰인지 여부"),
+                                fieldWithPath("[].rate").description("정률할인쿠폰인지 여부"),
                                 fieldWithPath("[].startDate").description("쿠폰 사용기간(시작일)"),
                                 fieldWithPath("[].endDate").description("쿠폰 사용기간(종료일)")
                         )
@@ -396,22 +410,3 @@ class UserCouponRestControllerTest {
         verify(userCouponService, times(1)).giveBackUserCoupon(anyLong());
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
