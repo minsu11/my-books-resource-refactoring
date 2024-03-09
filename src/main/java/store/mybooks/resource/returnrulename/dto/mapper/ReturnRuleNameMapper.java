@@ -2,7 +2,6 @@ package store.mybooks.resource.returnrulename.dto.mapper;
 
 import org.mapstruct.Mapper;
 import store.mybooks.resource.returnrulename.dto.response.ReturnRuleNameCreateResponse;
-import store.mybooks.resource.returnrulename.dto.response.ReturnRuleNameResponse;
 import store.mybooks.resource.returnrulename.entity.ReturnRuleName;
 
 /**
@@ -18,7 +17,6 @@ import store.mybooks.resource.returnrulename.entity.ReturnRuleName;
  */
 @Mapper(componentModel = "spring")
 public interface ReturnRuleNameMapper {
-    ReturnRuleNameResponse mapToReturnRuleNameResponse(ReturnRuleName returnNameRule);
 
     ReturnRuleNameCreateResponse mapToReturnRuleNameCreateResponse(ReturnRuleName returnRuleName);
 }

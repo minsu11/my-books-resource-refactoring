@@ -2,9 +2,11 @@ package store.mybooks.resource.returnrulename.repository;
 
 import com.querydsl.core.types.Projections;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import store.mybooks.resource.returnrulename.dto.response.ReturnRuleNameResponse;
 import store.mybooks.resource.returnrulename.entity.QReturnRuleName;
+import store.mybooks.resource.returnrulename.entity.ReturnRuleName;
 
 /**
  * packageName    : store.mybooks.resource.return_rule_name.repository<br>
@@ -19,21 +21,28 @@ import store.mybooks.resource.returnrulename.entity.QReturnRuleName;
  */
 
 public class ReturnRuleNameRepositoryImpl extends QuerydslRepositorySupport implements ReturnRuleNameRepositoryCustom {
+    private static final QReturnRuleName returnRuleName = QReturnRuleName.returnRuleName;
+
     public ReturnRuleNameRepositoryImpl() {
-        super(ReturnRuleNameResponse.class);
+        super(ReturnRuleName.class);
     }
 
-    /**
-     * methodName : getReturnRuleNameList<br>
-     * author : minsu11<br>
-     * description : 모든 반품 규정 명을 조회해서 {@code ReturnRuleNameResponse}로 반환
-     * <br> *
-     *
-     * @return {@code ReturnRuleNameResponse List}로 반환
-     */
+    @Override
+    public Optional<ReturnRuleNameResponse> findReturnRuleNameById(String id) {
+        return Optional.of(
+                from(returnRuleName)
+                        .select(Projections.constructor(
+                                ReturnRuleNameResponse.class,
+                                returnRuleName.id,
+                                returnRuleName.createdDate
+                        ))
+                        .where(returnRuleName.id.eq(id))
+                        .fetchOne());
+    }
+
+
     @Override
     public List<ReturnRuleNameResponse> getReturnRuleNameList() {
-        QReturnRuleName returnRuleName = QReturnRuleName.returnRuleName;
 
         return from(returnRuleName)
                 .select(

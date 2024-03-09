@@ -37,23 +37,22 @@ public class ReturnRuleNameService {
     /**
      * methodName : getReturnNameRule<br>
      * author : minsu11<br>
-     * description : 요청된 name 값과 동일한 반품 규정 명 조회 <br>
+     * description : 요청된 name 값과 동일한 반품 규정 명 조회. <br>
      *
-     * @param name 요청된 name
+     * @param id 조회할 id
      * @return return name rule response
      * @throws ReturnRuleNameNotExistException name 값과 동일한 데이터를 찾지 못한 경우
      */
     @Transactional(readOnly = true)
-    public ReturnRuleNameResponse getReturnRuleName(String name) {
-        ReturnRuleName returnNameRule = returnRuleNameRepository.findById(name)
+    public ReturnRuleNameResponse getReturnRuleName(String id) {
+        return returnRuleNameRepository.findReturnRuleNameById(id)
                 .orElseThrow(ReturnRuleNameNotExistException::new);
-        return returnRuleNameMapper.mapToReturnRuleNameResponse(returnNameRule);
     }
 
     /**
      * methodName : getReturnNameRule<br>
      * author : minsu11<br>
-     * description : 반품 규정 명 테이블의 모든 데이터를 조회 <br>
+     * description : 반품 규정 명 테이블의 모든 데이터를 조회.<br>
      *
      * @return the return rule name list
      */
@@ -67,7 +66,7 @@ public class ReturnRuleNameService {
      * methodName : createReturnRuleName<br>
      * author : minsu11<br>
      * description : 요청 들어온 반품 규정 명을 DB에 저장. <br>
-     * 등록 시 DB에 존재 한다면 ReturnRuleNameAlreadyExistException 던짐
+     * 등록 시 DB에 존재 한다면 ReturnRuleNameAlreadyExistException 던짐.
      *
      * @param request the request
      * @return the return rule name create response
