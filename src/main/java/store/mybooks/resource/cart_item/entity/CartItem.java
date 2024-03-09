@@ -48,4 +48,10 @@ public class CartItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     private Book book;
+
+    public CartItem(Integer amount, Cart cart, Book book) {
+        this.amount = amount;
+        this.cart = cart;
+        this.book = book;
+    }
 }
