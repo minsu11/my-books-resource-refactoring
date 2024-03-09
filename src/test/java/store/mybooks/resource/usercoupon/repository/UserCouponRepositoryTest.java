@@ -238,5 +238,4 @@ class UserCouponRepositoryTest {
         assertThat(userCouponGetResponseForOrderQuerydslList.get(0).getUserCouponId()).isEqualTo(
                 userTotalCoupon.getId());
     }
-
 }
