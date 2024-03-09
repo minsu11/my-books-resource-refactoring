@@ -73,26 +73,5 @@ public class BookDetailResponse {
 //    private String bookContentImage;
 
 //    private List<ReviewDetailResponse> review;
-
-
-    public BookDetailResponse(Long id, String name, String bookStatus, PublisherGetResponse publisher,
-                              LocalDate publishDate, Integer saleCost, Integer originalCost, Integer disCountRate,
-                              Boolean isPacking, Integer page, String isbn, Integer stock, String index,
-                              String content) {
-        this.id = id;
-        this.name = name;
-        this.bookStatus = bookStatus;
-        this.publisher = publisher;
-        this.publishDate = publishDate;
-        this.saleCost = saleCost;
-        this.originalCost = originalCost;
-        this.disCountRate = disCountRate;
-        this.isPacking = isPacking;
-        this.page = page;
-        this.isbn = isbn;
-        this.stock = stock;
-        this.index = index;
-        this.content = content;
-    }
 }
 

@@ -25,7 +25,7 @@ public class PublisherRepositoryImpl extends QuerydslRepositorySupport implement
     public PublisherRepositoryImpl() {
         super(Publisher.class);
     }
-    
+
     QPublisher publisher = QPublisher.publisher;
 
     @Override
@@ -38,10 +38,13 @@ public class PublisherRepositoryImpl extends QuerydslRepositorySupport implement
 
     @Override
     public Page<PublisherGetResponse> getPagedBy(Pageable pageable) {
-        List<PublisherGetResponse> lists = getQuerydsl().applyPagination(pageable,
-                        from(publisher)
-                                .select(Projections.constructor(PublisherGetResponse.class, publisher.id, publisher.name)))
-                .fetch();
+        List<PublisherGetResponse> lists =
+                from(publisher)
+                        .select(Projections.constructor(PublisherGetResponse.class, publisher.id, publisher.name))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .fetch();
+        
         long total = from(publisher).fetchCount();
         return new PageImpl<>(lists, pageable, total);
     }

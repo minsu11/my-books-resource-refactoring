@@ -14,9 +14,9 @@ import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
 import store.mybooks.resource.book.dto.response.BookResponseForOrder;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.entity.QBook;
-import store.mybooks.resource.book_author.entity.QBookAuthor;
-import store.mybooks.resource.book_status.entity.QBookStatus;
-import store.mybooks.resource.book_tag.entity.QBookTag;
+import store.mybooks.resource.bookauthor.entity.QBookAuthor;
+import store.mybooks.resource.bookstatus.entity.QBookStatus;
+import store.mybooks.resource.booktag.entity.QBookTag;
 import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
 import store.mybooks.resource.publisher.entity.QPublisher;
 import store.mybooks.resource.tag.dto.response.TagGetResponseForBookDetail;
@@ -78,10 +78,11 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
 
     @Override
     public Page<BookBriefResponse> getBookBriefInfo(Pageable pageable) {
-        List<BookBriefResponse> lists = getQuerydsl().applyPagination(pageable,
-                        from(book)
-                                .select(Projections.constructor(BookBriefResponse.class,
-                                        book.id, book.name, book.saleCost)))
+        List<BookBriefResponse> lists = from(book)
+                .select(Projections.constructor(BookBriefResponse.class,
+                        book.id, book.name, book.saleCost))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
         long total = from(book).fetchCount();
@@ -92,15 +93,20 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
 
     @Override
     public Page<BookBriefResponse> getActiveBookBriefInfo(Pageable pageable) {
-        List<BookBriefResponse> lists = getQuerydsl().applyPagination(pageable,
-                        from(book)
-                                .join(book.bookStatus, bookStatus)
-                                .select(Projections.constructor(BookBriefResponse.class,
-                                        book.id, book.name, book.saleCost)))
-                .where(bookStatus.id.in("판매중", "재고없음"))
-                .fetch();
+        List<BookBriefResponse> lists =
+                from(book)
+                        .join(book.bookStatus, bookStatus)
+                        .select(Projections.constructor(BookBriefResponse.class,
+                                book.id, book.name, book.saleCost))
+                        .where(bookStatus.id.in("판매중", "재고없음"))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .fetch();
 
-        long total = from(book).fetchCount();
+        long total = from(book)
+                .join(book.bookStatus, bookStatus)
+                .where(bookStatus.id.in("판매중", "재고없음"))
+                .fetchCount();
 
         return new PageImpl<>(lists, pageable, total);
     }
