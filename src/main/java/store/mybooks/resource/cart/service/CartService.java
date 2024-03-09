@@ -63,8 +63,8 @@ public class CartService {
      * @param userId the user id
      * @return the cart
      */
-    public CartDto getCart(Long userId) {
-        Optional<CartDto> optionalCart = cartRepository.findCartByUserId(userId);
+    public Cart getCart(Long userId) {
+        Optional<Cart> optionalCart = cartRepository.findCartByUserId(userId);
         return optionalCart.orElseThrow(() -> new CartNotFoundException("카트 id를 찾을수 없습니다"));
     }
 }
