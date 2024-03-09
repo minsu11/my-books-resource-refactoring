@@ -123,8 +123,6 @@ class PublisherServiceTest {
     @DisplayName("이미 존재하는 출판사 이름을 등록")
     void givenPublisherCreateRequest_whenAlreadyExistPublisherNameCreate_thenThrowPublisherAlreadyExistException() {
         PublisherCreateRequest createRequest = new PublisherCreateRequest(name);
-        PublisherCreateResponse createResponse = new PublisherCreateResponse();
-        createResponse.setName(createRequest.getName());
 
         given(publisherRepository.existsByName(createRequest.getName())).willReturn(true);
 
@@ -132,7 +130,6 @@ class PublisherServiceTest {
 
         verify(publisherRepository, times(1)).existsByName(createRequest.getName());
         verify(publisherMapper, times(0)).createResponse(any(Publisher.class));
-
     }
 
     @Test
