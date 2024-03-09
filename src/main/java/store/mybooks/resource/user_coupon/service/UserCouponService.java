@@ -168,9 +168,9 @@ public class UserCouponService {
 
     private UserCouponGetResponseForMyPage makeCouponGetResponse(UserCouponGetResponseForMyPageQuerydsl response) {
         Integer discountRateOrCost =
-                response.getIsRate() ? response.getDiscountRate() : response.getDiscountCost();
+                response.isRate() ? response.getDiscountRate() : response.getDiscountCost();
         Integer maxDiscountCost =
-                response.getIsRate() ? response.getMaxDiscountCost() : response.getDiscountCost();
+                response.isRate() ? response.getMaxDiscountCost() : response.getDiscountCost();
 
         String range;
         String target;
@@ -193,7 +193,7 @@ public class UserCouponService {
                 response.getOrderMin(),
                 discountRateOrCost,
                 maxDiscountCost,
-                response.getIsRate(),
+                response.isRate(),
                 response.getStartDate(),
                 response.getEndDate()
         );
@@ -202,9 +202,9 @@ public class UserCouponService {
     private UserCouponGetResponseForOrder makeCouponGetResponseForOrder(
             UserCouponGetResponseForOrderQuerydsl response) {
         Integer discountRateOrCost =
-                response.getIsRate() ? response.getDiscountRate() : response.getDiscountCost();
+                response.isRate() ? response.getDiscountRate() : response.getDiscountCost();
         Integer maxDiscountCost =
-                response.getIsRate() ? response.getMaxDiscountCost() : response.getDiscountCost();
+                response.isRate() ? response.getMaxDiscountCost() : response.getDiscountCost();
 
         return new UserCouponGetResponseForOrder(
                 response.getUserCouponId(),
@@ -212,7 +212,7 @@ public class UserCouponService {
                 response.getOrderMin(),
                 discountRateOrCost,
                 maxDiscountCost,
-                response.getIsRate(),
+                response.isRate(),
                 response.getStartDate(),
                 response.getEndDate()
         );
