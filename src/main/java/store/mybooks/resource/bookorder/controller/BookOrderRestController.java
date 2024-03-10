@@ -1,4 +1,4 @@
-package store.mybooks.resource.book_order.controller;
+package store.mybooks.resource.bookorder.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -6,13 +6,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import store.mybooks.resource.book_order.dto.request.BookOrderAdminModifyRequest;
-import store.mybooks.resource.book_order.dto.request.BookOrderRegisterInvoiceRequest;
-import store.mybooks.resource.book_order.dto.response.BookOrderAdminModifyResponse;
-import store.mybooks.resource.book_order.dto.response.BookOrderAdminResponse;
-import store.mybooks.resource.book_order.dto.response.BookOrderRegisterInvoiceResponse;
-import store.mybooks.resource.book_order.dto.response.BookOrderUserResponse;
-import store.mybooks.resource.book_order.service.BookOrderService;
+import store.mybooks.resource.bookorder.dto.request.BookOrderAdminModifyRequest;
+import store.mybooks.resource.bookorder.dto.request.BookOrderRegisterInvoiceRequest;
+import store.mybooks.resource.bookorder.dto.response.BookOrderAdminModifyResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderAdminResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderRegisterInvoiceResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
+import store.mybooks.resource.bookorder.service.BookOrderService;
 
 /**
  * packageName    : store.mybooks.resource.book_order.controller<br>

@@ -1,4 +1,4 @@
-package store.mybooks.resource.book_order.dto.request;
+package store.mybooks.resource.bookorder.dto.request;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
@@ -23,7 +23,7 @@ public class BookOrderRegisterInvoiceRequest {
     @NotBlank
     @Positive
     private Long id;
-    
+
     @NotBlank
     @Size(min = 10, max = 20)
     private String invoiceNumber;

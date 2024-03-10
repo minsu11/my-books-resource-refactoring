@@ -1,25 +1,21 @@
-package store.mybooks.resource.book_order.dto.response;
+package store.mybooks.resource.bookorder.dto.response;
 
-import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-
 /**
  * packageName    : store.mybooks.resource.book_order.dto.response<br>
- * fileName       : BookOrderModifyOrderStatusResponse<br>
+ * fileName       : BookOrderRegisterInvoiceResponse<br>
  * author         : minsu11<br>
- * date           : 3/2/24<br>
+ * date           : 3/4/24<br>
  * description    :
  * ===========================================================<br>
  * DATE              AUTHOR             NOTE<br>
  * -----------------------------------------------------------<br>
- * 3/2/24        minsu11       최초 생성<br>
+ * 3/4/24        minsu11       최초 생성<br>
  */
 @Getter
 @AllArgsConstructor
-public class BookOrderAdminModifyResponse {
-    private Long id;
-    private String statusId;
-    private LocalDate outDate;
+public class BookOrderRegisterInvoiceResponse {
+    private String invoiceNumber;
 }

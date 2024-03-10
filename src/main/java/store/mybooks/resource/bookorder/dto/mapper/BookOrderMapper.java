@@ -1,11 +1,11 @@
-package store.mybooks.resource.book_order.dto.mapper;
+package store.mybooks.resource.bookorder.dto.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
-import store.mybooks.resource.book_order.dto.response.BookOrderAdminModifyResponse;
-import store.mybooks.resource.book_order.dto.response.BookOrderRegisterInvoiceResponse;
-import store.mybooks.resource.book_order.entity.BookOrder;
+import store.mybooks.resource.bookorder.dto.response.BookOrderAdminModifyResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderRegisterInvoiceResponse;
+import store.mybooks.resource.bookorder.entity.BookOrder;
 
 /**
  * packageName    : store.mybooks.resource.book_order.dto.mapper<br>

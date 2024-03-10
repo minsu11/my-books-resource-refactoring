@@ -1,7 +1,7 @@
-package store.mybooks.resource.book_order.repository;
+package store.mybooks.resource.bookorder.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import store.mybooks.resource.book_order.entity.BookOrder;
+import store.mybooks.resource.bookorder.entity.BookOrder;
 
 /**
  * packageName    : store.mybooks.resource.book_order.repository<br>
