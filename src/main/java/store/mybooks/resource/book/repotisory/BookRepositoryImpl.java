@@ -49,24 +49,16 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     @Override
     public BookDetailResponse getBookDetailInfo(Long id) {
         BookDetailResponse result = from(book)
-                .where(book.id.eq(id))
-                .select(Projections.constructor(BookDetailResponse.class,
-                        book.id, book.name, book.publishDate,
-                        book.saleCost, book.originalCost, book.discountRate, book.isPackaging, book.page, book.isbn,
-                        book.stock, book.index, book.content))
-                .fetchOne();
-
-        result.setBookStatus(from(book)
                 .join(book.bookStatus, bookStatus)
-                .where(book.id.eq(id))
-                .select(Projections.constructor(String.class, bookStatus.id))
-                .fetchOne());
-
-        result.setPublisher(from(book)
                 .join(book.publisher, publisher)
                 .where(book.id.eq(id))
-                .select(Projections.constructor(PublisherGetResponse.class, publisher.id, publisher.name))
-                .fetchOne());
+                .select(Projections.constructor(BookDetailResponse.class,
+                        book.id, book.name, Projections.constructor(String.class, bookStatus.id),
+                        Projections.constructor(PublisherGetResponse.class, publisher.id, publisher.name),
+                        book.publishDate, book.saleCost, book.originalCost, book.discountRate, book.isPackaging,
+                        book.page, book.isbn, book.stock, book.index, book.content))
+                .fetchOne();
+
 
         result.setAuthorList(from(bookAuthor)
                 .join(bookAuthor.author, author)
@@ -80,6 +72,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .where(bookTag.book.id.eq(id))
                 .select(Projections.constructor(TagGetResponseForBookDetail.class, tag.id, tag.name))
                 .fetch());
+
         return result;
     }
 
