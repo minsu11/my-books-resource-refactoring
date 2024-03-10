@@ -48,32 +48,45 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
 
     @Override
     public BookDetailResponse getBookDetailInfo(Long id) {
-        BookDetailResponse result = from(book)
+        Book result = from(book)
                 .join(book.bookStatus, bookStatus)
                 .join(book.publisher, publisher)
                 .where(book.id.eq(id))
-                .select(Projections.constructor(BookDetailResponse.class,
-                        book.id, book.name, Projections.constructor(String.class, bookStatus.id),
-                        Projections.constructor(PublisherGetResponse.class, publisher.id, publisher.name),
-                        book.publishDate, book.saleCost, book.originalCost, book.discountRate, book.isPackaging,
-                        book.page, book.isbn, book.stock, book.index, book.content))
                 .fetchOne();
 
 
-        result.setAuthorList(from(bookAuthor)
+        List<AuthorGetResponse> authorList = from(bookAuthor)
                 .join(bookAuthor.author, author)
                 .where(bookAuthor.book.id.eq(id))
                 .select(Projections.constructor(AuthorGetResponse.class, author.id, author.name, author.content))
-                .fetch());
+                .fetch();
 
 
-        result.setTagList(from(bookTag)
+        List<TagGetResponseForBookDetail> tagList = from(bookTag)
                 .join(bookTag.tag, tag)
                 .where(bookTag.book.id.eq(id))
                 .select(Projections.constructor(TagGetResponseForBookDetail.class, tag.id, tag.name))
-                .fetch());
+                .fetch();
 
-        return result;
+        return BookDetailResponse.builder()
+                .id(result.getId())
+                .name(result.getName())
+                .bookStatus(result.getBookStatus().getId())
+                .publisher(new PublisherGetResponse(result.getPublisher().getId(),
+                        result.getPublisher().getName()))
+                .publishDate(result.getPublishDate())
+                .saleCost(result.getSaleCost())
+                .originalCost(result.getOriginalCost())
+                .disCountRate(result.getDiscountRate())
+                .isPacking(result.getIsPackaging())
+                .page(result.getPage())
+                .isbn(result.getIsbn())
+                .stock(result.getStock())
+                .index(result.getIndex())
+                .content(result.getContent())
+                .authorList(authorList)
+                .tagList(tagList)
+                .build();
     }
 
     @Override
