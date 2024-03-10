@@ -1,8 +1,9 @@
-package store.mybooks.resource.book_order.entity;
+package store.mybooks.resource.bookorder.entity;
 
 import java.time.LocalDate;
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -27,6 +28,7 @@ import store.mybooks.resource.wrap.entity.Wrap;
 
 @Getter
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "book_order")
@@ -100,28 +102,6 @@ public class BookOrder {
     @JoinColumn(name = "wrap_id")
     private Wrap wrap;
 
-    public BookOrder(Long id, String invoiceNumber, String receiverName, String receiverAddress,
-                     String receiverPhoneNumber, String receiverMessage, Integer totalCost, Integer pointCost, Integer couponCost, Boolean isCouponUsed,
-                     String number, String findPassword, User user, OrdersStatus orderStatus, DeliveryRule deliveryRule, UserCoupon userCoupon, Wrap wrap) {
-        this.id = id;
-        this.outDate = null;
-        this.invoiceNumber = invoiceNumber;
-        this.receiverName = receiverName;
-        this.receiverAddress = receiverAddress;
-        this.receiverPhoneNumber = receiverPhoneNumber;
-        this.receiverMessage = receiverMessage;
-        this.totalCost = totalCost;
-        this.pointCost = pointCost;
-        this.couponCost = couponCost;
-        this.isCouponUsed = isCouponUsed;
-        this.number = number;
-        this.findPassword = findPassword;
-        this.user = user;
-        this.orderStatus = orderStatus;
-        this.deliveryRule = deliveryRule;
-        this.userCoupon = userCoupon;
-        this.wrap = wrap;
-    }
 
     public void modifyBookOrderAdmin(OrdersStatus ordersStatus) {
         this.orderStatus = ordersStatus;

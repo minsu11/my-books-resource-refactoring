@@ -1,10 +1,10 @@
-package store.mybooks.resource.book_order.repository;
+package store.mybooks.resource.bookorder.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
-import store.mybooks.resource.book_order.dto.response.BookOrderAdminResponse;
-import store.mybooks.resource.book_order.dto.response.BookOrderUserResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderAdminResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
 
 /**
  * packageName    : store.mybooks.resource.book_order.repository<br>

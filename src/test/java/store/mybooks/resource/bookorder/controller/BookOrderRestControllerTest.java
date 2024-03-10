@@ -1,4 +1,4 @@
-package store.mybooks.resource.book_order.controller;
+package store.mybooks.resource.bookorder.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -20,8 +20,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import store.mybooks.resource.book_order.dto.response.BookOrderUserResponse;
-import store.mybooks.resource.book_order.service.BookOrderService;
+import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
+import store.mybooks.resource.bookorder.service.BookOrderService;
 
 /**
  * packageName    : store.mybooks.resource.book_order.controller<br>
