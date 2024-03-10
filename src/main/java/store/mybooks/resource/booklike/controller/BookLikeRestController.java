@@ -50,6 +50,23 @@ public class BookLikeRestController {
     }
 
     /**
+     * methodName : isUserBookLike
+     * author : newjaehun
+     * description : 사용자의 특정도서 좋아요 유무.
+     *
+     * @param userId Long
+     * @param bookId Long
+     * @return response entity
+     */
+    @GetMapping("/{bookId}")
+    public ResponseEntity<Boolean> isUserBookLike(@RequestHeader(name = HeaderProperties.USER_ID) Long userId,
+                                                  @PathVariable("bookId") Long bookId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookLikeService.isUserBookLike(userId, bookId));
+    }
+
+    /**
      * methodName : updateUserBookLike
      * author : newjaehun
      * description : 사용자가 도서좋아요 및 취소 기능.

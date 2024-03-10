@@ -74,4 +74,24 @@ public class BookLikeService {
         }
 
     }
+
+    /**
+     * methodName : isUserBookLike
+     * author : newjaehun
+     * description : 사용자의 특정도서 좋아요 유무.
+     *
+     * @param userId Long
+     * @param bookId Long
+     * @return boolean
+     */
+    public Boolean isUserBookLike(Long userId, Long bookId) {
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotExistException(userId);
+        }
+        if (!bookRepository.existsById(bookId)) {
+            throw new BookNotExistException(bookId);
+        }
+        BookLike.Pk pk = new BookLike.Pk(userId, bookId);
+        return bookLikeRepository.existsById(pk);
+    }
 }
