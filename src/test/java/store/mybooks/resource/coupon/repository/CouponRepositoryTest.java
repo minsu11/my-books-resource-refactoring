@@ -56,7 +56,7 @@ class CouponRepositoryTest {
                 .publishDate(LocalDate.of(2024, 1, 1))
                 .page(100)
                 .index("인덱스")
-                .content("내용")
+                .explanation("내용")
                 .originalCost(20000)
                 .saleCost(16000)
                 .discountRate(20)
