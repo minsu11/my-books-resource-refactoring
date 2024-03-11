@@ -1,6 +1,8 @@
 package store.mybooks.resource.delivery_rule.controller;
 
+import java.util.List;
 import javax.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -14,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.delivery_rule.dto.request.DeliveryRuleModifyRequest;
 import store.mybooks.resource.delivery_rule.dto.request.DeliveryRuleRegisterRequest;
-import store.mybooks.resource.delivery_rule.dto.response.DeliveryRuleDto;
 import store.mybooks.resource.delivery_rule.dto.response.DeliveryRuleResponse;
 import store.mybooks.resource.delivery_rule.service.DeliveryRuleService;
 import store.mybooks.resource.error.RequestValidationFailedException;
@@ -31,17 +32,17 @@ import store.mybooks.resource.error.RequestValidationFailedException;
  * 2/16/24        Fiat_lux       최초 생성<br>
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/delivery-rules")
 public class DeliveryRuleController {
+
     private final DeliveryRuleService deliveryRuleService;
 
-    /**
-     * Instantiates a new Delivery rule controller.
-     *
-     * @param deliveryRuleService the delivery rule service
-     */
-    public DeliveryRuleController(DeliveryRuleService deliveryRuleService) {
-        this.deliveryRuleService = deliveryRuleService;
+
+    @GetMapping
+    public ResponseEntity<List<DeliveryRuleResponse>> getDeliveryRuleList() {
+        List<DeliveryRuleResponse> deliveryRuleList = deliveryRuleService.getDeliveryRuleList();
+        return ResponseEntity.ok().body(deliveryRuleList);
     }
 
     /**
@@ -54,9 +55,9 @@ public class DeliveryRuleController {
      * @return the delivery rule
      */
     @GetMapping("/{deliveryRuleId}")
-    public ResponseEntity<DeliveryRuleDto> getDeliveryRule(
+    public ResponseEntity<DeliveryRuleResponse> getDeliveryRule(
             @PathVariable("deliveryRuleId") Integer deliveryRuleId) {
-        DeliveryRuleDto deliveryRule = deliveryRuleService.getDeliveryRule(deliveryRuleId);
+        DeliveryRuleResponse deliveryRule = deliveryRuleService.getDeliveryRule(deliveryRuleId);
 
         return ResponseEntity.ok().body(deliveryRule);
     }
@@ -92,22 +93,22 @@ public class DeliveryRuleController {
      * {@code modifyRequest}가 유효성 검사에 어긋난 경우 {@code DeliveryRuleValidationFailedException} 던짐<br>
      * <br>
      *
-     * @param deliveryRuleId            the delivery rule id
      * @param deliveryRuleModifyRequest the delivery rule modify request
      * @param bindingResult             유효성 검사 실패 시 에러의 정보가 담김
      * @return the response entity
      * @throws RequestValidationFailedException {@code request} 가 유효성 검사 실패 시 발생<br>
      */
-    @PutMapping("/{deliveryRuleId}")
+    @PutMapping("/modify")
     public ResponseEntity<DeliveryRuleResponse> modifyDeliveryRule(
-            @PathVariable("deliveryRuleId") Integer deliveryRuleId,
             @Valid @RequestBody DeliveryRuleModifyRequest deliveryRuleModifyRequest,
             BindingResult bindingResult) {
+        System.out.println("jiojijijijojoijpjiojiopop;ji");
         if (bindingResult.hasErrors()) {
             throw new RequestValidationFailedException(bindingResult);
         }
+        System.out.println("qwer:");
         DeliveryRuleResponse deliveryRuleResponse =
-                deliveryRuleService.modifyDeliveryRule(deliveryRuleId, deliveryRuleModifyRequest);
+                deliveryRuleService.modifyDeliveryRule(deliveryRuleModifyRequest);
 
         return ResponseEntity.status(HttpStatus.OK).body(deliveryRuleResponse);
     }
