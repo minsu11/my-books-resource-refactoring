@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -31,8 +32,10 @@ import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForBookCreate;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForQuerydsl;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
+import store.mybooks.resource.category.dto.response.CategoryIdNameGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 import store.mybooks.resource.category.entity.Category;
 import store.mybooks.resource.category.exception.CannotDeleteParentCategoryException;
@@ -165,6 +168,48 @@ class CategoryServiceTest {
                         .concat(secondCategory.getName()).concat("/")
                         .concat(thirdCategory.getName()));
         verify(categoryRepository, times(1)).findAllByOrderByParentCategory_Id();
+    }
+
+    @Test
+    @DisplayName("도서 상세페이지에서 보여줄 카테고리 이름 조회")
+    void givenBookId_whenGetCategoryNameForBookView_thenReturnListOfCategoryIdNameGetResponse() {
+        List<CategoryGetResponseForQuerydsl> categoryNameGetResponseList = new ArrayList<>();
+        CategoryGetResponseForQuerydsl levelOneCategory = new CategoryGetResponseForQuerydsl(
+                1,
+                null,
+                null,
+                "IT"
+        );
+
+        CategoryGetResponseForQuerydsl levelTwoCategory = new CategoryGetResponseForQuerydsl(
+                22,
+                null,
+                "경제경영",
+                "경제"
+        );
+
+        CategoryGetResponseForQuerydsl levelThreeCategory = new CategoryGetResponseForQuerydsl(
+                33,
+                "문학 소설",
+                "소설",
+                "로맨스"
+        );
+        categoryNameGetResponseList.add(levelOneCategory);
+        categoryNameGetResponseList.add(levelTwoCategory);
+        categoryNameGetResponseList.add(levelThreeCategory);
+        when(categoryRepository.findFullCategoryForBookViewByBookId(1L)).thenReturn(categoryNameGetResponseList);
+
+        List<CategoryIdNameGetResponse> actualList = categoryService.getCategoryNameForBookView(1L);
+        assertThat(actualList).isNotNull().hasSize(3);
+        assertThat(actualList.get(0).getId()).isEqualTo(levelOneCategory.getId());
+        assertThat(actualList.get(0).getName()).isEqualTo(levelOneCategory.getName3());
+        assertThat(actualList.get(1).getId()).isEqualTo(levelTwoCategory.getId());
+        assertThat(actualList.get(1).getName()).isEqualTo(
+                levelTwoCategory.getName2() + "/" + levelTwoCategory.getName3());
+        assertThat(actualList.get(2).getId()).isEqualTo(levelThreeCategory.getId());
+        assertThat(actualList.get(2).getName()).isEqualTo(
+                levelThreeCategory.getName1() + "/" + levelThreeCategory.getName2() + "/" +
+                        levelThreeCategory.getName3());
     }
 
     @Test
