@@ -67,7 +67,7 @@ class BookCategoryRestControllerTest {
     }
 
     @Test
-    @DisplayName("createBookCategory 테스트")
+    @DisplayName("Book-Category 등록 테스트")
     void givenBookCategoryCreateRequest_whenCreateBookCategory_thenReturnCreatedStatusCode() throws Exception {
         List<Integer> categoryIdList = new ArrayList<>();
         categoryIdList.add(1);
@@ -86,6 +86,52 @@ class BookCategoryRestControllerTest {
                                 fieldWithPath("categoryIdList").description("카테고리 ID 리스트")
                         )));
         verify(bookCategoryService, times(1)).createBookCategory(any());
+    }
+
+    @Test
+    @DisplayName("Book-Category 등록 테스트 실패 - Validation")
+    void givenInvalidBookCategoryCreateRequest_whenCreateBookCategory_thenThrowRequestValidationFailedException()
+            throws Exception {
+        List<Integer> categoryIdList = new ArrayList<>();
+        categoryIdList.add(1);
+        BookCategoryCreateRequest bookCategoryCreateRequestCategoryListIsNull =
+                new BookCategoryCreateRequest(1L, null);
+        BookCategoryCreateRequest bookCategoryCreateRequestCategoryListIsEmpty =
+                new BookCategoryCreateRequest(2L, new ArrayList<>());
+        BookCategoryCreateRequest bookCategoryCreateRequestBookIdIsNull =
+                new BookCategoryCreateRequest(null, categoryIdList);
+        BookCategoryCreateRequest bookCategoryCreateRequestBookIdIsZero =
+                new BookCategoryCreateRequest(0L, categoryIdList);
+        BookCategoryCreateRequest bookCategoryCreateRequestBookIdIsNegative =
+                new BookCategoryCreateRequest(-1L, categoryIdList);
+        String contentCategoryListIsNull = objectMapper.writeValueAsString(bookCategoryCreateRequestCategoryListIsNull);
+        String contentCategoryListIsEmpty =
+                objectMapper.writeValueAsString(bookCategoryCreateRequestCategoryListIsEmpty);
+        String contentBookIdIsNull = objectMapper.writeValueAsString(bookCategoryCreateRequestBookIdIsNull);
+        String contentBookIdIsZero = objectMapper.writeValueAsString(bookCategoryCreateRequestBookIdIsZero);
+        String contentBookIdIsNegative = objectMapper.writeValueAsString(bookCategoryCreateRequestBookIdIsNegative);
+
+        mockMvc.perform(post("/api/book-category")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(contentCategoryListIsNull))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(post("/api/book-category")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(contentCategoryListIsEmpty))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(post("/api/book-category")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(contentBookIdIsNull))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(post("/api/book-category")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(contentBookIdIsZero))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(post("/api/book-category")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(contentBookIdIsNegative))
+                .andExpect(status().isBadRequest());
+
     }
 
     @Test
