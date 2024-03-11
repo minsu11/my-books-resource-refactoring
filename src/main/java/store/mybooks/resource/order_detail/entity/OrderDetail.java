@@ -17,7 +17,7 @@ import lombok.Setter;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.bookorder.entity.BookOrder;
 import store.mybooks.resource.order_detail_status.entity.OrderDetailStatus;
-import store.mybooks.resource.user_coupon.entity.UserCoupon;
+import store.mybooks.resource.usercoupon.entity.UserCoupon;
 
 /**
  * packageName    : store.mybooks.resource.order_detail.entity

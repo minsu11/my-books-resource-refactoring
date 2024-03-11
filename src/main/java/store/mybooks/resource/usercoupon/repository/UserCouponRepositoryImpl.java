@@ -1,4 +1,4 @@
-package store.mybooks.resource.user_coupon.repository;
+package store.mybooks.resource.usercoupon.repository;
 
 import com.querydsl.core.types.Projections;
 import java.time.LocalDate;
@@ -15,10 +15,10 @@ import store.mybooks.resource.book.entity.QBook;
 import store.mybooks.resource.bookcategory.entity.QBookCategory;
 import store.mybooks.resource.category.entity.QCategory;
 import store.mybooks.resource.coupon.entity.QCoupon;
-import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForMyPageQuerydsl;
-import store.mybooks.resource.user_coupon.dto.response.UserCouponGetResponseForOrderQuerydsl;
-import store.mybooks.resource.user_coupon.entity.QUserCoupon;
-import store.mybooks.resource.user_coupon.entity.UserCoupon;
+import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForMyPageQuerydsl;
+import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForOrderQuerydsl;
+import store.mybooks.resource.usercoupon.entity.QUserCoupon;
+import store.mybooks.resource.usercoupon.entity.UserCoupon;
 
 /**
  * packageName    : store.mybooks.resource.user_coupon.repository
@@ -53,6 +53,8 @@ public class UserCouponRepositoryImpl extends QuerydslRepositorySupport implemen
                         .leftJoin(category)
                         .on(coupon.category.id.eq(category.id))
                         .where(userCoupon.user.id.eq(userId))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
                         .select(Projections.constructor(UserCouponGetResponseForMyPageQuerydsl.class,
                                 userCoupon.id,
                                 coupon.name,
@@ -152,6 +154,8 @@ public class UserCouponRepositoryImpl extends QuerydslRepositorySupport implemen
                 .on(userCoupon.coupon.id.eq(coupon.id))
                 .where(userCoupon.user.id.eq(userId))
                 .where(userCoupon.isUsed.isFalse())
+                .where(coupon.book.isNull())
+                .where(coupon.category.isNull())
                 .where(coupon.startDate.loe(LocalDate.now()))
                 .where(coupon.endDate.goe(LocalDate.now()))
                 .select(Projections.constructor(UserCouponGetResponseForOrderQuerydsl.class,
