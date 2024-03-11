@@ -63,8 +63,8 @@ public class Book {
     @Column(name = "book_index")
     private String index;
 
-    @Column(name = "book_content")
-    private String content;
+    @Column(name = "book_explanation")
+    private String explanation;
 
     @Column(name = "book_original_cost")
     private Integer originalCost;

@@ -83,7 +83,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .isbn(result.getIsbn())
                 .stock(result.getStock())
                 .index(result.getIndex())
-                .content(result.getContent())
+                .explanation(result.getExplanation())
                 .authorList(authorList)
                 .tagList(tagList)
                 .build();
