@@ -70,7 +70,7 @@ public class BookDetailResponse {
 
     private String index;
 
-    private String content;
+    private String explanation;
 
 //    private String bookContentImage;
 
