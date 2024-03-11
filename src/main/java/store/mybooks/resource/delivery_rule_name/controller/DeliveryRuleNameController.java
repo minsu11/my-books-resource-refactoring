@@ -1,5 +1,6 @@
 package store.mybooks.resource.delivery_rule_name.controller;
 
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,12 @@ import store.mybooks.resource.error.RequestValidationFailedException;
 public class DeliveryRuleNameController {
 
     private final DeliveryRuleNameService deliveryNameRuleService;
+
+    @GetMapping
+    public ResponseEntity<List<DeliveryRuleNameResponse>> getDeliveryNameRuleList() {
+        List<DeliveryRuleNameResponse> deliveryNameRuleList = deliveryNameRuleService.getDeliveryNameRuleList();
+        return ResponseEntity.ok().body(deliveryNameRuleList);
+    }
 
     /**
      * methodName : getDeliveryNameRule<br>
