@@ -1,4 +1,4 @@
-package store.mybooks.resource.user_coupon.exception;
+package store.mybooks.resource.usercoupon.exception;
 
 /**
  * packageName    : store.mybooks.resource.user_coupon.exception
