@@ -1,6 +1,7 @@
 package store.mybooks.resource.delivery_rule_name.dto.response;
 
 import java.time.LocalDate;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,6 +20,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
 public class DeliveryRuleNameResponse {
     private String id;

@@ -27,7 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.repotisory.BookRepository;
-import store.mybooks.resource.book_status.entity.BookStatus;
+import store.mybooks.resource.bookstatus.entity.BookStatus;
 import store.mybooks.resource.category.entity.Category;
 import store.mybooks.resource.category.repository.CategoryRepository;
 import store.mybooks.resource.coupon.dto.request.CouponCreateRequest;
@@ -40,7 +40,7 @@ import store.mybooks.resource.coupon.exception.CouponNotExistsException;
 import store.mybooks.resource.coupon.exception.OrderMinLessThanDiscountCostException;
 import store.mybooks.resource.coupon.repository.CouponRepository;
 import store.mybooks.resource.publisher.entity.Publisher;
-import store.mybooks.resource.user_coupon.repository.UserCouponRepository;
+import store.mybooks.resource.usercoupon.repository.UserCouponRepository;
 
 /**
  * packageName    : store.mybooks.resource.coupon.service

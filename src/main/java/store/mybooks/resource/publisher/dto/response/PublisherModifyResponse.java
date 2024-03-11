@@ -1,6 +1,5 @@
 package store.mybooks.resource.publisher.dto.response;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 

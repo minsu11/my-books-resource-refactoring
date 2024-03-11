@@ -3,6 +3,7 @@ package store.mybooks.resource.book.dto.response;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,6 +24,7 @@ import store.mybooks.resource.tag.dto.response.TagGetResponseForBookDetail;
  * 2/24/24        newjaehun       최초 생성<br/>
  */
 
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
@@ -73,22 +75,5 @@ public class BookDetailResponse {
 //    private String bookContentImage;
 
 //    private List<ReviewDetailResponse> review;
-
-    public BookDetailResponse(Long id, String name, LocalDate publishDate, Integer saleCost,
-                              Integer originalCost, Integer disCountRate, Boolean isPacking, Integer page, String isbn,
-                              Integer stock, String index, String content) {
-        this.id = id;
-        this.name = name;
-        this.publishDate = publishDate;
-        this.saleCost = saleCost;
-        this.originalCost = originalCost;
-        this.disCountRate = disCountRate;
-        this.isPacking = isPacking;
-        this.page = page;
-        this.isbn = isbn;
-        this.stock = stock;
-        this.index = index;
-        this.content = content;
-    }
 }
 

@@ -23,16 +23,16 @@ import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.exception.IsbnAlreadyExistsException;
 import store.mybooks.resource.book.mapper.BookMapper;
 import store.mybooks.resource.book.repotisory.BookRepository;
-import store.mybooks.resource.book_author.dto.request.BookAuthorCreateRequest;
-import store.mybooks.resource.book_author.service.BookAuthorService;
-import store.mybooks.resource.book_category.dto.request.BookCategoryCreateRequest;
-import store.mybooks.resource.book_category.service.BookCategoryService;
-import store.mybooks.resource.book_like.repository.BookLikeRepository;
-import store.mybooks.resource.book_status.entity.BookStatus;
-import store.mybooks.resource.book_status.exception.BookStatusNotExistException;
-import store.mybooks.resource.book_status.respository.BookStatusRepository;
-import store.mybooks.resource.book_tag.dto.request.BookTagCreateRequest;
-import store.mybooks.resource.book_tag.service.BookTagService;
+import store.mybooks.resource.bookauthor.dto.request.BookAuthorCreateRequest;
+import store.mybooks.resource.bookauthor.service.BookAuthorService;
+import store.mybooks.resource.bookcategory.dto.request.BookCategoryCreateRequest;
+import store.mybooks.resource.bookcategory.service.BookCategoryService;
+import store.mybooks.resource.booklike.repository.BookLikeRepository;
+import store.mybooks.resource.bookstatus.entity.BookStatus;
+import store.mybooks.resource.bookstatus.exception.BookStatusNotExistException;
+import store.mybooks.resource.bookstatus.respository.BookStatusRepository;
+import store.mybooks.resource.booktag.dto.request.BookTagCreateRequest;
+import store.mybooks.resource.booktag.service.BookTagService;
 import store.mybooks.resource.category.service.CategoryService;
 import store.mybooks.resource.image.dto.response.ImageRegisterResponse;
 import store.mybooks.resource.image.entity.Image;
@@ -160,13 +160,22 @@ public class BookService {
             throw new IsbnAlreadyExistsException(createRequest.getIsbn());
         }
 
-        Book book =
-                new Book(bookStatus, publisher, createRequest.getName(), createRequest.getIsbn(),
-                        createRequest.getPublishDate(), createRequest.getPage(),
-                        createRequest.getIndex(), createRequest.getContent(), createRequest.getOriginalCost(),
-                        createRequest.getSaleCost(), createRequest.getOriginalCost() / createRequest.getSaleCost(),
-                        createRequest.getStock(),
-                        createRequest.getIsPacking());
+        Book book = Book.builder()
+                .bookStatus(bookStatus)
+                .publisher(publisher)
+                .name(createRequest.getName())
+                .isbn(createRequest.getIsbn())
+                .publishDate(createRequest.getPublishDate())
+                .page(createRequest.getPage())
+                .index(createRequest.getIndex())
+                .content(createRequest.getContent())
+                .originalCost(createRequest.getOriginalCost())
+                .saleCost(createRequest.getSaleCost())
+                .discountRate(createRequest.getOriginalCost() / createRequest.getSaleCost())
+                .stock(createRequest.getStock())
+                .isPackaging(createRequest.getIsPacking())
+                .build();
+
         Book newBook = bookRepository.save(book);
         Long bookId = newBook.getId();
         bookAuthorService.createBookAuthor(new BookAuthorCreateRequest(bookId, createRequest.getAuthorList()));
@@ -185,7 +194,6 @@ public class BookService {
         for (MultipartFile file : content) {
             imageRegisterResponseList.add(imageService.saveImage(contentEnum, null, book, file));
         }
-        //TODO bookResponse dto에 이미지 값들도 넣어야한다
         return bookMapper.createResponse(newBook);
     }
 
@@ -240,7 +248,7 @@ public class BookService {
         return new BookCartResponse(book.getId(), book.getName(), url, book.getSaleCost());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<BookGetResponseForCoupon> getBookForCoupon() {
         return bookRepository.getBookForCoupon();
     }

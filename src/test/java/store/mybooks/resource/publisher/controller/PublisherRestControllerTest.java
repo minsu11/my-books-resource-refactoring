@@ -52,7 +52,7 @@ import store.mybooks.resource.publisher.service.PublisherService;
  */
 @WebMvcTest(value = PublisherRestController.class)
 @ExtendWith(MockitoExtension.class)
-public class PublisherRestControllerTest {
+class PublisherRestControllerTest {
     @Autowired
     private MockMvc mockMvc;
 

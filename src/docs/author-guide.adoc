@@ -59,7 +59,3 @@ include::{snippets}/author-delete/http-response.adoc[]
 ==== PathParameters
 
 include::{snippets}/author-delete/path-parameters.adoc[]
-
-==== ResponseFields
-
-include::{snippets}/author-delete/response-fields.adoc[]
