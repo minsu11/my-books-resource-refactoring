@@ -193,7 +193,6 @@ public class UserRestController {
      */
     @PostMapping("/verification")
     public ResponseEntity<UserEncryptedPasswordResponse> verifyUserStatus(@RequestBody UserEmailRequest request) {
-        System.out.println("!!!!");
         UserEncryptedPasswordResponse userEncryptedPasswordResponse = userService.verifyUserStatusByEmail(request);
         return new ResponseEntity<>(userEncryptedPasswordResponse, HttpStatus.OK);
     }
@@ -202,6 +201,23 @@ public class UserRestController {
     public ResponseEntity<UserLoginResponse> completeLoginProcess(@RequestBody UserEmailRequest request) {
         UserLoginResponse userLoginResponse = userService.completeLoginProcess(request);
         return new ResponseEntity<>(userLoginResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/verification/dormancy")
+    public ResponseEntity<UserInactiveVerificationResponse> dormancyUserVerification(
+            @RequestHeader(name = HeaderProperties.USER_ID) Long id) {
+
+        UserInactiveVerificationResponse response = userService.verifyDormancyUser(id);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/verification/lock")
+    public ResponseEntity<UserInactiveVerificationResponse> lockUserVerification(
+            @RequestHeader(name = HeaderProperties.USER_ID) Long id,@RequestBody UserPasswordModifyRequest request) {
+
+        System.out.println(request.getPassword());
+        UserInactiveVerificationResponse response = userService.verifyLockUser(id,request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }
