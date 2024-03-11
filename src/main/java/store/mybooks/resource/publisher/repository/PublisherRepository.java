@@ -15,5 +15,5 @@ import store.mybooks.resource.publisher.entity.Publisher;
  * 2/14/24        newjaehun       최초 생성
  */
 public interface PublisherRepository extends JpaRepository<Publisher, Integer>, PublisherRepositoryCustom {
-    Boolean existsByName(String name);
+    boolean existsByName(String name);
 }

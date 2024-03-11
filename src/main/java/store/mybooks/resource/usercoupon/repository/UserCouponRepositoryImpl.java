@@ -12,7 +12,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import store.mybooks.resource.book.entity.QBook;
-import store.mybooks.resource.book_category.entity.QBookCategory;
+import store.mybooks.resource.bookcategory.entity.QBookCategory;
 import store.mybooks.resource.category.entity.QCategory;
 import store.mybooks.resource.coupon.entity.QCoupon;
 import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForMyPageQuerydsl;
