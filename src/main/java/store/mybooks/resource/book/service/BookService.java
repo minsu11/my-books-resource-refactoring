@@ -248,7 +248,7 @@ public class BookService {
         return new BookCartResponse(book.getId(), book.getName(), url, book.getSaleCost());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<BookGetResponseForCoupon> getBookForCoupon() {
         return bookRepository.getBookForCoupon();
     }
