@@ -19,3 +19,4 @@ import lombok.Getter;
 public class PointResponse {
     private Integer remainingPoint;
 }
+
