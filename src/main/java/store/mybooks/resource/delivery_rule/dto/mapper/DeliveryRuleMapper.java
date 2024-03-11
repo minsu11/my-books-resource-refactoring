@@ -1,6 +1,7 @@
 package store.mybooks.resource.delivery_rule.dto.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import store.mybooks.resource.delivery_rule.dto.response.DeliveryRuleResponse;
 import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
@@ -24,5 +25,6 @@ public interface DeliveryRuleMapper {
      * @param deliveryRule the delivery rule
      * @return the delivery rule response
      */
+    @Mapping(target = "deliveryRuleNameId", source = "deliveryRuleName.id")
     DeliveryRuleResponse mapToResponse(DeliveryRule deliveryRule);
 }
