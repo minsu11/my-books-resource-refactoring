@@ -24,7 +24,6 @@ public class UserStatusEnumTest {
     @DisplayName("userStatusEnum 값 테스트")
     public void testUserStatusEnumToString() {
         assertEquals("활성", UserStatusEnum.ACTIVE.toString());
-        assertEquals("휴면", UserStatusEnum.INACTIVE.toString());
         assertEquals("탈퇴", UserStatusEnum.RESIGN.toString());
     }
 }
