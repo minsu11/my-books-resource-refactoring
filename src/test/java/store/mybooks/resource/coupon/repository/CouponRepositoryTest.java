@@ -14,7 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import store.mybooks.resource.book.entity.Book;
-import store.mybooks.resource.book_status.entity.BookStatus;
+import store.mybooks.resource.bookstatus.entity.BookStatus;
 import store.mybooks.resource.coupon.dto.response.CouponGetResponseForQuerydsl;
 import store.mybooks.resource.coupon.entity.Coupon;
 import store.mybooks.resource.publisher.entity.Publisher;
@@ -48,9 +48,21 @@ class CouponRepositoryTest {
         Publisher publisher = new Publisher("출판사");
         testEntityManager.persist(bookStatus);
         testEntityManager.persist(publisher);
-        Book book =
-                new Book(bookStatus, publisher, "도서", "1234567898764", LocalDate.of(2024, 1, 1), 100, "인덱스",
-                        "내용", 20000, 16000, 20, 5, true);
+        Book book = Book.builder()
+                .bookStatus(bookStatus)
+                .publisher(publisher)
+                .name("도서")
+                .isbn("1234567898764")
+                .publishDate(LocalDate.of(2024, 1, 1))
+                .page(100)
+                .index("인덱스")
+                .content("내용")
+                .originalCost(20000)
+                .saleCost(16000)
+                .discountRate(20)
+                .stock(5)
+                .isPackaging(true)
+                .build();
         testEntityManager.persist(book);
         bookCoupon = new Coupon(
                 "bookCoupon",
