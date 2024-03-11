@@ -168,7 +168,7 @@ public class BookService {
                 .publishDate(createRequest.getPublishDate())
                 .page(createRequest.getPage())
                 .index(createRequest.getIndex())
-                .content(createRequest.getContent())
+                .explanation(createRequest.getExplanation())
                 .originalCost(createRequest.getOriginalCost())
                 .saleCost(createRequest.getSaleCost())
                 .discountRate(createRequest.getOriginalCost() / createRequest.getSaleCost())
