@@ -102,11 +102,9 @@ public class DeliveryRuleController {
     public ResponseEntity<DeliveryRuleResponse> modifyDeliveryRule(
             @Valid @RequestBody DeliveryRuleModifyRequest deliveryRuleModifyRequest,
             BindingResult bindingResult) {
-        System.out.println("jiojijijijojoijpjiojiopop;ji");
         if (bindingResult.hasErrors()) {
             throw new RequestValidationFailedException(bindingResult);
         }
-        System.out.println("qwer:");
         DeliveryRuleResponse deliveryRuleResponse =
                 deliveryRuleService.modifyDeliveryRule(deliveryRuleModifyRequest);
 
@@ -123,8 +121,9 @@ public class DeliveryRuleController {
      */
     @DeleteMapping("/{deliveryRuleId}")
     public ResponseEntity<Void> deleteDeliveryRule(@PathVariable("deliveryRuleId") Integer deliveryRuleId) {
+        System.out.println("hihi");
         deliveryRuleService.deleteDeliveryRule(deliveryRuleId);
-
+        System.out.println("byby");
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
