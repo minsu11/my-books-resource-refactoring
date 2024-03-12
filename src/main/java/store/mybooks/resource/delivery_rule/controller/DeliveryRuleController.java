@@ -39,6 +39,11 @@ public class DeliveryRuleController {
     private final DeliveryRuleService deliveryRuleService;
 
 
+    /**
+     * Gets delivery rule list.
+     *
+     * @return the delivery rule list
+     */
     @GetMapping
     public ResponseEntity<List<DeliveryRuleResponse>> getDeliveryRuleList() {
         List<DeliveryRuleResponse> deliveryRuleList = deliveryRuleService.getDeliveryRuleList();

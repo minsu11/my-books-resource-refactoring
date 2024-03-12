@@ -62,6 +62,11 @@ public class DeliveryRuleService {
 
     }
 
+    /**
+     * Gets delivery rule list.
+     *
+     * @return the delivery rule list
+     */
     public List<DeliveryRuleResponse> getDeliveryRuleList() {
         return deliveryRuleRepository.getDeliveryRuleList();
     }
