@@ -122,10 +122,10 @@ public class DeliveryRuleService {
      */
     @Transactional
     public void deleteDeliveryRule(Integer id) {
-        if (deliveryRuleRepository.existsById(id)) {
-            deliveryRuleRepository.deleteById(id);
-        } else {
-            throw new DeliveryRuleNotExistsException("배송 규칙이 존재하지 않습니다");
+        DeliveryRule deliveryRule = deliveryRuleRepository.findById(id)
+                .orElseThrow(() -> new DeliveryRuleNotExistsException("배송 규칙이 존재하지 않습니다."));
+        if (deliveryRule.getIsAvailable() == 1) {
+            deliveryRule.setIsAvailable(0);
         }
     }
 
