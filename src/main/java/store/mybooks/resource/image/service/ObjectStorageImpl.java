@@ -31,6 +31,7 @@ import store.mybooks.resource.image.entity.Image;
 import store.mybooks.resource.image.exception.ImageNotExistsException;
 import store.mybooks.resource.image.repository.ImageRepository;
 import store.mybooks.resource.image_status.entity.ImageStatus;
+import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
 import store.mybooks.resource.review.entity.Review;
 
 
@@ -117,6 +118,13 @@ public class ObjectStorageImpl implements ImageService {
         String url = image.getPath() + image.getFileName() + image.getExtension();
 
         return new ImageGetResponse(url);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Image getThumbNailImage(Long id) {
+        return imageRepository.findImageByBook_IdAndImageStatus_Id(id, ImageStatusEnum.THUMBNAIL.getName())
+                .orElseThrow(() -> new ImageNotExistsException("해당하는 id의 이미지가 없습니다"));
     }
 
     @Override

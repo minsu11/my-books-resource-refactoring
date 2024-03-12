@@ -19,7 +19,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 @Setter
 @ConfigurationProperties(prefix = "my-books.redis")
-@RequiredArgsConstructor
 public class RedisProperties {
     private String host;
     private int port;

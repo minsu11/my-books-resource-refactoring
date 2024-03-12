@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import store.mybooks.resource.return_rule.entity.ReturnRule;
+import store.mybooks.resource.returnrule.entity.ReturnRule;
 
 /**
  * packageName    : store.mybooks.resource.book_return.entity

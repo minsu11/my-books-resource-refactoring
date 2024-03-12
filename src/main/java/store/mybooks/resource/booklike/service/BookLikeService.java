@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.book.dto.response.BookBriefResponse;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.exception.BookNotExistException;
@@ -41,6 +42,7 @@ public class BookLikeService {
      * @param pageable Pageable
      * @return page
      */
+    @Transactional(readOnly = true)
     public Page<BookBriefResponse> getUserBookLike(Long userId, Pageable pageable) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotExistException(userId);
@@ -57,6 +59,7 @@ public class BookLikeService {
      * @param bookId Long
      * @return boolean
      */
+    @Transactional
     public Boolean updateUserBookLike(Long userId, Long bookId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotExistException(bookId));
@@ -70,5 +73,25 @@ public class BookLikeService {
             return false;
         }
 
+    }
+
+    /**
+     * methodName : isUserBookLike
+     * author : newjaehun
+     * description : 사용자의 특정도서 좋아요 유무.
+     *
+     * @param userId Long
+     * @param bookId Long
+     * @return boolean
+     */
+    public Boolean isUserBookLike(Long userId, Long bookId) {
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotExistException(userId);
+        }
+        if (!bookRepository.existsById(bookId)) {
+            throw new BookNotExistException(bookId);
+        }
+        BookLike.Pk pk = new BookLike.Pk(userId, bookId);
+        return bookLikeRepository.existsById(pk);
     }
 }

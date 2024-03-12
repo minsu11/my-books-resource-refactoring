@@ -5,7 +5,7 @@ import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import store.mybooks.resource.book_order.entity.BookOrder;
+import store.mybooks.resource.bookorder.entity.BookOrder;
 import store.mybooks.resource.pointrule.entity.PointRule;
 import store.mybooks.resource.user.entity.User;
 

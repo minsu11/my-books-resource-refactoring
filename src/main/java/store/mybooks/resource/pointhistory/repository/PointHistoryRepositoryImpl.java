@@ -2,11 +2,12 @@ package store.mybooks.resource.pointhistory.repository;
 
 import com.querydsl.core.types.Projections;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
-import store.mybooks.resource.book_order.entity.QBookOrder;
+import store.mybooks.resource.bookorder.entity.QBookOrder;
 import store.mybooks.resource.pointhistory.dto.response.PointHistoryResponse;
 import store.mybooks.resource.pointhistory.dto.response.PointResponse;
 import store.mybooks.resource.pointhistory.entity.PointHistory;
@@ -23,6 +24,7 @@ import store.mybooks.resource.pointhistory.entity.QPointHistory;
  * -----------------------------------------------------------<br>
  * 3/7/24        minsu11       최초 생성<br>
  */
+@Slf4j
 public class PointHistoryRepositoryImpl extends QuerydslRepositorySupport implements PointHistoryRepositoryCustom {
     private static final QPointHistory pointHistory = QPointHistory.pointHistory;
 

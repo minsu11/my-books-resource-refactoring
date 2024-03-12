@@ -15,8 +15,6 @@ import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameAlrea
 import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotExistsException;
 import store.mybooks.resource.publisher.exception.PublisherAlreadyExistException;
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
-import store.mybooks.resource.return_rule.exception.ReturnRuleValidationFailedException;
-import store.mybooks.resource.return_rule_name.exception.ReturnRuleNameRequestValidationFailedException;
 import store.mybooks.resource.tag.exception.TagNameAlreadyExistsException;
 import store.mybooks.resource.tag.exception.TagNotExistsException;
 
@@ -75,8 +73,7 @@ public class GlobalControllerAdvice {
      * @param exception ValidationException.
      * @return ResponseEntity
      */
-    @ExceptionHandler({ValidationException.class, ReturnRuleNameRequestValidationFailedException.class,
-            ReturnRuleValidationFailedException.class, RequestValidationFailedException.class})
+    @ExceptionHandler({ValidationException.class, RequestValidationFailedException.class})
     public ResponseEntity<String> validationException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

@@ -23,5 +23,4 @@ public class BookResponseForOrder {
     private Integer originalCost;
     private Integer disCountRate;
     private Boolean isPacking;
-    private Integer stock;
 }

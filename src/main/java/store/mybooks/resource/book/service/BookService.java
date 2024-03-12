@@ -1,6 +1,7 @@
 package store.mybooks.resource.book.service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -168,12 +169,14 @@ public class BookService {
                 .publishDate(createRequest.getPublishDate())
                 .page(createRequest.getPage())
                 .index(createRequest.getIndex())
-                .content(createRequest.getContent())
+                .explanation(createRequest.getExplanation())
                 .originalCost(createRequest.getOriginalCost())
                 .saleCost(createRequest.getSaleCost())
                 .discountRate(createRequest.getOriginalCost() / createRequest.getSaleCost())
                 .stock(createRequest.getStock())
+                .viewCount(0)
                 .isPackaging(createRequest.getIsPacking())
+                .createdDate(LocalDate.now())
                 .build();
 
         Book newBook = bookRepository.save(book);
@@ -183,6 +186,7 @@ public class BookService {
         if (createRequest.getTagList() != null) {
             bookTagService.createBookTag(new BookTagCreateRequest(bookId, createRequest.getTagList()));
         }
+        
         List<ImageRegisterResponse> imageRegisterResponseList = new ArrayList<>();
         ImageStatus thumbnailEnum = imageStatusRepository.findById(ImageStatusEnum.THUMBNAIL.getName()).orElseThrow(
                 () -> new ImageStatusNotExistException("해당 하는 id의 이미지 상태가 없습니다."));
@@ -248,7 +252,7 @@ public class BookService {
         return new BookCartResponse(book.getId(), book.getName(), url, book.getSaleCost());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<BookGetResponseForCoupon> getBookForCoupon() {
         return bookRepository.getBookForCoupon();
     }

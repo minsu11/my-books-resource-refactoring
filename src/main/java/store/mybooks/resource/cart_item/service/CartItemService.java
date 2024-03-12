@@ -36,6 +36,7 @@ import store.mybooks.resource.user.repository.UserRepository;
  * 2/15/24        Fiat_lux       최초 생성
  */
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CartItemService {
     private final CartItemRepository cartItemRepository;
@@ -43,10 +44,10 @@ public class CartItemService {
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
-    private final ImageRepository imageRepository;
+//    private final ImageRepository imageRepository;
     private final ImageService imageService;
+//TODO 서비스에 썸네일 이미지 가져오는 메서드 추가 해보자
 
-    @Transactional
     public void registerMysqlDataFromRedisData(Long userId, CartUserRedisKeyNameRequest cartUserRedisKeyNameRequest) {
         List<CartDetail> cartDetailList = redisTemplate.opsForList().range(cartUserRedisKeyNameRequest.getCartKey(), 0, -1);
         if (Objects.isNull(cartDetailList) || cartDetailList.isEmpty()) {
@@ -67,7 +68,6 @@ public class CartItemService {
         redisTemplate.delete(cartUserRedisKeyNameRequest.getCartKey());
     }
 
-    @Transactional
     public void registerRedisDataFromMysqlData(Long userId, CartUserRedisKeyNameRequest cartUserRedisKeyNameRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotExistException(userId));
@@ -82,17 +82,14 @@ public class CartItemService {
         }
 
         for (CartItem cartItem : cartItemList) {
-            Image image = imageRepository.findImageByBook_IdAndImageStatus_Id(cartItem.getBook().getId(),
-                            ImageStatusEnum.THUMBNAIL.getName())
-                    .orElseThrow(() -> new ImageNotExistsException("해당하는 이미지가 없습니다."));
-
+            Image thumbNailImage = imageService.getThumbNailImage(cartItem.getBook().getId());
             redisTemplate.opsForList().rightPush(
                     cartUserRedisKeyNameRequest.getCartKey(),
                     new CartDetail(
                             cartItem.getBook().getId(),
                             cartItem.getAmount(),
                             cartItem.getBook().getName(),
-                            imageService.getObject(image.getId()).getFilePathName(), cartItem.getBook().getSaleCost())
+                            imageService.getObject(thumbNailImage.getId()).getFilePathName(), cartItem.getBook().getSaleCost())
             );
 
             cartItemRepository.deleteAllByCart_Id(userCart.getId());
