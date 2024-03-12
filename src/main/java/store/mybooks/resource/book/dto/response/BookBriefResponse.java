@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import store.mybooks.resource.image.dto.response.ImageResponse;
 
 /**
  * packageName    : store.mybooks.resource.book.dto.response <br/>
@@ -23,7 +24,13 @@ import lombok.Setter;
 public class BookBriefResponse {
     private Long id;
 
-//    private String bookImage;
+    private ImageResponse thumbNailImage;
+
+    private String imagePath;
+
+    private String fileName;
+
+    private String extension;
 
     private String name;
 
