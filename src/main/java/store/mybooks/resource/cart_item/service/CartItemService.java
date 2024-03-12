@@ -44,9 +44,8 @@ public class CartItemService {
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
-//    private final ImageRepository imageRepository;
     private final ImageService imageService;
-//TODO 서비스에 썸네일 이미지 가져오는 메서드 추가 해보자
+
 
     public void registerMysqlDataFromRedisData(Long userId, CartUserRedisKeyNameRequest cartUserRedisKeyNameRequest) {
         List<CartDetail> cartDetailList = redisTemplate.opsForList().range(cartUserRedisKeyNameRequest.getCartKey(), 0, -1);
