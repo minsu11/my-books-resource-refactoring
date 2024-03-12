@@ -1,6 +1,5 @@
-package store.mybooks.resource.book_return.entity;
+package store.mybooks.resource.returndetail.entity;
 
-import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,11 +12,13 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import store.mybooks.resource.returnrule.entity.ReturnRule;
+import lombok.Setter;
+import store.mybooks.resource.book_return.entity.BookReturn;
+import store.mybooks.resource.order_detail.entity.OrderDetail;
 
 /**
- * packageName    : store.mybooks.resource.book_return.entity
- * fileName       : BookReturn
+ * packageName    : store.mybooks.resource.return_detail.entity
+ * fileName       : ReturnDetail
  * author         : minsu11
  * date           : 2/13/24
  * description    :
@@ -27,23 +28,27 @@ import store.mybooks.resource.returnrule.entity.ReturnRule;
  * 2/13/24        minsu11       최초 생성
  */
 @Getter
+@Setter
 @Entity
-@Table(name = "book_return")
+@Table(name = "return_detail")
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookReturn {
+public class ReturnDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "book_return_id")
+    @Column(name = "return_detail_id")
     private Long id;
 
-    @Column(name = "is_damage")
-    private Boolean isDamage;
+    @Column(name = "return_detail_amount")
+    private Integer amount;
 
-    @Column(name = "return_date")
-    private LocalDate returnDate;
+    @ManyToOne
+    @JoinColumn(name = "book_return_id")
+    private BookReturn bookReturn;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "return_rule_id")
-    private ReturnRule returnRule;
+    @JoinColumn(name = "order_detail_id")
+    private OrderDetail orderDetail;
+
+
 }
