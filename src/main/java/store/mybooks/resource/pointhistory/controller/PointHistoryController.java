@@ -40,7 +40,7 @@ public class PointHistoryController {
      * @param userId 유저아이디
      * @return response entity
      */
-    @GetMapping("/point")
+    @GetMapping("/points")
     public ResponseEntity<PointResponse> getRemainPoint(@RequestHeader(name = HeaderProperties.USER_ID) Long userId) {
         return ResponseEntity
                 .status(HttpStatus.OK)

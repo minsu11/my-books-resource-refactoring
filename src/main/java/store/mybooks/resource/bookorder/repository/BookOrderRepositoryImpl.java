@@ -40,7 +40,6 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                                 bookOrder.user.id,
                                 bookOrder.orderStatus.id,
                                 bookOrder.deliveryRule.id,
-                                bookOrder.wrap.id,
                                 bookOrder.date,
                                 bookOrder.invoiceNumber,
                                 bookOrder.receiverName,
