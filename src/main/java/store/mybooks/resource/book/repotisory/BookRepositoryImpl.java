@@ -17,6 +17,10 @@ import store.mybooks.resource.book.entity.QBook;
 import store.mybooks.resource.bookauthor.entity.QBookAuthor;
 import store.mybooks.resource.bookstatus.entity.QBookStatus;
 import store.mybooks.resource.booktag.entity.QBookTag;
+import store.mybooks.resource.image.dto.response.ImageResponse;
+import store.mybooks.resource.image.entity.QImage;
+import store.mybooks.resource.image_status.entity.QImageStatus;
+import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
 import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
 import store.mybooks.resource.publisher.entity.QPublisher;
 import store.mybooks.resource.tag.dto.response.TagGetResponseForBookDetail;
@@ -45,6 +49,8 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     QTag tag = QTag.tag;
     QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
     QBookTag bookTag = QBookTag.bookTag;
+    QImage image = QImage.image;
+    QImageStatus imageStatus = QImageStatus.imageStatus;
 
     @Override
     public BookDetailResponse getBookDetailInfo(Long id) {
@@ -54,6 +60,23 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .where(book.id.eq(id))
                 .fetchOne();
 
+        ImageResponse thumbNailImage = from(image)
+                .join(image.book, book)
+                .join(image.imageStatus, imageStatus)
+                .where(image.book.id.eq(id))
+                .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
+                .select(Projections.constructor(ImageResponse.class, image.path, image.fileName, image.extension,
+                        imageStatus.id))
+                .fetchOne();
+
+        List<ImageResponse> contentImageList = from(image)
+                .join(image.book, book)
+                .join(image.imageStatus, imageStatus)
+                .where(image.book.id.eq(id))
+                .where(imageStatus.id.eq(ImageStatusEnum.CONTENT.getName()))
+                .select(Projections.constructor(ImageResponse.class, image.path, image.fileName, image.extension,
+                        imageStatus.id))
+                .fetch();
 
         List<AuthorGetResponse> authorList = from(bookAuthor)
                 .join(bookAuthor.author, author)
@@ -70,6 +93,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
 
         return BookDetailResponse.builder()
                 .id(result.getId())
+                .thumbNailImage(thumbNailImage)
                 .name(result.getName())
                 .bookStatus(result.getBookStatus().getId())
                 .publisher(new PublisherGetResponse(result.getPublisher().getId(),
@@ -84,6 +108,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .stock(result.getStock())
                 .index(result.getIndex())
                 .explanation(result.getExplanation())
+                .contentImageList(contentImageList)
                 .authorList(authorList)
                 .tagList(tagList)
                 .build();
@@ -91,9 +116,13 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
 
     @Override
     public Page<BookBriefResponse> getBookBriefInfo(Pageable pageable) {
+
         List<BookBriefResponse> lists = from(book)
+                .join(image.book, book)
+                .join(image.imageStatus, imageStatus)
+                .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
                 .select(Projections.constructor(BookBriefResponse.class,
-                        book.id, book.name, book.saleCost))
+                        book.id, image.path, image.fileName, image.extension, book.name, book.saleCost))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -109,9 +138,12 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
         List<BookBriefResponse> lists =
                 from(book)
                         .join(book.bookStatus, bookStatus)
+                        .join(image.book, book)
+                        .join(image.imageStatus, imageStatus)
                         .select(Projections.constructor(BookBriefResponse.class,
                                 book.id, book.name, book.saleCost))
                         .where(bookStatus.id.in("판매중", "재고없음"))
+                        .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .fetch();
