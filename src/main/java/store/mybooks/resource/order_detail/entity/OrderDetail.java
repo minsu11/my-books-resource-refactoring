@@ -1,15 +1,6 @@
 package store.mybooks.resource.order_detail.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +9,7 @@ import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.bookorder.entity.BookOrder;
 import store.mybooks.resource.order_detail_status.entity.OrderDetailStatus;
 import store.mybooks.resource.usercoupon.entity.UserCoupon;
+import store.mybooks.resource.wrap.entity.Wrap;
 
 /**
  * packageName    : store.mybooks.resource.order_detail.entity
@@ -67,5 +59,8 @@ public class OrderDetail {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_coupon_id")
     private UserCoupon userCoupon;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wrap_id")
+    private Wrap wrap;
 
 }
