@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameDto;
 import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameResponse;
+import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 import store.mybooks.resource.delivery_rule_name.entity.QDeliveryRuleName;
 
 /**
@@ -23,7 +24,7 @@ public class DeliveryRuleNameRepositoryImpl extends QuerydslRepositorySupport
 
 
     public DeliveryRuleNameRepositoryImpl() {
-        super(DeliveryRuleNameDto.class);
+        super(DeliveryRuleName.class);
     }
 
     @Override
