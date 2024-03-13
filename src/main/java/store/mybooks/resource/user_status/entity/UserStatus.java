@@ -30,8 +30,6 @@ public class UserStatus {
 
     @Id
     @Column(name = "user_status_id")
-    @NotNull
-    @NotBlank
     private String id;
 
 

@@ -32,8 +32,6 @@ public class UserGradeName {
 
     @Id
     @Column(name = "user_grade_name_id")
-    @NotNull
-    @NotBlank
     String id;
 
 }
