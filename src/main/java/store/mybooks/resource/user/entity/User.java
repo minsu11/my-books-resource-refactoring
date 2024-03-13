@@ -44,50 +44,35 @@ public class User {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_grade_id")
-    @NotNull
     private UserGrade userGrade;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_status_id")
-    @NotNull
     private UserStatus userStatus;
 
     @Column(name = "user_name")
-    @NotNull
-    @NotBlank
     private String name;
 
     @Column(name = "user_password")
-    @NotNull
-    @NotBlank
     private String password;
 
     @Column(name = "user_phone_number")
-    @NotNull
-    @NotBlank
     private String phoneNumber;
 
     @Column(name = "user_email")
-    @NotNull
-    @Email
-    @NotBlank
     private String email;
 
     @Column(name = "user_birth_year")
     private Integer birthYear;
 
     @Column(name = "user_birth_month_day")
-    @NotNull
-    @NotBlank
     private String birthMonthDay;
 
 
     @Column(name = "is_admin")
-    @NotNull
     private Boolean isAdmin;
 
     @Column(name = "user_created_at")
-    @NotNull
     private LocalDateTime createdAt;
 
 

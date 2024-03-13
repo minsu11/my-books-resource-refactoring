@@ -41,31 +41,21 @@ public class UserAddress {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = " user_id")
-    @NotNull
     private User user;
 
     @Column(name = "address_alias")
-    @NotNull
-    @NotBlank
     private String alias;
 
     @Column(name = "address_road_name")
-    @NotNull
-    @NotBlank
     private String roadName;
 
     @Column(name = "address_detail")
-    @NotNull
-    @NotBlank
     private String detail;
 
     @Column(name = "address_number")
-    @NotNull
     private Integer number;
 
     @Column(name = "address_reference")
-    @NotNull
-    @NotBlank
     private String reference;
 
 
