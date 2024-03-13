@@ -216,4 +216,12 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .where(book.id.eq(bookId))
                 .fetchOne();
     }
+
+    @Override
+    public void updateBookViewCount(Long bookId, Integer count) {
+        update(book)
+                .where(book.id.eq(bookId))
+                .set(book.viewCount, book.viewCount.add(count))
+                .execute();
+    }
 }
