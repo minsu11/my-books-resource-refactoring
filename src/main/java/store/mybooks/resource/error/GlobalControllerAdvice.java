@@ -17,6 +17,16 @@ import store.mybooks.resource.publisher.exception.PublisherAlreadyExistException
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
 import store.mybooks.resource.tag.exception.TagNameAlreadyExistsException;
 import store.mybooks.resource.tag.exception.TagNotExistsException;
+import store.mybooks.resource.user.exception.UserAlreadyExistException;
+import store.mybooks.resource.user.exception.UserAlreadyResignException;
+import store.mybooks.resource.user.exception.UserLoginFailException;
+import store.mybooks.resource.user.exception.UserNotExistException;
+import store.mybooks.resource.user_address.exception.UserAddressAlreadyExistException;
+import store.mybooks.resource.user_address.exception.UserAddressFullException;
+import store.mybooks.resource.user_address.exception.UserAddressNotExistException;
+import store.mybooks.resource.user_grade.exception.UserGradeIdNotExistException;
+import store.mybooks.resource.user_grade_name.exception.UserGradeNameNotExistException;
+import store.mybooks.resource.user_status.exception.UserStatusNotExistException;
 
 /**
  * packageName    : store.mybooks.resource.error
@@ -40,7 +50,9 @@ public class GlobalControllerAdvice {
      * @return ResponseEntity
      */
     @ExceptionHandler({CategoryNotExistsException.class, TagNotExistsException.class, PublisherNotExistException.class,
-            DeliveryRuleNameNotExistsException.class, DeliveryRuleNotExistsException.class})
+            DeliveryRuleNameNotExistsException.class, DeliveryRuleNotExistsException.class,
+            UserNotExistException.class, UserAddressNotExistException.class, UserGradeIdNotExistException.class,
+            UserGradeNameNotExistException.class, UserStatusNotExistException.class})
     public ResponseEntity<String> xxxNotExistsException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -57,7 +69,7 @@ public class GlobalControllerAdvice {
      */
     @ExceptionHandler({CategoryNameAlreadyExistsException.class, TagNameAlreadyExistsException.class,
             PublisherAlreadyExistException.class, DeliveryRuleNameAlreadyExistsException.class,
-            IsbnAlreadyExistsException.class})
+            IsbnAlreadyExistsException.class, UserAlreadyExistException.class, UserAddressAlreadyExistException.class})
     public ResponseEntity<String> xxxAlreadyExistsException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -94,4 +106,13 @@ public class GlobalControllerAdvice {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());
     }
+
+    @ExceptionHandler({UserAlreadyResignException.class, UserLoginFailException.class, UserAddressFullException.class})
+    public ResponseEntity<String> UserException(Exception exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
+    }
+
+
 }

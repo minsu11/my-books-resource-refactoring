@@ -2,7 +2,11 @@ package store.mybooks.resource.user.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.mapping.Bag;
@@ -142,7 +146,7 @@ public class User {
 
     public void modifyByDeleteRequest(UserStatus userStatus) {
         this.userStatus = userStatus;
-        this.deletedAt = LocalDateTime.now();
+        this.deletedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 
     public void modifyPassword(String password) {

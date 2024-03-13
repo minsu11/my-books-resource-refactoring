@@ -1,12 +1,17 @@
 package store.mybooks.resource.user.controller;
 
+import javax.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import store.mybooks.resource.config.HeaderProperties;
+import store.mybooks.resource.error.Utils;
+import store.mybooks.resource.error.exception.ValidationFailException;
 import store.mybooks.resource.user.dto.request.*;
 import store.mybooks.resource.user.dto.response.*;
 import store.mybooks.resource.user.service.UserService;
@@ -41,7 +46,9 @@ public class UserRestController {
      */
     @PostMapping
     public ResponseEntity<UserCreateResponse> createUser(
-            @RequestBody UserCreateRequest createRequest) {
+            @Valid @RequestBody UserCreateRequest createRequest, BindingResult bindingResult) {
+
+        Utils.validateRequest(bindingResult);
 
         UserCreateResponse createResponse = userService.createUser(createRequest);
 
@@ -51,7 +58,9 @@ public class UserRestController {
 
     @PostMapping("/oauth/login")
     public ResponseEntity<UserLoginResponse> loginOauthUser(
-            @RequestBody UserOauthLoginRequest loginRequest) {
+            @Valid @RequestBody UserOauthLoginRequest loginRequest, BindingResult bindingResult) {
+
+        Utils.validateRequest(bindingResult);
 
         UserLoginResponse loginResponse = userService.loginOauthUser(loginRequest);
         return new ResponseEntity<>(loginResponse, HttpStatus.OK);
@@ -59,8 +68,9 @@ public class UserRestController {
 
     @PostMapping("/oauth")
     public ResponseEntity<UserCreateResponse> createOauthUser(
-            @RequestBody UserOauthCreateRequest createRequest) {
+            @Valid @RequestBody UserOauthCreateRequest createRequest,BindingResult bindingResult) {
 
+        Utils.validateRequest(bindingResult);
         UserCreateResponse createResponse = userService.createOauthUser(createRequest);
         return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
     }
@@ -76,7 +86,10 @@ public class UserRestController {
      */
     @PutMapping
     public ResponseEntity<UserModifyResponse> modifyUser(@RequestHeader(name = HeaderProperties.USER_ID) Long id,
-                                                         @RequestBody UserModifyRequest modifyRequest) {
+                                                         @Valid @RequestBody UserModifyRequest modifyRequest,
+                                                         BindingResult bindingResult) {
+
+        Utils.validateRequest(bindingResult);
 
         UserModifyResponse modifyResponse = userService.modifyUser(id, modifyRequest);
 
@@ -94,7 +107,10 @@ public class UserRestController {
      */
     @PutMapping("/{id}/grade")
     public ResponseEntity<UserGradeModifyResponse> modifyUserGrade(@PathVariable(name = "id") Long id,
-                                                                   @RequestBody UserGradeModifyRequest modifyRequest) {
+                                                                   @Valid @RequestBody
+                                                                   UserGradeModifyRequest modifyRequest,
+                                                                   BindingResult bindingResult) {
+        Utils.validateRequest(bindingResult);
 
         UserGradeModifyResponse modifyResponse = userService.modifyUserGrade(id, modifyRequest);
         return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
@@ -111,8 +127,11 @@ public class UserRestController {
      */
     @PutMapping("/{id}/status")
     public ResponseEntity<UserStatusModifyResponse> modifyUserStatus(@PathVariable(name = "id") Long id,
-                                                                     @RequestBody
-                                                                     UserStatusModifyRequest modifyRequest) {
+                                                                     @Valid @RequestBody
+                                                                     UserStatusModifyRequest modifyRequest,
+                                                                     BindingResult bindingResult) {
+
+        Utils.validateRequest(bindingResult);
 
         UserStatusModifyResponse modifyResponse = userService.modifyUserStatus(id, modifyRequest);
         return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
@@ -130,8 +149,10 @@ public class UserRestController {
     @PutMapping("/password")
     public ResponseEntity<UserPasswordModifyResponse> modifyUserPassword(
             @RequestHeader(name = HeaderProperties.USER_ID) Long id,
-            @RequestBody
-            UserPasswordModifyRequest modifyRequest) {
+            @Valid @RequestBody UserPasswordModifyRequest modifyRequest, BindingResult bindingResult) {
+
+        Utils.validateRequest(bindingResult);
+
 
         UserPasswordModifyResponse modifyResponse = userService.modifyUserPassword(id, modifyRequest);
         return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
@@ -192,13 +213,20 @@ public class UserRestController {
      * @return response entity
      */
     @PostMapping("/verification")
-    public ResponseEntity<UserEncryptedPasswordResponse> verifyUserStatus(@RequestBody UserEmailRequest request) {
+    public ResponseEntity<UserEncryptedPasswordResponse> verifyUserStatus(
+            @Valid @RequestBody UserEmailRequest request, BindingResult bindingResult) {
+        Utils.validateRequest(bindingResult);
+
         UserEncryptedPasswordResponse userEncryptedPasswordResponse = userService.verifyUserStatusByEmail(request);
         return new ResponseEntity<>(userEncryptedPasswordResponse, HttpStatus.OK);
     }
 
     @PostMapping("/verification/complete")
-    public ResponseEntity<UserLoginResponse> completeLoginProcess(@RequestBody UserEmailRequest request) {
+    public ResponseEntity<UserLoginResponse> completeLoginProcess(@Valid @RequestBody UserEmailRequest request,
+                                                                  BindingResult bindingResult
+    ) {
+        Utils.validateRequest(bindingResult);
+
         UserLoginResponse userLoginResponse = userService.completeLoginProcess(request);
         return new ResponseEntity<>(userLoginResponse, HttpStatus.OK);
     }
@@ -213,10 +241,12 @@ public class UserRestController {
 
     @PostMapping("/verification/lock")
     public ResponseEntity<UserInactiveVerificationResponse> lockUserVerification(
-            @RequestHeader(name = HeaderProperties.USER_ID) Long id,@RequestBody UserPasswordModifyRequest request) {
+            @RequestHeader(name = HeaderProperties.USER_ID) Long id,
+            @Valid @RequestBody UserPasswordModifyRequest request, BindingResult bindingResult) {
 
-        System.out.println(request.getPassword());
-        UserInactiveVerificationResponse response = userService.verifyLockUser(id,request);
+        Utils.validateRequest(bindingResult);
+
+        UserInactiveVerificationResponse response = userService.verifyLockUser(id, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

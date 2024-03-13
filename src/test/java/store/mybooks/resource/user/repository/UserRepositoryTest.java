@@ -20,9 +20,11 @@ import org.springframework.test.context.TestPropertySource;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
 import store.mybooks.resource.user.entity.User;
+import store.mybooks.resource.user_grade.dto.request.UserGradeCreateRequest;
 import store.mybooks.resource.user_grade.entity.UserGrade;
 import store.mybooks.resource.user_grade.repository.UserGradeRepository;
 import store.mybooks.resource.user_grade_name.entity.UserGradeName;
+import store.mybooks.resource.user_grade_name.repository.UserGradeNameRepository;
 import store.mybooks.resource.user_status.entity.UserStatus;
 import store.mybooks.resource.user_status.repository.UserStatusRepository;
 
@@ -50,20 +52,25 @@ class UserRepositoryTest {
     @Autowired
     UserGradeRepository userGradeRepository;
 
+    @Autowired
+    UserGradeNameRepository userGradeNameRepository;
+
     Long id;
 
     @BeforeEach
     void setUp() {
 
         UserStatus userStatus = new UserStatus("test");
-        UserGrade userGrade = new UserGrade();
-        userStatusRepository.save(userStatus);
-        userGradeRepository.save(userGrade);
+        UserGradeName userGradeName = new UserGradeName("test");
+        UserGrade userGrade = new UserGrade(1, 100, 100, LocalDate.now(), userGradeName);
+        userGradeNameRepository.save(userGradeName);
+        UserStatus resultUserStatus = userStatusRepository.save(userStatus);
+        UserGrade resultUserGrade = userGradeRepository.save(userGrade);
 
         User user1 =
-                new User("test1@naver.com", LocalDate.now(), "test1", "test1", false, "test1", userStatus, userGrade);
+                new User("test1@naver.com", LocalDate.now(), "test1", "test1", false, "test1", resultUserStatus, resultUserGrade);
         User user2 =
-                new User("test2@naver.com", LocalDate.now(), "test2", "test2", false, "test2", userStatus, userGrade);
+                new User("test2@naver.com", LocalDate.now(), "test2", "test2", false, "test2", resultUserStatus, resultUserGrade);
         User resultUser = userRepository.save(user1);
 
         id = resultUser.getId();
@@ -99,7 +106,6 @@ class UserRepositoryTest {
     void givenPageable_whenCallQueryAllBy_thenReturnUserGetResponsePage() {
 
         Page<UserGetResponse> page = userRepository.queryAllBy(PageRequest.of(0, 10));
-
 
 
         assertEquals(1, page.getTotalPages());

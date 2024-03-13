@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +34,9 @@ import store.mybooks.resource.user_status.entity.UserStatus;
 @AllArgsConstructor
 public class UserModifyRequest {
 
+    @NotBlank
     private String name;
+    @NotBlank
     private String phoneNumber;
 
 }
