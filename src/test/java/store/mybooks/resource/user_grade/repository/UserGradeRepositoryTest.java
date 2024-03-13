@@ -58,9 +58,9 @@ class UserGradeRepositoryTest {
         userGradeNameRepository.save(userGradeName1);
         userGradeNameRepository.save(userGradeName2);
 
-        UserGrade userGrade1 = new UserGrade(1, userGradeName1, 0, 1000, 3, localDate, true);
-        UserGrade userGrade2 = new UserGrade(2, userGradeName1, 0, 1000, 3, localDate, false);
-        UserGrade userGrade3 = new UserGrade(3, userGradeName2, 0, 1000, 3, localDate, true);
+        UserGrade userGrade1 = new UserGrade(1, userGradeName1, 1, 1000, 3, localDate, true);
+        UserGrade userGrade2 = new UserGrade(2, userGradeName1, 1, 1000, 3, localDate, false);
+        UserGrade userGrade3 = new UserGrade(3, userGradeName2, 1, 1000, 3, localDate, true);
 
         userGradeId = userGradeRepository.save(userGrade1).getId();
         userGradeRepository.save(userGrade2);
@@ -78,7 +78,7 @@ class UserGradeRepositoryTest {
         assertEquals(3, userGradeGetResponse.getRate());
         assertEquals(localDate, userGradeGetResponse.getCreatedDate());
         assertEquals(1000, userGradeGetResponse.getMaxCost());
-        assertEquals(0, userGradeGetResponse.getMinCost());
+        assertEquals(1, userGradeGetResponse.getMinCost());
     }
 
     @Test

@@ -38,18 +38,48 @@ import store.mybooks.resource.tag.entity.QTag;
  * 2/24/24        newjaehun       최초 생성<br/>
  */
 public class BookRepositoryImpl extends QuerydslRepositorySupport implements BookRepositoryCustom {
+    /**
+     * Instantiates a new Book repository.
+     */
     public BookRepositoryImpl() {
         super(Book.class);
     }
 
+    /**
+     * The Book.
+     */
     QBook book = QBook.book;
+    /**
+     * The Book status.
+     */
     QBookStatus bookStatus = QBookStatus.bookStatus;
+    /**
+     * The Author.
+     */
     QAuthor author = QAuthor.author;
+    /**
+     * The Publisher.
+     */
     QPublisher publisher = QPublisher.publisher;
+    /**
+     * The Tag.
+     */
     QTag tag = QTag.tag;
+    /**
+     * The Book author.
+     */
     QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
+    /**
+     * The Book tag.
+     */
     QBookTag bookTag = QBookTag.bookTag;
+    /**
+     * The Image.
+     */
     QImage image = QImage.image;
+    /**
+     * The Image status.
+     */
     QImageStatus imageStatus = QImageStatus.imageStatus;
 
     @Override
@@ -59,23 +89,22 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .join(book.publisher, publisher)
                 .where(book.id.eq(id))
                 .fetchOne();
-
+        System.out.println("여긴가?");
         ImageResponse thumbNailImage = from(image)
                 .join(image.book, book)
                 .join(image.imageStatus, imageStatus)
                 .where(image.book.id.eq(id))
                 .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
-                .select(Projections.constructor(ImageResponse.class, image.path, image.fileName, image.extension,
-                        imageStatus.id))
+                .select(Projections.constructor(ImageResponse.class, image.path, image.fileName, image.extension))
                 .fetchOne();
-
+        System.out.println("잘나옴?");
+        System.out.println(thumbNailImage.toString());
         List<ImageResponse> contentImageList = from(image)
                 .join(image.book, book)
                 .join(image.imageStatus, imageStatus)
                 .where(image.book.id.eq(id))
                 .where(imageStatus.id.eq(ImageStatusEnum.CONTENT.getName()))
-                .select(Projections.constructor(ImageResponse.class, image.path, image.fileName, image.extension,
-                        imageStatus.id))
+                .select(Projections.constructor(ImageResponse.class, image.path, image.fileName, image.extension))
                 .fetch();
 
         List<AuthorGetResponse> authorList = from(bookAuthor)
@@ -116,14 +145,22 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
 
     @Override
     public Page<BookBriefResponse> getBookBriefInfo(Pageable pageable) {
-
         List<BookBriefResponse> lists = from(book)
-                .join(image.book, book)
+                .join(image)
+                .on(image.book.eq(book))
                 .join(image.imageStatus, imageStatus)
                 .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
-                .select(Projections.constructor(BookBriefResponse.class,
-                        book.id, image.path, image.fileName, image.extension, book.name, book.saleCost))
-                .offset(pageable.getOffset())
+                .select(Projections.constructor(
+                        BookBriefResponse.class,
+                        book.id,
+                        Projections.constructor(
+                                ImageResponse.class,
+                                image.path,
+                                image.fileName,
+                                image.extension),
+                        book.name,
+                        book.saleCost
+                )).offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
@@ -138,10 +175,17 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
         List<BookBriefResponse> lists =
                 from(book)
                         .join(book.bookStatus, bookStatus)
-                        .join(image.book, book)
+                        .join(image)
+                        .on(image.book.eq(book))
                         .join(image.imageStatus, imageStatus)
                         .select(Projections.constructor(BookBriefResponse.class,
-                                book.id, book.name, book.saleCost))
+                                book.id,
+                                Projections.constructor(ImageResponse.class,
+                                        image.path,
+                                        image.fileName,
+                                        image.extension),
+                                book.name,
+                                book.saleCost))
                         .where(bookStatus.id.in("판매중", "재고없음"))
                         .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
                         .offset(pageable.getOffset())
@@ -171,5 +215,13 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                         book.discountRate, book.isPackaging, book.stock))
                 .where(book.id.eq(bookId))
                 .fetchOne();
+    }
+
+    @Override
+    public void updateBookViewCount(Long bookId, Integer count) {
+        update(book)
+                .where(book.id.eq(bookId))
+                .set(book.viewCount, book.viewCount.add(count))
+                .execute();
     }
 }

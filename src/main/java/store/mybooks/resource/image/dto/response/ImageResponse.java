@@ -17,8 +17,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ImageResponse {
-    private String path;
-    private String fileName;
-    private String extension;
-    private String status;
+    private final String path;
+    private final String fileName;
+    private final String extension;
 }

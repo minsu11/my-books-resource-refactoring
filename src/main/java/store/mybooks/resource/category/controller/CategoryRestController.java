@@ -23,6 +23,7 @@ import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForBookCreate;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForMainView;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
 import store.mybooks.resource.category.dto.response.CategoryIdNameGetResponse;
@@ -135,6 +136,13 @@ public class CategoryRestController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(categoryService.getCategoryForUpdate(id));
+    }
+
+    @GetMapping("/main")
+    public ResponseEntity<List<CategoryGetResponseForMainView>> getCategoriesForMainView() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(categoryService.getCategoriesForMainView());
     }
 
     /**

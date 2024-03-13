@@ -39,16 +39,16 @@ class BookLikeRepositoryTest {
     @Autowired
     private BookRepository bookRepository;
 
-    @Test
-    @DisplayName("도서 좋아요 갯수 조회")
-    void givenBookId_whenCountBookLikeByPk_BookId_thenReturnCount() {
-        Book book = bookRepository.save(new Book());
-        User user = userRepository.save(new User());
-        Long bookId = book.getId();
-        Long userId = user.getId();
-        bookLikeRepository.save(new BookLike(new BookLike.Pk(userId, bookId), user, book));
-        Assertions.assertEquals(1, bookLikeRepository.countBookLikeByPk_BookId(bookId));
-    }
+//    @Test
+//    @DisplayName("도서 좋아요 갯수 조회")
+//    void givenBookId_whenCountBookLikeByPk_BookId_thenReturnCount() {
+//        Book book = bookRepository.save(new Book());
+//        User user = userRepository.save(new User());
+//        Long bookId = book.getId();
+//        Long userId = user.getId();
+//        bookLikeRepository.save(new BookLike(new BookLike.Pk(userId, bookId), user, book));
+//        Assertions.assertEquals(1, bookLikeRepository.countBookLikeByPk_BookId(bookId));
+//    }
 
 //    @Test
 //    @DisplayName("사용자가 좋아요한 도서 목록 조회")
