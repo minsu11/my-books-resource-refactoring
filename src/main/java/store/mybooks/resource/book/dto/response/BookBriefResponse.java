@@ -1,9 +1,10 @@
 package store.mybooks.resource.book.dto.response;
 
-import lombok.AllArgsConstructor;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import store.mybooks.resource.image.dto.response.ImageResponse;
 
 /**
@@ -20,21 +21,24 @@ import store.mybooks.resource.image.dto.response.ImageResponse;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class BookBriefResponse {
     private Long id;
 
-    private ImageResponse thumbNailImage;
-
-    private String imagePath;
-
-    private String fileName;
-
-    private String extension;
+    private ImageResponse imageResponse;
 
     private String name;
 
 //    private Double rate;
 
     private Integer saleCost;
+
+    @QueryProjection
+    public BookBriefResponse(Long id, ImageResponse imageResponse, String name, Integer saleCost) {
+        this.id = id;
+        this.imageResponse = imageResponse;
+        this.name = name;
+        this.saleCost = saleCost;
+    }
+
+
 }
