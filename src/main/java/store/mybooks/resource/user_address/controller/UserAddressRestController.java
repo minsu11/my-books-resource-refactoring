@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.config.HeaderProperties;
+import store.mybooks.resource.error.Utils;
 import store.mybooks.resource.error.exception.ValidationFailException;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
@@ -69,9 +70,8 @@ public class UserAddressRestController {
             @RequestHeader(name = HeaderProperties.USER_ID) Long userId,
             @Valid @RequestBody UserAddressCreateRequest createRequest, BindingResult bindingResult) {
 
-        if(bindingResult.hasErrors()){
-            throw new ValidationFailException(bindingResult);
-        }
+        Utils.validateRequest(bindingResult);
+
         UserAddressCreateResponse createResponse =
                 userAddressService.createUserAddress(userId, createRequest);
 
@@ -94,9 +94,8 @@ public class UserAddressRestController {
             @RequestHeader(name = HeaderProperties.USER_ID) Long userId,
             @PathVariable(name = "addressId") Long addressId,
             @Valid @RequestBody UserAddressModifyRequest modifyRequest,BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
-            throw new ValidationFailException(bindingResult);
-        }
+        Utils.validateRequest(bindingResult);
+
         UserAddressModifyResponse modifyResponse =
                 userAddressService.modifyUserAddress(userId, addressId, modifyRequest);
 

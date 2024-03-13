@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import store.mybooks.resource.config.HeaderProperties;
+import store.mybooks.resource.error.Utils;
 import store.mybooks.resource.error.exception.ValidationFailException;
 import store.mybooks.resource.user.dto.request.*;
 import store.mybooks.resource.user.dto.response.*;
@@ -47,9 +48,7 @@ public class UserRestController {
     public ResponseEntity<UserCreateResponse> createUser(
             @Valid @RequestBody UserCreateRequest createRequest, BindingResult bindingResult) {
 
-        if (bindingResult.hasErrors()) {
-            throw new ValidationFailException(bindingResult);
-        }
+        Utils.validateRequest(bindingResult);
 
         UserCreateResponse createResponse = userService.createUser(createRequest);
 
@@ -61,9 +60,7 @@ public class UserRestController {
     public ResponseEntity<UserLoginResponse> loginOauthUser(
             @Valid @RequestBody UserOauthLoginRequest loginRequest, BindingResult bindingResult) {
 
-        if (bindingResult.hasErrors()) {
-            throw new ValidationFailException(bindingResult);
-        }
+        Utils.validateRequest(bindingResult);
 
         UserLoginResponse loginResponse = userService.loginOauthUser(loginRequest);
         return new ResponseEntity<>(loginResponse, HttpStatus.OK);
@@ -73,9 +70,7 @@ public class UserRestController {
     public ResponseEntity<UserCreateResponse> createOauthUser(
             @Valid @RequestBody UserOauthCreateRequest createRequest,BindingResult bindingResult) {
 
-        if(bindingResult.hasErrors()){
-            throw new ValidationFailException(bindingResult);
-        }
+        Utils.validateRequest(bindingResult);
         UserCreateResponse createResponse = userService.createOauthUser(createRequest);
         return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
     }
@@ -94,9 +89,8 @@ public class UserRestController {
                                                          @Valid @RequestBody UserModifyRequest modifyRequest,
                                                          BindingResult bindingResult) {
 
-        if (bindingResult.hasErrors()) {
-            throw new ValidationFailException(bindingResult);
-        }
+        Utils.validateRequest(bindingResult);
+
         UserModifyResponse modifyResponse = userService.modifyUser(id, modifyRequest);
 
         return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
@@ -116,9 +110,8 @@ public class UserRestController {
                                                                    @Valid @RequestBody
                                                                    UserGradeModifyRequest modifyRequest,
                                                                    BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new ValidationFailException(bindingResult);
-        }
+        Utils.validateRequest(bindingResult);
+
         UserGradeModifyResponse modifyResponse = userService.modifyUserGrade(id, modifyRequest);
         return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
     }
@@ -138,9 +131,8 @@ public class UserRestController {
                                                                      UserStatusModifyRequest modifyRequest,
                                                                      BindingResult bindingResult) {
 
-        if (bindingResult.hasErrors()) {
-            throw new ValidationFailException(bindingResult);
-        }
+        Utils.validateRequest(bindingResult);
+
         UserStatusModifyResponse modifyResponse = userService.modifyUserStatus(id, modifyRequest);
         return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
     }
@@ -159,9 +151,8 @@ public class UserRestController {
             @RequestHeader(name = HeaderProperties.USER_ID) Long id,
             @Valid @RequestBody UserPasswordModifyRequest modifyRequest, BindingResult bindingResult) {
 
-        if (bindingResult.hasErrors()) {
-            throw new ValidationFailException(bindingResult);
-        }
+        Utils.validateRequest(bindingResult);
+
 
         UserPasswordModifyResponse modifyResponse = userService.modifyUserPassword(id, modifyRequest);
         return new ResponseEntity<>(modifyResponse, HttpStatus.OK);
@@ -224,9 +215,8 @@ public class UserRestController {
     @PostMapping("/verification")
     public ResponseEntity<UserEncryptedPasswordResponse> verifyUserStatus(
             @Valid @RequestBody UserEmailRequest request, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new ValidationFailException(bindingResult);
-        }
+        Utils.validateRequest(bindingResult);
+
         UserEncryptedPasswordResponse userEncryptedPasswordResponse = userService.verifyUserStatusByEmail(request);
         return new ResponseEntity<>(userEncryptedPasswordResponse, HttpStatus.OK);
     }
@@ -235,9 +225,8 @@ public class UserRestController {
     public ResponseEntity<UserLoginResponse> completeLoginProcess(@Valid @RequestBody UserEmailRequest request,
                                                                   BindingResult bindingResult
     ) {
-        if (bindingResult.hasErrors()) {
-            throw new ValidationFailException(bindingResult);
-        }
+        Utils.validateRequest(bindingResult);
+
         UserLoginResponse userLoginResponse = userService.completeLoginProcess(request);
         return new ResponseEntity<>(userLoginResponse, HttpStatus.OK);
     }
@@ -255,9 +244,8 @@ public class UserRestController {
             @RequestHeader(name = HeaderProperties.USER_ID) Long id,
             @Valid @RequestBody UserPasswordModifyRequest request, BindingResult bindingResult) {
 
-        if (bindingResult.hasErrors()) {
-            throw new ValidationFailException(bindingResult);
-        }
+        Utils.validateRequest(bindingResult);
+
         UserInactiveVerificationResponse response = userService.verifyLockUser(id, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

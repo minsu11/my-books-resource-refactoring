@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import store.mybooks.resource.error.Utils;
 import store.mybooks.resource.error.exception.ValidationFailException;
 import store.mybooks.resource.user_grade.dto.request.UserGradeCreateRequest;
 import store.mybooks.resource.user_grade.dto.response.UserGradeCreateResponse;
@@ -52,9 +53,8 @@ public class UserGradeRestController {
     @PostMapping
     public ResponseEntity<UserGradeCreateResponse> createUserGrade(
             @Valid @RequestBody UserGradeCreateRequest createRequest, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
-            throw new ValidationFailException(bindingResult);
-        }
+        Utils.validateRequest(bindingResult);
+
 
         UserGradeCreateResponse createResponse = userGradeService.createUserGrade(createRequest);
 
