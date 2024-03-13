@@ -1,5 +1,7 @@
 package store.mybooks.resource.user_address.dto.request;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,8 +23,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserAddressModifyRequest {
 
+    @NotNull
+    @NotBlank
     private String alias;
 
+    @NotNull
+    @NotBlank
     private String detail;
 
 

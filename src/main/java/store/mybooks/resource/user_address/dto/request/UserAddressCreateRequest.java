@@ -4,6 +4,8 @@ import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,13 +27,23 @@ import store.mybooks.resource.user.entity.User;
 @AllArgsConstructor
 public class UserAddressCreateRequest {
 
+    @NotNull
+    @NotBlank
     private String alias;
 
+    @NotNull
+    @NotBlank
     private String roadName;
 
+    @NotNull
+    @NotBlank
     private String detail;
 
+
+    @NotNull
     private Integer number;
 
+    @NotNull
+    @NotBlank
     private String reference;
 }
