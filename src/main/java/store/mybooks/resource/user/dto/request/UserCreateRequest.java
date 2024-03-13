@@ -1,6 +1,8 @@
 package store.mybooks.resource.user.dto.request;
 
 import java.time.LocalDate;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,16 +24,26 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserCreateRequest {
 
+    @NotNull
+    @NotBlank
     private String name;
 
+    @NotNull
+    @NotBlank
     private String password;
 
+    @NotNull
+    @NotBlank
     private String phoneNumber;
 
+    @NotNull
+    @NotBlank
     private String email;
 
+    @NotNull
     private LocalDate birth;
 
+    @NotNull
     private Boolean isAdmin;
 
 
