@@ -37,6 +37,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.HandlerResultMatchers;
 import store.mybooks.resource.config.HeaderProperties;
+import store.mybooks.resource.error.RequestValidationFailedException;
 import store.mybooks.resource.error.exception.ValidationFailException;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
@@ -92,7 +93,7 @@ class UserAddressRestControllerTest {
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
-        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(ValidationFailException.class);
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(RequestValidationFailedException.class);
     }
 
     @Test
@@ -110,7 +111,7 @@ class UserAddressRestControllerTest {
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
-        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(ValidationFailException.class);
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(RequestValidationFailedException.class);
     }
     @Test
     @DisplayName("UserId , UserAddressCreateRequest 로 createUserAddress 실행시 UserAddressCreateResponse 반환")

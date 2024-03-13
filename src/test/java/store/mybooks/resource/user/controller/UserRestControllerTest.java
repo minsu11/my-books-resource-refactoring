@@ -44,6 +44,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import store.mybooks.resource.category.dto.request.CategoryCreateRequest;
 import store.mybooks.resource.category.exception.CategoryValidationException;
 import store.mybooks.resource.config.HeaderProperties;
+import store.mybooks.resource.error.RequestValidationFailedException;
 import store.mybooks.resource.error.exception.ValidationFailException;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.request.UserEmailRequest;
@@ -108,7 +109,7 @@ class UserRestControllerTest {
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
-        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(ValidationFailException.class);
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(RequestValidationFailedException.class);
     }
 
     @Test
@@ -125,7 +126,7 @@ class UserRestControllerTest {
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
-        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(ValidationFailException.class);
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(RequestValidationFailedException.class);
     }
 
     @Test
@@ -143,7 +144,7 @@ class UserRestControllerTest {
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
-        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(ValidationFailException.class);
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(RequestValidationFailedException.class);
     }
 
 
@@ -163,7 +164,7 @@ class UserRestControllerTest {
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
-        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(ValidationFailException.class);
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(RequestValidationFailedException.class);
     }
 
     @Test
@@ -181,7 +182,7 @@ class UserRestControllerTest {
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
-        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(ValidationFailException.class);
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(RequestValidationFailedException.class);
     }
 
     @Test
@@ -199,7 +200,7 @@ class UserRestControllerTest {
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
-        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(ValidationFailException.class);
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(RequestValidationFailedException.class);
     }
 
     @Test
@@ -217,7 +218,7 @@ class UserRestControllerTest {
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
-        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(ValidationFailException.class);
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(RequestValidationFailedException.class);
     }
 
     @Test
@@ -234,7 +235,7 @@ class UserRestControllerTest {
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
-        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(ValidationFailException.class);
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(RequestValidationFailedException.class);
     }
 
     @Test
