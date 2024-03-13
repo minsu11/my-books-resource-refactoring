@@ -2,6 +2,9 @@ package store.mybooks.resource.user_grade.entity;
 
 import java.time.LocalDate;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,23 +39,32 @@ public class UserGrade {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_grade_name_id")
+    @NotNull
     private UserGradeName userGradeName;
 
 
     @Column(name = "user_grade_min")
+    @NotNull
+    @Positive
     private Integer minCost;
 
     @Column(name = "user_grade_max")
+    @NotNull
+    @Positive
     private Integer maxCost;
 
 
     @Column(name = "user_grade_rate")
+    @NotNull
+    @Positive
     private Integer rate;
 
     @Column(name = "user_grade_created_date")
+    @NotNull
     private LocalDate createdDate;
 
     @Column(name = "is_available")
+    @NotNull
     private Boolean isAvailable;
 
 
