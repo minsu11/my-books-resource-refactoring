@@ -167,17 +167,8 @@ public class CategoryService {
                 stringJoiner.add(categoryGetResponseForQuerydsl.getName3());
             }
 
-            categoryNameList.add(new CategoryIdNameGetResponse() {
-                @Override
-                public Integer getId() {
-                    return categoryGetResponseForQuerydsl.getId();
-                }
-
-                @Override
-                public String getName() {
-                    return stringJoiner.toString();
-                }
-            });
+            categoryNameList.add(
+                    new CategoryIdNameGetResponse(categoryGetResponseForQuerydsl.getId(), stringJoiner.toString()));
         }
 
         return categoryNameList;
@@ -210,17 +201,10 @@ public class CategoryService {
         String levelTwoCategoryName = levelTwoCategory == null ? null : levelTwoCategory.getName();
 
         return new CategoryGetResponseForUpdate(
-                new CategoryIdNameGetResponse() {
-                    @Override
-                    public Integer getId() {
-                        return categoryGetResponse.getId();
-                    }
-
-                    @Override
-                    public String getName() {
-                        return categoryGetResponse.getName();
-                    }
-                }, levelOneCategoryName, levelTwoCategoryName);
+                new CategoryIdNameGetResponse(
+                        categoryGetResponse.getId(),
+                        categoryGetResponse.getName()),
+                levelOneCategoryName, levelTwoCategoryName);
     }
 
     /**
