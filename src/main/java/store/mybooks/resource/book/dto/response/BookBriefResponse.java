@@ -1,11 +1,9 @@
 package store.mybooks.resource.book.dto.response;
 
-import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import store.mybooks.resource.image.dto.response.ImageResponse;
 
 /**
