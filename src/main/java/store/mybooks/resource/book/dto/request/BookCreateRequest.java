@@ -51,7 +51,7 @@ public class BookCreateRequest {
     @NotBlank
     private String index;
     @NotBlank
-    private String content;
+    private String explanation;
     @NotNull
     @Positive
     private Integer originalCost;
