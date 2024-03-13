@@ -23,20 +23,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserOauthCreateRequest {
 
-    @NotNull
     @NotBlank
     private String name;
 
-    @NotNull
     @NotBlank
     private String phoneNumber;
 
-    @NotNull
     @NotBlank
     @Email
     private String email;
 
-    @NotNull
     @NotBlank
     private String birthMonthDay;
 

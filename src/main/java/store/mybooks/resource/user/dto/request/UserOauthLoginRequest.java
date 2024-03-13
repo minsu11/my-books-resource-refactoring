@@ -24,7 +24,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserOauthLoginRequest {
 
-    @NotNull
     @NotBlank
     @Email
     private String email;

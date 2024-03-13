@@ -23,11 +23,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserAddressModifyRequest {
 
-    @NotNull
     @NotBlank
     private String alias;
 
-    @NotNull
     @NotBlank
     private String detail;
 

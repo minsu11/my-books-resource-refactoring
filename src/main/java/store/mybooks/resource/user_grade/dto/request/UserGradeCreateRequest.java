@@ -29,7 +29,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserGradeCreateRequest {
 
-    @NotNull
     @NotBlank
     private String name;
 

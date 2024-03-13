@@ -22,7 +22,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserGradeModifyRequest {
-    @NotNull
     @NotBlank
     private String userGradeName;
 

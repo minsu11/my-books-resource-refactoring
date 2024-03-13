@@ -21,7 +21,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserStatusModifyRequest {
-    @NotNull
     @NotBlank
     private String userStatusName;
 

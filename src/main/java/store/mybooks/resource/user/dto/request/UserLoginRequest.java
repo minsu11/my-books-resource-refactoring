@@ -24,12 +24,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserLoginRequest {
 
-    @NotNull
     @NotBlank
     @Email
     private String email;
 
-    @NotNull
     @NotBlank
     private String password;
 

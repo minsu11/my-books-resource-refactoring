@@ -34,10 +34,8 @@ import store.mybooks.resource.user_status.entity.UserStatus;
 @AllArgsConstructor
 public class UserModifyRequest {
 
-    @NotNull
     @NotBlank
     private String name;
-    @NotNull
     @NotBlank
     private String phoneNumber;
 

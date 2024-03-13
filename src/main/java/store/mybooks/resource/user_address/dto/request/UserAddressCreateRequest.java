@@ -27,15 +27,12 @@ import store.mybooks.resource.user.entity.User;
 @AllArgsConstructor
 public class UserAddressCreateRequest {
 
-    @NotNull
     @NotBlank
     private String alias;
 
-    @NotNull
     @NotBlank
     private String roadName;
 
-    @NotNull
     @NotBlank
     private String detail;
 
@@ -43,7 +40,6 @@ public class UserAddressCreateRequest {
     @NotNull
     private Integer number;
 
-    @NotNull
     @NotBlank
     private String reference;
 }

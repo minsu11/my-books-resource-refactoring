@@ -22,7 +22,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserPasswordModifyRequest {
 
-    @NotNull
     @NotBlank
     private String password;
 
