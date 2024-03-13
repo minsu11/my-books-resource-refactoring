@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.booktag.dto.request.BookTagCreateRequest;
 import store.mybooks.resource.booktag.service.BookTagService;
-import store.mybooks.resource.error.exception.ValidationFailException;
+import store.mybooks.resource.error.RequestValidationFailedException;
 
 /**
  * packageName    : store.mybooks.resource.book_tag.controller
@@ -44,7 +44,7 @@ public class BookTagRestController {
     public ResponseEntity<Void> createBookTag(@Valid @RequestBody BookTagCreateRequest bookTagCreateRequest,
                                               BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationFailException(bindingResult);
+            throw new RequestValidationFailedException(bindingResult);
         }
 
         bookTagService.createBookTag(bookTagCreateRequest);

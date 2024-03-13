@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.bookcategory.dto.request.BookCategoryCreateRequest;
 import store.mybooks.resource.bookcategory.service.BookCategoryService;
-import store.mybooks.resource.error.exception.ValidationFailException;
+import store.mybooks.resource.error.RequestValidationFailedException;
 
 /**
  * packageName    : store.mybooks.resource.book_category.controller
@@ -45,7 +45,7 @@ public class BookCategoryRestController {
             @Valid @RequestBody BookCategoryCreateRequest bookCategoryCreateRequest,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationFailException(bindingResult);
+            throw new RequestValidationFailedException(bindingResult);
         }
 
         bookCategoryService.createBookCategory(bookCategoryCreateRequest);
