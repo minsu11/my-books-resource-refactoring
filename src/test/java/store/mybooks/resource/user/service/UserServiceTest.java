@@ -13,6 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Optional;
 import org.hibernate.validator.constraints.time.DurationMax;
 import org.junit.jupiter.api.DisplayName;
@@ -21,13 +22,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import store.mybooks.resource.user.dto.mapper.UserMapper;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
+import store.mybooks.resource.user.dto.request.UserEmailRequest;
 import store.mybooks.resource.user.dto.request.UserGradeModifyRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
+import store.mybooks.resource.user.dto.request.UserOauthCreateRequest;
 import store.mybooks.resource.user.dto.request.UserPasswordModifyRequest;
 import store.mybooks.resource.user.dto.request.UserStatusModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
@@ -35,6 +39,8 @@ import store.mybooks.resource.user.dto.response.UserDeleteResponse;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user.exception.UserAlreadyExistException;
+import store.mybooks.resource.user.exception.UserAlreadyResignException;
+import store.mybooks.resource.user.exception.UserLoginFailException;
 import store.mybooks.resource.user.exception.UserNotExistException;
 import store.mybooks.resource.user.repository.UserRepository;
 import store.mybooks.resource.user_grade.entity.UserGrade;
@@ -77,8 +83,7 @@ class UserServiceTest {
     @Test
     @DisplayName("이미 사용중인 email 을 담고있는 UserCreateRequest 를 이용해 CreateUser 실행시 UserAlreadyExistException")
     void givenUserCreateRequestWithAlreadyUsedEmail_whenCallCreateUser_thenThrowUserAlreadyExistException(
-            @Mock UserCreateRequest userCreateRequest,
-            @Mock User user) {
+            @Mock UserCreateRequest userCreateRequest) {
 
         when(userCreateRequest.getEmail()).thenReturn("test");
         when(userRepository.existsByEmail(anyString())).thenReturn(true);
@@ -210,10 +215,10 @@ class UserServiceTest {
 
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(request.getPassword()).thenReturn("test");
-        userService.modifyUserPassword(1L,request);
+        userService.modifyUserPassword(1L, request);
 
-        verify(userRepository,times(1)).findById(anyLong());
-        verify(user,times(1)).modifyPassword(anyString());
+        verify(userRepository, times(1)).findById(anyLong());
+        verify(user, times(1)).modifyPassword(anyString());
 
     }
 
@@ -296,5 +301,180 @@ class UserServiceTest {
         verify(userRepository, times(1)).queryAllBy(any());
     }
 
+    @Test
+    @DisplayName("UserOauthCreateRequest 를 이용해 createOauthUser 실행시 동작 테스트")
+    void givenUserOauthCreateRequest_whenCallCreateOauthUser_thenReturnUserCreateResponse(
+            @Mock UserOauthCreateRequest userOauthCreateRequest
+            , @Mock UserStatus userStatus, @Mock UserGrade userGrade) {
+
+        when(userStatusRepository.findById(anyString())).thenReturn(Optional.ofNullable(userStatus));
+
+        when(userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(anyString())).thenReturn(
+                Optional.ofNullable(userGrade));
+
+        when(userOauthCreateRequest.getEmail()).thenReturn("test@test.com");
+        when(userOauthCreateRequest.getBirthMonthDay()).thenReturn("1217");
+        when(userOauthCreateRequest.getPhoneNumber()).thenReturn("01012345678");
+        when(userOauthCreateRequest.getName()).thenReturn("test");
+
+        userService.createOauthUser(userOauthCreateRequest);
+
+        verify(userStatusRepository, times(1)).findById(anyString());
+        verify(userGradeRepository, times(1)).findByUserGradeNameIdAndIsAvailableIsTrue(anyString());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 UserStatus 를 이용해 createOauthUser 실행시 UserStatusNotExistException")
+    void givenNotExistUserStatus_whenCallCreateOauthUser_thenThrowUserStatusNotExistException(
+            @Mock UserOauthCreateRequest userOauthCreateRequest) {
+        assertThrows(UserStatusNotExistException.class, () -> userService.createOauthUser(userOauthCreateRequest));
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 UserGrade 를 이용해 createOauthUser 실행시 UserGradeNameNotExistException")
+    void givenNotExistUserGrade_whenCallCreateOauthUser_thenThrowUserGradeNameNotExistException(
+            @Mock UserOauthCreateRequest userOauthCreateRequest, @Mock UserStatus userStatus) {
+        when(userStatusRepository.findById(anyString())).thenReturn(Optional.ofNullable(userStatus));
+
+        assertThrows(UserGradeNameNotExistException.class, () -> userService.createOauthUser(userOauthCreateRequest));
+    }
+
+
+    @Test
+    @DisplayName("UserEmailRequest 를 이용해 completeLoginProcess 실행시 동작 테스트")
+    void givenUserEmailRequest_whenCallCompleteLoginProcess_thenReturnUserLoginResponse(@Mock User user, @Mock
+    UserEmailRequest userEmailRequest, @Mock UserStatus userStatus) {
+
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.ofNullable(user));
+        when(userEmailRequest.getEmail()).thenReturn("test");
+        assert user != null;
+        when(user.getIsAdmin()).thenReturn(true);
+        when(user.getId()).thenReturn(1L);
+        when(user.getUserStatus()).thenReturn(userStatus);
+        when(userStatus.getId()).thenReturn("test");
+        userService.completeLoginProcess(userEmailRequest);
+
+        verify(userRepository, times(1)).findByEmail(anyString());
+        verify(user, times(1)).modifyLatestLogin();
+    }
+
+    @Test
+    @DisplayName("존재하지않는 User Email 을 이용해 completeLoginProcess 실행시 UserLoginFailException")
+    void givenUserEmailRequestWithNotExist_whenCallCompleteLoginProcess_thenThrowUserLoginResponse(@Mock
+                                                                                                   UserEmailRequest userEmailRequest) {
+
+        assertThrows(UserLoginFailException.class, () -> userService.completeLoginProcess(userEmailRequest));
+
+    }
+
+
+    @Test
+    @DisplayName("UserEmailRequest 를 이용해 verifyUserStatusByEmail 실행시 동작 테스트")
+    void givenUserEmailRequest_whenCallVerifyUserStatusByEmail_thenReturnUserLoginResponse(@Mock User user, @Mock
+    UserEmailRequest userEmailRequest, @Mock UserStatus userStatus) {
+
+        when(userEmailRequest.getEmail()).thenReturn("test");
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.ofNullable(user));
+        assert user != null;
+        when(user.getPassword()).thenReturn("password");
+        when(user.getUserStatus()).thenReturn(userStatus);
+        when(userStatus.getId()).thenReturn("test");
+
+        userService.verifyUserStatusByEmail(userEmailRequest);
+
+        verify(userRepository, times(1)).findByEmail(anyString());
+    }
+
+    @Test
+    @DisplayName("존재하지않는 User Email 을 이용해 verifyUserStatusByEmail 실행시 UserLoginFailException")
+    void givenUserEmailRequestWithNotExist_whenCallVerifyUserStatusByEmail_thenThrowUserLoginFailException(@Mock
+                                                                                                           UserEmailRequest userEmailRequest) {
+
+        assertThrows(UserLoginFailException.class, () -> userService.verifyUserStatusByEmail(userEmailRequest));
+    }
+
+    @Test
+    @DisplayName("탈퇴한 User Email 을 이용해 verifyUserStatusByEmail 실행시 UserAlreadyResignException")
+    void givenUserEmailRequestWithResign_whenCallVerifyUserStatusByEmail_thenThrowUserAlreadyResignException(
+            @Mock User user, @Mock
+    UserEmailRequest userEmailRequest, @Mock UserStatus userStatus) {
+
+        when(userEmailRequest.getEmail()).thenReturn("test");
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.ofNullable(user));
+        assert user != null;
+        when(user.getUserStatus()).thenReturn(userStatus);
+        when(userStatus.getId()).thenReturn("탈퇴");
+        assertThrows(UserAlreadyResignException.class, () -> userService.verifyUserStatusByEmail(userEmailRequest));
+
+    }
+
+
+    @Test
+    @DisplayName("UserId 를 이용해 verifyDormancyUser 실행시 동작 테스트")
+    void givenUserId_whenCallVerifyDormancyUser_thenReturnUserInactiveVerificationResponse(@Mock User user, @Mock
+    UserStatus userStatus) {
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
+        when(userStatusRepository.findById(anyString())).thenReturn(Optional.ofNullable(userStatus));
+
+        userService.verifyDormancyUser(1L);
+
+        verify(userRepository, times(1)).findById(anyLong());
+        verify(userStatusRepository, times(1)).findById(anyString());
+    }
+
+    @Test
+    @DisplayName("존재하지않는 UserId 를 이용해 verifyDormancyUser 실행시 UserNotExistException")
+    void givenNotExistUserId_whenCallVerifyDormancyUser_thenThrowUserNotExistException() {
+
+        assertThrows(UserNotExistException.class, () -> userService.verifyDormancyUser(anyLong()));
+    }
+
+    @Test
+    @DisplayName("User 활성상태가 존재하지 않는 경우 verifyDormancyUser 실행시 UserStatusNotExistException")
+    void givenUserId_whenCallVerifyDormancyUser_thenThrowUserStatusNotExistException(@Mock User user) {
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
+        assertThrows(UserStatusNotExistException.class, () -> userService.verifyDormancyUser(anyLong()));
+    }
+
+    @Test
+    @DisplayName("UserId 와 UserPasswordModifyRequest 를 이용해 verifyLockUser 실행시 동작 테스트")
+    void givenUserIdAndUserPasswordModifyRequest_whenCallVerifyLockUser_thenReturnUserInactiveVerificationResponse(
+            @Mock User user, @Mock
+    UserStatus userStatus, @Mock UserPasswordModifyRequest userPasswordModifyRequest) {
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
+        when(userStatusRepository.findById(anyString())).thenReturn(Optional.ofNullable(userStatus));
+        when(userPasswordModifyRequest.getPassword()).thenReturn("password");
+        doNothing().when(user).modifyUserStatus(any(UserStatus.class));
+        doNothing().when(user).modifyPassword(anyString());
+
+        userService.verifyLockUser(1L, userPasswordModifyRequest);
+
+        verify(userRepository, times(1)).findById(anyLong());
+        verify(userStatusRepository, times(1)).findById(anyString());
+        verify(user, times(1)).modifyUserStatus(any(UserStatus.class));
+        verify(user, times(1)).modifyPassword(anyString());
+    }
+
+    @Test
+    @DisplayName("존재하지않는 UserId 를 이용해 verifyLockUser 실행시 UserNotExistException")
+    void givenNotExistUserId_whenCallVerifyLockUser_thenThrowUserNotExistException(
+            @Mock UserPasswordModifyRequest userPasswordModifyRequest) {
+
+        assertThrows(UserNotExistException.class,
+                () -> userService.verifyLockUser(anyLong(), userPasswordModifyRequest));
+    }
+
+    @Test
+    @DisplayName("User 활성상태가 존재하지 않는 경우 verifyLockUser 실행시 UserStatusNotExistException")
+    void givenUserId_whenCallVerifyLockUser_thenThrowUserStatusNotExistException(@Mock User user, @Mock
+    UserPasswordModifyRequest userPasswordModifyRequest) {
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
+        assertThrows(UserStatusNotExistException.class,
+                () -> userService.verifyLockUser(anyLong(), userPasswordModifyRequest));
+    }
 
 }
