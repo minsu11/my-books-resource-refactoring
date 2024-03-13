@@ -247,7 +247,7 @@ class CategoryRestControllerTest {
                 ));
     }
 
-    @Test//1, firstCategory
+    @Test
     @DisplayName("카테고리 수정을 위한 카테고리 가져오기")
     void givenCategoryId_whenGetCategoryUpdateForm_thenReturnCategoryGetResponseForUpdate() throws Exception {
         CategoryGetResponseForUpdate categoryGetResponseForUpdate = new CategoryGetResponseForUpdate(
