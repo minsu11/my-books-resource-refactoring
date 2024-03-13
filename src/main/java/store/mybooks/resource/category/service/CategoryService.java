@@ -17,6 +17,7 @@ import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForBookCreate;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForMainView;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForQuerydsl;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
@@ -167,17 +168,8 @@ public class CategoryService {
                 stringJoiner.add(categoryGetResponseForQuerydsl.getName3());
             }
 
-            categoryNameList.add(new CategoryIdNameGetResponse() {
-                @Override
-                public Integer getId() {
-                    return categoryGetResponseForQuerydsl.getId();
-                }
-
-                @Override
-                public String getName() {
-                    return stringJoiner.toString();
-                }
-            });
+            categoryNameList.add(
+                    new CategoryIdNameGetResponse(categoryGetResponseForQuerydsl.getId(), stringJoiner.toString()));
         }
 
         return categoryNameList;
@@ -210,17 +202,10 @@ public class CategoryService {
         String levelTwoCategoryName = levelTwoCategory == null ? null : levelTwoCategory.getName();
 
         return new CategoryGetResponseForUpdate(
-                new CategoryIdNameGetResponse() {
-                    @Override
-                    public Integer getId() {
-                        return categoryGetResponse.getId();
-                    }
-
-                    @Override
-                    public String getName() {
-                        return categoryGetResponse.getName();
-                    }
-                }, levelOneCategoryName, levelTwoCategoryName);
+                new CategoryIdNameGetResponse(
+                        categoryGetResponse.getId(),
+                        categoryGetResponse.getName()),
+                levelOneCategoryName, levelTwoCategoryName);
     }
 
     /**
@@ -250,6 +235,27 @@ public class CategoryService {
         }
 
         return categoryRepository.findAllByParentCategory_Id(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CategoryGetResponseForMainView> getCategoriesForMainView() {
+        List<CategoryGetResponseForMainView> categoryGetResponseForMainViewList = new ArrayList<>();
+        List<CategoryGetResponse> highestCategoryList = categoryRepository.findAllByParentCategoryIsNull();
+        for (CategoryGetResponse highestCategory : highestCategoryList) {
+            List<CategoryIdNameGetResponse> childCategoryList =
+                    categoryRepository.findAllByParentCategory_Id(highestCategory.getId())
+                            .stream()
+                            .map(category -> new CategoryIdNameGetResponse(category.getId(), category.getName()))
+                            .collect(Collectors.toList());
+
+            categoryGetResponseForMainViewList.add(new CategoryGetResponseForMainView(
+                    highestCategory.getId(),
+                    highestCategory.getName(),
+                    childCategoryList
+            ));
+        }
+
+        return categoryGetResponseForMainViewList;
     }
 
     /**

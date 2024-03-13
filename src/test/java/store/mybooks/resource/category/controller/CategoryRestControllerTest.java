@@ -433,17 +433,7 @@ class CategoryRestControllerTest {
     }
 
     private CategoryIdNameGetResponse makeCategoryIdNameGetResponse(Integer id, String name) {
-        return new CategoryIdNameGetResponse() {
-            @Override
-            public Integer getId() {
-                return id;
-            }
-
-            @Override
-            public String getName() {
-                return name;
-            }
-        };
+        return new CategoryIdNameGetResponse(id, name);
     }
 
     private CategoryGetResponse makeCategoryGetResponse(Integer id, CategoryGetResponse parentCategory, String name) {
