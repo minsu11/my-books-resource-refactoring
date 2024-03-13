@@ -70,12 +70,14 @@ class CategoryRepositoryTest {
                 .publishDate(LocalDate.of(2024, 1, 1))
                 .page(100)
                 .index("index")
-                .content("content")
+                .explanation("content")
                 .originalCost(20000)
                 .saleCost(16000)
                 .discountRate(20)
                 .stock(5)
                 .createdDate(LocalDate.now())
+                .viewCount(1)
+                .isPackaging(true)
                 .build());
 
         BookCategory bookCategory = new BookCategory(
