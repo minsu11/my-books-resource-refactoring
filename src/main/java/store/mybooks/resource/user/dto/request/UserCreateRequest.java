@@ -1,8 +1,10 @@
 package store.mybooks.resource.user.dto.request;
 
 import java.time.LocalDate;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,10 +35,12 @@ public class UserCreateRequest {
     @NotBlank
     private String phoneNumber;
 
+    @Email
     @NotBlank
     private String email;
 
     @NotNull
+    @PastOrPresent
     private LocalDate birth;
 
     @NotNull
