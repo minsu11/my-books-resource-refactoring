@@ -1,5 +1,7 @@
 package store.mybooks.resource.user.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.array;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -23,6 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -37,18 +40,29 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import store.mybooks.resource.category.dto.request.CategoryCreateRequest;
+import store.mybooks.resource.category.exception.CategoryValidationException;
 import store.mybooks.resource.config.HeaderProperties;
+import store.mybooks.resource.error.exception.ValidationFailException;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
+import store.mybooks.resource.user.dto.request.UserEmailRequest;
 import store.mybooks.resource.user.dto.request.UserGradeModifyRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
+import store.mybooks.resource.user.dto.request.UserOauthCreateRequest;
+import store.mybooks.resource.user.dto.request.UserPasswordModifyRequest;
 import store.mybooks.resource.user.dto.request.UserStatusModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
+import store.mybooks.resource.user.dto.response.UserEncryptedPasswordResponse;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
 import store.mybooks.resource.user.dto.response.UserGradeModifyResponse;
+import store.mybooks.resource.user.dto.response.UserInactiveVerificationResponse;
+import store.mybooks.resource.user.dto.response.UserLoginResponse;
 import store.mybooks.resource.user.dto.response.UserModifyResponse;
 import store.mybooks.resource.user.dto.response.UserStatusModifyResponse;
 import store.mybooks.resource.user.service.UserService;
+import store.mybooks.resource.user_status.entity.UserStatus;
 
 /**
  * packageName    : store.mybooks.resource.user.controller
@@ -78,6 +92,150 @@ class UserRestControllerTest {
 
     UserGetResponse userGetResponse1;
     UserGetResponse userGetResponse2;
+
+
+    @Test
+    @DisplayName("유저 UserCreateRequest - Validation 실패")
+    void givenUserCreateRequest_whenValidationFailure_thenReturnBadRequest() throws Exception {
+
+        UserCreateRequest request = new UserCreateRequest("test", null, "01000000", "asdas", null, false);
+
+        String content = objectMapper.writeValueAsString(request);
+
+        MvcResult mvcResult = mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(ValidationFailException.class);
+    }
+
+    @Test
+    @DisplayName("유저 Oauth UserOauthCreateRequest - Validation 실패")
+    void givenUserOauthLoginRequest_whenValidationFailure_thenReturnBadRequest() throws Exception {
+
+        UserOauthCreateRequest request = new UserOauthCreateRequest("test", "test", "dddd", null);
+
+        String content = objectMapper.writeValueAsString(request);
+
+        MvcResult mvcResult = mockMvc.perform(post("/api/users/oauth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(ValidationFailException.class);
+    }
+
+    @Test
+    @DisplayName("유저 Oauth UserOauthCreateRequest - Validation 실패")
+    void givenUserOauthCreateRequest_whenValidationFailure_thenReturnBadRequest() throws Exception {
+
+
+        UserOauthCreateRequest request = new UserOauthCreateRequest("test", "test", "dddd@test.com", null);
+
+        String content = objectMapper.writeValueAsString(request);
+
+        MvcResult mvcResult = mockMvc.perform(post("/api/users/oauth")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(ValidationFailException.class);
+    }
+
+
+    @Test
+    @DisplayName("유저 UserModifyRequest - Validation 실패")
+    void givenUserModifyRequest_whenValidationFailure_thenReturnBadRequest() throws Exception {
+
+
+        UserModifyRequest request = new UserModifyRequest(null, "01012345678");
+
+        String content = objectMapper.writeValueAsString(request);
+
+        MvcResult mvcResult = mockMvc.perform(put("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                        .header(HeaderProperties.USER_ID, 1))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(ValidationFailException.class);
+    }
+
+    @Test
+    @DisplayName("유저 UserGradeModifyRequest - Validation 실패")
+    void givenUserGradeModifyRequest_whenValidationFailure_thenReturnBadRequest() throws Exception {
+
+
+        UserGradeModifyRequest request = new UserGradeModifyRequest("");
+
+        String content = objectMapper.writeValueAsString(request);
+
+        MvcResult mvcResult = mockMvc.perform(put("/api/users/1/grade")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(ValidationFailException.class);
+    }
+
+    @Test
+    @DisplayName("유저 UserStatusModifyRequest - Validation 실패")
+    void givenUserStatusModifyRequest_whenValidationFailure_thenReturnBadRequest() throws Exception {
+
+
+        UserStatusModifyRequest request = new UserStatusModifyRequest("");
+
+        String content = objectMapper.writeValueAsString(request);
+
+        MvcResult mvcResult = mockMvc.perform(put("/api/users/1/status")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(ValidationFailException.class);
+    }
+
+    @Test
+    @DisplayName("유저 UserPasswordModifyRequest - Validation 실패")
+    void givenUserPasswordModifyRequest_whenValidationFailure_thenReturnBadRequest() throws Exception {
+
+        UserPasswordModifyRequest request = new UserPasswordModifyRequest("");
+
+        String content = objectMapper.writeValueAsString(request);
+
+        MvcResult mvcResult = mockMvc.perform(put("/api/users/password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                        .header(HeaderProperties.USER_ID, 1))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(ValidationFailException.class);
+    }
+
+    @Test
+    @DisplayName("유저 UserEmailRequest  - Validation 실패")
+    void givenUserEmailRequest_whenValidationFailure_thenReturnBadRequest() throws Exception {
+
+        UserEmailRequest request = new UserEmailRequest("test");
+
+        String content = objectMapper.writeValueAsString(request);
+
+        MvcResult mvcResult = mockMvc.perform(post("/api/users/verification/complete")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(ValidationFailException.class);
+    }
 
     @Test
     @DisplayName("UserCreateRequest 로 createUser 실행시 UserCreateResponse 반환")
@@ -158,6 +316,7 @@ class UserRestControllerTest {
                 .andExpect(jsonPath("$.gradeChangedDate").exists());
     }
 
+
     @Test
     @DisplayName("UserId 로 deleteUser 실행시 UserDeleteResponse 반환")
     void givenUserId_whenCallDeleteUser_thenReturnUserDeleteResponse() throws Exception {
@@ -221,6 +380,71 @@ class UserRestControllerTest {
 
     }
 
+    @Test
+    @DisplayName("UserEmailRequest 로 verifyUserStatus 실행시 UserEncryptedPasswordResponse 반환")
+    void givenUserEmailRequest_whenCallVerifyUserStatus_thenReturnUserEncryptedPasswordResponse() throws Exception {
+
+        UserEmailRequest request = new UserEmailRequest("test@test.com");
+        UserEncryptedPasswordResponse response = new UserEncryptedPasswordResponse("password");
+
+        when(userService.verifyUserStatusByEmail(any(UserEmailRequest.class))).thenReturn(response);
+
+        mockMvc.perform(post("/api/users/verification")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.encryptedPassword").exists());
+
+    }
+
+    @Test
+    @DisplayName("UserEmailRequest 로 completeLoginProcess 실행시 UserLoginResponse 반환")
+    void givenUserEmailRequest_whenCallCompleteLoginProcess_thenReturnUserLoginResponse() throws Exception {
+
+        UserEmailRequest request = new UserEmailRequest("test@test.com");
+        UserLoginResponse response = new UserLoginResponse(true, true, 1L, "test");
+        when(userService.completeLoginProcess(any(UserEmailRequest.class))).thenReturn(response);
+
+        mockMvc.perform(post("/api/users/verification/complete")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isValidUser").exists())
+                .andExpect(jsonPath("$.isAdmin").exists())
+                .andExpect(jsonPath("$.userId").exists())
+                .andExpect(jsonPath("$.status").exists());
+
+    }
+
+    @Test
+    @DisplayName("UserId 로 dormancyUserVerification 실행시 UserInactiveVerificationResponse 반환")
+    void givenUserId_whenCallDormancyUserVerification_thenReturnUserInactiveVerificationResponse() throws Exception {
+
+        UserInactiveVerificationResponse response = new UserInactiveVerificationResponse("test");
+        when(userService.verifyDormancyUser(anyLong())).thenReturn(response);
+
+        mockMvc.perform(post("/api/users/verification/dormancy")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HeaderProperties.USER_ID, 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userStatus").exists());
+    }
+
+    @Test
+    @DisplayName("UserId 로 lockUserVerification 실행시 UserInactiveVerificationResponse 반환")
+    void givenUserId_whenCallLockUserVerification_thenReturnUserInactiveVerificationResponse() throws Exception {
+
+        UserPasswordModifyRequest request = new UserPasswordModifyRequest("test");
+        UserInactiveVerificationResponse response = new UserInactiveVerificationResponse("test");
+        when(userService.verifyLockUser(anyLong(), any(UserPasswordModifyRequest.class))).thenReturn(response);
+
+        mockMvc.perform(post("/api/users/verification/lock")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                        .header(HeaderProperties.USER_ID, 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userStatus").exists());
+    }
 
     @BeforeEach
     void setUp() {
