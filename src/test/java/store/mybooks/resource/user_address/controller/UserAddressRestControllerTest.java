@@ -1,5 +1,6 @@
 package store.mybooks.resource.user_address.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -33,8 +34,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.HandlerResultMatchers;
 import store.mybooks.resource.config.HeaderProperties;
+import store.mybooks.resource.error.exception.ValidationFailException;
+import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
 import store.mybooks.resource.user_address.dto.request.UserAddressCreateRequest;
 import store.mybooks.resource.user_address.dto.request.UserAddressModifyRequest;
@@ -72,6 +76,42 @@ class UserAddressRestControllerTest {
     UserAddressGetResponse userAddressGetResponse1;
     UserAddressGetResponse userAddressGetResponse2;
 
+
+    @Test
+    @DisplayName("유저 UserAddressCreateRequest - Validation 실패")
+    void givenUserAddressCreateRequest_whenValidationFailure_thenReturnBadRequest() throws Exception {
+
+        UserAddressCreateRequest request = new UserAddressCreateRequest("alias",null,"detail",1,"");
+
+        String content = objectMapper.writeValueAsString(request);
+
+        MvcResult mvcResult = mockMvc.perform(post("/api/users/addresses")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                        .header(HeaderProperties.USER_ID,1L))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(ValidationFailException.class);
+    }
+
+    @Test
+    @DisplayName("유저 UserAddressModifyRequest - Validation 실패")
+    void givenUserAddressModifyRequest_whenValidationFailure_thenReturnBadRequest() throws Exception {
+
+        UserAddressModifyRequest request = new UserAddressModifyRequest("","");
+
+        String content = objectMapper.writeValueAsString(request);
+
+        MvcResult mvcResult = mockMvc.perform(put("/api/users/addresses/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                        .header(HeaderProperties.USER_ID,1L))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(ValidationFailException.class);
+    }
     @Test
     @DisplayName("UserId , UserAddressCreateRequest 로 createUserAddress 실행시 UserAddressCreateResponse 반환")
     void givenUserIdAndUserAddressCreateRequest_whenCallCreateUserAddress_thenReturnUserAddressCreateResponse()
