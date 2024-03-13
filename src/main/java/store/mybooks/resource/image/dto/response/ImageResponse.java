@@ -1,6 +1,6 @@
 package store.mybooks.resource.image.dto.response;
 
-import lombok.AllArgsConstructor;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 
 /**
@@ -15,10 +15,15 @@ import lombok.Getter;
  * 3/12/24        Fiat_lux       최초 생성<br/>
  */
 @Getter
-@AllArgsConstructor
 public class ImageResponse {
-    private String path;
-    private String fileName;
-    private String extension;
-    private String status;
+    private final String path;
+    private final String fileName;
+    private final String extension;
+
+    @QueryProjection
+    public ImageResponse(String path, String fileName, String extension) {
+        this.path = path;
+        this.fileName = fileName;
+        this.extension = extension;
+    }
 }
