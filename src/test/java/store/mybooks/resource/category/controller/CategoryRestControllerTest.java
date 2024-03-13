@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -250,17 +251,9 @@ class CategoryRestControllerTest {
     @DisplayName("카테고리 수정을 위한 카테고리 가져오기")
     void givenCategoryId_whenGetCategoryUpdateForm_thenReturnCategoryGetResponseForUpdate() throws Exception {
         CategoryGetResponseForUpdate categoryGetResponseForUpdate = new CategoryGetResponseForUpdate(
-                new CategoryIdNameGetResponse() {
-                    @Override
-                    public Integer getId() {
-                        return 1;
-                    }
-
-                    @Override
-                    public String getName() {
-                        return "firstCategory";
-                    }
-                }, "levelOneCategoryName", "levelTwoCategoryName");
+                makeCategoryIdNameGetResponse(1, "firstCategory"),
+                "levelOneCategoryName",
+                "levelTwoCategoryName");
 
         when(categoryService.getCategoryForUpdate(anyInt())).thenReturn(categoryGetResponseForUpdate);
 
@@ -283,6 +276,29 @@ class CategoryRestControllerTest {
                                 fieldWithPath("levelTwoCategoryName").description("2단계 카테고리 이름")
                         )
                 ));
+    }
+
+    @Test
+    @DisplayName("도서 상세페이지에서 보여줄 카테고리 이름 가져오기")
+    void givenBookId_whenGetCategoryNameForBookView_thenReturnListOfCategoryIdNameGetResponse() throws Exception {
+        CategoryIdNameGetResponse firstCategoryIdNameGetResponse = makeCategoryIdNameGetResponse(1, "firstCategory");
+        CategoryIdNameGetResponse secondCategoryIdNameGetResponse = makeCategoryIdNameGetResponse(2, "secondCategory");
+        CategoryIdNameGetResponse thirdCategoryIdNameGetResponse = makeCategoryIdNameGetResponse(3, "thirdCategory");
+        List<CategoryIdNameGetResponse> categoryIdNameGetResponseList = new ArrayList<>();
+        categoryIdNameGetResponseList.add(firstCategoryIdNameGetResponse);
+        categoryIdNameGetResponseList.add(secondCategoryIdNameGetResponse);
+        categoryIdNameGetResponseList.add(thirdCategoryIdNameGetResponse);
+        when(categoryService.getCategoryNameForBookView(anyLong())).thenReturn(categoryIdNameGetResponseList);
+
+        mockMvc.perform(get("/api/categories/bookId/{bookId}", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(categoryIdNameGetResponseList.size()))
+                .andExpect(jsonPath("$[0].id").value(firstCategoryIdNameGetResponse.getId()))
+                .andExpect(jsonPath("$[0].name").value(firstCategoryIdNameGetResponse.getName()))
+                .andExpect(jsonPath("$[1].id").value(secondCategoryIdNameGetResponse.getId()))
+                .andExpect(jsonPath("$[1].name").value(secondCategoryIdNameGetResponse.getName()))
+                .andExpect(jsonPath("$[2].id").value(thirdCategoryIdNameGetResponse.getId()))
+                .andExpect(jsonPath("$[2].name").value(thirdCategoryIdNameGetResponse.getName()));
     }
 
     @Test
@@ -414,6 +430,20 @@ class CategoryRestControllerTest {
         categoryGetResponseList.add(makeCategoryGetResponse(1, null, "firstCategory"));
         categoryGetResponseList.add(makeCategoryGetResponse(2, null, "secondCategory"));
         categoryGetResponseList.add(makeCategoryGetResponse(3, null, "thirdCategory"));
+    }
+
+    private CategoryIdNameGetResponse makeCategoryIdNameGetResponse(Integer id, String name) {
+        return new CategoryIdNameGetResponse() {
+            @Override
+            public Integer getId() {
+                return id;
+            }
+
+            @Override
+            public String getName() {
+                return name;
+            }
+        };
     }
 
     private CategoryGetResponse makeCategoryGetResponse(Integer id, CategoryGetResponse parentCategory, String name) {

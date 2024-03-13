@@ -1,10 +1,10 @@
 package store.mybooks.resource.booktag.dto.request;
 
 import java.util.List;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 /**
  * packageName    : store.mybooks.resource.book_tag.dto.request
@@ -19,8 +19,8 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
 public class BookTagCreateRequest {
+    @NotNull
     @Positive
     private Long bookId;
     private List<Integer> tagIdList;

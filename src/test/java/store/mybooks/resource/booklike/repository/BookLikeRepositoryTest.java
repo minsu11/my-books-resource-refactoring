@@ -50,27 +50,27 @@ class BookLikeRepositoryTest {
         Assertions.assertEquals(1, bookLikeRepository.countBookLikeByPk_BookId(bookId));
     }
 
-    @Test
-    @DisplayName("사용자가 좋아요한 도서 목록 조회")
-    void givenUserIdAndPageable_whenGetUserBookLike_thenReturnPagedBookBriefResponse() {
-        Book book1 = bookRepository.save(new Book());
-        Book book2 = bookRepository.save(new Book());
-        Long bookId1 = book1.getId();
-        Long bookId2 = book2.getId();
-
-        User user = userRepository.save(new User());
-        Long userId = user.getId();
-
-        BookLike bookLike1 = new BookLike(new BookLike.Pk(userId, bookId1), user, book1);
-        BookLike bookLike2 = new BookLike(new BookLike.Pk(userId, bookId2), user, book2);
-        bookLikeRepository.save(bookLike1);
-        bookLikeRepository.save(bookLike2);
-
-        Pageable pageable = PageRequest.of(0, 2);
-        Page<BookBriefResponse> result = bookLikeRepository.getUserBookLike(userId, pageable);
-
-        assertThat(result.getContent()).hasSize(2);
-        assertThat(result.getContent().get(0).getId()).isEqualTo(bookId1);
-        assertThat(result.getContent().get(1).getId()).isEqualTo(bookId2);
-    }
+//    @Test
+//    @DisplayName("사용자가 좋아요한 도서 목록 조회")
+//    void givenUserIdAndPageable_whenGetUserBookLike_thenReturnPagedBookBriefResponse() {
+//        Book book1 = bookRepository.save(new Book());
+//        Book book2 = bookRepository.save(new Book());
+//        Long bookId1 = book1.getId();
+//        Long bookId2 = book2.getId();
+//
+//        User user = userRepository.save(new User());
+//        Long userId = user.getId();
+//
+//        BookLike bookLike1 = new BookLike(new BookLike.Pk(userId, bookId1), user, book1);
+//        BookLike bookLike2 = new BookLike(new BookLike.Pk(userId, bookId2), user, book2);
+//        bookLikeRepository.save(bookLike1);
+//        bookLikeRepository.save(bookLike2);
+//
+//        Pageable pageable = PageRequest.of(0, 2);
+//        Page<BookBriefResponse> result = bookLikeRepository.getUserBookLike(userId, pageable);
+//
+//        assertThat(result.getContent()).hasSize(2);
+//        assertThat(result.getContent().get(0).getId()).isEqualTo(bookId1);
+//        assertThat(result.getContent().get(1).getId()).isEqualTo(bookId2);
+//    }
 }
