@@ -71,8 +71,11 @@ public class UserRestController {
 
     @PostMapping("/oauth")
     public ResponseEntity<UserCreateResponse> createOauthUser(
-            @Valid @RequestBody UserOauthCreateRequest createRequest) {
+            @Valid @RequestBody UserOauthCreateRequest createRequest,BindingResult bindingResult) {
 
+        if(bindingResult.hasErrors()){
+            throw new ValidationFailException(bindingResult);
+        }
         UserCreateResponse createResponse = userService.createOauthUser(createRequest);
         return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
     }
@@ -255,7 +258,6 @@ public class UserRestController {
         if (bindingResult.hasErrors()) {
             throw new ValidationFailException(bindingResult);
         }
-        System.out.println(request.getPassword());
         UserInactiveVerificationResponse response = userService.verifyLockUser(id, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
