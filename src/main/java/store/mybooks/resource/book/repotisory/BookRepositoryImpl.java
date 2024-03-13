@@ -1,6 +1,7 @@
 package store.mybooks.resource.book.repotisory;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -12,12 +13,14 @@ import store.mybooks.resource.book.dto.response.BookBriefResponse;
 import store.mybooks.resource.book.dto.response.BookDetailResponse;
 import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
 import store.mybooks.resource.book.dto.response.BookResponseForOrder;
+import store.mybooks.resource.book.dto.response.QBookBriefResponse;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.entity.QBook;
 import store.mybooks.resource.bookauthor.entity.QBookAuthor;
 import store.mybooks.resource.bookstatus.entity.QBookStatus;
 import store.mybooks.resource.booktag.entity.QBookTag;
 import store.mybooks.resource.image.dto.response.ImageResponse;
+import store.mybooks.resource.image.dto.response.QImageResponse;
 import store.mybooks.resource.image.entity.QImage;
 import store.mybooks.resource.image_status.entity.QImageStatus;
 import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
@@ -59,23 +62,22 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .join(book.publisher, publisher)
                 .where(book.id.eq(id))
                 .fetchOne();
-
+        System.out.println("여긴가?");
         ImageResponse thumbNailImage = from(image)
                 .join(image.book, book)
                 .join(image.imageStatus, imageStatus)
                 .where(image.book.id.eq(id))
                 .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
-                .select(Projections.constructor(ImageResponse.class, image.path, image.fileName, image.extension,
-                        imageStatus.id))
+                .select(Projections.constructor(ImageResponse.class, image.path, image.fileName, image.extension))
                 .fetchOne();
-
+        System.out.println("잘나옴?");
+        System.out.println(thumbNailImage.toString());
         List<ImageResponse> contentImageList = from(image)
                 .join(image.book, book)
                 .join(image.imageStatus, imageStatus)
                 .where(image.book.id.eq(id))
                 .where(imageStatus.id.eq(ImageStatusEnum.CONTENT.getName()))
-                .select(Projections.constructor(ImageResponse.class, image.path, image.fileName, image.extension,
-                        imageStatus.id))
+                .select(Projections.constructor(ImageResponse.class, image.path, image.fileName, image.extension))
                 .fetch();
 
         List<AuthorGetResponse> authorList = from(bookAuthor)
@@ -116,17 +118,21 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
 
     @Override
     public Page<BookBriefResponse> getBookBriefInfo(Pageable pageable) {
-
-        List<BookBriefResponse> lists = from(book)
-                .join(image.book, book)
+        List<BookBriefResponse> lists = new JPAQueryFactory(getEntityManager())
+                .from(book)
+                .join(image)
+                .on(image.book.eq(book))
                 .join(image.imageStatus, imageStatus)
                 .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
-                .select(Projections.constructor(BookBriefResponse.class,
-                        book.id, image.path, image.fileName, image.extension, book.name, book.saleCost))
+                .select(new QBookBriefResponse(book.id,
+                        new QImageResponse(image.path, image.fileName, image.extension),
+                        book.name,
+                        book.saleCost))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-
+        System.out.println("listss");
+        System.out.println(lists);
         long total = from(book).fetchCount();
 
         return new PageImpl<>(lists, pageable, total);
@@ -138,10 +144,13 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
         List<BookBriefResponse> lists =
                 from(book)
                         .join(book.bookStatus, bookStatus)
-                        .join(image.book, book)
+                        .join(image)
+                        .on(image.book.eq(book))
                         .join(image.imageStatus, imageStatus)
-                        .select(Projections.constructor(BookBriefResponse.class,
-                                book.id, book.name, book.saleCost))
+                        .select(new QBookBriefResponse(book.id,
+                                new QImageResponse(image.path, image.fileName, image.extension),
+                                book.name,
+                                book.saleCost))
                         .where(bookStatus.id.in("판매중", "재고없음"))
                         .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
                         .offset(pageable.getOffset())
