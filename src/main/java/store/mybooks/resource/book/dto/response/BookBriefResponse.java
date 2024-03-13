@@ -24,13 +24,7 @@ import store.mybooks.resource.image.dto.response.ImageResponse;
 public class BookBriefResponse {
     private Long id;
 
-    private ImageResponse thumbNailImage;
-
-    private String imagePath;
-
-    private String fileName;
-
-    private String extension;
+    private ImageResponse imageResponse;
 
     private String name;
 
