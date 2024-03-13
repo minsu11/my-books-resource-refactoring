@@ -66,5 +66,6 @@ public class DeliveryRule {
         this.cost = cost;
         this.ruleCost = ruleCost;
         this.createdDate = LocalDate.now();
+        this.isAvailable = 1;
     }
 }

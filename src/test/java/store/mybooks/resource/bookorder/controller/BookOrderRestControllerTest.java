@@ -62,7 +62,6 @@ class BookOrderRestControllerTest {
                 .andExpect(jsonPath("$.content[0].userId").value(1L))
                 .andExpect(jsonPath("$.content[0].statusId").value("test"))
                 .andExpect(jsonPath("$.content[0].deliveryRuleId").value(1))
-                .andExpect(jsonPath("$.content[0].wrapId").value(1))
                 .andExpect(jsonPath("$.content[0].date").value("1212-12-12"))
                 .andExpect(jsonPath("$.content[0].invoiceNumber").value("test"))
                 .andExpect(jsonPath("$.content[0].receiverName").value("testName"))
@@ -78,13 +77,11 @@ class BookOrderRestControllerTest {
     }
 
     private static BookOrderUserResponse getBookOrderUserResponse() {
-        BookOrderUserResponse bookOrderUserResponse = new BookOrderUserResponse(1L, "test", 1, 1,
+        BookOrderUserResponse bookOrderUserResponse = new BookOrderUserResponse(1L, "test", 1,
                 LocalDate.of(1212, 12, 12), "test", "testName", "testAddress", "010-0000-0000", "testMessage", 1000, 100, 100,
                 "123123123", "");
         return bookOrderUserResponse;
     }
 
-    @Test
-    void getBookOrderPageByStatusId() {
-    }
+
 }

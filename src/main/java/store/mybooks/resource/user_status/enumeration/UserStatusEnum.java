@@ -15,8 +15,6 @@ public enum UserStatusEnum {
 
 
     ACTIVE("활성"),
-
-    INACTIVE("휴면"),
     RESIGN("탈퇴");
 
 

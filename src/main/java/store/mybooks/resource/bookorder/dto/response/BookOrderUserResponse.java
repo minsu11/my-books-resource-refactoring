@@ -23,7 +23,6 @@ public class BookOrderUserResponse {
     private Long userId;
     private String statusId;
     private Integer deliveryRuleId;
-    private Integer wrapId;
     private LocalDate date;
     private String invoiceNumber;
     private String receiverName;

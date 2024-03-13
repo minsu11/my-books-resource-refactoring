@@ -11,7 +11,6 @@ import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
 import store.mybooks.resource.orders_status.entity.OrdersStatus;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.usercoupon.entity.UserCoupon;
-import store.mybooks.resource.wrap.entity.Wrap;
 
 
 /**
@@ -97,10 +96,6 @@ public class BookOrder {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_coupon_id")
     private UserCoupon userCoupon;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "wrap_id")
-    private Wrap wrap;
 
 
     public void modifyBookOrderAdmin(OrdersStatus ordersStatus) {

@@ -3,7 +3,6 @@ package store.mybooks.resource.category.repository;
 import com.querydsl.core.types.Projections;
 import java.util.List;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
-import store.mybooks.resource.book.entity.QBook;
 import store.mybooks.resource.bookcategory.entity.QBookCategory;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForQuerydsl;
 import store.mybooks.resource.category.entity.Category;
@@ -31,7 +30,6 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
         QCategory category2 = new QCategory("category2");
         QCategory category3 = new QCategory("category3");
         QBookCategory bookCategory = QBookCategory.bookCategory;
-        QBook book = QBook.book;
 
         return from(category3)
                 .leftJoin(category2)
@@ -40,9 +38,7 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
                 .on(category2.parentCategory.id.eq(category1.id))
                 .leftJoin(bookCategory)
                 .on(category3.id.eq(bookCategory.category.id))
-                .leftJoin(book)
-                .on(book.id.eq(bookCategory.book.id))
-                .where(book.id.eq(bookId))
+                .where(bookCategory.book.id.eq(bookId))
                 .select(Projections.constructor(CategoryGetResponseForQuerydsl.class,
                         category3.id,
                         category1.name,
