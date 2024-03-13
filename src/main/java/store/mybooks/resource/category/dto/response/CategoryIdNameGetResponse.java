@@ -1,5 +1,8 @@
 package store.mybooks.resource.category.dto.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * packageName    : store.mybooks.resource.category.dto.response
  * fileName       : CategoryIdNameGetResponse
@@ -11,8 +14,9 @@ package store.mybooks.resource.category.dto.response;
  * -----------------------------------------------------------
  * 2/24/24          damho-lee          최초 생성
  */
-public interface CategoryIdNameGetResponse {
-    Integer getId();
-
-    String getName();
+@Getter
+@AllArgsConstructor
+public class CategoryIdNameGetResponse {
+    private Integer id;
+    private String name;
 }
