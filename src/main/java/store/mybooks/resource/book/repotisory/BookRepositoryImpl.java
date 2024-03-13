@@ -1,7 +1,6 @@
 package store.mybooks.resource.book.repotisory;
 
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -13,14 +12,12 @@ import store.mybooks.resource.book.dto.response.BookBriefResponse;
 import store.mybooks.resource.book.dto.response.BookDetailResponse;
 import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
 import store.mybooks.resource.book.dto.response.BookResponseForOrder;
-import store.mybooks.resource.book.dto.response.QBookBriefResponse;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.entity.QBook;
 import store.mybooks.resource.bookauthor.entity.QBookAuthor;
 import store.mybooks.resource.bookstatus.entity.QBookStatus;
 import store.mybooks.resource.booktag.entity.QBookTag;
 import store.mybooks.resource.image.dto.response.ImageResponse;
-import store.mybooks.resource.image.dto.response.QImageResponse;
 import store.mybooks.resource.image.entity.QImage;
 import store.mybooks.resource.image_status.entity.QImageStatus;
 import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
@@ -41,18 +38,48 @@ import store.mybooks.resource.tag.entity.QTag;
  * 2/24/24        newjaehun       최초 생성<br/>
  */
 public class BookRepositoryImpl extends QuerydslRepositorySupport implements BookRepositoryCustom {
+    /**
+     * Instantiates a new Book repository.
+     */
     public BookRepositoryImpl() {
         super(Book.class);
     }
 
+    /**
+     * The Book.
+     */
     QBook book = QBook.book;
+    /**
+     * The Book status.
+     */
     QBookStatus bookStatus = QBookStatus.bookStatus;
+    /**
+     * The Author.
+     */
     QAuthor author = QAuthor.author;
+    /**
+     * The Publisher.
+     */
     QPublisher publisher = QPublisher.publisher;
+    /**
+     * The Tag.
+     */
     QTag tag = QTag.tag;
+    /**
+     * The Book author.
+     */
     QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
+    /**
+     * The Book tag.
+     */
     QBookTag bookTag = QBookTag.bookTag;
+    /**
+     * The Image.
+     */
     QImage image = QImage.image;
+    /**
+     * The Image status.
+     */
     QImageStatus imageStatus = QImageStatus.imageStatus;
 
     @Override
@@ -118,21 +145,25 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
 
     @Override
     public Page<BookBriefResponse> getBookBriefInfo(Pageable pageable) {
-        List<BookBriefResponse> lists = new JPAQueryFactory(getEntityManager())
-                .from(book)
+        List<BookBriefResponse> lists = from(book)
                 .join(image)
                 .on(image.book.eq(book))
                 .join(image.imageStatus, imageStatus)
                 .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
-                .select(new QBookBriefResponse(book.id,
-                        new QImageResponse(image.path, image.fileName, image.extension),
+                .select(Projections.constructor(
+                        BookBriefResponse.class,
+                        book.id,
+                        Projections.constructor(
+                                ImageResponse.class,
+                                image.path,
+                                image.fileName,
+                                image.extension),
                         book.name,
-                        book.saleCost))
-                .offset(pageable.getOffset())
+                        book.saleCost
+                )).offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-        System.out.println("listss");
-        System.out.println(lists);
+
         long total = from(book).fetchCount();
 
         return new PageImpl<>(lists, pageable, total);
@@ -147,8 +178,12 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                         .join(image)
                         .on(image.book.eq(book))
                         .join(image.imageStatus, imageStatus)
-                        .select(new QBookBriefResponse(book.id,
-                                new QImageResponse(image.path, image.fileName, image.extension),
+                        .select(Projections.constructor(BookBriefResponse.class,
+                                book.id,
+                                Projections.constructor(ImageResponse.class,
+                                        image.path,
+                                        image.fileName,
+                                        image.extension),
                                 book.name,
                                 book.saleCost))
                         .where(bookStatus.id.in("판매중", "재고없음"))

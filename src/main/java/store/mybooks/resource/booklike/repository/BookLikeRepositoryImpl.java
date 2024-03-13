@@ -1,16 +1,16 @@
 package store.mybooks.resource.booklike.repository;
 
+import com.querydsl.core.types.Projections;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import store.mybooks.resource.book.dto.response.BookBriefResponse;
-import store.mybooks.resource.book.dto.response.QBookBriefResponse;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.entity.QBook;
 import store.mybooks.resource.booklike.entity.QBookLike;
-import store.mybooks.resource.image.dto.response.QImageResponse;
+import store.mybooks.resource.image.dto.response.ImageResponse;
 import store.mybooks.resource.image.entity.QImage;
 import store.mybooks.resource.image_status.entity.QImageStatus;
 import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
@@ -48,8 +48,15 @@ public class BookLikeRepositoryImpl extends QuerydslRepositorySupport implements
                         .join(image.imageStatus, imageStatus)
                         .where(bookLike.user.id.eq(userId))
                         .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
-                        .select(new QBookBriefResponse(book.id, new QImageResponse(image.path, image.fileName,
-                                image.extension), book.name, book.saleCost))
+                        .select(Projections.constructor(
+                                BookBriefResponse.class,
+                                book.id,
+                                Projections.constructor(ImageResponse.class,
+                                        image.path,
+                                        image.fileName,
+                                        image.extension),
+                                book.name,
+                                book.saleCost))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .fetch();
