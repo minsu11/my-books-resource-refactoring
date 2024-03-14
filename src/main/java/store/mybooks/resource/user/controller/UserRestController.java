@@ -2,18 +2,41 @@ package store.mybooks.resource.user.controller;
 
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.config.HeaderProperties;
 import store.mybooks.resource.error.Utils;
-import store.mybooks.resource.error.exception.ValidationFailException;
-import store.mybooks.resource.user.dto.request.*;
-import store.mybooks.resource.user.dto.response.*;
+import store.mybooks.resource.user.dto.request.UserCreateRequest;
+import store.mybooks.resource.user.dto.request.UserEmailRequest;
+import store.mybooks.resource.user.dto.request.UserGradeModifyRequest;
+import store.mybooks.resource.user.dto.request.UserModifyRequest;
+import store.mybooks.resource.user.dto.request.UserOauthCreateRequest;
+import store.mybooks.resource.user.dto.request.UserOauthLoginRequest;
+import store.mybooks.resource.user.dto.request.UserPasswordModifyRequest;
+import store.mybooks.resource.user.dto.request.UserStatusModifyRequest;
+import store.mybooks.resource.user.dto.response.UserCreateResponse;
+import store.mybooks.resource.user.dto.response.UserDeleteResponse;
+import store.mybooks.resource.user.dto.response.UserEncryptedPasswordResponse;
+import store.mybooks.resource.user.dto.response.UserGetResponse;
+import store.mybooks.resource.user.dto.response.UserGradeModifyResponse;
+import store.mybooks.resource.user.dto.response.UserInactiveVerificationResponse;
+import store.mybooks.resource.user.dto.response.UserLoginResponse;
+import store.mybooks.resource.user.dto.response.UserModifyResponse;
+import store.mybooks.resource.user.dto.response.UserOauthCreateResponse;
+import store.mybooks.resource.user.dto.response.UserPasswordModifyResponse;
+import store.mybooks.resource.user.dto.response.UserStatusModifyResponse;
 import store.mybooks.resource.user.service.UserService;
 
 /**
@@ -67,11 +90,11 @@ public class UserRestController {
     }
 
     @PostMapping("/oauth")
-    public ResponseEntity<UserCreateResponse> createOauthUser(
+    public ResponseEntity<UserOauthCreateResponse> createOauthUser(
             @Valid @RequestBody UserOauthCreateRequest createRequest,BindingResult bindingResult) {
 
         Utils.validateRequest(bindingResult);
-        UserCreateResponse createResponse = userService.createOauthUser(createRequest);
+        UserOauthCreateResponse createResponse = userService.createOauthUser(createRequest);
         return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
     }
 
