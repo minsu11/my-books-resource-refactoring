@@ -1,8 +1,5 @@
 package store.mybooks.resource.user_address.dto.response;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 /**
  * packageName    : store.mybooks.resource.user_address.dto.response<br>
  * fileName       : UserAddressGetResponse<br>
