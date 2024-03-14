@@ -57,7 +57,7 @@ class WrapRestControllerUnitTest {
     @Test
     @DisplayName("id에 맞는 포장지 조회 성공 테스트")
     void givenIntegerId_whenGetWrapById_thenReturnWrapResponse() throws Exception {
-        WrapResponse wrapResponse = new WrapResponse("test", 1000, true);
+        WrapResponse wrapResponse = new WrapResponse(1, "test", 1000, true);
         when(wrapService.getWrapById(any())).thenReturn(wrapResponse);
 
         mockMvc.perform(get("/api/wraps/{id}", 1))
@@ -95,7 +95,7 @@ class WrapRestControllerUnitTest {
     @Test
     @DisplayName("전체 포장지 목록 조회")
     void given_whenGetWrapResponseList_thenReturnGetWrapResponseList() throws Exception {
-        List<WrapResponse> wrapResponses = List.of(new WrapResponse("test", 100, true));
+        List<WrapResponse> wrapResponses = List.of(new WrapResponse(1, "test", 100, true));
         when(wrapService.getWrapResponseList()).thenReturn(wrapResponses);
 
         mockMvc.perform(get("/api/wraps"))

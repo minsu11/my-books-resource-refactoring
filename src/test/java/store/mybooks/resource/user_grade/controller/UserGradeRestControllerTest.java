@@ -1,5 +1,6 @@
 package store.mybooks.resource.user_grade.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -33,6 +34,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import store.mybooks.resource.config.HeaderProperties;
+import store.mybooks.resource.error.RequestValidationFailedException;
+import store.mybooks.resource.error.exception.ValidationFailException;
+import store.mybooks.resource.user_address.dto.request.UserAddressCreateRequest;
 import store.mybooks.resource.user_grade.dto.request.UserGradeCreateRequest;
 import store.mybooks.resource.user_grade.dto.response.UserGradeCreateResponse;
 import store.mybooks.resource.user_grade.dto.response.UserGradeDeleteResponse;
@@ -68,6 +74,23 @@ class UserGradeRestControllerTest {
     UserGradeGetResponse userGradeGetResponse1;
     UserGradeGetResponse userGradeGetResponse2;
 
+
+    @Test
+    @DisplayName("유저 UserGradeCreateRequest - Validation 실패")
+    void givenUserGradeCreateRequest_whenValidationFailure_thenReturnBadRequest() throws Exception {
+
+        UserGradeCreateRequest request = new UserGradeCreateRequest("alias",-1,100,100,null);
+
+        String content = objectMapper.writeValueAsString(request);
+
+        MvcResult mvcResult = mockMvc.perform(post("/api/users-grades")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(RequestValidationFailedException.class);
+    }
 
     @Test
     @DisplayName("UserGradeCreateRequest 로 createUserGrade 실행시 UserGradeCreateRequest 반환")

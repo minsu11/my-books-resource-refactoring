@@ -1,13 +1,10 @@
 package store.mybooks.resource.delivery_rule.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
-
 
 /**
  * packageName    : store.mybooks.resource.delivery_rule.dto
@@ -22,12 +19,12 @@ import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
  */
 
 @Getter
-@Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class DeliveryRuleResponse {
 
     private Integer id;
+
+    private String deliveryRuleNameId;
 
     private String companyName;
 

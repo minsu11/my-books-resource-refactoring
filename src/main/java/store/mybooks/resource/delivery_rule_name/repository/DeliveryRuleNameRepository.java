@@ -16,7 +16,7 @@ import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
  * -----------------------------------------------------------
  * 2/15/24        Fiat_lux       최초 생성
  */
-public interface DeliveryRuleNameRepository extends JpaRepository<DeliveryRuleName, String> {
+public interface DeliveryRuleNameRepository extends JpaRepository<DeliveryRuleName, String>, DeliveryRuleNameRepositoryCustom {
     /**
      * Find delivery rule name by id optional.
      *

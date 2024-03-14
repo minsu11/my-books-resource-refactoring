@@ -20,6 +20,7 @@ import store.mybooks.resource.user.dto.response.UserDeleteResponse;
 import store.mybooks.resource.user.dto.response.UserEncryptedPasswordResponse;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
 import store.mybooks.resource.user.dto.response.UserGradeModifyResponse;
+import store.mybooks.resource.user.dto.response.UserInactiveVerificationResponse;
 import store.mybooks.resource.user.dto.response.UserLoginResponse;
 import store.mybooks.resource.user.dto.response.UserModifyResponse;
 import store.mybooks.resource.user.dto.response.UserPasswordModifyResponse;
@@ -128,6 +129,7 @@ public class UserService {
 
         if (user.isPresent()) { // 이미 있으면 = 회원가입한 회원이면
             User existUser = user.get();
+            existUser.modifyLatestLogin();
             return new UserLoginResponse(true, existUser.getIsAdmin(), existUser.getId(),
                     existUser.getUserStatus().getId()); // 로그인 response 보내기
         }
@@ -294,9 +296,13 @@ public class UserService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(UserLoginFailException::new);
 
+        user.modifyLatestLogin();
+
         return new UserLoginResponse(true, user.getIsAdmin(), user.getId(), user.getUserStatus().getId());
     }
 
+
+    @Transactional(readOnly = true)
     public UserEncryptedPasswordResponse verifyUserStatusByEmail(UserEmailRequest request) {
 
         // 아이디 확인
@@ -309,6 +315,25 @@ public class UserService {
         }
 
         return new UserEncryptedPasswordResponse(user.getPassword());
+    }
+
+    public UserInactiveVerificationResponse verifyDormancyUser(Long id) {
+
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotExistException(id));
+        UserStatus userStatus = userStatusRepository.findById(UserStatusEnum.ACTIVE.toString())
+                .orElseThrow(() -> new UserStatusNotExistException(UserStatusEnum.ACTIVE.toString()));
+        user.modifyUserStatus(userStatus);
+        return new UserInactiveVerificationResponse(userStatus.getId());
+    }
+
+    public UserInactiveVerificationResponse verifyLockUser(Long id, UserPasswordModifyRequest request) {
+
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotExistException(id));
+        UserStatus userStatus = userStatusRepository.findById(UserStatusEnum.ACTIVE.toString())
+                .orElseThrow(() -> new UserStatusNotExistException(UserStatusEnum.ACTIVE.toString()));
+        user.modifyUserStatus(userStatus);
+        user.modifyPassword(request.getPassword());
+        return new UserInactiveVerificationResponse(userStatus.getId());
     }
 
 }

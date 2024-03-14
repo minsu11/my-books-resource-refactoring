@@ -1,11 +1,15 @@
 package store.mybooks.resource.book.service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,16 +27,16 @@ import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.exception.IsbnAlreadyExistsException;
 import store.mybooks.resource.book.mapper.BookMapper;
 import store.mybooks.resource.book.repotisory.BookRepository;
-import store.mybooks.resource.book_author.dto.request.BookAuthorCreateRequest;
-import store.mybooks.resource.book_author.service.BookAuthorService;
-import store.mybooks.resource.book_category.dto.request.BookCategoryCreateRequest;
-import store.mybooks.resource.book_category.service.BookCategoryService;
-import store.mybooks.resource.book_like.repository.BookLikeRepository;
-import store.mybooks.resource.book_status.entity.BookStatus;
-import store.mybooks.resource.book_status.exception.BookStatusNotExistException;
-import store.mybooks.resource.book_status.respository.BookStatusRepository;
-import store.mybooks.resource.book_tag.dto.request.BookTagCreateRequest;
-import store.mybooks.resource.book_tag.service.BookTagService;
+import store.mybooks.resource.bookauthor.dto.request.BookAuthorCreateRequest;
+import store.mybooks.resource.bookauthor.service.BookAuthorService;
+import store.mybooks.resource.bookcategory.dto.request.BookCategoryCreateRequest;
+import store.mybooks.resource.bookcategory.service.BookCategoryService;
+import store.mybooks.resource.booklike.repository.BookLikeRepository;
+import store.mybooks.resource.bookstatus.entity.BookStatus;
+import store.mybooks.resource.bookstatus.exception.BookStatusNotExistException;
+import store.mybooks.resource.bookstatus.respository.BookStatusRepository;
+import store.mybooks.resource.booktag.dto.request.BookTagCreateRequest;
+import store.mybooks.resource.booktag.service.BookTagService;
 import store.mybooks.resource.category.service.CategoryService;
 import store.mybooks.resource.image.dto.response.ImageRegisterResponse;
 import store.mybooks.resource.image.entity.Image;
@@ -73,6 +77,7 @@ public class BookService {
     private final CategoryService categoryService;
     private final ImageRepository imageRepository;
     private final BookLikeRepository bookLikeRepository;
+    private final RedisTemplate<String, Integer> redisTemplate;
 
     /**
      * methodName : getBookBriefInfo
@@ -160,13 +165,25 @@ public class BookService {
             throw new IsbnAlreadyExistsException(createRequest.getIsbn());
         }
 
-        Book book =
-                new Book(bookStatus, publisher, createRequest.getName(), createRequest.getIsbn(),
-                        createRequest.getPublishDate(), createRequest.getPage(),
-                        createRequest.getIndex(), createRequest.getContent(), createRequest.getOriginalCost(),
-                        createRequest.getSaleCost(), createRequest.getOriginalCost() / createRequest.getSaleCost(),
-                        createRequest.getStock(),
-                        createRequest.getIsPacking());
+        Book book = Book.builder()
+                .bookStatus(bookStatus)
+                .publisher(publisher)
+                .name(createRequest.getName())
+                .isbn(createRequest.getIsbn())
+                .publishDate(createRequest.getPublishDate())
+                .page(createRequest.getPage())
+                .index(createRequest.getIndex())
+                .explanation(createRequest.getExplanation())
+                .originalCost(createRequest.getOriginalCost())
+                .saleCost(createRequest.getSaleCost())
+                .discountRate(((createRequest.getOriginalCost() - createRequest.getSaleCost()) * 100) /
+                        createRequest.getOriginalCost())
+                .stock(createRequest.getStock())
+                .viewCount(0)
+                .isPackaging(createRequest.getIsPacking())
+                .createdDate(LocalDate.now())
+                .build();
+
         Book newBook = bookRepository.save(book);
         Long bookId = newBook.getId();
         bookAuthorService.createBookAuthor(new BookAuthorCreateRequest(bookId, createRequest.getAuthorList()));
@@ -174,6 +191,7 @@ public class BookService {
         if (createRequest.getTagList() != null) {
             bookTagService.createBookTag(new BookTagCreateRequest(bookId, createRequest.getTagList()));
         }
+
         List<ImageRegisterResponse> imageRegisterResponseList = new ArrayList<>();
         ImageStatus thumbnailEnum = imageStatusRepository.findById(ImageStatusEnum.THUMBNAIL.getName()).orElseThrow(
                 () -> new ImageStatusNotExistException("해당 하는 id의 이미지 상태가 없습니다."));
@@ -185,7 +203,6 @@ public class BookService {
         for (MultipartFile file : content) {
             imageRegisterResponseList.add(imageService.saveImage(contentEnum, null, book, file));
         }
-        //TODO bookResponse dto에 이미지 값들도 넣어야한다
         return bookMapper.createResponse(newBook);
     }
 
@@ -240,9 +257,32 @@ public class BookService {
         return new BookCartResponse(book.getId(), book.getName(), url, book.getSaleCost());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<BookGetResponseForCoupon> getBookForCoupon() {
         return bookRepository.getBookForCoupon();
     }
 
+    /**
+     * methodName : updateBookViewCount
+     * author : newjaehun
+     * description : 스케쥴러를 이용하여 조횟수 업데이트.
+     */
+    @Scheduled(cron = "0 1 0 * * *")
+    @Transactional
+    public void updateBookViewCount() {
+        Set<String> keys = redisTemplate.keys("viewCount:*");
+        if (keys != null) {
+            for (String key : keys) {
+                Long bookId = Long.parseLong(key.substring("viewCount:".length()));
+                if (!bookRepository.existsById(bookId)) {
+                    throw new BookNotExistException(bookId);
+                }
+                Integer viewCount = redisTemplate.opsForValue().get(key);
+                if (viewCount != null) {
+                    bookRepository.updateBookViewCount(bookId, viewCount);
+                    redisTemplate.delete(key);
+                }
+            }
+        }
+    }
 }

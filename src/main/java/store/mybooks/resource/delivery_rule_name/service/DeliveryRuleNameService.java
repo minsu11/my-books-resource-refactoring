@@ -1,16 +1,17 @@
 package store.mybooks.resource.delivery_rule_name.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameDto;
 import store.mybooks.resource.delivery_rule_name.dto.mapper.DeliveryRuleNameMapper;
 import store.mybooks.resource.delivery_rule_name.dto.request.DeliveryRuleNameRegisterRequest;
+import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameDto;
 import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameResponse;
+import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameAlreadyExistsException;
 import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotExistsException;
 import store.mybooks.resource.delivery_rule_name.repository.DeliveryRuleNameRepository;
-import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 
 /**
  * packageName    : store.mybooks.resource.delivery_name_rule.service<br>
@@ -44,12 +45,16 @@ public class DeliveryRuleNameService {
     @Transactional
     public DeliveryRuleNameResponse registerDeliveryNameRule(
             DeliveryRuleNameRegisterRequest deliveryRuleNameRegisterRequest) {
-        if(deliveryRuleNameRepository.existsById(deliveryRuleNameRegisterRequest.getId())){
+        if (deliveryRuleNameRepository.existsById(deliveryRuleNameRegisterRequest.getId())) {
             throw new DeliveryRuleNameAlreadyExistsException("해당하는 id값의 데이터가 있습니다");
         }
         DeliveryRuleName deliveryNameRule = new DeliveryRuleName(deliveryRuleNameRegisterRequest.getId());
         DeliveryRuleName saveDeliveryNameRule = this.deliveryRuleNameRepository.save(deliveryNameRule);
         return deliveryRuleNameMapper.mapToResponse(saveDeliveryNameRule);
+    }
+
+    public List<DeliveryRuleNameResponse> getDeliveryNameRuleList() {
+        return deliveryRuleNameRepository.getDeliveryRuleNameList();
     }
 
     /**

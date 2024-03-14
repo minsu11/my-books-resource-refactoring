@@ -25,9 +25,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DeliveryRuleModifyRequest {
-    @NotBlank
-    @Size(min = 1, max = 50)
-    private String deliveryNameRuleId;
+
+    private Integer id;
 
     @NotBlank
     @Size(min = 1, max = 20)

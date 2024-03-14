@@ -22,7 +22,7 @@ import store.mybooks.resource.coupon.exception.CouponCannotDeleteException;
 import store.mybooks.resource.coupon.exception.CouponNotExistsException;
 import store.mybooks.resource.coupon.repository.CouponRepository;
 import store.mybooks.resource.coupon.utils.CouponUtils;
-import store.mybooks.resource.user_coupon.repository.UserCouponRepository;
+import store.mybooks.resource.usercoupon.repository.UserCouponRepository;
 
 /**
  * packageName    : store.mybooks.resource.coupon.entity.service

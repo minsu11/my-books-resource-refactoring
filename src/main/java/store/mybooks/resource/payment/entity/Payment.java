@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import javax.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import store.mybooks.resource.book_order.entity.BookOrder;
+import store.mybooks.resource.bookorder.entity.BookOrder;
 
 /**
  * packageName    : store.mybooks.resource.payment.entity
