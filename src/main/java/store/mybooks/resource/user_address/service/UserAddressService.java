@@ -48,7 +48,7 @@ public class UserAddressService {
      * author : masiljangajji
      * description : 유저주소를 생성
      *
-     * @param userId   id
+     * @param userId        id
      * @param createRequest request
      * @return user address create response
      */
@@ -78,18 +78,17 @@ public class UserAddressService {
      * author : masiljangajji
      * description : 유저주소를 수정 (별명,상세주소)
      *
-     * @param userId    id
-     * @param addressId id
-     * @param modifyRequest  request
-     * @throws UserNotExistException 유저가 존재하지 않는경우
-     * @throws UserAddressNotExistException 유저가주소가 존재하지 않는 경우
+     * @param userId        id
+     * @param addressId     id
+     * @param modifyRequest request
      * @return user address modify response
+     * @throws UserNotExistException        유저가 존재하지 않는경우
+     * @throws UserAddressNotExistException 유저가주소가 존재하지 않는 경우
      */
     @Transactional
     public UserAddressModifyResponse modifyUserAddress(Long userId, Long addressId,
                                                        UserAddressModifyRequest modifyRequest) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotExistException(userId));
+        IsExistUser(userId);
 
         UserAddress userAddress = userAddressRepository.findById(addressId)
                 .orElseThrow(() -> new UserAddressNotExistException(addressId));
@@ -108,14 +107,14 @@ public class UserAddressService {
      *
      * @param userId    id
      * @param addressId id
-     * @throws UserNotExistException 유저가 존재하지 않는 경우
-     * @throws UserAddressNotExistException 유저가주소가 존재하지 않는 경우
      * @return user address delete response
+     * @throws UserNotExistException        유저가 존재하지 않는 경우
+     * @throws UserAddressNotExistException 유저가주소가 존재하지 않는 경우
      */
     @Transactional
     public UserAddressDeleteResponse deleteUserAddress(Long userId, Long addressId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotExistException(userId));
+
+        IsExistUser(userId);
 
         UserAddress userAddress = userAddressRepository.findById(addressId)
                 .orElseThrow(() -> new UserAddressNotExistException(addressId));
@@ -131,8 +130,8 @@ public class UserAddressService {
      *
      * @param userId    id
      * @param addressId id
-     * @throws UserAddressNotExistException 유저주소가 존재하지 않는 경우
      * @return user address get response
+     * @throws UserAddressNotExistException 유저주소가 존재하지 않는 경우
      */
     public UserAddressGetResponse findByAddressId(Long userId, Long addressId) {
 
@@ -159,16 +158,22 @@ public class UserAddressService {
      * description : 유저의 모든 주소를 List 로 반환
      *
      * @param userId id
-     * @throws UserNotExistException 유저가 존재하지 않는 경우
      * @return list
+     * @throws UserNotExistException 유저가 존재하지 않는 경우
      */
     public List<UserAddressGetResponse> findAllAddressByUserId(Long userId) {
 
-        userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotExistException(userId));
+        IsExistUser(userId);
+
 
         return userAddressRepository.queryAllByUserId(userId);
 
+    }
+
+    private void IsExistUser(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotExistException(userId);
+        }
     }
 
 
