@@ -1,7 +1,6 @@
 package store.mybooks.resource.user_grade.dto.response;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 
 /**
