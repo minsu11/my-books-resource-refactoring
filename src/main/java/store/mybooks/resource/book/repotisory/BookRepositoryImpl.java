@@ -159,6 +159,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                                 image.fileName,
                                 image.extension),
                         book.name,
+                        book.originalCost,
                         book.saleCost
                 )).offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -185,6 +186,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                                         image.fileName,
                                         image.extension),
                                 book.name,
+                                book.originalCost,
                                 book.saleCost))
                         .where(bookStatus.id.in("판매중", "재고없음"))
                         .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))

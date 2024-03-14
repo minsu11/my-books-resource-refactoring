@@ -30,5 +30,7 @@ public class BookBriefResponse {
 
 //    private Double rate;
 
+    private Integer cost;
+
     private Integer saleCost;
 }

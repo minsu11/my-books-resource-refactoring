@@ -56,6 +56,7 @@ public class BookLikeRepositoryImpl extends QuerydslRepositorySupport implements
                                         image.fileName,
                                         image.extension),
                                 book.name,
+                                book.originalCost,
                                 book.saleCost))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
