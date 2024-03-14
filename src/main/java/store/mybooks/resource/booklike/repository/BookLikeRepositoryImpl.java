@@ -10,6 +10,10 @@ import store.mybooks.resource.book.dto.response.BookBriefResponse;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.entity.QBook;
 import store.mybooks.resource.booklike.entity.QBookLike;
+import store.mybooks.resource.image.dto.response.ImageResponse;
+import store.mybooks.resource.image.entity.QImage;
+import store.mybooks.resource.image_status.entity.QImageStatus;
+import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
 import store.mybooks.resource.user.entity.QUser;
 
 /**
@@ -31,6 +35,8 @@ public class BookLikeRepositoryImpl extends QuerydslRepositorySupport implements
     QBook book = QBook.book;
     QUser user = QUser.user;
     QBookLike bookLike = QBookLike.bookLike;
+    QImage image = QImage.image;
+    QImageStatus imageStatus = QImageStatus.imageStatus;
 
     @Override
     public Page<BookBriefResponse> getUserBookLike(Long userId, Pageable pageable) {
@@ -38,9 +44,20 @@ public class BookLikeRepositoryImpl extends QuerydslRepositorySupport implements
                 from(bookLike)
                         .join(bookLike.user, user)
                         .join(bookLike.book, book)
+                        .join(image).on(image.book.eq(book))
+                        .join(image.imageStatus, imageStatus)
                         .where(bookLike.user.id.eq(userId))
-                        .select(Projections.constructor(BookBriefResponse.class,
-                                book.id, book.name, book.saleCost))
+                        .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
+                        .select(Projections.constructor(
+                                BookBriefResponse.class,
+                                book.id,
+                                Projections.constructor(ImageResponse.class,
+                                        image.path,
+                                        image.fileName,
+                                        image.extension),
+                                book.name,
+                                book.originalCost,
+                                book.saleCost))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .fetch();

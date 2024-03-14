@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -74,6 +77,7 @@ public class BookService {
     private final CategoryService categoryService;
     private final ImageRepository imageRepository;
     private final BookLikeRepository bookLikeRepository;
+    private final RedisTemplate<String, Integer> redisTemplate;
 
     /**
      * methodName : getBookBriefInfo
@@ -172,7 +176,8 @@ public class BookService {
                 .explanation(createRequest.getExplanation())
                 .originalCost(createRequest.getOriginalCost())
                 .saleCost(createRequest.getSaleCost())
-                .discountRate(createRequest.getOriginalCost() / createRequest.getSaleCost())
+                .discountRate(((createRequest.getOriginalCost() - createRequest.getSaleCost()) * 100) /
+                        createRequest.getOriginalCost())
                 .stock(createRequest.getStock())
                 .viewCount(0)
                 .isPackaging(createRequest.getIsPacking())
@@ -186,7 +191,7 @@ public class BookService {
         if (createRequest.getTagList() != null) {
             bookTagService.createBookTag(new BookTagCreateRequest(bookId, createRequest.getTagList()));
         }
-        
+
         List<ImageRegisterResponse> imageRegisterResponseList = new ArrayList<>();
         ImageStatus thumbnailEnum = imageStatusRepository.findById(ImageStatusEnum.THUMBNAIL.getName()).orElseThrow(
                 () -> new ImageStatusNotExistException("해당 하는 id의 이미지 상태가 없습니다."));
@@ -257,4 +262,27 @@ public class BookService {
         return bookRepository.getBookForCoupon();
     }
 
+    /**
+     * methodName : updateBookViewCount
+     * author : newjaehun
+     * description : 스케쥴러를 이용하여 조횟수 업데이트.
+     */
+    @Scheduled(cron = "0 1 0 * * *")
+    @Transactional
+    public void updateBookViewCount() {
+        Set<String> keys = redisTemplate.keys("viewCount:*");
+        if (keys != null) {
+            for (String key : keys) {
+                Long bookId = Long.parseLong(key.substring("viewCount:".length()));
+                if (!bookRepository.existsById(bookId)) {
+                    throw new BookNotExistException(bookId);
+                }
+                Integer viewCount = redisTemplate.opsForValue().get(key);
+                if (viewCount != null) {
+                    bookRepository.updateBookViewCount(bookId, viewCount);
+                    redisTemplate.delete(key);
+                }
+            }
+        }
+    }
 }

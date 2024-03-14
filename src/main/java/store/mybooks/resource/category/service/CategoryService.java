@@ -17,6 +17,8 @@ import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForBookCreate;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForCategoryView;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForMainView;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForQuerydsl;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
@@ -83,7 +85,7 @@ public class CategoryService {
             String firstCategoryName = firstCategory != null ? firstCategory.getName() : "";
 
             if (!firstCategoryName.isEmpty()) {
-                secondCategoryName = firstCategoryName + "/" + secondCategoryName;
+                secondCategoryName = firstCategoryName + " > " + secondCategoryName;
             }
 
             categoryGetResponseForViewList.add(new CategoryGetResponseForView(
@@ -122,7 +124,7 @@ public class CategoryService {
 
             while (currentCategoryGetResponse != null) {
                 if (stringBuilder.length() > 0) {
-                    stringBuilder.insert(0, "/");
+                    stringBuilder.insert(0, " > ");
                 }
                 stringBuilder.insert(0, currentCategoryGetResponse.getName());
                 currentCategoryGetResponse = currentCategoryGetResponse.getParentCategory();
@@ -153,7 +155,7 @@ public class CategoryService {
         List<CategoryIdNameGetResponse> categoryNameList = new ArrayList<>();
 
         for (CategoryGetResponseForQuerydsl categoryGetResponseForQuerydsl : categoryNameGetResponseList) {
-            StringJoiner stringJoiner = new StringJoiner("/");
+            StringJoiner stringJoiner = new StringJoiner(" > ");
 
             if (categoryGetResponseForQuerydsl.getName1() != null) {
                 stringJoiner.add(categoryGetResponseForQuerydsl.getName1());
@@ -167,17 +169,8 @@ public class CategoryService {
                 stringJoiner.add(categoryGetResponseForQuerydsl.getName3());
             }
 
-            categoryNameList.add(new CategoryIdNameGetResponse() {
-                @Override
-                public Integer getId() {
-                    return categoryGetResponseForQuerydsl.getId();
-                }
-
-                @Override
-                public String getName() {
-                    return stringJoiner.toString();
-                }
-            });
+            categoryNameList.add(
+                    new CategoryIdNameGetResponse(categoryGetResponseForQuerydsl.getId(), stringJoiner.toString()));
         }
 
         return categoryNameList;
@@ -210,17 +203,10 @@ public class CategoryService {
         String levelTwoCategoryName = levelTwoCategory == null ? null : levelTwoCategory.getName();
 
         return new CategoryGetResponseForUpdate(
-                new CategoryIdNameGetResponse() {
-                    @Override
-                    public Integer getId() {
-                        return categoryGetResponse.getId();
-                    }
-
-                    @Override
-                    public String getName() {
-                        return categoryGetResponse.getName();
-                    }
-                }, levelOneCategoryName, levelTwoCategoryName);
+                new CategoryIdNameGetResponse(
+                        categoryGetResponse.getId(),
+                        categoryGetResponse.getName()),
+                levelOneCategoryName, levelTwoCategoryName);
     }
 
     /**
@@ -250,6 +236,53 @@ public class CategoryService {
         }
 
         return categoryRepository.findAllByParentCategory_Id(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CategoryGetResponseForMainView> getCategoriesForMainView() {
+        List<CategoryGetResponseForMainView> categoryGetResponseForMainViewList = new ArrayList<>();
+        List<CategoryGetResponse> highestCategoryList = categoryRepository.findAllByParentCategoryIsNull();
+        for (CategoryGetResponse highestCategory : highestCategoryList) {
+            List<CategoryIdNameGetResponse> childCategoryList =
+                    categoryRepository.findAllByParentCategory_Id(highestCategory.getId())
+                            .stream()
+                            .map(category -> new CategoryIdNameGetResponse(category.getId(), category.getName()))
+                            .collect(Collectors.toList());
+
+            categoryGetResponseForMainViewList.add(new CategoryGetResponseForMainView(
+                    highestCategory.getId(),
+                    highestCategory.getName(),
+                    childCategoryList
+            ));
+        }
+
+        return categoryGetResponseForMainViewList;
+    }
+
+    @Transactional(readOnly = true)
+    public CategoryGetResponseForCategoryView getCategoriesForCategoryView(Integer categoryId) {
+        Category category =
+                categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotExistsException(categoryId));
+        Integer highestCategoryId = category.getParentCategory() == null
+                ? categoryId : categoryRepository.findHighestCategoryId(categoryId);
+
+        CategoryIdNameGetResponse targetCategory = categoryRepository.findCategoryById(categoryId);
+        List<CategoryIdNameGetResponse> levelTwoCategories =
+                categoryRepository.findAllByParentCategory_Id(highestCategoryId)
+                        .stream()
+                        .map(categoryGetResponse -> new CategoryIdNameGetResponse(
+                                categoryGetResponse.getId(),
+                                categoryGetResponse.getName()))
+                        .collect(Collectors.toList());
+        List<CategoryIdNameGetResponse> targetCategories =
+                categoryRepository.findAllByParentCategory_Id(categoryId)
+                        .stream()
+                        .map(categoryGetResponse -> new CategoryIdNameGetResponse(
+                                categoryGetResponse.getId(),
+                                categoryGetResponse.getName()))
+                        .collect(Collectors.toList());
+
+        return new CategoryGetResponseForCategoryView(targetCategory.getName(), levelTwoCategories, targetCategories);
     }
 
     /**

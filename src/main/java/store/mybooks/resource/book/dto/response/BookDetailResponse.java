@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import store.mybooks.resource.author.dto.response.AuthorGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryIdNameGetResponse;
+import store.mybooks.resource.image.dto.response.ImageResponse;
 import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
 import store.mybooks.resource.tag.dto.response.TagGetResponseForBookDetail;
 
@@ -32,7 +33,8 @@ import store.mybooks.resource.tag.dto.response.TagGetResponseForBookDetail;
 public class BookDetailResponse {
     private Long id;
 
-//    private String bookImage;
+    private ImageResponse thumbNailImage;
+
 
     private String name;
 
@@ -72,7 +74,7 @@ public class BookDetailResponse {
 
     private String explanation;
 
-//    private String bookContentImage;
+    private List<ImageResponse> contentImageList;
 
 //    private List<ReviewDetailResponse> review;
 }

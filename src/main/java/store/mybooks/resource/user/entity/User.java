@@ -2,7 +2,11 @@ package store.mybooks.resource.user.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.mapping.Bag;
@@ -13,6 +17,7 @@ import store.mybooks.resource.user.dto.response.UserCreateResponse;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
 import store.mybooks.resource.user.dto.response.UserModifyResponse;
+import store.mybooks.resource.user.utils.TimeUtils;
 import store.mybooks.resource.user_grade.entity.UserGrade;
 import store.mybooks.resource.user_status.entity.UserStatus;
 
@@ -95,7 +100,7 @@ public class User {
         this.userStatus = userStatus;
         this.userGrade = userGrade;
 
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = TimeUtils.nowDateTime();
         this.gradeChangedDate = null;
         this.deletedAt = null;
         this.latestLogin = null;
@@ -113,7 +118,7 @@ public class User {
         this.name = name;
         this.userStatus = userStatus;
         this.userGrade = userGrade;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = TimeUtils.nowDateTime();
         this.gradeChangedDate = null;
         this.deletedAt = null;
         this.latestLogin = null;
@@ -133,16 +138,16 @@ public class User {
 
     public void modifyUserGrade(UserGrade userGrade) {
         this.userGrade = userGrade;
-        this.gradeChangedDate = LocalDate.now();
+        this.gradeChangedDate = TimeUtils.nowDate();
     }
 
     public void modifyLatestLogin() {
-        this.latestLogin = LocalDateTime.now();
+        this.latestLogin = TimeUtils.nowDateTime();
     }
 
     public void modifyByDeleteRequest(UserStatus userStatus) {
         this.userStatus = userStatus;
-        this.deletedAt = LocalDateTime.now();
+        this.deletedAt = TimeUtils.nowDateTime();
     }
 
     public void modifyPassword(String password) {

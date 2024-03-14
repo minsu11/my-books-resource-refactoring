@@ -56,7 +56,7 @@ class WrapServiceUnitTest {
     @DisplayName("id에 따른 조회 성공 테스트")
     void givenIntegerId_whenFindWrapResponseId_thenReturnWrapResponse() {
         Integer id = 1;
-        WrapResponse expected = new WrapResponse("test", 100, true);
+        WrapResponse expected = new WrapResponse(1, "test", 100, true);
         when(wrapRepository.findWrapResponseById(any())).thenReturn(Optional.of(expected));
 
         WrapResponse actual = wrapService.getWrapById(id);
@@ -79,7 +79,7 @@ class WrapServiceUnitTest {
     @Test
     @DisplayName("사용 중인 모든 포장지 목록 조회 테스트")
     void given_whenGetWrapResponseList_thenReturnWrapResponseList() {
-        List<WrapResponse> expected = List.of(new WrapResponse("test", 1000, true));
+        List<WrapResponse> expected = List.of(new WrapResponse(1, "test", 1000, true));
         when(wrapRepository.getWrapResponseList()).thenReturn(expected);
 
         List<WrapResponse> actual = wrapService.getWrapResponseList();

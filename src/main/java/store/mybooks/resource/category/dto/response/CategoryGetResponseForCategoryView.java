@@ -1,22 +1,24 @@
 package store.mybooks.resource.category.dto.response;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
  * packageName    : store.mybooks.resource.category.dto.response
- * fileName       : CategoryIdNameGetResponse
+ * fileName       : CategoryGetResponseForCategoryView
  * author         : damho-lee
- * date           : 2/24/24
+ * date           : 3/14/24
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 2/24/24          damho-lee          최초 생성
+ * 3/14/24          damho-lee          최초 생성
  */
 @Getter
 @AllArgsConstructor
-public class CategoryIdNameGetResponse {
-    private Integer id;
+public class CategoryGetResponseForCategoryView {
     private String name;
+    private List<CategoryIdNameGetResponse> levelTwoCategories;
+    private List<CategoryIdNameGetResponse> targetCategories;
 }

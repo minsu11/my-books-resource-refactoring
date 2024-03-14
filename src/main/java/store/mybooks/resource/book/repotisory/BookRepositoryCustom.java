@@ -31,4 +31,6 @@ public interface BookRepositoryCustom {
     List<BookGetResponseForCoupon> getBookForCoupon();
 
     BookResponseForOrder getBookForOrder(Long bookId);
+
+    void updateBookViewCount(Long bookId, Integer count);
 }

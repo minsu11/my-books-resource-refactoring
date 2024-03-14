@@ -68,8 +68,8 @@ class BookTagRestControllerTest {
     }
 
     @Test
-    @DisplayName("createBookTag 테스트")
-    void givenBookTagCreateRequest_whenCreateBookTag_thenReturnStatusCodeOk() throws Exception {
+    @DisplayName("Book-Tag 추가")
+    void givenBookTagCreateRequest_whenCreateBookTag_thenReturnStatusCodeIsCreated() throws Exception {
         List<Integer> tagIdList = new ArrayList<>();
         tagIdList.add(1);
         tagIdList.add(2);
@@ -87,6 +87,46 @@ class BookTagRestControllerTest {
                                 fieldWithPath("tagIdList").description("태그 ID 리스트")
                         )));
         verify(bookTagService, times(1)).createBookTag(any());
+    }
+
+    @Test
+    @DisplayName("Book-Tag 추가 - tagIdList 가 null 인 경우")
+    void given_bookTagCreateRequestTagIdListIsNull_whenCreateBookTag_thenReturnStatusCodeIsCreated() throws Exception {
+        BookTagCreateRequest bookTagCreateRequest = new BookTagCreateRequest(1L, null);
+        String content = objectMapper.writeValueAsString(bookTagCreateRequest);
+        mockMvc.perform(post("/api/book-tag")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    @DisplayName("Book-Tag 추가 실패 - Validation")
+    void givenBookIdIsNotPositiveBookTagCreateRequest_whenCreateBookTag_thenThrowRequestValidationFailedException()
+            throws Exception {
+        BookTagCreateRequest bookTagCreateRequestBookIdIsZero = new BookTagCreateRequest(0L, new ArrayList<>());
+        BookTagCreateRequest bookTagCreateRequestBookIdIsNegative = new BookTagCreateRequest(-1L, new ArrayList<>());
+        BookTagCreateRequest bookTagCreateRequestBookIdIsNull = new BookTagCreateRequest(null, new ArrayList<>());
+        String contentBookIdIsZero = objectMapper.writeValueAsString(bookTagCreateRequestBookIdIsZero);
+        String contentBookIdIsNegative = objectMapper.writeValueAsString(bookTagCreateRequestBookIdIsNegative);
+        String contentBookIdIsNull = objectMapper.writeValueAsString(bookTagCreateRequestBookIdIsNull);
+
+        mockMvc.perform(post("/api/book-tag")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(contentBookIdIsZero))
+                .andExpect(status().isBadRequest());
+
+        mockMvc.perform(post("/api/book-tag")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(contentBookIdIsNegative))
+                .andExpect(status().isBadRequest());
+
+        mockMvc.perform(post("/api/book-tag")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(contentBookIdIsNull))
+                .andExpect(status().isBadRequest());
+
+        verify(bookTagService, times(0)).createBookTag(any());
     }
 
     @Test

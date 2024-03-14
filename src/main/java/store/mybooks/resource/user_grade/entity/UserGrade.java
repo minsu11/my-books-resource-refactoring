@@ -2,6 +2,9 @@ package store.mybooks.resource.user_grade.entity;
 
 import java.time.LocalDate;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

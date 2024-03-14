@@ -36,6 +36,7 @@ public class WrapRepositoryImpl extends QuerydslRepositorySupport implements Wra
 
         return Optional.of(from(wrap)
                 .select(Projections.constructor(WrapResponse.class,
+                        wrap.id,
                         wrap.name,
                         wrap.cost,
                         wrap.isAvailable))
@@ -48,6 +49,7 @@ public class WrapRepositoryImpl extends QuerydslRepositorySupport implements Wra
     public List<WrapResponse> getWrapResponseList() {
         return from(wrap)
                 .select(Projections.constructor(WrapResponse.class,
+                        wrap.id,
                         wrap.name,
                         wrap.cost,
                         wrap.isAvailable))
