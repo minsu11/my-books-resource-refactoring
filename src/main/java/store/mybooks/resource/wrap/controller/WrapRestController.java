@@ -39,7 +39,7 @@ public class WrapRestController {
     /**
      * methodName : getWrapResponse<br>
      * author : minsu11<br>
-     * description : id로 포장지 조회
+     * description : id로 포장지 조회.
      * <br> *
      *
      * @param id 조회할 포장지의 {@code id}
@@ -55,7 +55,7 @@ public class WrapRestController {
     /**
      * methodName : getWrapResponsePage<br>
      * author : minsu11<br>
-     * description : {@code pagination}된 포장지의 목록 조회
+     * description : {@code pagination}된 포장지의 목록 조회.
      * <br> *
      *
      * @param pageable 페이징 처리
@@ -72,26 +72,26 @@ public class WrapRestController {
     /**
      * methodName : getWrapResponseList<br>
      * author : minsu11<br>
-     * description : 전체 포장지의 목록 반환
+     * description : 전체 포장지의 목록 반환.
      * <br> *
      *
      * @return response entity
      */
     @GetMapping
     public ResponseEntity<List<WrapResponse>> getWrapResponseList() {
-        return ResponseEntity.
-                status(HttpStatus.OK)
+        return ResponseEntity
+                .status(HttpStatus.OK)
                 .body(wrapService.getWrapResponseList());
     }
 
     /**
      * methodName : createWrap<br>
      * author : minsu11<br>
-     * description : {@code post} 요청 시 등록할 포장지를 등록.
-     * 등록할 포장지가 유효성 검사에 실패 할 경우 {@code WrapValidationFailedNo}
+     * description : {@code post} 요청 시 등록할 포장지를 등록,
+     * 등록할 포장지가 유효성 검사에 실패 할 경우 {@code WrapValidationFailedNo}.
      * <br> *
      *
-     * @param wrapCreateRequest
+     * @param wrapCreateRequest 생성할 포장지
      * @return response entity
      * @throws RequestValidationFailedException 등록할 포장지 유효성 실패 시
      */
@@ -110,12 +110,12 @@ public class WrapRestController {
      * methodName : modifyWrap<br>
      * author : minsu11<br>
      * description : {@code put} 요청 시 id의 포장지 정보를 수정 할 포장지 정보로 수정.
-     * 수정 할 포장지 정보가 유효성 검사 실패 시 {@code WrapValidationFailedException}던짐
+     * 수정 할 포장지 정보가 유효성 검사 실패 시 {@code WrapValidationFailedException}던짐.
      * <br> *
      *
-     * @param id
-     * @param wrapModifyRequest
-     * @param bindingResult
+     * @param id                수정할 포장지 아이디
+     * @param wrapModifyRequest 수정할 포장지 데이터
+     * @param bindingResult     유효성 검사
      * @return response entity
      */
     @PutMapping("/{id}")
@@ -133,14 +133,14 @@ public class WrapRestController {
     /**
      * methodName : deleteWrap<br>
      * author : minsu11<br>
-     * description : 포장지 삭제
+     * description : 포장지 삭제.
      * <br> *
      *
      * @param id 삭제할 포장지 아이디
      * @return response entity
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteWrap(@PathVariable Integer id) {
+    public ResponseEntity<Object> deleteWrap(@PathVariable Integer id) {
         wrapService.deleteWrap(id);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)

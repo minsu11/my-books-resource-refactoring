@@ -40,7 +40,7 @@ public class WrapService {
     /**
      * methodName : getWrapById<br>
      * author : minsu11<br>
-     * description : {@code id}로 조회된 포장지 조회
+     * description : {@code id}로 조회된 포장지 조회.
      * <br> *
      *
      * @param id 조회할 포장지 {@code id}
@@ -58,7 +58,7 @@ public class WrapService {
     /**
      * methodName : getWrapResponseList<br>
      * author : minsu11<br>
-     * description : 모든 포장지의 목록을 조회
+     * description : 모든 포장지의 목록을 조회.ㄴ
      * <br> *
      *
      * @return {@code WrapResponse} 목록을 반환
@@ -72,10 +72,10 @@ public class WrapService {
     /**
      * methodName : getWrapPage<br>
      * author : minsu11<br>
-     * description : 포장지 전체 목록에 대한 {@code pagination}
+     * description : 포장지 전체 목록에 대한 {@code pagination}.
      * <br> *
      *
-     * @param pageable
+     * @param pageable 페이징 처리
      * @return page
      */
     @Transactional(readOnly = true)

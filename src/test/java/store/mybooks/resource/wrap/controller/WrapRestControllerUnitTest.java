@@ -131,11 +131,11 @@ class WrapRestControllerUnitTest {
     @Test
     @DisplayName("포장지 등록 실패 테스트(유효성 테스트 실패: 이릅 빈 값 )")
     void givenWrapCreateRequest_whenCreateWrap_thenThrowWrapValidationFailedException() throws Exception {
-        WrapCreateRequest wrapCreateRequest = new WrapCreateRequest();
-        ReflectionTestUtils.setField(wrapCreateRequest, "name", "");
-        ReflectionTestUtils.setField(wrapCreateRequest, "cost", 100);
+        WrapCreateRequest request = new WrapCreateRequest();
+        ReflectionTestUtils.setField(request, "name", "");
+        ReflectionTestUtils.setField(request, "cost", 100);
         mockMvc.perform(post("/api/wraps")
-                        .content(objectMapper.writeValueAsString(wrapCreateRequest))
+                        .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
