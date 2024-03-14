@@ -23,6 +23,8 @@ public class MessageSenderService {
 
     private final MessageSender messageSender;
 
+    private final Random random = new Random();
+
     /**
      * methodName : sendMessage
      * author : masiljangajji
@@ -32,8 +34,6 @@ public class MessageSenderService {
      * @return string
      */
     public String sendMessage(MessageBot messageBot) {
-
-        Random random = new Random();
 
         String randomNumber = String.valueOf(random.nextInt(9000) + 1000);
 
