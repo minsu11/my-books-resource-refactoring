@@ -266,6 +266,7 @@ public class CategoryService {
         Integer highestCategoryId = category.getParentCategory() == null
                 ? categoryId : categoryRepository.findHighestCategoryId(categoryId);
 
+        CategoryIdNameGetResponse highestCategory = categoryRepository.findCategoryById(highestCategoryId);
         CategoryIdNameGetResponse targetCategory = categoryRepository.findCategoryById(categoryId);
         List<CategoryIdNameGetResponse> levelTwoCategories =
                 categoryRepository.findAllByParentCategory_Id(highestCategoryId)
@@ -282,7 +283,11 @@ public class CategoryService {
                                 categoryGetResponse.getName()))
                         .collect(Collectors.toList());
 
-        return new CategoryGetResponseForCategoryView(targetCategory.getName(), levelTwoCategories, targetCategories);
+        return new CategoryGetResponseForCategoryView(
+                highestCategory.getName(),
+                targetCategory.getName(),
+                levelTwoCategories,
+                targetCategories);
     }
 
     /**
