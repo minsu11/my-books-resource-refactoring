@@ -131,7 +131,7 @@ class CategoryServiceTest {
         assertThat(actualList.get(1).getParentCategoryName()).isEqualTo("grandParentCategory");
         assertThat(actualList.get(1).getId()).isEqualTo(2);
         assertThat(actualList.get(1).getName()).isEqualTo("parentCategory");
-        assertThat(actualList.get(2).getParentCategoryName()).isEqualTo("grandParentCategory/parentCategory");
+        assertThat(actualList.get(2).getParentCategoryName()).isEqualTo("grandParentCategory > parentCategory");
         assertThat(actualList.get(2).getId()).isEqualTo(3);
         assertThat(actualList.get(2).getName()).isEqualTo("childCategory");
         verify(categoryRepository, times(1)).findByOrderByParentCategory_Id(any());
@@ -160,11 +160,11 @@ class CategoryServiceTest {
         assertThat(actualList.get(0).getName()).isEqualTo(firstCategory.getName());
         assertThat(actualList.get(1).getId()).isEqualTo(secondCategory.getId());
         assertThat(actualList.get(1).getName()).isEqualTo(
-                firstCategory.getName().concat("/").concat(secondCategory.getName()));
+                firstCategory.getName().concat(" > ").concat(secondCategory.getName()));
         assertThat(actualList.get(2).getId()).isEqualTo(thirdCategory.getId());
         assertThat(actualList.get(2).getName()).isEqualTo(
-                firstCategory.getName().concat("/")
-                        .concat(secondCategory.getName()).concat("/")
+                firstCategory.getName().concat(" > ")
+                        .concat(secondCategory.getName()).concat(" > ")
                         .concat(thirdCategory.getName()));
         verify(categoryRepository, times(1)).findAllByOrderByParentCategory_Id();
     }
@@ -204,10 +204,10 @@ class CategoryServiceTest {
         assertThat(actualList.get(0).getName()).isEqualTo(levelOneCategory.getName3());
         assertThat(actualList.get(1).getId()).isEqualTo(levelTwoCategory.getId());
         assertThat(actualList.get(1).getName()).isEqualTo(
-                levelTwoCategory.getName2() + "/" + levelTwoCategory.getName3());
+                levelTwoCategory.getName2() + " > " + levelTwoCategory.getName3());
         assertThat(actualList.get(2).getId()).isEqualTo(levelThreeCategory.getId());
         assertThat(actualList.get(2).getName()).isEqualTo(
-                levelThreeCategory.getName1() + "/" + levelThreeCategory.getName2() + "/" +
+                levelThreeCategory.getName1() + " > " + levelThreeCategory.getName2() + " > " +
                         levelThreeCategory.getName3());
     }
 
