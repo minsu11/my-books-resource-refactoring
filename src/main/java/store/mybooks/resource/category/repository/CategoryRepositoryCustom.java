@@ -16,4 +16,6 @@ import store.mybooks.resource.category.dto.response.CategoryGetResponseForQueryd
  */
 public interface CategoryRepositoryCustom {
     List<CategoryGetResponseForQuerydsl> findFullCategoryForBookViewByBookId(Long bookId);
+
+    Integer findHighestCategoryId(Integer categoryId);
 }

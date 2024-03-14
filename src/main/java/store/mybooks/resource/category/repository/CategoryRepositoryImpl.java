@@ -46,4 +46,33 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
                         category3.name))
                 .fetch();
     }
+
+    @Override
+    public Integer findHighestCategoryId(Integer categoryId) {
+        QCategory category1 = new QCategory("category1");
+        QCategory category2 = new QCategory("category2");
+        QCategory category3 = new QCategory("category3");
+
+        Integer firstCategoryId = from(category1)
+                .leftJoin(category2)
+                .on(category1.parentCategory.id.eq(category2.id))
+                .leftJoin(category3)
+                .on(category2.parentCategory.id.eq(category3.id))
+                .where(category1.id.eq(categoryId))
+                .select(category3.id)
+                .distinct()
+                .fetchOne();
+
+        Integer secondCategoryId = from(category1)
+                .leftJoin(category2)
+                .on(category1.parentCategory.id.eq(category2.id))
+                .leftJoin(category3)
+                .on(category2.parentCategory.id.eq(category3.id))
+                .where(category1.id.eq(categoryId))
+                .select(category2.id)
+                .distinct()
+                .fetchOne();
+
+        return firstCategoryId == null ? secondCategoryId : firstCategoryId;
+    }
 }

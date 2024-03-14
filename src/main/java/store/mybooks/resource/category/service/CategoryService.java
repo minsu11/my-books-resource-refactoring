@@ -17,6 +17,7 @@ import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForBookCreate;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForCategoryView;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForMainView;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForQuerydsl;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate;
@@ -256,6 +257,32 @@ public class CategoryService {
         }
 
         return categoryGetResponseForMainViewList;
+    }
+
+    @Transactional(readOnly = true)
+    public CategoryGetResponseForCategoryView getCategoriesForCategoryView(Integer categoryId) {
+        Category category =
+                categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotExistsException(categoryId));
+        Integer highestCategoryId = category.getParentCategory() == null
+                ? categoryId : categoryRepository.findHighestCategoryId(categoryId);
+
+        CategoryIdNameGetResponse targetCategory = categoryRepository.findCategoryById(categoryId);
+        List<CategoryIdNameGetResponse> levelTwoCategories =
+                categoryRepository.findAllByParentCategory_Id(highestCategoryId)
+                        .stream()
+                        .map(categoryGetResponse -> new CategoryIdNameGetResponse(
+                                categoryGetResponse.getId(),
+                                categoryGetResponse.getName()))
+                        .collect(Collectors.toList());
+        List<CategoryIdNameGetResponse> targetCategories =
+                categoryRepository.findAllByParentCategory_Id(categoryId)
+                        .stream()
+                        .map(categoryGetResponse -> new CategoryIdNameGetResponse(
+                                categoryGetResponse.getId(),
+                                categoryGetResponse.getName()))
+                        .collect(Collectors.toList());
+
+        return new CategoryGetResponseForCategoryView(targetCategory.getName(), levelTwoCategories, targetCategories);
     }
 
     /**
