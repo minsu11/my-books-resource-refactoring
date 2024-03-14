@@ -2,7 +2,6 @@ package store.mybooks.resource.user_address.dto.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
-import org.mapstruct.factory.Mappers;
 import store.mybooks.resource.user_address.dto.response.UserAddressCreateResponse;
 import store.mybooks.resource.user_address.dto.response.UserAddressModifyResponse;
 import store.mybooks.resource.user_address.entity.UserAddress;

@@ -2,11 +2,9 @@ package store.mybooks.resource.user_address.repository;
 
 import java.util.List;
 import java.util.Optional;
-import javax.swing.text.html.Option;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import store.mybooks.resource.user.dto.response.UserGetResponse;
 import store.mybooks.resource.user_address.dto.response.UserAddressGetResponse;
 import store.mybooks.resource.user_address.entity.UserAddress;
 

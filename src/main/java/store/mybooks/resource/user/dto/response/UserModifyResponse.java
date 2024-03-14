@@ -1,17 +1,8 @@
 package store.mybooks.resource.user.dto.response;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import net.bytebuddy.implementation.bind.annotation.BindingPriority;
-import org.mapstruct.Mapper;
-import org.mapstruct.ReportingPolicy;
-import store.mybooks.resource.user_grade.entity.UserGrade;
-import store.mybooks.resource.user_status.entity.UserStatus;
 
 /**
  * packageName    : store.mybooks.resource.user.dto.response<br>

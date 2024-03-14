@@ -3,7 +3,6 @@ package store.mybooks.resource.user.dto.response;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
