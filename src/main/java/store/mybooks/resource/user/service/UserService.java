@@ -23,6 +23,7 @@ import store.mybooks.resource.user.dto.response.UserGradeModifyResponse;
 import store.mybooks.resource.user.dto.response.UserInactiveVerificationResponse;
 import store.mybooks.resource.user.dto.response.UserLoginResponse;
 import store.mybooks.resource.user.dto.response.UserModifyResponse;
+import store.mybooks.resource.user.dto.response.UserOauthCreateResponse;
 import store.mybooks.resource.user.dto.response.UserPasswordModifyResponse;
 import store.mybooks.resource.user.dto.response.UserStatusModifyResponse;
 import store.mybooks.resource.user.entity.User;
@@ -105,7 +106,7 @@ public class UserService {
         return userMapper.toUserCreateResponse(user);
     }
 
-    public UserCreateResponse createOauthUser(UserOauthCreateRequest createRequest) {
+    public UserOauthCreateResponse createOauthUser(UserOauthCreateRequest createRequest) {
 
         String userStatusName = UserStatusEnum.ACTIVE.toString();
         String userGradeName = UserGradeNameEnum.NORMAL.toString();
@@ -120,7 +121,7 @@ public class UserService {
                 createRequest.getPhoneNumber(), false, createRequest.getName(), userStatus, userGrade);
 
         User resultUser = userRepository.save(user);
-        return userMapper.toUserCreateResponse(resultUser);
+        return userMapper.toUserOauthCreateResponse(resultUser);
     }
 
     public UserLoginResponse loginOauthUser(UserOauthLoginRequest loginRequest) {
