@@ -176,7 +176,8 @@ public class BookService {
                 .explanation(createRequest.getExplanation())
                 .originalCost(createRequest.getOriginalCost())
                 .saleCost(createRequest.getSaleCost())
-                .discountRate(createRequest.getOriginalCost() / createRequest.getSaleCost())
+                .discountRate(((createRequest.getOriginalCost() - createRequest.getSaleCost()) * 100) /
+                        createRequest.getOriginalCost())
                 .stock(createRequest.getStock())
                 .viewCount(0)
                 .isPackaging(createRequest.getIsPacking())
