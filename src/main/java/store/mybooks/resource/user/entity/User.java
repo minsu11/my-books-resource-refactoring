@@ -2,24 +2,20 @@ package store.mybooks.resource.user.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.mapping.Bag;
-import store.mybooks.resource.user.dto.request.UserCreateRequest;
-import store.mybooks.resource.user.dto.request.UserModifyRequest;
-import store.mybooks.resource.user.dto.request.UserPasswordModifyRequest;
-import store.mybooks.resource.user.dto.response.UserCreateResponse;
-import store.mybooks.resource.user.dto.response.UserDeleteResponse;
-import store.mybooks.resource.user.dto.response.UserGetResponse;
-import store.mybooks.resource.user.dto.response.UserModifyResponse;
-import store.mybooks.resource.user.utils.TimeUtils;
 import store.mybooks.resource.user_grade.entity.UserGrade;
 import store.mybooks.resource.user_status.entity.UserStatus;
+import store.mybooks.resource.utils.TimeUtils;
 
 /**
  * packageName    : store.mybooks.resource.user.entity<br>
