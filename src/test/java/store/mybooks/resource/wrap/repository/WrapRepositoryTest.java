@@ -56,8 +56,8 @@ class WrapRepositoryTest {
     @Order(2)
     @DisplayName("사용 중인 포장지 목록 찾기")
     void given_whenGetWrapResponseList_thenReturnWrapResponseList() {
-        List<WrapResponse> expectedList = List.of(new WrapResponse("test1", 100, true),
-                new WrapResponse("test2", 1000, true));
+        List<WrapResponse> expectedList = List.of(new WrapResponse(1, "test1", 100, true),
+                new WrapResponse(1, "test2", 1000, true));
 
         List<WrapResponse> actualList = wrapRepository.getWrapResponseList();
 
