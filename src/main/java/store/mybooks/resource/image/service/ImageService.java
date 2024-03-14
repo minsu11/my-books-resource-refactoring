@@ -1,10 +1,8 @@
 package store.mybooks.resource.image.service;
 
 import java.io.IOException;
-import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.book.entity.Book;
-import store.mybooks.resource.image.dto.request.ImageRegisterRequest;
 import store.mybooks.resource.image.dto.response.ImageGetResponse;
 import store.mybooks.resource.image.dto.response.ImageRegisterResponse;
 import store.mybooks.resource.image_status.entity.ImageStatus;
