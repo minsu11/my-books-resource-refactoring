@@ -119,8 +119,8 @@ public class UserService {
         User user = new User(createRequest.getEmail(), null, createRequest.getBirthMonthDay(), "dummy",
                 createRequest.getPhoneNumber(), false, createRequest.getName(), userStatus, userGrade);
 
-        userRepository.save(user);
-        return userMapper.toUserCreateResponse(user);
+        User resultUser = userRepository.save(user);
+        return userMapper.toUserCreateResponse(resultUser);
     }
 
     public UserLoginResponse loginOauthUser(UserOauthLoginRequest loginRequest) {
