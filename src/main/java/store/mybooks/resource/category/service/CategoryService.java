@@ -84,7 +84,7 @@ public class CategoryService {
             String firstCategoryName = firstCategory != null ? firstCategory.getName() : "";
 
             if (!firstCategoryName.isEmpty()) {
-                secondCategoryName = firstCategoryName + "/" + secondCategoryName;
+                secondCategoryName = firstCategoryName + " > " + secondCategoryName;
             }
 
             categoryGetResponseForViewList.add(new CategoryGetResponseForView(
@@ -123,7 +123,7 @@ public class CategoryService {
 
             while (currentCategoryGetResponse != null) {
                 if (stringBuilder.length() > 0) {
-                    stringBuilder.insert(0, "/");
+                    stringBuilder.insert(0, " > ");
                 }
                 stringBuilder.insert(0, currentCategoryGetResponse.getName());
                 currentCategoryGetResponse = currentCategoryGetResponse.getParentCategory();
@@ -154,7 +154,7 @@ public class CategoryService {
         List<CategoryIdNameGetResponse> categoryNameList = new ArrayList<>();
 
         for (CategoryGetResponseForQuerydsl categoryGetResponseForQuerydsl : categoryNameGetResponseList) {
-            StringJoiner stringJoiner = new StringJoiner("/");
+            StringJoiner stringJoiner = new StringJoiner(" > ");
 
             if (categoryGetResponseForQuerydsl.getName1() != null) {
                 stringJoiner.add(categoryGetResponseForQuerydsl.getName1());
