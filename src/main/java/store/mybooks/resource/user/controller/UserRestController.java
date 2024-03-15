@@ -221,7 +221,7 @@ public class UserRestController {
      * @param pageable pageable
      * @return response entity
      */
-    @GetMapping("/all")
+    @GetMapping("/page")
     public ResponseEntity<Page<UserGetResponse>> findAllUser(Pageable pageable) {
 
         Page<UserGetResponse> paginationUsr = userService.findAllUser(pageable);
