@@ -279,7 +279,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public Page<UserGetResponse> findAllUser(Pageable pageable) {
 
-        return userRepository.findAllBy(pageable);
+        return userRepository.queryAllBy(pageable);
     }
 
     /**
