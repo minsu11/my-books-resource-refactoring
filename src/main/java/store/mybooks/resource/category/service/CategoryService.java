@@ -277,10 +277,11 @@ public class CategoryService {
      */
     @Transactional(readOnly = true)
     public CategoryGetResponseForCategoryView getCategoriesForCategoryView(Integer categoryId) {
-        Category category =
-                categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotExistsException(categoryId));
-        Integer highestCategoryId = category.getParentCategory() == null
-                ? categoryId : categoryRepository.findHighestCategoryId(categoryId);
+        if (!categoryRepository.existsById(categoryId)) {
+            throw new CategoryNotExistsException(categoryId);
+        }
+
+        Integer highestCategoryId = categoryRepository.findHighestCategoryId(categoryId);
 
         CategoryIdNameGetResponse highestCategory = categoryRepository.findCategoryById(highestCategoryId);
         CategoryIdNameGetResponse targetCategory = categoryRepository.findCategoryById(categoryId);
