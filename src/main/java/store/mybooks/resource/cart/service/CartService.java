@@ -47,7 +47,7 @@ public class CartService {
         User user = userRepository.findById(cartRegisterRequest.getUserId())
                 .orElseThrow(() -> new UserNotExistException(cartRegisterRequest.getUserId()));
 
-        if (cartRepository.existsCartByUserId(cartRegisterRequest.getUserId())) {
+        if (Boolean.TRUE.equals(cartRepository.existsCartByUserId(cartRegisterRequest.getUserId()))) {
             throw new CartAlreadyExistException("카트가 이미 존재합니다");
         } else {
             Cart cart = new Cart(user);
