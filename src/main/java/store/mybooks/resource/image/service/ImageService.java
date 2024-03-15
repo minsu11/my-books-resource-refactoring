@@ -7,6 +7,7 @@ import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.image.dto.request.ImageRegisterRequest;
 import store.mybooks.resource.image.dto.response.ImageGetResponse;
 import store.mybooks.resource.image.dto.response.ImageRegisterResponse;
+import store.mybooks.resource.image.entity.Image;
 import store.mybooks.resource.image_status.entity.ImageStatus;
 import store.mybooks.resource.review.entity.Review;
 
@@ -27,4 +28,5 @@ public interface ImageService {
     ImageGetResponse getObject(Long id);
 
     void deleteObject(Long id);
+    Image getThumbNailImage(Long id);
 }
