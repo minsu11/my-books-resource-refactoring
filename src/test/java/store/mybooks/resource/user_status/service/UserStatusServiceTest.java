@@ -1,22 +1,22 @@
 package store.mybooks.resource.user_status.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import store.mybooks.resource.user_status.dto.response.UserStatusGetResponse;
-import store.mybooks.resource.user_status.entity.UserStatus;
 import store.mybooks.resource.user_status.exception.UserStatusNotExistException;
 import store.mybooks.resource.user_status.repository.UserStatusRepository;
 
@@ -47,10 +47,10 @@ class UserStatusServiceTest {
 
     @Test
     @DisplayName("UserStatus 로 findUserStatusById 메서드 실행시 동작이 올바른지 테스트")
-    void givenUserStatusId_whenCallFindUserStatusById_thenReturnUserStatusGetResponse(@Mock UserStatus userStatus) {
+    void givenUserStatusId_whenCallFindUserStatusById_thenReturnUserStatusGetResponse() {
 
 
-        when(userStatusRepository.findById(anyString())).thenReturn(Optional.of(userStatus));
+        when(userStatusRepository.existsById(anyString())).thenReturn(true);
         when(userStatusRepository.queryById(anyString())).thenReturn(userStatusGetResponse);
         when(userStatusGetResponse.getId()).thenReturn("test");
 
@@ -58,7 +58,7 @@ class UserStatusServiceTest {
         assertEquals("test", userStatusService.findUserStatusById("test").getId());
 
 
-        verify(userStatusRepository, times(1)).findById(anyString());
+        verify(userStatusRepository, times(1)).existsById(anyString());
         verify(userStatusRepository, times(1)).queryById(anyString());
     }
 
@@ -68,7 +68,7 @@ class UserStatusServiceTest {
 
 
         assertThrows(UserStatusNotExistException.class, () -> userStatusService.findUserStatusById("wrong_id"));
-        verify(userStatusRepository, times(1)).findById(anyString());
+        verify(userStatusRepository, times(1)).existsById(anyString());
     }
 
     @Test

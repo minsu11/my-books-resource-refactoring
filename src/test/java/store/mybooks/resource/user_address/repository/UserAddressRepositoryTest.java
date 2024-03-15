@@ -1,24 +1,18 @@
 package store.mybooks.resource.user_address.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import store.mybooks.resource.user.dto.response.UserGetResponse;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user.repository.UserRepository;
 import store.mybooks.resource.user_address.dto.response.UserAddressGetResponse;
@@ -91,11 +85,11 @@ class UserAddressRepositoryTest {
 
         UserAddressGetResponse result = userAddressRepository.queryByIdAndUserId(addressId, userId).get();
 
-        assertEquals(result.getAlias(), "test1");
-        assertEquals(result.getDetail(), "test1");
-        assertEquals(result.getReference(), "test1");
-        assertEquals(result.getRoadName(), "test1");
-        assertEquals(result.getNumber(), 1);
+        assertEquals("test1", result.getAlias());
+        assertEquals("test1", result.getDetail());
+        assertEquals("test1", result.getReference());
+        assertEquals("test1", result.getRoadName());
+        assertEquals(1, result.getNumber());
     }
 
     @Test
@@ -115,8 +109,8 @@ class UserAddressRepositoryTest {
 
         Page<UserAddressGetResponse> page = userAddressRepository.queryAllBy(PageRequest.of(0, 10));
 
-        assertEquals(page.getTotalPages(), 1);
-        assertEquals(page.getTotalElements(), 2);
+        assertEquals(1, page.getTotalPages());
+        assertEquals(2, page.getTotalElements());
     }
 
     @Test

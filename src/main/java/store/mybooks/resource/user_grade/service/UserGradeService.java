@@ -46,8 +46,8 @@ public class UserGradeService {
      * description : 유저 등급을 생성
      *
      * @param createRequest request
-     * @throws UserGradeNameNotExistException 유저의 이름이 존재하지 않는 경우
      * @return user grade create response
+     * @throws UserGradeNameNotExistException 유저의 이름이 존재하지 않는 경우
      */
     @Transactional
     public UserGradeCreateResponse createUserGrade(UserGradeCreateRequest createRequest) {
@@ -62,9 +62,8 @@ public class UserGradeService {
                         createRequest.getCreatedDate(), userGradeName);
 
 
-        // todo 이미 사용중인 UserGrade가 있다면 사용중인 등급의 isAvailable 을 false 로 변경하고 새로운 등급을 넣는걸로 변경
-
-        Optional<UserGrade> optionalUserGrade = userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(userGradeNameRequest);
+        Optional<UserGrade> optionalUserGrade =
+                userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(userGradeNameRequest);
         optionalUserGrade.ifPresent(UserGrade::deleteUserGrade);
 
         userGradeRepository.save(userGrade);
@@ -78,8 +77,8 @@ public class UserGradeService {
      * description : 유저 등급을 삭제
      *
      * @param id id
-     * @throws UserGradeIdNotExistException 유저등급이 존재하지 않는 경우
      * @return user grade delete response
+     * @throws UserGradeIdNotExistException 유저등급이 존재하지 않는 경우
      */
     @Transactional
     public UserGradeDeleteResponse deleteUserGrade(Integer id) {
@@ -96,13 +95,14 @@ public class UserGradeService {
      * description : 유저등급을 찾음
      *
      * @param id id
-     * @throws UserGradeIdNotExistException 유저등급이 존재하지 않는 경우
      * @return user grade get response
+     * @throws UserGradeIdNotExistException 유저등급이 존재하지 않는 경우
      */
     public UserGradeGetResponse findUserGradeById(Integer id) {
 
-        userGradeRepository.findById(id).orElseThrow(UserGradeIdNotExistException::new);
-
+        if (!userGradeRepository.existsById(id)) {
+            throw new UserGradeIdNotExistException();
+        }
         return userGradeRepository.queryById(id);
     }
 

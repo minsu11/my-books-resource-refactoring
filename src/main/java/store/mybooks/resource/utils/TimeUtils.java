@@ -1,4 +1,4 @@
-package store.mybooks.resource.user.utils;
+package store.mybooks.resource.utils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,11 +17,14 @@ import java.time.ZoneId;
  */
 public class TimeUtils {
 
-    public static LocalDate nowDate(){
+    private TimeUtils() {
+    }
+
+    public static LocalDate nowDate() {
         return LocalDate.now(ZoneId.of("Asia/Seoul"));
     }
 
-    public static LocalDateTime nowDateTime(){
+    public static LocalDateTime nowDateTime() {
         return LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 }
