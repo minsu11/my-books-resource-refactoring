@@ -58,6 +58,15 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
 
     @Override
     public Integer findHighestCategoryId(Integer categoryId) {
+        Integer parentCategoryId = from(category1)
+                .where(category1.id.eq(categoryId))
+                .select(category1.parentCategory.id)
+                .distinct()
+                .fetchOne();
+        if (parentCategoryId == null) {
+            return categoryId;
+        }
+
         Integer firstCategoryId = from(category1)
                 .leftJoin(category2)
                 .on(category1.parentCategory.id.eq(category2.id))
