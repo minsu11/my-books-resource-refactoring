@@ -159,7 +159,7 @@ class ReturnRuleRestControllerUnitTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
-        
+
     }
 
     @Test
@@ -190,10 +190,10 @@ class ReturnRuleRestControllerUnitTest {
     void givenReturnRuleModifyRequestReturnRuleNameValidation_when_thenReturnHttpStatusCodeIsNotFound()
             throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        ReturnRuleModifyRequest request = new ReturnRuleModifyRequest("", 10, 11);
+        ReturnRuleModifyRequest modifyRequest = new ReturnRuleModifyRequest("", 10, 11);
 
         mockMvc.perform(put("/api/return-rules/{id}", 1)
-                        .content(mapper.writeValueAsString(request))
+                        .content(mapper.writeValueAsString(modifyRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
@@ -205,10 +205,10 @@ class ReturnRuleRestControllerUnitTest {
     @DisplayName("반품 규정 수정 반품 배송 요금 유효성 테스트")
     void givenReturnRuleModifyRequestDeliveryFeeValidation_when_thenReturnHttpStatusCodeIsNotFound() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        ReturnRuleModifyRequest request = new ReturnRuleModifyRequest("test", 10001, 11);
+        ReturnRuleModifyRequest modifyRequest = new ReturnRuleModifyRequest("test", 10001, 11);
 
         mockMvc.perform(put("/api/return-rules/{id}", 1)
-                        .content(mapper.writeValueAsString(request))
+                        .content(mapper.writeValueAsString(modifyRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andDo(print());

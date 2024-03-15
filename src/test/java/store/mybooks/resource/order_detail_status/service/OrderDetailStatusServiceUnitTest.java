@@ -1,11 +1,12 @@
 package store.mybooks.resource.order_detail_status.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -53,7 +54,7 @@ class OrderDetailStatusServiceUnitTest {
         OrderDetailStatusResponse actual = mapper.mapToOrderDetailStatusResponse(orderDetailStatus);
         OrderDetailStatusResponse expected = new OrderDetailStatusResponse(orderDetailStatusId);
 
-        Assertions.assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getId(), actual.getId());
 
         verify(orderDetailStatusRepository, times(1)).findById(anyString());
         verify(mapper, times(1)).mapToOrderDetailStatusResponse(any());
@@ -64,7 +65,7 @@ class OrderDetailStatusServiceUnitTest {
     @DisplayName("id값과 동일하지 않은 경우에 OrderDetailStatusNotFoundException 테스트")
     void givenNotMatchOrderDetailStatusId_whenFindById_thenThrowsOrderDetailStatusNotFoundException() {
         when(orderDetailStatusRepository.findById(anyString())).thenThrow(OrderDetailStatusNotFoundException.class);
-        Assertions.assertThrows(OrderDetailStatusNotFoundException.class, () -> orderDetailStatusRepository.findById(anyString()));
+        assertThrows(OrderDetailStatusNotFoundException.class, () -> orderDetailStatusRepository.findById("test1"));
         verify(orderDetailStatusRepository, times(1)).findById(anyString());
     }
 
@@ -77,8 +78,8 @@ class OrderDetailStatusServiceUnitTest {
 
         List<OrderDetailStatusResponse> actual = orderDetailStatusRepository.getOrderDetailStatusResponseList();
 
-        Assertions.assertEquals(expected.get(0).getId(), actual.get(0).getId());
-        Assertions.assertEquals(expected.size(), actual.size());
+        assertEquals(expected.get(0).getId(), actual.get(0).getId());
+        assertEquals(expected.size(), actual.size());
         verify(orderDetailStatusRepository, times(1)).getOrderDetailStatusResponseList();
 
     }
@@ -90,8 +91,8 @@ class OrderDetailStatusServiceUnitTest {
         when(orderDetailStatusRepository.getOrderDetailStatusResponseList()).thenReturn(Collections.emptyList());
 
         List<OrderDetailStatusResponse> actual = orderDetailStatusRepository.getOrderDetailStatusResponseList();
-        Assertions.assertEquals(Collections.emptyList().toString(), actual.toString());
-        Assertions.assertEquals(Collections.emptyList().size(), actual.size());
+        assertEquals(Collections.emptyList().toString(), actual.toString());
+        assertEquals(Collections.emptyList().size(), actual.size());
         verify(orderDetailStatusRepository, times(1)).getOrderDetailStatusResponseList();
 
     }

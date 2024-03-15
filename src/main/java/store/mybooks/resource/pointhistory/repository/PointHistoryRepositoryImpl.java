@@ -44,16 +44,18 @@ public class PointHistoryRepositoryImpl extends QuerydslRepositorySupport implem
     public Page<PointHistoryResponse> getPointHistoryByUserId(Pageable pageable, Long userId) {
         QBookOrder bookOrder = QBookOrder.bookOrder;
 
-        List<PointHistoryResponse> pointHistoryResponses = getQuerydsl().applyPagination(pageable,
-                        from(pointHistory)
-                                .select(Projections.constructor(PointHistoryResponse.class,
-                                        bookOrder.number,
-                                        pointHistory.pointRule.pointRuleName.id,
-                                        pointHistory.pointStatusCost,
-                                        pointHistory.createdDate))
-                                .leftJoin(pointHistory.bookOrder, bookOrder)
-                                .where(pointHistory.user.id.eq(userId)))
-                .fetch();
+        List<PointHistoryResponse> pointHistoryResponses =
+                from(pointHistory)
+                        .select(Projections.constructor(PointHistoryResponse.class,
+                                bookOrder.number,
+                                pointHistory.pointRule.pointRuleName.id,
+                                pointHistory.pointStatusCost,
+                                pointHistory.createdDate))
+                        .leftJoin(pointHistory.bookOrder, bookOrder)
+                        .where(pointHistory.user.id.eq(userId))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .fetch();
 
         long total = from(pointHistory)
                 .where(pointHistory.user.id.eq(userId))
