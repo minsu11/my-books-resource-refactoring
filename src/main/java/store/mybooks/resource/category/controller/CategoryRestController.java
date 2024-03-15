@@ -17,12 +17,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import store.mybooks.resource.book.dto.response.BookBriefResponseIncludePublishDate;
 import store.mybooks.resource.category.dto.request.CategoryCreateRequest;
 import store.mybooks.resource.category.dto.request.CategoryModifyRequest;
 import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForBookCreate;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForCategoryView;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForMainView;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
@@ -138,12 +140,54 @@ public class CategoryRestController {
                 .body(categoryService.getCategoryForUpdate(id));
     }
 
+    /**
+     * methodName : getCategoriesForMainView <br>
+     * author : damho-lee <br>
+     * description : 메인페이지에서 보여줄 최상위 카테고리와 자식카테고리들 조회. <br>
+     *
+     * @return ResponseEntity
+     */
     @GetMapping("/main")
     public ResponseEntity<List<CategoryGetResponseForMainView>> getCategoriesForMainView() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(categoryService.getCategoriesForMainView());
     }
+
+    /**
+     * methodName : getCategoriesForCategoryView <br>
+     * author : damho-lee <br>
+     * description : 카테고리 선택 시 2단계 카테고리들과 선택된 카테고리의 자식 카테고리 리스트 조회.<br>
+     *
+     * @param categoryId Integer
+     * @return ResponseEntity
+     */
+    @GetMapping("/view/{categoryId}")
+    public ResponseEntity<CategoryGetResponseForCategoryView> getCategoriesForCategoryView(
+            @PathVariable("categoryId") Integer categoryId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(categoryService.getCategoriesForCategoryView(categoryId));
+    }
+
+    /**
+     * methodName : getBooksForCategoryView <br>
+     * author : damho-lee <br>
+     * description : 카테고리 선택 시 출판일 기준 내림차순으로 해당 카테고리와 자식 카테고리들의 도서 페이지 반환.<br>
+     *
+     * @param categoryId Integer
+     * @param pageable   Pageable
+     * @return ResponseEntity
+     */
+    @GetMapping("/view/book/{categoryId}")
+    public ResponseEntity<Page<BookBriefResponseIncludePublishDate>> getBooksForCategoryView(
+            @PathVariable("categoryId") Integer categoryId,
+            @PageableDefault(size = 9) Pageable pageable) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(categoryService.getBooksForCategoryView(categoryId, pageable));
+    }
+
 
     /**
      * 메서드 이름 : createPost

@@ -1,6 +1,6 @@
 package store.mybooks.resource.user_address.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
@@ -108,20 +108,19 @@ class UserAddressServiceTest {
     @Test
     @DisplayName("UserId , AddressId , UserAddressModifyRequest 로 modifyUserAddress 실행시 동작 테스트")
     void givenUserIdAndAddressIdAndUserAddressModifyRequest_whenCallModifyUserAddress_thenReturnUserAddressModifyResponse(
-            @Mock User user,
             @Mock UserAddress userAddress,
             @Mock UserAddressModifyResponse userAddressModifyResponse,
             @Mock UserAddressModifyRequest userAddressModifyRequest
     ) {
 
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         when(userAddressRepository.findById(anyLong())).thenReturn(Optional.of(userAddress));
         when(userAddressMapper.toUserAddressModifyResponse(any(UserAddress.class))).thenReturn(
                 userAddressModifyResponse);
 
         userAddressService.modifyUserAddress(1L, 1L, userAddressModifyRequest);
 
-        verify(userRepository, times(1)).findById(anyLong());
+        verify(userRepository, times(1)).existsById(anyLong());
         verify(userAddressRepository, times(1)).findById(anyLong());
         verify(userAddressMapper, times(1)).toUserAddressModifyResponse(any(UserAddress.class));
     }
@@ -138,11 +137,10 @@ class UserAddressServiceTest {
     @Test
     @DisplayName("UserId , 존재하지 않는 AddressId , UserAddressModifyRequest 로 modifyUserAddress 실행시 UserAddressNotExistException")
     void givenUserIdAndNotExistAddressIdAndUserAddressModifyRequest_whenCallModifyUserAddress_thenThrowUserAddressNotExistException(
-            @Mock User user,
             @Mock UserAddressModifyRequest userAddressModifyRequest
     ) {
 
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         assertThrows(UserAddressNotExistException.class,
                 () -> userAddressService.modifyUserAddress(1L, 1L, userAddressModifyRequest));
     }
@@ -154,13 +152,13 @@ class UserAddressServiceTest {
             @Mock UserAddress userAddress
     ) {
 
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         when(userAddressRepository.findById(anyLong())).thenReturn(Optional.of(userAddress));
         doNothing().when(userAddressRepository).deleteById(anyLong());
 
         userAddressService.deleteUserAddress(1L, 1L);
 
-        verify(userRepository, times(1)).findById(anyLong());
+        verify(userRepository, times(1)).existsById(anyLong());
         verify(userAddressRepository, times(1)).findById(anyLong());
         verify(userAddressRepository, times(1)).deleteById(anyLong());
 
@@ -176,10 +174,9 @@ class UserAddressServiceTest {
     @Test
     @DisplayName("UserId , 존재하지않는 AddressId 로 deleteUserAddress 실행시 UserAddressNotExistException")
     void givenUserIdAndNotExistAddressId_whenCallDeleteUserAddress_thenThrowUserAddressNotExistException(
-            @Mock User user
     ) {
 
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         assertThrows(UserAddressNotExistException.class, () -> userAddressService.deleteUserAddress(1L, 1L));
     }
 
@@ -218,13 +215,12 @@ class UserAddressServiceTest {
     @Test
     @DisplayName("UserId 로 findAllUserAddressByUserId 실행시 동작테스트")
     void givenUserId_whenCallFindAllUserAddressByUserId_thenReturnUserAddressGetResponseList(
-            @Mock User user
     ) {
 
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         userAddressService.findAllAddressByUserId(anyLong());
 
-        verify(userRepository, times(1)).findById(anyLong());
+        verify(userRepository, times(1)).existsById(anyLong());
         verify(userAddressRepository, times(1)).queryAllByUserId(anyLong());
     }
 

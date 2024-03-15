@@ -1,19 +1,15 @@
 package store.mybooks.resource.user_status.repository;
 
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.List;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import store.mybooks.resource.user.dto.response.UserGetResponse;
 import store.mybooks.resource.user_status.dto.response.UserStatusGetResponse;
 import store.mybooks.resource.user_status.entity.UserStatus;
-import store.mybooks.resource.user_status.exception.UserStatusNotExistException;
 
 /**
  * packageName    : store.mybooks.resource.user_status.repository
@@ -62,11 +58,11 @@ class UserStatusRepositoryTest {
     @DisplayName("QueryAllBy 실행시 List<UserStatusGetResponse> 반환")
     void whenCallQueryAllBy_thenReturnUserStatusGetResponseList() {
 
-        assertEquals(userStatusRepository.queryAllBy().size(), 3);
+        assertEquals(3,userStatusRepository.queryAllBy().size());
 
         UserStatus userStatus = new UserStatus("test4");
         userStatusRepository.save(userStatus);
-        assertEquals(userStatusRepository.queryAllBy().size(), 4);
+        assertEquals(4,userStatusRepository.queryAllBy().size());
 
     }
 

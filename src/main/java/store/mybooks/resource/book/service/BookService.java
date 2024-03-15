@@ -254,7 +254,7 @@ public class BookService {
 
 
         String url = image.getPath() + image.getFileName() + image.getExtension();
-        return new BookCartResponse(book.getId(), book.getName(), url, book.getSaleCost());
+        return new BookCartResponse(book.getId(), book.getName(), url, book.getOriginalCost(), book.getSaleCost());
     }
 
     @Transactional(readOnly = true)
@@ -271,7 +271,7 @@ public class BookService {
     @Transactional
     public void updateBookViewCount() {
         Set<String> keys = redisTemplate.keys("viewCount:*");
-        if (keys != null) {
+        if (keys != null && !keys.isEmpty()) {
             for (String key : keys) {
                 Long bookId = Long.parseLong(key.substring("viewCount:".length()));
                 if (!bookRepository.existsById(bookId)) {

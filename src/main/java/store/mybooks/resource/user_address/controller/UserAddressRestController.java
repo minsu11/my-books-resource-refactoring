@@ -1,17 +1,12 @@
 package store.mybooks.resource.user_address.controller;
 
 import java.util.List;
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.validation.Valid;
-import javax.ws.rs.Path;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,21 +16,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.config.HeaderProperties;
 import store.mybooks.resource.error.Utils;
-import store.mybooks.resource.error.exception.ValidationFailException;
-import store.mybooks.resource.user.dto.request.UserCreateRequest;
-import store.mybooks.resource.user.dto.response.UserDeleteResponse;
-import store.mybooks.resource.user.dto.response.UserGetResponse;
 import store.mybooks.resource.user_address.dto.request.UserAddressCreateRequest;
 import store.mybooks.resource.user_address.dto.request.UserAddressModifyRequest;
 import store.mybooks.resource.user_address.dto.response.UserAddressCreateResponse;
 import store.mybooks.resource.user_address.dto.response.UserAddressDeleteResponse;
 import store.mybooks.resource.user_address.dto.response.UserAddressGetResponse;
 import store.mybooks.resource.user_address.dto.response.UserAddressModifyResponse;
-import store.mybooks.resource.user_address.entity.UserAddress;
 import store.mybooks.resource.user_address.service.UserAddressService;
 
 /**
@@ -168,8 +157,7 @@ public class UserAddressRestController {
      */
     @GetMapping
     public ResponseEntity<List<UserAddressGetResponse>> findAllAddressByUserId(
-            @RequestHeader(name = HeaderProperties.USER_ID) Long
-                    userId) {
+            @RequestHeader(name = HeaderProperties.USER_ID) Long userId) {
 
         List<UserAddressGetResponse> userGetResponseList =
                 userAddressService.findAllAddressByUserId(userId);

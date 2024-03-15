@@ -24,7 +24,7 @@ public class CouponGetResponseForQuerydsl {
     private Integer discountCost;
     private Integer maxDiscountCost;
     private Integer discountRate;
-    private Boolean isRate;
+    private boolean isRate;
     private LocalDate startDate;
     private LocalDate endDate;
     private String bookName;

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
+import store.mybooks.resource.category.dto.response.CategoryIdNameGetResponse;
 import store.mybooks.resource.category.entity.Category;
 
 /**
@@ -28,6 +29,8 @@ public interface CategoryRepository extends JpaRepository<Category, Integer>, Ca
     List<CategoryGetResponse> findAllByParentCategoryIsNull();
 
     List<CategoryGetResponse> findAllByParentCategory_Id(int id);
+
+    CategoryIdNameGetResponse findCategoryById(Integer categoryId);
 
     Integer countByParentCategory_Id(int id);
 

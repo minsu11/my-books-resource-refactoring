@@ -115,9 +115,9 @@ public class CouponService {
 
     private CouponGetResponse makeCouponGetResponse(CouponGetResponseForQuerydsl response) {
         Integer discountRateOrCost =
-                response.getIsRate() ? response.getDiscountRate() : response.getDiscountCost();
+                response.isRate() ? response.getDiscountRate() : response.getDiscountCost();
         Integer maxDiscountCost =
-                response.getIsRate() ?  response.getMaxDiscountCost() : response.getDiscountCost();
+                response.isRate() ? response.getMaxDiscountCost() : response.getDiscountCost();
 
         String range;
         String target;
@@ -140,7 +140,7 @@ public class CouponService {
                 response.getOrderMin(),
                 discountRateOrCost,
                 maxDiscountCost,
-                response.getIsRate(),
+                response.isRate(),
                 response.getStartDate(),
                 response.getEndDate()
         );

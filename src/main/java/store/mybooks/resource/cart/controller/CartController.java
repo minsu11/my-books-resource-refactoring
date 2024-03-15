@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.cart.dto.CartDto;
 import store.mybooks.resource.cart.dto.CartRegisterRequest;
 import store.mybooks.resource.cart.dto.CartResponse;
+import store.mybooks.resource.cart.entity.Cart;
 import store.mybooks.resource.cart.service.CartService;
 
 /**
@@ -54,11 +55,11 @@ public class CartController {
      * @return the cart
      */
     @GetMapping("/{cartId}")
-    public ResponseEntity<CartDto> getCart(@PathVariable Long cartId) {
-        CartDto cartDto = cartService.getCart(cartId);
+    public ResponseEntity<Cart> getCart(@PathVariable Long cartId) {
+        Cart cart = cartService.getCart(cartId);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(cartDto);
+                .body(cart);
     }
 
 }

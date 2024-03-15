@@ -211,8 +211,9 @@ class PointRuleServiceTest {
     void whenModifyPointRuleIsAvailable(@Mock PointRule pointRule) {
         when(pointRuleRepository.findById(any())).thenReturn(Optional.of(pointRule));
         doNothing().when(pointRule).modifyPointRuleIsAvailable(any());
-        pointRuleService.deletePointRuleResponse(1);
-
+        Assertions.assertDoesNotThrow(() -> pointRuleService.deletePointRuleResponse(1));
+        verify(pointRuleRepository, times(1)).findById(any());
+        verify(pointRule, times(1)).modifyPointRuleIsAvailable(any());
     }
 
 }

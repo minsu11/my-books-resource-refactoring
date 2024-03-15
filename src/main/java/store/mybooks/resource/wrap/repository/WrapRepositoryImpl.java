@@ -29,7 +29,7 @@ public class WrapRepositoryImpl extends QuerydslRepositorySupport implements Wra
         super(WrapResponse.class);
     }
 
-    private final QWrap wrap = QWrap.wrap;
+    private static final QWrap wrap = QWrap.wrap;
 
     @Override
     public Optional<WrapResponse> findWrapResponseById(Integer id) {
@@ -69,11 +69,15 @@ public class WrapRepositoryImpl extends QuerydslRepositorySupport implements Wra
 
     @Override
     public Page<WrapPageResponse> getPageBy(Pageable pageable) {
-        List<WrapPageResponse> wrapResponses = getQuerydsl().applyPagination(pageable,
-                from(wrap).select(
-                        Projections.constructor(WrapPageResponse.class, wrap.id,
-                                wrap.name, wrap.cost, wrap.isAvailable)
-                ).where(wrap.isAvailable.eq(true))).fetch();
+        List<WrapPageResponse> wrapResponses =
+                from(wrap)
+                        .select(
+                                Projections.constructor(WrapPageResponse.class, wrap.id,
+                                        wrap.name, wrap.cost, wrap.isAvailable)
+                        ).where(wrap.isAvailable.eq(true))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .fetch();
 
         long total = from(wrap).fetchCount();
 
