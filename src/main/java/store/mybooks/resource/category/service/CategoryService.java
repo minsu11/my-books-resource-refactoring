@@ -270,7 +270,7 @@ public class CategoryService {
     /**
      * methodName : getCategoriesForCategoryView <br>
      * author : damho-lee <br>
-     * description : 카테고리 선택 시 보여줄 2단계 카테고리와 선택된 카테고리의 하위 카테고리 리스트 조회<br>
+     * description : 카테고리 선택 시 보여줄 2단계 카테고리와 선택된 카테고리의 하위 카테고리 리스트 조회.<br>
      *
      * @param categoryId Integer
      * @return CategoryGetResponseForCategoryView
