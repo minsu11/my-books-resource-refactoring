@@ -16,10 +16,7 @@ import store.mybooks.resource.cart_item.dto.CartDetail;
 import store.mybooks.resource.cart_item.entity.CartItem;
 import store.mybooks.resource.cart_item.repository.CartItemRepository;
 import store.mybooks.resource.image.entity.Image;
-import store.mybooks.resource.image.exception.ImageNotExistsException;
-import store.mybooks.resource.image.repository.ImageRepository;
 import store.mybooks.resource.image.service.ImageService;
-import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user.exception.UserNotExistException;
 import store.mybooks.resource.user.repository.UserRepository;
@@ -88,7 +85,7 @@ public class CartItemService {
                             cartItem.getBook().getId(),
                             cartItem.getAmount(),
                             cartItem.getBook().getName(),
-                            imageService.getObject(thumbNailImage.getId()).getFilePathName(), cartItem.getBook().getSaleCost())
+                            imageService.getObject(thumbNailImage.getId()).getFilePathName(), cartItem.getBook().getOriginalCost(), cartItem.getBook().getSaleCost())
             );
 
             cartItemRepository.deleteAllByCart_Id(userCart.getId());
