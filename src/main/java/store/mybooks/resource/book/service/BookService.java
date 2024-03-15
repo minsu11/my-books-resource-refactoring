@@ -254,7 +254,7 @@ public class BookService {
 
 
         String url = image.getPath() + image.getFileName() + image.getExtension();
-        return new BookCartResponse(book.getId(), book.getName(), url, book.getSaleCost());
+        return new BookCartResponse(book.getId(), book.getName(), url, book.getOriginalCost(), book.getSaleCost());
     }
 
     @Transactional(readOnly = true)
