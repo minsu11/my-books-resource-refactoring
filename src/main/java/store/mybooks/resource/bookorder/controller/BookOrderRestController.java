@@ -82,4 +82,13 @@ public class BookOrderRestController {
                 .status(HttpStatus.OK)
                 .body(bookOrderService.registerBookOrderInvoiceNumber(request));
     }
+
+    @GetMapping("/check/adress/{id}")
+    public ResponseEntity<Object> checkOrderUserAddress(@PathVariable Long id) {
+        bookOrderService.checkUserOrderAddress(id);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+
+    }
 }

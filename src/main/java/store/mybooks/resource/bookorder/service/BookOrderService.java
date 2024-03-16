@@ -14,12 +14,14 @@ import store.mybooks.resource.bookorder.dto.response.BookOrderAdminResponse;
 import store.mybooks.resource.bookorder.dto.response.BookOrderRegisterInvoiceResponse;
 import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
 import store.mybooks.resource.bookorder.entity.BookOrder;
+import store.mybooks.resource.bookorder.exception.BookOrderInfoNotMatchException;
 import store.mybooks.resource.bookorder.exception.BookOrderNotExistException;
 import store.mybooks.resource.bookorder.repository.BookOrderRepository;
 import store.mybooks.resource.orders_status.entity.OrdersStatus;
 import store.mybooks.resource.orders_status.enumulation.OrdersStatusEnum;
 import store.mybooks.resource.orders_status.exception.OrdersStatusNotExistException;
 import store.mybooks.resource.orders_status.repository.OrdersStatusRepository;
+import store.mybooks.resource.user_address.repository.UserAddressRepository;
 
 /**
  * packageName    : store.mybooks.resource.book_order.service<br>
@@ -41,6 +43,7 @@ public class BookOrderService {
 
     private final OrdersStatusRepository ordersStatusRepository;
     private final BookOrderMapper bookOrderMapper;
+    private final UserAddressRepository userAddressRepository;
 
     /**
      * methodName : getBookOrderResponseList<br>
@@ -95,5 +98,12 @@ public class BookOrderService {
 
         bookOrder.registerBookOrderInvoiceNumber(request.getInvoiceNumber());
         return bookOrderMapper.mapToBookOrderRegisterInvoiceResponse(bookOrder);
+    }
+
+    public void checkUserOrderAddress(Long addressId) {
+        if (!userAddressRepository.existsById(addressId)) {
+            throw new BookOrderInfoNotMatchException();
+        }
+
     }
 }
