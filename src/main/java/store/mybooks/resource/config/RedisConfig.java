@@ -34,7 +34,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @EnableCaching
 public class RedisConfig {
     private final RedisProperties redisProperties;
-    private final ObjectMapper objectMapper;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
@@ -60,26 +59,26 @@ public class RedisConfig {
         return redisTemplate;
     }
 
-//    @Bean
-//    public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
-//        PolymorphicTypeValidator typeValidator = BasicPolymorphicTypeValidator
-//                .builder()
-//                .allowIfSubType(Object.class)
-//                .build();
-//
-//        objectMapper.activateDefaultTyping(typeValidator, ObjectMapper.DefaultTyping.NON_FINAL);
-//
-//        GenericJackson2JsonRedisSerializer redisSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
-//
-//        RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration
-//                .defaultCacheConfig()
-//                .disableCachingNullValues()
-//                .serializeKeysWith(RedisSerializationContext.SerializationPair
-//                        .fromSerializer(new StringRedisSerializer()))
-//                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer));
-//
-//        return RedisCacheManager.builder(redisConnectionFactory)
-//                .cacheDefaults(cacheConfiguration)
-//                .build();
-//    }
+    @Bean
+    public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
+        PolymorphicTypeValidator typeValidator = BasicPolymorphicTypeValidator
+                .builder()
+                .allowIfSubType(Object.class)
+                .build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.activateDefaultTyping(typeValidator, ObjectMapper.DefaultTyping.NON_FINAL);
+
+        GenericJackson2JsonRedisSerializer redisSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
+
+        RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration
+                .defaultCacheConfig()
+                .disableCachingNullValues()
+                .serializeKeysWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer));
+
+        return RedisCacheManager.builder(redisConnectionFactory)
+                .cacheDefaults(cacheConfiguration)
+                .build();
+    }
 }
