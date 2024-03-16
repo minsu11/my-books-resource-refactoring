@@ -18,6 +18,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class BookOrderCreateResponse {
-    private String statusName;
+    private String orderStatus;
+    private String number;
+    private Integer totalCost;
 
 }

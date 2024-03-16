@@ -2,10 +2,7 @@ package store.mybooks.resource.bookorder.dto.request;
 
 import java.time.LocalDate;
 import java.util.List;
-import javax.validation.constraints.FutureOrPresent;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,14 +22,12 @@ import lombok.NoArgsConstructor;
 public class BookOrderCreateRequest {
     private List<BookInfoRequest> bookInfoList;
 
-    @NotBlank
-    @Size(min = 1, max = 50)
-    private String deliveryName;
+    @Positive
+    private Integer deliveryId;
 
     @FutureOrPresent
     private LocalDate deliveryDate;
-    @Min(0)
-    private Integer point;
+
 
     @NotBlank
     @Size(min = 3, max = 20)
@@ -50,6 +45,15 @@ public class BookOrderCreateRequest {
     @NotBlank
     @Size(max = 20)
     private String orderNumber;
+
+    @PositiveOrZero
+    private Integer pointCost;
+
+    @PositiveOrZero
+    private Integer couponCost;
+
+    @Positive
+    private Integer totalCost;
 
 
 }
