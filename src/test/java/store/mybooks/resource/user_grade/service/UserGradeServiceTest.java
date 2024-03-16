@@ -1,25 +1,20 @@
 package store.mybooks.resource.user_grade.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import javax.swing.text.html.Option;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import store.mybooks.resource.user_grade.dto.mapper.UserGradeMapper;
 import store.mybooks.resource.user_grade.dto.request.UserGradeCreateRequest;
 import store.mybooks.resource.user_grade.dto.response.UserGradeCreateResponse;
@@ -119,12 +114,11 @@ class UserGradeServiceTest {
 
     @Test
     @DisplayName("UserGradeId 로 findUserGradeById 메서드 실행시 동작 테스트")
-    void givenUserGradeId_whenCallFindUserGradeById_thenReturnUserGradeGetResponse(
-            @Mock UserGrade userGrade) {
+    void givenUserGradeId_whenCallFindUserGradeById_thenReturnUserGradeGetResponse() {
 
-        when(userGradeRepository.findById(any())).thenReturn(Optional.of(userGrade));
+        when(userGradeRepository.existsById(any())).thenReturn(true);
         userGradeService.findUserGradeById(any());
-        verify(userGradeRepository, times(1)).findById(any());
+        verify(userGradeRepository, times(1)).existsById(any());
     }
 
     @Test

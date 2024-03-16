@@ -1,7 +1,6 @@
 package store.mybooks.resource.user_grade.dto.response;
 
 import java.time.LocalDate;
-import javax.persistence.Column;
 
 /**
  * packageName    : store.mybooks.resource.user_grade.dto.response<br>

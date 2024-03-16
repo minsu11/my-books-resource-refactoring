@@ -89,7 +89,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .join(book.publisher, publisher)
                 .where(book.id.eq(id))
                 .fetchOne();
-        System.out.println("여긴가?");
+
         ImageResponse thumbNailImage = from(image)
                 .join(image.book, book)
                 .join(image.imageStatus, imageStatus)
@@ -97,8 +97,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
                 .select(Projections.constructor(ImageResponse.class, image.path, image.fileName, image.extension))
                 .fetchOne();
-        System.out.println("잘나옴?");
-        System.out.println(thumbNailImage.toString());
+
         List<ImageResponse> contentImageList = from(image)
                 .join(image.book, book)
                 .join(image.imageStatus, imageStatus)
@@ -112,8 +111,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .where(bookAuthor.book.id.eq(id))
                 .select(Projections.constructor(AuthorGetResponse.class, author.id, author.name, author.content))
                 .fetch();
-
-
+        
         List<TagGetResponseForBookDetail> tagList = from(bookTag)
                 .join(bookTag.tag, tag)
                 .where(bookTag.book.id.eq(id))

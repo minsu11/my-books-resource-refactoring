@@ -1,7 +1,6 @@
 package store.mybooks.resource.cart.dto;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
 import store.mybooks.resource.cart.entity.Cart;
 
 /**

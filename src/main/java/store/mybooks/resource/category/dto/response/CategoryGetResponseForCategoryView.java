@@ -18,6 +18,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class CategoryGetResponseForCategoryView {
+    private String highestCategoryName;
     private String name;
     private List<CategoryIdNameGetResponse> levelTwoCategories;
     private List<CategoryIdNameGetResponse> targetCategories;

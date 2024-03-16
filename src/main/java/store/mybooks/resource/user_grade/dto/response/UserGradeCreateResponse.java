@@ -2,7 +2,6 @@ package store.mybooks.resource.user_grade.dto.response;
 
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

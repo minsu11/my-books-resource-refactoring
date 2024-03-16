@@ -18,12 +18,15 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,18 +49,22 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import store.mybooks.resource.book.dto.response.BookBriefResponseIncludePublishDate;
 import store.mybooks.resource.category.dto.request.CategoryCreateRequest;
 import store.mybooks.resource.category.dto.request.CategoryModifyRequest;
 import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForBookCreate;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForCategoryView;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForMainView;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
 import store.mybooks.resource.category.dto.response.CategoryIdNameGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 import store.mybooks.resource.category.exception.CategoryValidationException;
 import store.mybooks.resource.category.service.CategoryService;
+import store.mybooks.resource.image.dto.response.ImageResponse;
 
 /**
  * packageName    : store.mybooks.resource.category.controller
@@ -299,6 +306,133 @@ class CategoryRestControllerTest {
                 .andExpect(jsonPath("$[1].name").value(secondCategoryIdNameGetResponse.getName()))
                 .andExpect(jsonPath("$[2].id").value(thirdCategoryIdNameGetResponse.getId()))
                 .andExpect(jsonPath("$[2].name").value(thirdCategoryIdNameGetResponse.getName()));
+    }
+
+    @Test
+    @DisplayName("getCategoriesForMainView 메서드 테스트")
+    void whenGetCategoriesForMainView_thenReturnListOfCategoryGetResponseForMainView() throws Exception {
+        CategoryIdNameGetResponse database = new CategoryIdNameGetResponse(3, "데이터베이스");
+        CategoryIdNameGetResponse network = new CategoryIdNameGetResponse(4, "네트워크");
+        CategoryIdNameGetResponse algorithm = new CategoryIdNameGetResponse(5, "알고리즘");
+        List<CategoryIdNameGetResponse> childOfItCategoryList = new ArrayList<>();
+        childOfItCategoryList.add(database);
+        childOfItCategoryList.add(network);
+        childOfItCategoryList.add(algorithm);
+
+        CategoryIdNameGetResponse corporateManagement = new CategoryIdNameGetResponse(6, "기업 경영");
+        CategoryIdNameGetResponse marketing = new CategoryIdNameGetResponse(7, "마케팅");
+        CategoryIdNameGetResponse investment = new CategoryIdNameGetResponse(8, "투자");
+        List<CategoryIdNameGetResponse> childOfEconomyCategoryList = new ArrayList<>();
+        childOfEconomyCategoryList.add(corporateManagement);
+        childOfEconomyCategoryList.add(marketing);
+        childOfEconomyCategoryList.add(investment);
+
+        CategoryGetResponseForMainView it =
+                new CategoryGetResponseForMainView(1, "IT", childOfItCategoryList);
+        CategoryGetResponseForMainView economy =
+                new CategoryGetResponseForMainView(2, "economy", childOfEconomyCategoryList);
+        List<CategoryGetResponseForMainView> expect = Arrays.asList(it, economy);
+
+        when(categoryService.getCategoriesForMainView()).thenReturn(expect);
+
+        mockMvc.perform(get("/api/categories/main"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(expect.size()))
+                .andExpect(jsonPath("$[0].parentCategoryId").value(it.getParentCategoryId()))
+                .andExpect(jsonPath("$[0].parentCategoryName").value(it.getParentCategoryName()))
+                .andExpect(jsonPath("$[0].childCategoryList.size()").value(childOfItCategoryList.size()))
+                .andExpect(jsonPath("$[0].childCategoryList[0].id").value(database.getId()))
+                .andExpect(jsonPath("$[0].childCategoryList[1].id").value(network.getId()))
+                .andExpect(jsonPath("$[0].childCategoryList[2].id").value(algorithm.getId()))
+                .andExpect(jsonPath("$[1].parentCategoryId").value(economy.getParentCategoryId()))
+                .andExpect(jsonPath("$[1].parentCategoryName").value(economy.getParentCategoryName()))
+                .andExpect(jsonPath("$[1].childCategoryList.size()").value(childOfEconomyCategoryList.size()))
+                .andExpect(jsonPath("$[1].childCategoryList[0].id").value(corporateManagement.getId()))
+                .andExpect(jsonPath("$[1].childCategoryList[1].id").value(marketing.getId()))
+                .andExpect(jsonPath("$[1].childCategoryList[2].id").value(investment.getId()));
+    }
+
+    @Test
+    @DisplayName("getCategoriesForCategoryView 테스트")
+    void givenCategoryId_whenGetCategoriesForCategoryView_thenReturnCategoryGetResponseForCategoryView()
+            throws Exception {
+        String highestCategoryName = "IT";
+        String name = "데이터베이스";
+        CategoryIdNameGetResponse network = new CategoryIdNameGetResponse(4, "Network");
+        CategoryIdNameGetResponse language = new CategoryIdNameGetResponse(5, "Language");
+        List<CategoryIdNameGetResponse> levelTwoCategories = Arrays.asList(network, language);
+        CategoryIdNameGetResponse mysql = new CategoryIdNameGetResponse(4, "MySQL");
+        CategoryIdNameGetResponse mssql = new CategoryIdNameGetResponse(5, "MSSQL");
+        List<CategoryIdNameGetResponse> targetCategories = Arrays.asList(mysql, mssql);
+        CategoryGetResponseForCategoryView expect =
+                new CategoryGetResponseForCategoryView(
+                        highestCategoryName,
+                        name,
+                        levelTwoCategories,
+                        targetCategories
+                );
+
+        when(categoryService.getCategoriesForCategoryView(anyInt())).thenReturn(expect);
+
+        mockMvc.perform(get("/api/categories/view/{categoryId}", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.highestCategoryName").value(highestCategoryName))
+                .andExpect(jsonPath("$.name").value(name))
+                .andDo(print())
+                .andExpect(jsonPath("$.levelTwoCategories.size()").value(levelTwoCategories.size()))
+                .andExpect(jsonPath("$.levelTwoCategories[0].id").value(network.getId()))
+                .andExpect(jsonPath("$.levelTwoCategories[0].name").value(network.getName()))
+                .andExpect(jsonPath("$.levelTwoCategories[1].id").value(language.getId()))
+                .andExpect(jsonPath("$.levelTwoCategories[1].name").value(language.getName()))
+                .andExpect(jsonPath("$.targetCategories.size()").value(targetCategories.size()))
+                .andExpect(jsonPath("$.targetCategories[0].id").value(mysql.getId()))
+                .andExpect(jsonPath("$.targetCategories[0].name").value(mysql.getName()))
+                .andExpect(jsonPath("$.targetCategories[1].id").value(mssql.getId()))
+                .andExpect(jsonPath("$.targetCategories[1].name").value(mssql.getName()));
+    }
+
+    @Test
+    @DisplayName("getBooksForCategoryView 테스트")
+    void givenCategoryIdAndPageable_whenGetBooksForCategoryView_thenReturnPageOfBookBriefResponseIncludePublishDate()
+            throws Exception {
+        Pageable pageable = PageRequest.of(0, 2);
+        ImageResponse appleImageResponse = new ImageResponse("path", "apple", "png");
+        BookBriefResponseIncludePublishDate appleBook =
+                new BookBriefResponseIncludePublishDate(
+                        1L,
+                        appleImageResponse,
+                        "appleBook",
+                        10000,
+                        5000,
+                        LocalDate.now()
+                );
+        ImageResponse bananaImageResponse = new ImageResponse("path", "apple", "png");
+        BookBriefResponseIncludePublishDate bananaBook =
+                new BookBriefResponseIncludePublishDate(
+                        1L,
+                        bananaImageResponse,
+                        "bananaBook",
+                        10000,
+                        5000,
+                        LocalDate.now()
+                );
+        List<BookBriefResponseIncludePublishDate> bookBriefResponseIncludePublishDateList =
+                Arrays.asList(appleBook, bananaBook);
+        long total = 100L;
+        Page<BookBriefResponseIncludePublishDate> expect =
+                new PageImpl<>(
+                        bookBriefResponseIncludePublishDateList,
+                        pageable,
+                        total);
+
+        when(categoryService.getBooksForCategoryView(anyInt(), any())).thenReturn(expect);
+
+        mockMvc.perform(get("/api/categories/view/book/{categoryId}", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.size()").value(bookBriefResponseIncludePublishDateList.size()))
+                .andExpect(jsonPath("$.content[0].id").value(appleBook.getId()))
+                .andExpect(jsonPath("$.content[1].id").value(bananaBook.getId()))
+                .andExpect(jsonPath("$.totalPages").value(total / pageable.getPageSize()));
     }
 
     @Test

@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import store.mybooks.resource.book.dto.response.BookBriefResponseIncludePublishDate;
 import store.mybooks.resource.category.dto.request.CategoryCreateRequest;
 import store.mybooks.resource.category.dto.request.CategoryModifyRequest;
 import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
@@ -238,6 +239,13 @@ public class CategoryService {
         return categoryRepository.findAllByParentCategory_Id(id);
     }
 
+    /**
+     * methodName : getCategoriesForMainView <br>
+     * author : damho-lee <br>
+     * description : 메인페이지에서 보여줄 최상위 카테고리와 하위 카테고리 리스트들 조회.<br>
+     *
+     * @return list
+     */
     @Transactional(readOnly = true)
     public List<CategoryGetResponseForMainView> getCategoriesForMainView() {
         List<CategoryGetResponseForMainView> categoryGetResponseForMainViewList = new ArrayList<>();
@@ -259,13 +267,23 @@ public class CategoryService {
         return categoryGetResponseForMainViewList;
     }
 
+    /**
+     * methodName : getCategoriesForCategoryView <br>
+     * author : damho-lee <br>
+     * description : 카테고리 선택 시 보여줄 2단계 카테고리와 선택된 카테고리의 하위 카테고리 리스트 조회.<br>
+     *
+     * @param categoryId Integer
+     * @return CategoryGetResponseForCategoryView
+     */
     @Transactional(readOnly = true)
     public CategoryGetResponseForCategoryView getCategoriesForCategoryView(Integer categoryId) {
-        Category category =
-                categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotExistsException(categoryId));
-        Integer highestCategoryId = category.getParentCategory() == null
-                ? categoryId : categoryRepository.findHighestCategoryId(categoryId);
+        if (!categoryRepository.existsById(categoryId)) {
+            throw new CategoryNotExistsException(categoryId);
+        }
 
+        Integer highestCategoryId = categoryRepository.findHighestCategoryId(categoryId);
+
+        CategoryIdNameGetResponse highestCategory = categoryRepository.findCategoryById(highestCategoryId);
         CategoryIdNameGetResponse targetCategory = categoryRepository.findCategoryById(categoryId);
         List<CategoryIdNameGetResponse> levelTwoCategories =
                 categoryRepository.findAllByParentCategory_Id(highestCategoryId)
@@ -282,7 +300,25 @@ public class CategoryService {
                                 categoryGetResponse.getName()))
                         .collect(Collectors.toList());
 
-        return new CategoryGetResponseForCategoryView(targetCategory.getName(), levelTwoCategories, targetCategories);
+        return new CategoryGetResponseForCategoryView(
+                highestCategory.getName(),
+                targetCategory.getName(),
+                levelTwoCategories,
+                targetCategories);
+    }
+
+    /**
+     * methodName : getBooksForCategoryView <br>
+     * author : damho-lee <br>
+     * description : 카테고리 선택시 해당 카테고리에 속하는 도서 페이지 조회.<br>
+     *
+     * @param categoryId Integer
+     * @param pageable   Pageable
+     * @return Page
+     */
+    @Transactional(readOnly = true)
+    public Page<BookBriefResponseIncludePublishDate> getBooksForCategoryView(Integer categoryId, Pageable pageable) {
+        return categoryRepository.getBooksForCategoryView(categoryId, pageable);
     }
 
     /**

@@ -33,12 +33,14 @@ public class UserStatusService {
      * description : 유저상태의 정보를 찾음
      *
      * @param id id
-     * @throws UserStatusNotExistException 유저상태가 존재하지 않는 경우
      * @return user status get response
+     * @throws UserStatusNotExistException 유저상태가 존재하지 않는 경우
      */
     public UserStatusGetResponse findUserStatusById(String id) {
 
-        userStatusRepository.findById(id).orElseThrow(() -> new UserStatusNotExistException(id));
+        if (!userStatusRepository.existsById(id)) {
+            throw new UserStatusNotExistException(id);
+        }
         return userStatusRepository.queryById(id);
     }
 
@@ -52,8 +54,6 @@ public class UserStatusService {
     public List<UserStatusGetResponse> findAllUserStatus() {
         return userStatusRepository.queryAllBy();
     }
-
-
 
 
 }
