@@ -1,8 +1,13 @@
 package store.mybooks.resource.bookorder.dto.request;
 
-import lombok.AllArgsConstructor;
+import java.time.LocalDate;
+import java.util.List;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import lombok.Getter;
-import lombok.NonNull;
+import lombok.NoArgsConstructor;
 
 /**
  * packageName    : store.mybooks.resource.book_order.dto.request
@@ -16,23 +21,35 @@ import lombok.NonNull;
  * 2/15/24        minsu11       최초 생성
  */
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 public class BookOrderCreateRequest {
-    @NonNull
-    private Long userId;
-    private Long userCouponId;
-    private Long wrapId;
-    private String receiverName;
-    private String receiverAddress;
-    private String receiverPhoneNumber;
+    private List<BookInfoRequest> bookInfoList;
+
+    @NotBlank
+    @Size(min = 1, max = 50)
+    private String deliveryName;
+
+    @FutureOrPresent
+    private LocalDate deliveryDate;
+    @Min(0)
+    private Integer point;
+
+    @NotBlank
+    @Size(min = 3, max = 20)
+    private String recipientName;
+
+    @NotBlank
+    @Size(max = 100)
+    private String recipientAddress;
+
+    @NotBlank
+    @Size(max = 13)
+    private String recipientPhoneNumber;
 
     private String receiverMessage;
-
-    private Integer totalCost;
-    private Integer pointCost;
-    private Integer couponCost;
-    private String number;
-    private String findPassword;
+    @NotBlank
+    @Size(max = 20)
+    private String orderNumber;
 
 
 }
