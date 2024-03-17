@@ -24,4 +24,6 @@ public class BookCartResponse {
     private String bookImage;
     private Integer cost;
     private Integer saleCost;
+    private Integer stock;
+    private String sellingStatus;
 }
