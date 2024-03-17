@@ -1,17 +1,20 @@
 package store.mybooks.resource.bookorder.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import store.mybooks.resource.bookorder.dto.request.BookOrderAdminModifyRequest;
+import store.mybooks.resource.bookorder.dto.request.BookOrderCreateRequest;
 import store.mybooks.resource.bookorder.dto.request.BookOrderRegisterInvoiceRequest;
-import store.mybooks.resource.bookorder.dto.response.BookOrderAdminModifyResponse;
-import store.mybooks.resource.bookorder.dto.response.BookOrderAdminResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderCreateResponse;
 import store.mybooks.resource.bookorder.dto.response.BookOrderRegisterInvoiceResponse;
 import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
+import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminModifyResponse;
+import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminResponse;
 import store.mybooks.resource.bookorder.service.BookOrderService;
 
 /**
@@ -25,6 +28,7 @@ import store.mybooks.resource.bookorder.service.BookOrderService;
  * -----------------------------------------------------------<br>
  * 3/2/24        minsu11       최초 생성<br>
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
@@ -83,12 +87,23 @@ public class BookOrderRestController {
                 .body(bookOrderService.registerBookOrderInvoiceNumber(request));
     }
 
-    @GetMapping("/check/adress/{id}")
-    public ResponseEntity<Object> checkOrderUserAddress(@PathVariable Long id) {
+    @GetMapping("/check/address/{id}")
+    public ResponseEntity<Object> checkOrderUserAddress(@PathVariable(name = "id") Long id) {
         bookOrderService.checkUserOrderAddress(id);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();
 
     }
+
+    @PostMapping
+    public ResponseEntity<BookOrderCreateResponse> createResponseResponseEntity(
+            @RequestBody BookOrderCreateRequest request,
+            @RequestHeader(name = "X-User-Id") Long id) {
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(bookOrderService.createBookOrder(request, id));
+    }
+
 }

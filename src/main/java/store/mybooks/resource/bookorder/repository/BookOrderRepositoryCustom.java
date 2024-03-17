@@ -3,8 +3,8 @@ package store.mybooks.resource.bookorder.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
-import store.mybooks.resource.bookorder.dto.response.BookOrderAdminResponse;
 import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
+import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminResponse;
 
 /**
  * packageName    : store.mybooks.resource.book_order.repository<br>

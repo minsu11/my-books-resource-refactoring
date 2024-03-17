@@ -19,5 +19,6 @@ import store.mybooks.resource.order_detail.repository.OrderDetailRepository;
 @RequiredArgsConstructor
 public class OrderDetailService {
     private final OrderDetailRepository orderDetailRepository;
+    public
 }
 

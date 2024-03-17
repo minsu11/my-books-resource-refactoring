@@ -1,5 +1,6 @@
 package store.mybooks.resource.bookorder.service;
 
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -8,19 +9,28 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.bookorder.dto.mapper.BookOrderMapper;
 import store.mybooks.resource.bookorder.dto.request.BookOrderAdminModifyRequest;
+import store.mybooks.resource.bookorder.dto.request.BookOrderCreateRequest;
+import store.mybooks.resource.bookorder.dto.request.BookOrderInfoRequest;
 import store.mybooks.resource.bookorder.dto.request.BookOrderRegisterInvoiceRequest;
-import store.mybooks.resource.bookorder.dto.response.BookOrderAdminModifyResponse;
-import store.mybooks.resource.bookorder.dto.response.BookOrderAdminResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderCreateResponse;
 import store.mybooks.resource.bookorder.dto.response.BookOrderRegisterInvoiceResponse;
 import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
+import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminModifyResponse;
+import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminResponse;
 import store.mybooks.resource.bookorder.entity.BookOrder;
 import store.mybooks.resource.bookorder.exception.BookOrderInfoNotMatchException;
 import store.mybooks.resource.bookorder.exception.BookOrderNotExistException;
 import store.mybooks.resource.bookorder.repository.BookOrderRepository;
+import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
+import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotExistsException;
+import store.mybooks.resource.delivery_rule.repository.DeliveryRuleRepository;
 import store.mybooks.resource.orders_status.entity.OrdersStatus;
 import store.mybooks.resource.orders_status.enumulation.OrdersStatusEnum;
 import store.mybooks.resource.orders_status.exception.OrdersStatusNotExistException;
 import store.mybooks.resource.orders_status.repository.OrdersStatusRepository;
+import store.mybooks.resource.user.entity.User;
+import store.mybooks.resource.user.exception.UserNotExistException;
+import store.mybooks.resource.user.repository.UserRepository;
 import store.mybooks.resource.user_address.repository.UserAddressRepository;
 
 /**
@@ -40,10 +50,11 @@ import store.mybooks.resource.user_address.repository.UserAddressRepository;
 @RequiredArgsConstructor
 public class BookOrderService {
     private final BookOrderRepository bookOrderRepository;
-
     private final OrdersStatusRepository ordersStatusRepository;
     private final BookOrderMapper bookOrderMapper;
     private final UserAddressRepository userAddressRepository;
+    private final DeliveryRuleRepository deliveryRuleRepository;
+    private final UserRepository userRepository;
 
     /**
      * methodName : getBookOrderResponseList<br>
@@ -101,9 +112,36 @@ public class BookOrderService {
     }
 
     public void checkUserOrderAddress(Long addressId) {
+        log.info("address ID : {}", addressId);
         if (!userAddressRepository.existsById(addressId)) {
             throw new BookOrderInfoNotMatchException();
         }
+    }
 
+    public BookOrderCreateResponse createBookOrder(BookOrderCreateRequest request, Long userId) {
+        BookOrderInfoRequest orderInfo = request.getOrderInfo();
+        DeliveryRule deliveryRule = deliveryRuleRepository.findById(orderInfo.getDeliveryId())
+                .orElseThrow(() -> new DeliveryRuleNotExistsException("배송 규정 없음"));
+        OrdersStatus ordersStatus = ordersStatusRepository.findById("주문 대기").orElseThrow(OrdersStatusNotExistException::new);
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
+
+        BookOrder bookOrder = BookOrder.builder()
+                .user(user)
+                .deliveryRule(deliveryRule)
+                .receiverName(orderInfo.getRecipientName())
+                .receiverAddress(orderInfo.getRecipientAddress())
+                .receiverMessage(orderInfo.getReceiverMessage())
+                .receiverPhoneNumber(orderInfo.getRecipientPhoneNumber())
+                .orderStatus(ordersStatus)
+                .deliveryDate(orderInfo.getDeliveryDate())
+                .date(LocalDate.now())
+                .number(request.getOrderNumber())
+                .totalCost(request.getTotalCost())
+                .couponCost(request.getCouponCost())
+                .pointCost(request.getPointCost())
+                .build();
+
+        bookOrderRepository.save(bookOrder);
+        return bookOrderMapper.mapToBookOrderCreateResponse(bookOrder);
     }
 }
