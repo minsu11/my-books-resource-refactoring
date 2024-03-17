@@ -1,10 +1,10 @@
-package store.mybooks.resource.order_detail_status.repository;
+package store.mybooks.resource.orderdetailstatus.repository;
 
 import com.querydsl.core.types.Projections;
 import java.util.List;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
-import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusResponse;
-import store.mybooks.resource.order_detail_status.entity.QOrderDetailStatus;
+import store.mybooks.resource.orderdetailstatus.dto.response.OrderDetailStatusResponse;
+import store.mybooks.resource.orderdetailstatus.entity.QOrderDetailStatus;
 
 /**
  * packageName    : store.mybooks.resource.order_detail_status.repository
@@ -30,5 +30,5 @@ public class OrderDetailStatusRepositoryImpl extends QuerydslRepositorySupport i
                 .fetch();
     }
 
-    
+
 }

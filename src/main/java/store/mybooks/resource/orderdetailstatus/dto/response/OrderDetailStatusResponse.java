@@ -1,4 +1,4 @@
-package store.mybooks.resource.order_detail_status.dto.response;
+package store.mybooks.resource.orderdetailstatus.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

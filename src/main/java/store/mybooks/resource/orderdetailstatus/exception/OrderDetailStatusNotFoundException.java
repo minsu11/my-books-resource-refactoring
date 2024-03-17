@@ -1,8 +1,8 @@
-package store.mybooks.resource.order_detail_status.exception;
+package store.mybooks.resource.orderdetailstatus.exception;
 
 /**
  * packageName    : store.mybooks.resource.order_detail_status.exception
- * fileName       : OrderDetailStatusAlreadyExistException
+ * fileName       : OrderDetailStatusNotFoundException
  * author         : minsu11
  * date           : 2/16/24
  * description    :
@@ -11,11 +11,11 @@ package store.mybooks.resource.order_detail_status.exception;
  * -----------------------------------------------------------
  * 2/16/24        minsu11       최초 생성
  */
-public class OrderDetailStatusAlreadyExistException extends RuntimeException {
-    public OrderDetailStatusAlreadyExistException() {
+public class OrderDetailStatusNotFoundException extends RuntimeException {
+    public OrderDetailStatusNotFoundException() {
     }
 
-    public OrderDetailStatusAlreadyExistException(String message) {
+    public OrderDetailStatusNotFoundException(String message) {
         super(message);
     }
 }

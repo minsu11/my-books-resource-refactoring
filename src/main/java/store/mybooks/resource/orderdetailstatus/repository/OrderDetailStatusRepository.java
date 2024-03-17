@@ -1,7 +1,7 @@
-package store.mybooks.resource.order_detail_status.repository;
+package store.mybooks.resource.orderdetailstatus.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import store.mybooks.resource.order_detail_status.entity.OrderDetailStatus;
+import store.mybooks.resource.orderdetailstatus.entity.OrderDetailStatus;
 
 /**
  * packageName    : store.mybooks.resource.order_detail_status.repository

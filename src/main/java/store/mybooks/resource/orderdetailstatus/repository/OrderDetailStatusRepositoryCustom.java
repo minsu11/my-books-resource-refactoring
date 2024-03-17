@@ -1,8 +1,8 @@
-package store.mybooks.resource.order_detail_status.repository;
+package store.mybooks.resource.orderdetailstatus.repository;
 
 import java.util.List;
 import org.springframework.data.repository.NoRepositoryBean;
-import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusResponse;
+import store.mybooks.resource.orderdetailstatus.dto.response.OrderDetailStatusResponse;
 
 /**
  * packageName    : store.mybooks.resource.order_detail_status.repository

@@ -1,14 +1,14 @@
-package store.mybooks.resource.order_detail_status.service;
+package store.mybooks.resource.orderdetailstatus.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import store.mybooks.resource.order_detail_status.dto.mapper.OrderDetailMapper;
-import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusResponse;
-import store.mybooks.resource.order_detail_status.entity.OrderDetailStatus;
-import store.mybooks.resource.order_detail_status.exception.OrderDetailStatusNotFoundException;
-import store.mybooks.resource.order_detail_status.repository.OrderDetailStatusRepository;
+import store.mybooks.resource.orderdetailstatus.dto.mapper.OrderDetailMapper;
+import store.mybooks.resource.orderdetailstatus.dto.response.OrderDetailStatusResponse;
+import store.mybooks.resource.orderdetailstatus.entity.OrderDetailStatus;
+import store.mybooks.resource.orderdetailstatus.exception.OrderDetailStatusNotFoundException;
+import store.mybooks.resource.orderdetailstatus.repository.OrderDetailStatusRepository;
 
 /**
  * packageName    : store.mybooks.resource.order_detail_status.service <br>

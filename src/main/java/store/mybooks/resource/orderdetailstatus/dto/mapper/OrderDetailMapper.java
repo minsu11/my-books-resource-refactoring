@@ -1,8 +1,8 @@
-package store.mybooks.resource.order_detail_status.dto.mapper;
+package store.mybooks.resource.orderdetailstatus.dto.mapper;
 
 import org.mapstruct.Mapper;
-import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusResponse;
-import store.mybooks.resource.order_detail_status.entity.OrderDetailStatus;
+import store.mybooks.resource.orderdetailstatus.dto.response.OrderDetailStatusResponse;
+import store.mybooks.resource.orderdetailstatus.entity.OrderDetailStatus;
 
 /**
  * packageName    : store.mybooks.resource.order_detail_status.dto.response

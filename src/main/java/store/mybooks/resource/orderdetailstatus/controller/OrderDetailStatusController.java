@@ -1,4 +1,4 @@
-package store.mybooks.resource.order_detail_status.controller;
+package store.mybooks.resource.orderdetailstatus.controller;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusResponse;
-import store.mybooks.resource.order_detail_status.service.OrderDetailStatusService;
+import store.mybooks.resource.orderdetailstatus.dto.response.OrderDetailStatusResponse;
+import store.mybooks.resource.orderdetailstatus.service.OrderDetailStatusService;
 
 /**
  * packageName    : store.mybooks.resource.order_detail_status.controller

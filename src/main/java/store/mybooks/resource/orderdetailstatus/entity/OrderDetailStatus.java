@@ -1,4 +1,4 @@
-package store.mybooks.resource.order_detail_status.entity;
+package store.mybooks.resource.orderdetailstatus.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
