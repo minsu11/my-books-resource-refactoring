@@ -1,4 +1,4 @@
-package store.mybooks.resource.order_detail_status.service;
+package store.mybooks.resource.orderdetailstatus.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -14,11 +14,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import store.mybooks.resource.order_detail_status.dto.mapper.OrderDetailMapper;
-import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusResponse;
-import store.mybooks.resource.order_detail_status.entity.OrderDetailStatus;
-import store.mybooks.resource.order_detail_status.exception.OrderDetailStatusNotFoundException;
-import store.mybooks.resource.order_detail_status.repository.OrderDetailStatusRepository;
+import store.mybooks.resource.orderdetailstatus.dto.mapper.OrderDetailStatusMapper;
+import store.mybooks.resource.orderdetailstatus.dto.response.OrderDetailStatusResponse;
+import store.mybooks.resource.orderdetailstatus.entity.OrderDetailStatus;
+import store.mybooks.resource.orderdetailstatus.exception.OrderDetailStatusNotFoundException;
+import store.mybooks.resource.orderdetailstatus.repository.OrderDetailStatusRepository;
 
 /**
  * packageName    : store.mybooks.resource.order_detail_status.service<br>
@@ -40,7 +40,7 @@ class OrderDetailStatusServiceUnitTest {
     @Mock
     OrderDetailStatusRepository orderDetailStatusRepository;
     @Mock
-    OrderDetailMapper mapper;
+    OrderDetailStatusMapper mapper;
 
     @Test
     @Order(1)

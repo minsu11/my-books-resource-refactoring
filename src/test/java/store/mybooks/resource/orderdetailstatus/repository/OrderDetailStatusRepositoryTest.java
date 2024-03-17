@@ -1,12 +1,12 @@
-package store.mybooks.resource.order_detail_status.repository;
+package store.mybooks.resource.orderdetailstatus.repository;
 
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import store.mybooks.resource.order_detail_status.dto.response.OrderDetailStatusResponse;
-import store.mybooks.resource.order_detail_status.entity.OrderDetailStatus;
+import store.mybooks.resource.orderdetailstatus.dto.response.OrderDetailStatusResponse;
+import store.mybooks.resource.orderdetailstatus.entity.OrderDetailStatus;
 import store.mybooks.resource.orders_status.exception.OrdersStatusNotExistException;
 
 /**

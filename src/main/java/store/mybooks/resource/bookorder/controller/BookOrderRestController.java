@@ -16,6 +16,8 @@ import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminModifyResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminResponse;
 import store.mybooks.resource.bookorder.service.BookOrderService;
+import store.mybooks.resource.bookorder.service.OrderService;
+import store.mybooks.resource.config.HeaderProperties;
 
 /**
  * packageName    : store.mybooks.resource.book_order.controller<br>
@@ -34,6 +36,7 @@ import store.mybooks.resource.bookorder.service.BookOrderService;
 @RequiredArgsConstructor
 public class BookOrderRestController {
     private final BookOrderService bookOrderService;
+    private final OrderService orderService;
 
     /**
      * methodName : getBookOrderPageById<br>
@@ -99,11 +102,12 @@ public class BookOrderRestController {
     @PostMapping
     public ResponseEntity<BookOrderCreateResponse> createResponseResponseEntity(
             @RequestBody BookOrderCreateRequest request,
-            @RequestHeader(name = "X-User-Id") Long id) {
+            @RequestHeader(name = HeaderProperties.USER_ID) Long id) {
+        log.info("controller: {}", request);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(bookOrderService.createBookOrder(request, id));
+                .body(orderService.createOrder(request, id));
     }
 
 }

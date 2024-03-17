@@ -22,4 +22,5 @@ public interface BookOrderRepositoryCustom {
     Page<BookOrderUserResponse> getBookOrderPageByUserId(Long userId, Pageable pageable);
 
     Page<BookOrderAdminResponse> getBookOrderPageByOrderStatusId(Pageable pageable);
+
 }

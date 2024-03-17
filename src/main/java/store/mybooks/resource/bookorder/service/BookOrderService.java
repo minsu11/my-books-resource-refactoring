@@ -124,7 +124,6 @@ public class BookOrderService {
                 .orElseThrow(() -> new DeliveryRuleNotExistsException("배송 규정 없음"));
         OrdersStatus ordersStatus = ordersStatusRepository.findById("주문 대기").orElseThrow(OrdersStatusNotExistException::new);
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
-
         BookOrder bookOrder = BookOrder.builder()
                 .user(user)
                 .deliveryRule(deliveryRule)
@@ -138,6 +137,8 @@ public class BookOrderService {
                 .number(request.getOrderNumber())
                 .totalCost(request.getTotalCost())
                 .couponCost(request.getCouponCost())
+                .userCoupon(null)
+                .isCouponUsed(false)
                 .pointCost(request.getPointCost())
                 .build();
 

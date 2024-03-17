@@ -16,7 +16,7 @@ import store.mybooks.resource.orderdetailstatus.entity.OrderDetailStatus;
  * 2/18/24        minsu11       최초 생성
  */
 @Mapper(componentModel = "spring")
-public interface OrderDetailMapper {
+public interface OrderDetailStatusMapper {
     OrderDetailStatusResponse mapToOrderDetailStatusResponse(OrderDetailStatus orderDetailStatus);
 
 }

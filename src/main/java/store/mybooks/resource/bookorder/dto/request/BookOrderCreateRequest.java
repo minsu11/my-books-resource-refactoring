@@ -7,6 +7,8 @@ import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * packageName    : store.mybooks.resource.book_order.dto.request
@@ -21,8 +23,12 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
+@Setter
+@ToString
 public class BookOrderCreateRequest {
+
     private List<BookInfoRequest> bookInfoList;
+
     private BookOrderInfoRequest orderInfo;
     @NotBlank
     @Size(max = 20)

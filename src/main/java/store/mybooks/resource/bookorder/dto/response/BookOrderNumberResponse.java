@@ -1,5 +1,10 @@
-package store.mybooks.resource.bookorder.dto.response;/**
- *packageName    : store.mybooks.resource.bookorder.dto.response<br>
+package store.mybooks.resource.bookorder.dto.response;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+/**
+ * packageName    : store.mybooks.resource.bookorder.dto.response<br>
  * fileName       : BookOrderNumberResponse<br>
  * author         : minsu11<br>
  * date           : 3/17/24<br>
@@ -8,5 +13,9 @@ package store.mybooks.resource.bookorder.dto.response;/**
  * DATE              AUTHOR             NOTE<br>
  * -----------------------------------------------------------<br>
  * 3/17/24        minsu11       최초 생성<br>
- */public class BookOrderNumberResponse {
+ */
+@Getter
+@AllArgsConstructor
+public class BookOrderNumberResponse {
+    private String number;
 }

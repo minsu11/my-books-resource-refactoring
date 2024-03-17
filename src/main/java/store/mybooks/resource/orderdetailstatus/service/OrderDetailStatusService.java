@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import store.mybooks.resource.orderdetailstatus.dto.mapper.OrderDetailMapper;
+import store.mybooks.resource.orderdetailstatus.dto.mapper.OrderDetailStatusMapper;
 import store.mybooks.resource.orderdetailstatus.dto.response.OrderDetailStatusResponse;
 import store.mybooks.resource.orderdetailstatus.entity.OrderDetailStatus;
 import store.mybooks.resource.orderdetailstatus.exception.OrderDetailStatusNotFoundException;
@@ -29,7 +29,7 @@ import store.mybooks.resource.orderdetailstatus.repository.OrderDetailStatusRepo
 @Transactional(readOnly = true)
 public class OrderDetailStatusService {
     private final OrderDetailStatusRepository orderDetailStatusRepository;
-    private final OrderDetailMapper mapper;
+    private final OrderDetailStatusMapper mapper;
 
 
     /**

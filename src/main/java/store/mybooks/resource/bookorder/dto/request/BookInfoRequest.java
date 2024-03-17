@@ -1,6 +1,9 @@
 package store.mybooks.resource.bookorder.dto.request;
 
 import javax.validation.constraints.Positive;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * packageName    : store.mybooks.resource.bookorder.dto.request<br>
@@ -13,6 +16,9 @@ import javax.validation.constraints.Positive;
  * -----------------------------------------------------------<br>
  * 3/16/24        minsu11       최초 생성<br>
  */
+@Getter
+@NoArgsConstructor
+@ToString
 public class BookInfoRequest {
     @Positive
     private Long bookId;
