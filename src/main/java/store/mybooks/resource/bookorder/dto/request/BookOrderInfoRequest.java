@@ -1,0 +1,46 @@
+package store.mybooks.resource.bookorder.dto.request;
+
+import java.time.LocalDate;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+/**
+ * packageName    : store.mybooks.resource.bookorder.dto.request<br>
+ * fileName       : BookOrderInfoRequest<br>
+ * author         : minsu11<br>
+ * date           : 3/17/24<br>
+ * description    :
+ * ===========================================================<br>
+ * DATE              AUTHOR             NOTE<br>
+ * -----------------------------------------------------------<br>
+ * 3/17/24        minsu11       최초 생성<br>
+ */
+@Getter
+@NoArgsConstructor
+public class BookOrderInfoRequest {
+
+    @Positive
+    private Integer deliveryId;
+
+    @FutureOrPresent
+    private LocalDate deliveryDate;
+
+
+    @NotBlank
+    @Size(min = 3, max = 20)
+    private String recipientName;
+
+    @NotBlank
+    @Size(max = 100)
+    private String recipientAddress;
+
+    @NotBlank
+    @Size(max = 13)
+    private String recipientPhoneNumber;
+
+    private String receiverMessage;
+}
