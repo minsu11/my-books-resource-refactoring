@@ -1,7 +1,7 @@
 package store.mybooks.resource.order_detail.dto.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 /**
  * packageName    : store.mybooks.resource.order_detail.dto.request<br>
@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
  * 3/16/24        minsu11       최초 생성<br>
  */
 @Getter
-@NoArgsConstructor
+@AllArgsConstructor
 public class OrderDetailCreateRequest {
     private String orderNumber;
     private Long bookId;
@@ -23,5 +23,4 @@ public class OrderDetailCreateRequest {
     private Integer wrapId;
     private Integer bookCost;
     private Integer bookAmount;
-    private Boolean isCouponUsed;
 }

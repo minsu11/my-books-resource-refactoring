@@ -1,13 +1,10 @@
 package store.mybooks.resource.order_detail.entity;
 
 import javax.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.bookorder.entity.BookOrder;
-import store.mybooks.resource.order_detail_status.entity.OrderDetailStatus;
+import store.mybooks.resource.orderdetailstatus.entity.OrderDetailStatus;
 import store.mybooks.resource.usercoupon.entity.UserCoupon;
 import store.mybooks.resource.wrap.entity.Wrap;
 
@@ -25,6 +22,7 @@ import store.mybooks.resource.wrap.entity.Wrap;
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "order_detail")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -62,5 +60,6 @@ public class OrderDetail {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "wrap_id")
     private Wrap wrap;
+
 
 }
