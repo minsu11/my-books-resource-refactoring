@@ -99,6 +99,20 @@ public class BookOrderRestController {
 
     }
 
+    @GetMapping("/orderNumber/{orderNumber}")
+    public ResponseEntity<Boolean> checkBookOrderNumber(@PathVariable String orderNumber) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookOrderService.checkBookOrderNumberExists(orderNumber));
+    }
+
+    /**
+     * 주문 요청이 들어오면 주문 생성.
+     *
+     * @param request the request
+     * @param id      the id
+     * @return the response entity
+     */
     @PostMapping
     public ResponseEntity<BookOrderCreateResponse> createResponseResponseEntity(
             @RequestBody BookOrderCreateRequest request,
@@ -109,5 +123,6 @@ public class BookOrderRestController {
                 .status(HttpStatus.CREATED)
                 .body(orderService.createOrder(request, id));
     }
+
 
 }

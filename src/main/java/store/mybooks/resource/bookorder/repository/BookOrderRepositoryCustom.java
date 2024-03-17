@@ -23,4 +23,5 @@ public interface BookOrderRepositoryCustom {
 
     Page<BookOrderAdminResponse> getBookOrderPageByOrderStatusId(Pageable pageable);
 
+    Boolean existBookOrderByOrderNumber(String orderNumber);
 }

@@ -111,13 +111,30 @@ public class BookOrderService {
         return bookOrderMapper.mapToBookOrderRegisterInvoiceResponse(bookOrder);
     }
 
+    /**
+     * methodName : checkUserOrderAddress<br>
+     * author : minsu11<br>
+     * description : 주문에서 입력 들어온 회원의 주소가 맞는지 판별.
+     * <br> *
+     *
+     * @param addressId 회원의 주소 아이디
+     * @return book order register invoice response
+     */
     public void checkUserOrderAddress(Long addressId) {
-        log.info("address ID : {}", addressId);
         if (!userAddressRepository.existsById(addressId)) {
             throw new BookOrderInfoNotMatchException();
         }
     }
 
+    /**
+     * methodName : createBookOrder<br>
+     * author : minsu11<br>
+     * description : 주문서 생성.
+     * <br> *
+     *
+     * @param request 등록할 송장 번호.
+     * @return book order register invoice response
+     */
     public BookOrderCreateResponse createBookOrder(BookOrderCreateRequest request, Long userId) {
         BookOrderInfoRequest orderInfo = request.getOrderInfo();
         DeliveryRule deliveryRule = deliveryRuleRepository.findById(orderInfo.getDeliveryId())
@@ -144,5 +161,9 @@ public class BookOrderService {
 
         bookOrderRepository.save(bookOrder);
         return bookOrderMapper.mapToBookOrderCreateResponse(bookOrder);
+    }
+
+    public Boolean checkBookOrderNumberExists(String orderNumber) {
+        return bookOrderRepository.existBookOrderByOrderNumber(orderNumber);
     }
 }
