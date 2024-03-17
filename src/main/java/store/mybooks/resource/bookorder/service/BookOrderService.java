@@ -1,6 +1,7 @@
 package store.mybooks.resource.bookorder.service;
 
 import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,7 @@ import store.mybooks.resource.bookorder.repository.BookOrderRepository;
 import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
 import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotExistsException;
 import store.mybooks.resource.delivery_rule.repository.DeliveryRuleRepository;
+import store.mybooks.resource.order_detail.dto.response.OrderDetailCreateResponse;
 import store.mybooks.resource.orders_status.entity.OrdersStatus;
 import store.mybooks.resource.orders_status.enumulation.OrdersStatusEnum;
 import store.mybooks.resource.orders_status.exception.OrdersStatusNotExistException;
@@ -163,7 +165,33 @@ public class BookOrderService {
         return bookOrderMapper.mapToBookOrderCreateResponse(bookOrder);
     }
 
+    /**
+     * {@code orderNubmer}로 된 주문이 있는지 확인하는 메서드.
+     *
+     * @param orderNumber the order number
+     * @return the boolean
+     */
     public Boolean checkBookOrderNumberExists(String orderNumber) {
         return bookOrderRepository.existBookOrderByOrderNumber(orderNumber);
     }
+
+    /**
+     * 개별 쿠폰이 적용이 되었는지 확인.
+     *
+     * @param orderDetailList the order detail list
+     * @return the boolean
+     */
+    public Boolean checkCouponUsed(List<OrderDetailCreateResponse> orderDetailList) {
+        for (OrderDetailCreateResponse orderDetail : orderDetailList) {
+            System.out.println("확인 ");
+            System.out.println(orderDetail.getIsCouponUsed());
+            boolean check = orderDetail.getIsCouponUsed();
+            System.out.println("쿠폰 사용 유무 : " + check);
+            if (check) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

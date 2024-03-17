@@ -2,12 +2,13 @@ package store.mybooks.resource.bookorder.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.bookorder.dto.request.BookInfoRequest;
 import store.mybooks.resource.bookorder.dto.request.BookOrderCreateRequest;
-import store.mybooks.resource.bookorder.dto.request.BookOrderInfoRequest;
 import store.mybooks.resource.bookorder.dto.response.BookOrderCreateResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderResultCreateResponse;
 import store.mybooks.resource.order_detail.dto.response.OrderDetailCreateResponse;
 import store.mybooks.resource.order_detail.service.OrderDetailService;
 import store.mybooks.resource.orderdetailstatus.service.OrderDetailStatusService;
@@ -24,6 +25,7 @@ import store.mybooks.resource.orders_status.service.OrdersStatusService;
  * -----------------------------------------------------------<br>
  * 3/16/24        minsu11       최초 생성<br>
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -40,12 +42,14 @@ public class OrderService {
      * @return the book order create response
      */
     @Transactional
-    public BookOrderCreateResponse createOrder(BookOrderCreateRequest request, Long userId) {
+    public BookOrderResultCreateResponse createOrder(BookOrderCreateRequest request, Long userId) {
         List<BookInfoRequest> bookorderInfoList = request.getBookInfoList();
-        BookOrderInfoRequest orderInfo = request.getOrderInfo();
         BookOrderCreateResponse bookOrder = bookOrderService.createBookOrder(request, userId);
         List<OrderDetailCreateResponse> orderDetailCreateResponseList =
                 orderDetailService.createOrderDetailList(bookorderInfoList, request.getOrderNumber());
-        return bookOrder;
+        Boolean isCouponUsed = bookOrderService.checkCouponUsed(orderDetailCreateResponseList);
+        log.info("쿠폰 사용 유무: {}", isCouponUsed);
+
+        return new BookOrderResultCreateResponse(bookOrder, isCouponUsed);
     }
 }

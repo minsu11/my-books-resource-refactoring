@@ -90,6 +90,8 @@ public class OrderDetailService {
                 .userCoupon(userCoupon)
                 .wrap(wrap)
                 .build();
+        System.out.println("쿠폰 사용 유무 확인용 " + isCouponUsed);
+
         return orderDetailMapper.mapToorderDetailCreateResponse(orderDetailRepository.save(orderDetail));
     }
 

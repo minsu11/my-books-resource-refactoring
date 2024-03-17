@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import store.mybooks.resource.bookorder.dto.request.BookOrderAdminModifyRequest;
 import store.mybooks.resource.bookorder.dto.request.BookOrderCreateRequest;
 import store.mybooks.resource.bookorder.dto.request.BookOrderRegisterInvoiceRequest;
-import store.mybooks.resource.bookorder.dto.response.BookOrderCreateResponse;
 import store.mybooks.resource.bookorder.dto.response.BookOrderRegisterInvoiceResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderResultCreateResponse;
 import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminModifyResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminResponse;
@@ -114,7 +114,7 @@ public class BookOrderRestController {
      * @return the response entity
      */
     @PostMapping
-    public ResponseEntity<BookOrderCreateResponse> createResponseResponseEntity(
+    public ResponseEntity<BookOrderResultCreateResponse> createResponseResponseEntity(
             @RequestBody BookOrderCreateRequest request,
             @RequestHeader(name = HeaderProperties.USER_ID) Long id) {
         log.info("controller: {}", request);
