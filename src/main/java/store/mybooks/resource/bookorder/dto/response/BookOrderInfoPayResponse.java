@@ -5,17 +5,20 @@ import lombok.Getter;
 
 /**
  * packageName    : store.mybooks.resource.bookorder.dto.response<br>
- * fileName       : BookOrderCreateResultResponse<br>
+ * fileName       : BookOrderInfoPayReponse<br>
  * author         : minsu11<br>
- * date           : 3/16/24<br>
+ * date           : 3/17/24<br>
  * description    :
  * ===========================================================<br>
  * DATE              AUTHOR             NOTE<br>
  * -----------------------------------------------------------<br>
- * 3/16/24        minsu11       최초 생성<br>
+ * 3/17/24        minsu11       최초 생성<br>
  */
 @Getter
 @AllArgsConstructor
-public class BookOrderCreateResultResponse {
-    BookOrderCreateResponse bookOrder;
+public class BookOrderInfoPayResponse {
+    private String orderStatus;
+    private String number;
+    private Integer totalCost;
+    private Boolean isCouponUsed;
 }
