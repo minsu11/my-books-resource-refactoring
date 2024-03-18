@@ -10,7 +10,6 @@ import store.mybooks.resource.book.dto.response.BookBriefResponse;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.entity.QBook;
 import store.mybooks.resource.booklike.entity.QBookLike;
-import store.mybooks.resource.image.dto.response.ImageResponse;
 import store.mybooks.resource.image.entity.QImage;
 import store.mybooks.resource.image_status.entity.QImageStatus;
 import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
@@ -51,10 +50,7 @@ public class BookLikeRepositoryImpl extends QuerydslRepositorySupport implements
                         .select(Projections.constructor(
                                 BookBriefResponse.class,
                                 book.id,
-                                Projections.constructor(ImageResponse.class,
-                                        image.path,
-                                        image.fileName,
-                                        image.extension),
+                                image.path.concat(image.fileName).concat(image.extension),
                                 book.name,
                                 book.originalCost,
                                 book.saleCost))
