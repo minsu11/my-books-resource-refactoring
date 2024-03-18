@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.bookorder.dto.request.BookInfoRequest;
 import store.mybooks.resource.bookorder.dto.request.BookOrderCreateRequest;
 import store.mybooks.resource.bookorder.dto.response.BookOrderCreateResponse;
-import store.mybooks.resource.bookorder.dto.response.BookOrderResultCreateResponse;
 import store.mybooks.resource.order_detail.dto.response.OrderDetailCreateResponse;
 import store.mybooks.resource.order_detail.service.OrderDetailService;
 import store.mybooks.resource.orderdetailstatus.service.OrderDetailStatusService;
@@ -42,14 +41,13 @@ public class OrderService {
      * @return the book order create response
      */
     @Transactional
-    public BookOrderResultCreateResponse createOrder(BookOrderCreateRequest request, Long userId) {
+    public BookOrderCreateResponse createOrder(BookOrderCreateRequest request, Long userId) {
         List<BookInfoRequest> bookorderInfoList = request.getBookInfoList();
         BookOrderCreateResponse bookOrder = bookOrderService.createBookOrder(request, userId);
         List<OrderDetailCreateResponse> orderDetailCreateResponseList =
                 orderDetailService.createOrderDetailList(bookorderInfoList, request.getOrderNumber());
         Boolean isCouponUsed = bookOrderService.checkCouponUsed(orderDetailCreateResponseList);
-        log.info("쿠폰 사용 유무: {}", isCouponUsed);
-
-        return new BookOrderResultCreateResponse(bookOrder, isCouponUsed);
+        bookOrder.updateIsCouponUsed(isCouponUsed);
+        return bookOrder;
     }
 }

@@ -3,14 +3,18 @@ package store.mybooks.resource.bookorder.repository;
 import com.querydsl.core.types.Projections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import store.mybooks.resource.bookorder.dto.response.BookOrderInfoPayResponse;
 import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminResponse;
 import store.mybooks.resource.bookorder.entity.BookOrder;
 import store.mybooks.resource.bookorder.entity.QBookOrder;
+import store.mybooks.resource.order_detail.dto.response.OrderDetailInfoResponse;
+import store.mybooks.resource.order_detail.entity.QOrderDetail;
 import store.mybooks.resource.orders_status.enumulation.OrdersStatusEnum;
 
 /**
@@ -91,4 +95,33 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                         .where(bookOrder.number.eq(orderNumber))
         );
     }
+
+    @Override
+    public Optional<BookOrderInfoPayResponse> findBookOrderInfo(String orderNumber) {
+        QOrderDetail orderDetail = QOrderDetail.orderDetail;
+
+        List<OrderDetailInfoResponse> orderDetailInfoResponses = from(orderDetail)
+                .select(Projections.constructor(
+                                OrderDetailInfoResponse.class,
+                                orderDetail.book.name,
+                                orderDetail.bookCost,
+                                orderDetail.isCouponUsed
+                        )
+                )
+                .where(orderDetail.bookOrder.number.eq(orderNumber))
+                .fetch();
+        BookOrderInfoPayResponse bookorderInfo =
+                from(bookOrder)
+                        .select(Projections.constructor(BookOrderInfoPayResponse.class,
+                                bookOrder.orderStatus.id,
+                                bookOrder.number,
+                                bookOrder.totalCost))
+                        .where(bookOrder.number.eq(orderNumber))
+                        .fetchOne();
+        bookorderInfo.setOrderDetails(orderDetailInfoResponses);
+
+        return Optional.of(bookorderInfo
+        );
+    }
+
 }

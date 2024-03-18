@@ -14,6 +14,7 @@ import store.mybooks.resource.bookorder.dto.request.BookOrderCreateRequest;
 import store.mybooks.resource.bookorder.dto.request.BookOrderInfoRequest;
 import store.mybooks.resource.bookorder.dto.request.BookOrderRegisterInvoiceRequest;
 import store.mybooks.resource.bookorder.dto.response.BookOrderCreateResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderInfoPayResponse;
 import store.mybooks.resource.bookorder.dto.response.BookOrderRegisterInvoiceResponse;
 import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminModifyResponse;
@@ -183,15 +184,23 @@ public class BookOrderService {
      */
     public Boolean checkCouponUsed(List<OrderDetailCreateResponse> orderDetailList) {
         for (OrderDetailCreateResponse orderDetail : orderDetailList) {
-            System.out.println("확인 ");
-            System.out.println(orderDetail.getIsCouponUsed());
             boolean check = orderDetail.getIsCouponUsed();
-            System.out.println("쿠폰 사용 유무 : " + check);
             if (check) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Gets book info.
+     *
+     * @param orderNumber the order number
+     * @return the book info
+     */
+    public BookOrderInfoPayResponse getBookInfo(String orderNumber) {
+        return bookOrderRepository.findBookOrderInfo(orderNumber)
+                .orElseThrow(BookOrderNotExistException::new);
     }
 
 }

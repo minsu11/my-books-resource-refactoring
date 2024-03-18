@@ -1,7 +1,10 @@
 package store.mybooks.resource.bookorder.dto.response;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
+import store.mybooks.resource.order_detail.dto.response.OrderDetailInfoResponse;
 
 /**
  * packageName    : store.mybooks.resource.bookorder.dto.response<br>
@@ -15,10 +18,17 @@ import lombok.Getter;
  * 3/17/24        minsu11       최초 생성<br>
  */
 @Getter
+@Setter
 @AllArgsConstructor
 public class BookOrderInfoPayResponse {
     private String orderStatus;
     private String number;
     private Integer totalCost;
-    private Boolean isCouponUsed;
+    private List<OrderDetailInfoResponse> orderDetails;
+
+    public BookOrderInfoPayResponse(String orderStatus, String number, Integer totalCost) {
+        this.orderStatus = orderStatus;
+        this.number = number;
+        this.totalCost = totalCost;
+    }
 }

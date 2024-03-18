@@ -18,5 +18,4 @@ import lombok.Getter;
 @AllArgsConstructor
 public class BookOrderResultCreateResponse {
     private BookOrderCreateResponse bookOrderInfo;
-    private Boolean isCouponUsed;
 }
