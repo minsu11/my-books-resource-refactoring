@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.front.cart.domain.CartDetail;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.repotisory.BookRepository;
-import store.mybooks.resource.cart.dto.CartUserRedisKeyNameRequest;
+import store.mybooks.resource.cart_item.dto.CartUserRedisKeyNameRequest;
 import store.mybooks.resource.cart.entity.Cart;
 import store.mybooks.resource.cart.repository.CartRepository;
 import store.mybooks.resource.cart_item.entity.CartItem;
