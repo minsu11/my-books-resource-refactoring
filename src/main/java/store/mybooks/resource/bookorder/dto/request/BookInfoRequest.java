@@ -2,6 +2,7 @@ package store.mybooks.resource.bookorder.dto.request;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -19,6 +20,7 @@ import lombok.ToString;
  */
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class BookInfoRequest {
     @Positive

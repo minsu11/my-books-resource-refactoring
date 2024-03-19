@@ -40,6 +40,8 @@ public class BookOrderCreateRequest {
 
     @Positive
     private Integer totalCost;
+    @Positive
+    private Integer wrapCost;
 
 
 }

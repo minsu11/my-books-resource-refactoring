@@ -43,6 +43,7 @@ public class OrderService {
     @Transactional
     public BookOrderCreateResponse createOrder(BookOrderCreateRequest request, Long userId) {
         List<BookInfoRequest> bookorderInfoList = request.getBookInfoList();
+        log.info("저장할 주문 데이터:{}", request);
         BookOrderCreateResponse bookOrder = bookOrderService.createBookOrder(request, userId);
         List<OrderDetailCreateResponse> orderDetailCreateResponseList =
                 orderDetailService.createOrderDetailList(bookorderInfoList, request.getOrderNumber());

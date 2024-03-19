@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.book.entity.Book;
@@ -39,6 +40,7 @@ import store.mybooks.resource.wrap.repository.WrapRepository;
  * -----------------------------------------------------------<br>
  * 3/16/24        minsu11       최초 생성<br>
  */
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -61,7 +63,9 @@ public class OrderDetailService {
      */
     public OrderDetailCreateResponse createOrderDetail(BookInfoRequest request, String number) {
         boolean isCouponUsed = false;
-        OrderDetailStatus orderDetailStatus = orderDetailStatusRepository.findById(OrderDetailStatusName.WAIT.name())
+        log.debug("주문 상태: {}", OrderDetailStatusName.WAIT.toString());
+        log.debug("주문 상태: {}", OrderDetailStatusName.WAIT);
+        OrderDetailStatus orderDetailStatus = orderDetailStatusRepository.findById(OrderDetailStatusName.WAIT.toString())
                 .orElseThrow(OrderDetailStatusNotFoundException::new);
 
         Book book = bookRepository.findById(request.getBookId())
@@ -106,7 +110,10 @@ public class OrderDetailService {
      */
     public List<OrderDetailCreateResponse> createOrderDetailList(List<BookInfoRequest> request, String number) {
         List<OrderDetailCreateResponse> orderDetailList = new ArrayList<>();
+        log.debug("주문 상세 데이터 : {}", request);
+        log.debug("주문 번호: {}", number);
         for (int i = 0; i < request.size(); i++) {
+
             OrderDetailCreateResponse response = createOrderDetail(request.get(i), number);
             orderDetailList.add(response);
         }

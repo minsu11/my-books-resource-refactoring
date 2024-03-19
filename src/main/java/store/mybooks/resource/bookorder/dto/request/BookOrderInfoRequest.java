@@ -51,4 +51,5 @@ public class BookOrderInfoRequest {
     private Integer wrapCost;
     @PositiveOrZero
     private Integer couponApplicationAmount;
+
 }
