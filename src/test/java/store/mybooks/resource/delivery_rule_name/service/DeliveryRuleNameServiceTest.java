@@ -9,6 +9,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -53,9 +55,8 @@ class DeliveryRuleNameServiceTest {
     void givenDeliveryRuleNameRegisterRequest_whenNormalCase_thenCreateAndSaveDeliveryRuleNameReturnDeliveryRuleNameResponse() {
         DeliveryRuleName deliveryNameRule = new DeliveryRuleName("test");
 
-        DeliveryRuleNameResponse expectedDeliveryRuleNameResponse = new DeliveryRuleNameResponse();
-        expectedDeliveryRuleNameResponse.setId("test");
-        expectedDeliveryRuleNameResponse.setCreatedDate(LocalDate.now());
+        DeliveryRuleNameResponse expectedDeliveryRuleNameResponse =
+                new DeliveryRuleNameResponse("test", LocalDate.now());
 
         DeliveryRuleNameRegisterRequest deliveryRuleNameRegisterRequest = new DeliveryRuleNameRegisterRequest("test");
         when(deliveryRuleNameRepository.save(any())).thenReturn(deliveryNameRule);
@@ -138,6 +139,21 @@ class DeliveryRuleNameServiceTest {
                 () -> deliveryRuleNameService.deleteDeliveryNameRule(id));
         verify(deliveryRuleNameRepository, times(1)).existsById(id);
         verify(deliveryRuleNameRepository, never()).deleteById(id);
+    }
+
+    @Test
+    @DisplayName("DeliveryRuleNameResponse list read 테스트")
+    void given_whenGetDeliveryRuleNAmeList_thenDeliveryRuleNameList() {
+        DeliveryRuleNameResponse deliveryRuleNameResponse = new DeliveryRuleNameResponse("배송", LocalDate.now());
+        DeliveryRuleNameResponse deliveryRuleNameResponse1 = new DeliveryRuleNameResponse("도착", LocalDate.now());
+        List<DeliveryRuleNameResponse> expected = new ArrayList<>();
+        expected.add(deliveryRuleNameResponse);
+        expected.add(deliveryRuleNameResponse1);
+
+        when(deliveryRuleNameRepository.getDeliveryRuleNameList()).thenReturn(expected);
+
+        List<DeliveryRuleNameResponse> result = deliveryRuleNameService.getDeliveryNameRuleList();
+        assertEquals(expected, result);
     }
 
 

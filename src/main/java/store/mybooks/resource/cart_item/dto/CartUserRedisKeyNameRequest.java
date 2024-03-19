@@ -1,4 +1,4 @@
-package store.mybooks.resource.cart.dto;
+package store.mybooks.resource.cart_item.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

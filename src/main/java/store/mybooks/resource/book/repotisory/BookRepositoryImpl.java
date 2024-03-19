@@ -111,7 +111,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .where(bookAuthor.book.id.eq(id))
                 .select(Projections.constructor(AuthorGetResponse.class, author.id, author.name, author.content))
                 .fetch();
-        
+
         List<TagGetResponseForBookDetail> tagList = from(bookTag)
                 .join(bookTag.tag, tag)
                 .where(bookTag.book.id.eq(id))
@@ -151,11 +151,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .select(Projections.constructor(
                         BookBriefResponse.class,
                         book.id,
-                        Projections.constructor(
-                                ImageResponse.class,
-                                image.path,
-                                image.fileName,
-                                image.extension),
+                        image.path.concat(image.fileName).concat(image.extension),
                         book.name,
                         book.originalCost,
                         book.saleCost
@@ -179,10 +175,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                         .join(image.imageStatus, imageStatus)
                         .select(Projections.constructor(BookBriefResponse.class,
                                 book.id,
-                                Projections.constructor(ImageResponse.class,
-                                        image.path,
-                                        image.fileName,
-                                        image.extension),
+                                image.path.concat(image.fileName).concat(image.extension),
                                 book.name,
                                 book.originalCost,
                                 book.saleCost))

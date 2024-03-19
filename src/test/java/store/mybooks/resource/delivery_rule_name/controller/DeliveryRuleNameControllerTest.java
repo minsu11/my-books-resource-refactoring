@@ -15,10 +15,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -42,8 +42,6 @@ import store.mybooks.resource.delivery_rule_name.service.DeliveryRuleNameService
  */
 
 @WebMvcTest(value = DeliveryRuleNameController.class)
-
-
 class DeliveryRuleNameControllerTest {
 
     @Autowired
@@ -51,6 +49,20 @@ class DeliveryRuleNameControllerTest {
 
     @MockBean
     private DeliveryRuleNameService deliveryRuleNameService;
+
+    @Test
+    @DisplayName("배송 규칙 이름 list 조회")
+    void given_whenGetDeliveryNameRuleList_thenReturnDeliveryRuleNameResponseList() throws Exception {
+        List<DeliveryRuleNameResponse> deliveryRuleNameResponseList =
+                List.of(new DeliveryRuleNameResponse("test", LocalDate.of(2023, 12, 31)));
+
+        when(deliveryRuleNameService.getDeliveryNameRuleList()).thenReturn(deliveryRuleNameResponseList);
+        mockMvc.perform(get("/api/delivery-name-rules"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value(deliveryRuleNameResponseList.get(0).getId()))
+                .andExpect(jsonPath("$[0].createdDate").value(deliveryRuleNameResponseList.get(0).getCreatedDate().toString()));
+    }
 
     @Test
     @DisplayName("배송 규칙 이름 조회")
@@ -83,9 +95,7 @@ class DeliveryRuleNameControllerTest {
     void givenDeliveryRuleNameRegisterRequest_whenCreateDeliveryRuleName_thenSaveDeliveryRuleNameAndReturnDeliveryRuleNameResponse()
             throws Exception {
         DeliveryRuleNameRegisterRequest deliveryRuleNameRegisterRequest = new DeliveryRuleNameRegisterRequest("test");
-        DeliveryRuleNameResponse deliveryRuleNameResponse = new DeliveryRuleNameResponse();
-        deliveryRuleNameResponse.setId("test");
-        deliveryRuleNameResponse.setCreatedDate(LocalDate.now());
+        DeliveryRuleNameResponse deliveryRuleNameResponse = new DeliveryRuleNameResponse("test", LocalDate.now());
 
         when(deliveryRuleNameService.registerDeliveryNameRule(any())).thenReturn(
                 deliveryRuleNameResponse);
@@ -117,7 +127,8 @@ class DeliveryRuleNameControllerTest {
     @DisplayName("post 요청으로 들어온 데이터의 id값의 유효성을 지키지 않은 경우 - max size 50")
     void givenDeliveryRuleNameRegisterRequest_whenRegisterDeliveryNameRuleIdMaxSize50_thenHttpStatusIsBadRequest()
             throws Exception {
-        DeliveryRuleNameRegisterRequest deliveryRuleNameRegisterRequest = new DeliveryRuleNameRegisterRequest("qwertyuiopasdfghjklzxcvbnmqwertyuiiiiiioasdfghjklzxcv");
+        DeliveryRuleNameRegisterRequest deliveryRuleNameRegisterRequest =
+                new DeliveryRuleNameRegisterRequest("qwertyuiopasdfghjklzxcvbnmqwertyuiiiiiioasdfghjklzxcv");
         mockMvc.perform(post("/api/delivery-name-rules").content(
                                 new ObjectMapper().writeValueAsString(deliveryRuleNameRegisterRequest))
                         .contentType(MediaType.APPLICATION_JSON))

@@ -134,9 +134,7 @@ public class DeliveryRuleController {
      */
     @DeleteMapping("/{deliveryRuleId}")
     public ResponseEntity<Void> deleteDeliveryRule(@PathVariable("deliveryRuleId") Integer deliveryRuleId) {
-        System.out.println("hihi");
         deliveryRuleService.deleteDeliveryRule(deliveryRuleId);
-        System.out.println("byby");
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
