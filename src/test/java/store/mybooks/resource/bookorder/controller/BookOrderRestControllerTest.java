@@ -79,7 +79,7 @@ class BookOrderRestControllerTest {
     }
 
     private static BookOrderUserResponse getBookOrderUserResponse() {
-        BookOrderUserResponse bookOrderUserResponse = new BookOrderUserResponse(1L, "test", 1,
+        BookOrderUserResponse bookOrderUserResponse = new BookOrderUserResponse("주문 대기", "test", 1,
                 LocalDate.of(1212, 12, 12), "test", "testName", "testAddress", "010-0000-0000", "testMessage", 1000, 100, 100,
                 "123123123", "");
         return bookOrderUserResponse;
