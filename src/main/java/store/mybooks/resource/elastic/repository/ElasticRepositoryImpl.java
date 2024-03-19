@@ -11,8 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.Query;
 import store.mybooks.resource.book.dto.response.BookBriefResponse;
 import store.mybooks.resource.elastic.entity.Elastic;
 
@@ -39,14 +39,14 @@ public class ElasticRepositoryImpl implements ElasticRepositoryCustom {
                 .field("tag_name", 70)
                 .field("publisher_name", 30)
                 .field("author_name", 50);
-   
-        Query searchQuery = new NativeSearchQueryBuilder()
+
+        NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder()
                 .withQuery(queryBuilder)
                 .withPageable(pageable)
                 .build();
 
-        SearchHits<Elastic> searchHits = elasticsearchOperations.search(searchQuery, Elastic.class);
-        List<BookBriefResponse> responses = searchHits.getSearchHits().stream()
+        SearchHits<Elastic> searchHits = elasticsearchOperations.search(nativeSearchQuery, Elastic.class);
+        List<BookBriefResponse> lists = searchHits.getSearchHits().stream()
                 .map(SearchHit::getContent)
                 .map(elastic -> new BookBriefResponse(
                         elastic.getBookId(),
@@ -58,6 +58,6 @@ public class ElasticRepositoryImpl implements ElasticRepositoryCustom {
                 ))
                 .collect(Collectors.toList());
 
-        return new PageImpl<>(responses, pageable, searchHits.getTotalHits());
+        return new PageImpl<>(lists, pageable, searchHits.getTotalHits());
     }
 }
