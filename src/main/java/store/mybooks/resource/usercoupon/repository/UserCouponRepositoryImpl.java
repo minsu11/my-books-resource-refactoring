@@ -176,7 +176,7 @@ public class UserCouponRepositoryImpl extends QuerydslRepositorySupport implemen
     public Optional<UserCouponGetResponseForOrderQuerydsl> getUserCouponResponse(Long userCouponId) {
         QCoupon coupon = QCoupon.coupon;
         QUserCoupon userCoupon = QUserCoupon.userCoupon;
-        return Optional.of(
+        return Optional.ofNullable(
                 from(userCoupon)
                         .select(Projections.constructor(UserCouponGetResponseForOrderQuerydsl.class,
                                 userCoupon.id,

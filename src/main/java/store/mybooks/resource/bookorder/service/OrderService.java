@@ -8,10 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.bookorder.dto.request.BookInfoRequest;
 import store.mybooks.resource.bookorder.dto.request.BookOrderCreateRequest;
 import store.mybooks.resource.bookorder.dto.response.BookOrderCreateResponse;
-import store.mybooks.resource.order_detail.dto.response.OrderDetailCreateResponse;
-import store.mybooks.resource.order_detail.service.OrderDetailService;
+import store.mybooks.resource.orderdetail.dto.response.OrderDetailCreateResponse;
+import store.mybooks.resource.orderdetail.service.OrderDetailService;
 import store.mybooks.resource.orderdetailstatus.service.OrderDetailStatusService;
-import store.mybooks.resource.orders_status.service.OrdersStatusService;
+import store.mybooks.resource.ordersstatus.service.OrdersStatusService;
 
 /**
  * packageName    : store.mybooks.resource.bookorder.service<br>

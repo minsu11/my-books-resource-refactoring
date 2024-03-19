@@ -18,19 +18,20 @@ import store.mybooks.resource.bookorder.dto.response.*;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminModifyResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminResponse;
 import store.mybooks.resource.bookorder.entity.BookOrder;
+import store.mybooks.resource.bookorder.eumulation.BookOrderStatusName;
 import store.mybooks.resource.bookorder.exception.BookOrderInfoNotMatchException;
 import store.mybooks.resource.bookorder.exception.BookOrderNotExistException;
 import store.mybooks.resource.bookorder.repository.BookOrderRepository;
 import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
 import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotExistsException;
 import store.mybooks.resource.delivery_rule.repository.DeliveryRuleRepository;
-import store.mybooks.resource.order_detail.dto.response.OrderDetailCreateResponse;
-import store.mybooks.resource.order_detail.dto.response.OrderDetailInfoResponse;
-import store.mybooks.resource.order_detail.repository.OrderDetailRepository;
-import store.mybooks.resource.orders_status.entity.OrdersStatus;
-import store.mybooks.resource.orders_status.enumulation.OrdersStatusEnum;
-import store.mybooks.resource.orders_status.exception.OrdersStatusNotExistException;
-import store.mybooks.resource.orders_status.repository.OrdersStatusRepository;
+import store.mybooks.resource.orderdetail.dto.response.OrderDetailCreateResponse;
+import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
+import store.mybooks.resource.orderdetail.repository.OrderDetailRepository;
+import store.mybooks.resource.ordersstatus.entity.OrdersStatus;
+import store.mybooks.resource.ordersstatus.enumulation.OrdersStatusEnum;
+import store.mybooks.resource.ordersstatus.exception.OrdersStatusNotExistException;
+import store.mybooks.resource.ordersstatus.repository.OrdersStatusRepository;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user.exception.UserNotExistException;
 import store.mybooks.resource.user.repository.UserRepository;
@@ -124,10 +125,11 @@ public class BookOrderService {
      * @param addressId 회원의 주소 아이디
      * @return book order register invoice response
      */
-    public void checkUserOrderAddress(Long addressId) {
+    public boolean checkUserOrderAddress(Long addressId) {
         if (!userAddressRepository.existsById(addressId)) {
             throw new BookOrderInfoNotMatchException();
         }
+        return true;
     }
 
     /**
@@ -143,7 +145,7 @@ public class BookOrderService {
         BookOrderInfoRequest orderInfo = request.getOrderInfo();
         DeliveryRule deliveryRule = deliveryRuleRepository.findById(orderInfo.getDeliveryId())
                 .orElseThrow(() -> new DeliveryRuleNotExistsException("배송 규정 없음"));
-        OrdersStatus ordersStatus = ordersStatusRepository.findById("주문 대기").orElseThrow(OrdersStatusNotExistException::new);
+        OrdersStatus ordersStatus = ordersStatusRepository.findById(BookOrderStatusName.ORDER_WAIT.toString()).orElseThrow(OrdersStatusNotExistException::new);
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
         BookOrder bookOrder = BookOrder.builder()
                 .user(user)

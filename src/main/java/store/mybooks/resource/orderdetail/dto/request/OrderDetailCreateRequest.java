@@ -1,14 +1,14 @@
-package store.mybooks.resource.bookorder.dto.request;
+package store.mybooks.resource.orderdetail.dto.request;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
- * packageName    : store.mybooks.resource.bookorder.dto.request<br>
- * fileName       : BookInfoRequest<br>
+ * packageName    : store.mybooks.resource.order_detail.dto.request<br>
+ * fileName       : OrderDetailCreateRequest<br>
  * author         : minsu11<br>
  * date           : 3/16/24<br>
  * description    :
@@ -18,19 +18,20 @@ import lombok.ToString;
  * 3/16/24        minsu11       최초 생성<br>
  */
 @Getter
-@NoArgsConstructor
-@ToString
-public class BookInfoRequest {
+@AllArgsConstructor
+public class OrderDetailCreateRequest {
+    @NotBlank
+    private String orderNumber;
     @Positive
     private Long bookId;
+    private Long couponId;
+    private Integer wrapId;
+
     @PositiveOrZero
-    private Integer saleCost;
-    @PositiveOrZero
+    @NotBlank
     private Integer bookCost;
-    @PositiveOrZero
-    private Integer amount;
+
     @Positive
-    private Integer selectWrapId;
-    @Positive
-    private Long selectCouponId;
+    @NotBlank
+    private Integer bookAmount;
 }

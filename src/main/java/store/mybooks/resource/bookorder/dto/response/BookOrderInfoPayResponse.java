@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import store.mybooks.resource.order_detail.dto.response.OrderDetailInfoResponse;
+import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
 
 /**
  * packageName    : store.mybooks.resource.bookorder.dto.response<br>

@@ -1,10 +1,7 @@
 package store.mybooks.resource.bookorder.dto.request;
 
 import java.util.List;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,6 +24,7 @@ import lombok.ToString;
 @ToString
 public class BookOrderCreateRequest {
 
+    @NotNull
     private List<BookInfoRequest> bookInfoList;
 
     private BookOrderInfoRequest orderInfo;

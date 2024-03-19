@@ -2,7 +2,7 @@ package store.mybooks.resource.review.entity;
 
 import java.time.LocalDate;
 import javax.persistence.*;
-import store.mybooks.resource.order_detail.entity.OrderDetail;
+import store.mybooks.resource.orderdetail.entity.OrderDetail;
 import store.mybooks.resource.user.entity.User;
 
 /**
@@ -33,7 +33,7 @@ public class Review {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_detail_id")
     private OrderDetail orderDetail;
-    
+
     @Column(name = "review_rate")
     private Integer rate;
 

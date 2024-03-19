@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import store.mybooks.resource.orderdetailstatus.dto.response.OrderDetailStatusResponse;
 import store.mybooks.resource.orderdetailstatus.entity.OrderDetailStatus;
-import store.mybooks.resource.orders_status.exception.OrdersStatusNotExistException;
+import store.mybooks.resource.ordersstatus.exception.OrdersStatusNotExistException;
 
 /**
  * packageName    : store.mybooks.resource.order_detail_status.repository<br>

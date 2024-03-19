@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import store.mybooks.resource.order_detail.dto.response.OrderDetailInfoResponse;
+import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
 
 
 /**

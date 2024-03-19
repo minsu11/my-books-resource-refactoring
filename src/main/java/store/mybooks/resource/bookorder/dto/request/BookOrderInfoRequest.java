@@ -1,10 +1,7 @@
 package store.mybooks.resource.bookorder.dto.request;
 
 import java.time.LocalDate;
-import javax.validation.constraints.FutureOrPresent;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -46,8 +43,12 @@ public class BookOrderInfoRequest {
     @Size(max = 13)
     private String recipientPhoneNumber;
 
+    @NotBlank
     private String receiverMessage;
+
     private Integer usingPoint;
+    @PositiveOrZero
     private Integer wrapCost;
+    @PositiveOrZero
     private Integer couponApplicationAmount;
 }

@@ -115,11 +115,10 @@ public class BookOrderRestController {
      * @return response entity
      */
     @GetMapping("/check/address/{id}")
-    public ResponseEntity<Object> checkOrderUserAddress(@PathVariable(name = "id") Long id) {
-        bookOrderService.checkUserOrderAddress(id);
+    public ResponseEntity<Boolean> checkOrderUserAddress(@PathVariable(name = "id") Long id) {
         return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
-                .build();
+                .status(HttpStatus.OK)
+                .body(bookOrderService.checkUserOrderAddress(id));
 
     }
 
@@ -162,7 +161,7 @@ public class BookOrderRestController {
      * description : 주문 창에서 결제 창으로 넘어갈 때 필요한 정보를 조회.
      * <br> *
      *
-     * @param pageable
+     * @param orderNumber 주문 번호
      * @return response entity
      */
     @GetMapping("/info/pay/{orderNumber}")

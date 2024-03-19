@@ -46,7 +46,7 @@ public class DeliveryRuleRepositoryImpl extends QuerydslRepositorySupport implem
     public Optional<DeliveryRuleResponse> getDeliveryRuleByName(String name) {
         QDeliveryRule deliveryRule = QDeliveryRule.deliveryRule;
 
-        return Optional.of(
+        return Optional.ofNullable(
                 from(deliveryRule)
                         .select(Projections.constructor(
                                 DeliveryRuleResponse.class,

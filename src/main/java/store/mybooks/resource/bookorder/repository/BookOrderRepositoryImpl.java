@@ -15,9 +15,9 @@ import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminRespons
 import store.mybooks.resource.bookorder.entity.BookOrder;
 import store.mybooks.resource.bookorder.entity.QBookOrder;
 import store.mybooks.resource.image.entity.QImage;
-import store.mybooks.resource.order_detail.dto.response.OrderDetailInfoResponse;
-import store.mybooks.resource.order_detail.entity.QOrderDetail;
-import store.mybooks.resource.orders_status.enumulation.OrdersStatusEnum;
+import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
+import store.mybooks.resource.orderdetail.entity.QOrderDetail;
+import store.mybooks.resource.ordersstatus.enumulation.OrdersStatusEnum;
 
 /**
  * packageName    : store.mybooks.resource.book_order.repository<br>
