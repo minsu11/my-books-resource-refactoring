@@ -18,7 +18,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class PointHistoryResponse {
-    private String orderNumber;
     private String pointRuleName;
     private Integer statusCost;
     private LocalDate createdDate;
