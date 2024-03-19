@@ -12,7 +12,7 @@ import store.mybooks.resource.image.dto.response.ImageResponse;
 import store.mybooks.resource.image.entity.Image;
 import store.mybooks.resource.image.entity.QImage;
 import store.mybooks.resource.image_status.entity.QImageStatus;
-import store.mybooks.resource.order_detail.entity.QOrderDetail;
+import store.mybooks.resource.orderdetail.entity.QOrderDetail;
 import store.mybooks.resource.review.dto.response.ReviewDetailGetResponse;
 import store.mybooks.resource.review.dto.response.ReviewGetResponse;
 import store.mybooks.resource.review.entity.QReview;

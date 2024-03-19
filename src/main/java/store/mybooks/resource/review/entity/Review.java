@@ -1,7 +1,6 @@
 package store.mybooks.resource.review.entity;
 
 import java.time.LocalDate;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,7 +13,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import store.mybooks.resource.order_detail.entity.OrderDetail;
+import store.mybooks.resource.orderdetail.entity.OrderDetail;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.utils.TimeUtils;
 
