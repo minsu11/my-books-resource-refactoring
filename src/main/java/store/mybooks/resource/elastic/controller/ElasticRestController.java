@@ -44,6 +44,6 @@ public class ElasticRestController {
         if (query != null) {
             return ResponseEntity.status(HttpStatus.OK).body(elasticService.search(query, pageable));
         }
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 }
