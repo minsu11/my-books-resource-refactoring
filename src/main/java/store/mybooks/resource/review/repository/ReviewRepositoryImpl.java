@@ -150,7 +150,7 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
     }
 
     @Override
-    public ReviewGetResponse getReview(Long reviewId) {
+    public Optional<ReviewGetResponse> getReview(Long reviewId) {
 
         List<Review> reviews = from(review)
                 .where(review.id.eq(reviewId))
@@ -189,6 +189,6 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
                     imageResponse
             );
         }
-        return response;
+        return Optional.of(response);
     }
 }
