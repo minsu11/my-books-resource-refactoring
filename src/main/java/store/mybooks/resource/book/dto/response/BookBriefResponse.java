@@ -27,7 +27,7 @@ public class BookBriefResponse {
 
     private String name;
 
-    private Double rate;
+    private Float rate;
 
     private Integer cost;
 

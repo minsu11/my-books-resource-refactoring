@@ -3,6 +3,7 @@ package store.mybooks.resource.elastic.repository;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -32,10 +33,15 @@ public class ElasticRepositoryImpl implements ElasticRepositoryCustom {
 
     @Override
     public Page<BookBriefResponse> search(String query, Pageable pageable) {
+        QueryBuilder queryBuilder = QueryBuilders.multiMatchQuery(query)
+                .field("book_name", 100)
+                .field("book_explanation", 10)
+                .field("tag_name", 70)
+                .field("publisher_name", 30)
+                .field("author_name", 50);
+   
         Query searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(query != null ? QueryBuilders.multiMatchQuery(query,
-                        "book_name", "publisher_name", "author_names", "tag_names", "book_explanation")
-                        : QueryBuilders.matchAllQuery())
+                .withQuery(queryBuilder)
                 .withPageable(pageable)
                 .build();
 

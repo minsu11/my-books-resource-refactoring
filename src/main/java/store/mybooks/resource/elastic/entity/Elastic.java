@@ -40,7 +40,7 @@ public class Elastic {
     private String name;
 
     @Field(name = "avg_rate")
-    private Double rate;
+    private Float rate;
 
     @Field(name = "book_original_cost")
     private Integer cost;

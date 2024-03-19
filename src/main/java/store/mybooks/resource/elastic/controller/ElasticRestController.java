@@ -32,7 +32,11 @@ public class ElasticRestController {
     @GetMapping
     public ResponseEntity<Page<BookBriefResponse>> getSearchPage(
             @RequestParam(value = "query", required = false) String query, Pageable pageable) {
+        if (query == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
         return ResponseEntity.status(HttpStatus.OK).body(elasticService.search(query, pageable));
-
     }
+
+
 }
