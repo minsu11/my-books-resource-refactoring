@@ -29,14 +29,21 @@ import store.mybooks.resource.elastic.service.ElasticService;
 public class ElasticRestController {
     private final ElasticService elasticService;
 
+    /**
+     * methodName : getSearchPage
+     * author : newjaehun
+     * description : 검색결과(정렬 포함)을 호출하는 메소드.
+     *
+     * @param query    String
+     * @param pageable Pageable
+     * @return responseEntity
+     */
     @GetMapping
     public ResponseEntity<Page<BookBriefResponse>> getSearchPage(
             @RequestParam(value = "query", required = false) String query, Pageable pageable) {
-        if (query == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        if (query != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(elasticService.search(query, pageable));
         }
-        return ResponseEntity.status(HttpStatus.OK).body(elasticService.search(query, pageable));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
-
 }

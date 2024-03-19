@@ -23,6 +23,15 @@ import store.mybooks.resource.elastic.repository.ElasticRepository;
 public class ElasticService {
     private final ElasticRepository elasticRepository;
 
+    /**
+     * methodName : search
+     * author : newjaehun
+     * description : 검색 서비스 메소드.
+     *
+     * @param query    String
+     * @param pageable Pageable
+     * @return page
+     */
     public Page<BookBriefResponse> search(String query, Pageable pageable) {
         return elasticRepository.search(query, pageable);
     }
