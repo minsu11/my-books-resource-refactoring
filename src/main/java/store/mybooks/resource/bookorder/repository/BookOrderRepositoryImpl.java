@@ -14,6 +14,7 @@ import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminResponse;
 import store.mybooks.resource.bookorder.entity.BookOrder;
 import store.mybooks.resource.bookorder.entity.QBookOrder;
+import store.mybooks.resource.image.entity.QImage;
 import store.mybooks.resource.order_detail.dto.response.OrderDetailInfoResponse;
 import store.mybooks.resource.order_detail.entity.QOrderDetail;
 import store.mybooks.resource.orders_status.enumulation.OrdersStatusEnum;
@@ -159,5 +160,44 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                 bookOrderInfoPayResponse
         );
     }
+
+    @Override
+    public Long getUserBookOrderCount(Long userId) {
+
+        return from(bookOrder)
+                .where(bookOrder.user.id.eq(userId))
+                .fetchCount();
+    }
+
+    @Override
+    public List<BookOrderUserResponse> getUserBookOrderInfos(Long userId) {
+        QImage image = QImage.image;
+        QOrderDetail orderDetail = QOrderDetail.orderDetail;
+        return from(orderDetail)
+                .join(image)
+                .on(image.book.eq(orderDetail.book))
+                .join(bookOrder)
+                .on(bookOrder.eq(orderDetail.bookOrder))
+                .select(Projections.constructor(
+                        BookOrderUserResponse.class,
+                        bookOrder.orderStatus.id,
+                        bookOrder.deliveryRule.deliveryRuleName.id,
+                        bookOrder.deliveryRule.cost,
+                        bookOrder.date,
+                        bookOrder.invoiceNumber,
+                        bookOrder.receiverName,
+                        bookOrder.receiverAddress,
+                        bookOrder.receiverPhoneNumber,
+                        bookOrder.receiverMessage,
+                        bookOrder.totalCost,
+                        bookOrder.pointCost,
+                        bookOrder.couponCost,
+                        bookOrder.number,
+                        image.path.concat(image.fileName).concat(image.extension)
+
+                )).where(bookOrder.user.id.eq(userId))
+                .fetch();
+    }
+
 
 }

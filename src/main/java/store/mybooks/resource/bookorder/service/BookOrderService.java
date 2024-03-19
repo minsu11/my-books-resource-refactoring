@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,8 @@ import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
 import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotExistsException;
 import store.mybooks.resource.delivery_rule.repository.DeliveryRuleRepository;
 import store.mybooks.resource.order_detail.dto.response.OrderDetailCreateResponse;
+import store.mybooks.resource.order_detail.dto.response.OrderDetailInfoResponse;
+import store.mybooks.resource.order_detail.repository.OrderDetailRepository;
 import store.mybooks.resource.orders_status.entity.OrdersStatus;
 import store.mybooks.resource.orders_status.enumulation.OrdersStatusEnum;
 import store.mybooks.resource.orders_status.exception.OrdersStatusNotExistException;
@@ -51,6 +54,7 @@ import store.mybooks.resource.user_address.repository.UserAddressRepository;
 public class BookOrderService {
     private final BookOrderRepository bookOrderRepository;
     private final OrdersStatusRepository ordersStatusRepository;
+    private final OrderDetailRepository orderDetailRepository;
     private final BookOrderMapper bookOrderMapper;
     private final UserAddressRepository userAddressRepository;
     private final DeliveryRuleRepository deliveryRuleRepository;
@@ -204,6 +208,16 @@ public class BookOrderService {
     public BookOrderPaymentInfoRespones getOrderInfoPayment(String orderNumber) {
         return bookOrderRepository.findOrderPayInfo(orderNumber)
                 .orElseThrow(BookOrderNotExistException::new);
+    }
 
+    public Page<BookOrderUserResponse> getUserBookOrderInfo(Pageable pageable, Long userId) {
+        List<BookOrderUserResponse> bookOrderUserList = bookOrderRepository.getUserBookOrderInfos(userId);
+        for (int i = 0; i < bookOrderUserList.size(); i++) {
+            List<OrderDetailInfoResponse> orderDetailInfoResponses =
+                    orderDetailRepository.getOrderDetailList(userId);
+            bookOrderUserList.get(i).createOrderDetailInfos(orderDetailInfoResponses);
+        }
+        Long size = bookOrderRepository.getUserBookOrderCount(userId);
+        return new PageImpl<>(bookOrderUserList, pageable, size);
     }
 }

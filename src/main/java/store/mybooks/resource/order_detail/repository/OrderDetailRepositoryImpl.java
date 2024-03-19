@@ -19,11 +19,11 @@ import store.mybooks.resource.order_detail.entity.QOrderDetail;
  * -----------------------------------------------------------<br>
  * 3/18/24        minsu11       최초 생성<br>
  */
-public class OrderDetailRespositoryImpl extends QuerydslRepositorySupport implements OrderDetailRepositoryCustom {
+public class OrderDetailRepositoryImpl extends QuerydslRepositorySupport implements OrderDetailRepositoryCustom {
     private QOrderDetail orderDetail = QOrderDetail.orderDetail;
 
 
-    public OrderDetailRespositoryImpl() {
+    public OrderDetailRepositoryImpl() {
         super(OrderDetail.class);
     }
 

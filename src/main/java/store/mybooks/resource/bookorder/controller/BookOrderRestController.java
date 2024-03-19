@@ -191,4 +191,12 @@ public class BookOrderRestController {
                 .body(bookOrderService.getOrderInfoPayment(orderNumber));
     }
 
+    @GetMapping("/page")
+    public ResponseEntity<Page<BookOrderUserResponse>> getBookOrderUserPage(Pageable pageable,
+                                                                            @RequestHeader(name = HeaderProperties.USER_ID) Long userId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookOrderService.getUserBookOrderInfo(pageable, userId));
+    }
+
 }
