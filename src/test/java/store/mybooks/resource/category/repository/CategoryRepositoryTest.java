@@ -190,11 +190,14 @@ class CategoryRepositoryTest {
     @Test
     @DisplayName("카테고리 아이디의 최상위 카테고리 아이디 찾기")
     void givenCategoryId_whenFindHighestCategoryId_thenReturnRootCategoryId() {
+        Integer highestCategoryIdOfLevelOneCategory =
+                categoryRepository.findHighestCategoryId(actualGrandParentCategory.getId());
         Integer highestCategoryIdOfLevelTwoCategory =
                 categoryRepository.findHighestCategoryId(actualParentCategory.getId());
         Integer highestCategoryIdOfLevelThreeCategory =
                 categoryRepository.findHighestCategoryId(actualChildCategory.getId());
 
+        assertThat(highestCategoryIdOfLevelOneCategory).isNotNull().isEqualTo(actualGrandParentCategory.getId());
         assertThat(highestCategoryIdOfLevelTwoCategory).isNotNull().isEqualTo(actualGrandParentCategory.getId());
         assertThat(highestCategoryIdOfLevelThreeCategory).isNotNull().isEqualTo(actualGrandParentCategory.getId());
     }
