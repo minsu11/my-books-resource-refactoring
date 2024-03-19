@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
 import store.mybooks.resource.bookorder.dto.response.BookOrderInfoPayResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderPaymentInfoRespones;
 import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminResponse;
 
@@ -28,4 +29,6 @@ public interface BookOrderRepositoryCustom {
     Boolean existBookOrderByOrderNumber(String orderNumber);
 
     Optional<BookOrderInfoPayResponse> findBookOrderInfo(String orderNumber);
+
+    Optional<BookOrderPaymentInfoRespones> findOrderPayInfo(String orderNumber);
 }

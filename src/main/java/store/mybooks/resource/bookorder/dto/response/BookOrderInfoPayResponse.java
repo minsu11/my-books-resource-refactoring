@@ -31,4 +31,5 @@ public class BookOrderInfoPayResponse {
         this.number = number;
         this.totalCost = totalCost;
     }
+
 }

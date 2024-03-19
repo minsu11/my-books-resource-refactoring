@@ -13,10 +13,7 @@ import store.mybooks.resource.bookorder.dto.request.BookOrderAdminModifyRequest;
 import store.mybooks.resource.bookorder.dto.request.BookOrderCreateRequest;
 import store.mybooks.resource.bookorder.dto.request.BookOrderInfoRequest;
 import store.mybooks.resource.bookorder.dto.request.BookOrderRegisterInvoiceRequest;
-import store.mybooks.resource.bookorder.dto.response.BookOrderCreateResponse;
-import store.mybooks.resource.bookorder.dto.response.BookOrderInfoPayResponse;
-import store.mybooks.resource.bookorder.dto.response.BookOrderRegisterInvoiceResponse;
-import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
+import store.mybooks.resource.bookorder.dto.response.*;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminModifyResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminResponse;
 import store.mybooks.resource.bookorder.entity.BookOrder;
@@ -203,4 +200,10 @@ public class BookOrderService {
                 .orElseThrow(BookOrderNotExistException::new);
     }
 
+
+    public BookOrderPaymentInfoRespones getOrderInfoPayment(String orderNumber) {
+        return bookOrderRepository.findOrderPayInfo(orderNumber)
+                .orElseThrow(BookOrderNotExistException::new);
+
+    }
 }

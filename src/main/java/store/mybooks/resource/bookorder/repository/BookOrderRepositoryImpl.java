@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import store.mybooks.resource.bookorder.dto.response.BookOrderInfoPayResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderPaymentInfoRespones;
 import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminResponse;
 import store.mybooks.resource.bookorder.entity.BookOrder;
@@ -121,6 +122,41 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
         bookorderInfo.setOrderDetails(orderDetailInfoResponses);
 
         return Optional.of(bookorderInfo
+        );
+    }
+
+    @Override
+    public Optional<BookOrderPaymentInfoRespones> findOrderPayInfo(String orderNumber) {
+        QOrderDetail orderDetail = QOrderDetail.orderDetail;
+        BookOrderPaymentInfoRespones bookOrderInfoPayResponse = from(bookOrder)
+                .select(Projections.constructor(
+                        BookOrderPaymentInfoRespones.class,
+                        bookOrder.user.name,
+                        bookOrder.user.email,
+                        bookOrder.user.phoneNumber,
+                        bookOrder.number,
+                        bookOrder.orderStatus.id
+                ))
+                .where(bookOrder.number.eq(orderNumber))
+                .fetchOne();
+
+        Long count = from(orderDetail)
+                .where(orderDetail.bookOrder.number.eq(orderNumber))
+                .fetchCount();
+
+        StringBuilder orderName = new StringBuilder().append(from(orderDetail)
+                .select(orderDetail.book.name)
+                .where(orderDetail.bookOrder.number.eq(orderNumber))
+                .fetchFirst());
+
+        if (count > 1) {
+            count -= 1;
+            orderName.append("외 " + count + "건");
+        }
+        bookOrderInfoPayResponse.updateOrderName(orderName.toString());
+
+        return Optional.of(
+                bookOrderInfoPayResponse
         );
     }
 
