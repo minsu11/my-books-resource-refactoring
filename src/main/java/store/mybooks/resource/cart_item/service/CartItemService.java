@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.front.cart.domain.CartDetail;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.repotisory.BookRepository;
-import store.mybooks.resource.cart.dto.CartUserRedisKeyNameRequest;
+import store.mybooks.resource.cart_item.dto.CartUserRedisKeyNameRequest;
 import store.mybooks.resource.cart.entity.Cart;
 import store.mybooks.resource.cart.repository.CartRepository;
 import store.mybooks.resource.cart_item.entity.CartItem;
@@ -45,7 +45,8 @@ public class CartItemService {
 
 
     public void registerMysqlDataFromRedisData(Long userId, CartUserRedisKeyNameRequest cartUserRedisKeyNameRequest) {
-        List<CartDetail> cartDetailList = redisTemplate.opsForList().range(cartUserRedisKeyNameRequest.getCartKey(), 0, -1);
+        List<CartDetail> cartDetailList =
+                redisTemplate.opsForList().range(cartUserRedisKeyNameRequest.getCartKey(), 0, -1);
         if (Objects.isNull(cartDetailList) || cartDetailList.isEmpty()) {
             return;
         }
@@ -85,7 +86,9 @@ public class CartItemService {
                             cartItem.getBook().getId(),
                             cartItem.getAmount(),
                             cartItem.getBook().getName(),
-                            imageService.getObject(thumbNailImage.getId()).getFilePathName(), cartItem.getBook().getOriginalCost(), cartItem.getBook().getSaleCost())
+                            imageService.getObject(thumbNailImage.getId()).getFilePathName(),
+                            cartItem.getBook().getOriginalCost(), cartItem.getBook().getSaleCost(),
+                            cartItem.getBook().getStock(), cartItem.getBook().getBookStatus().getId())
             );
 
             cartItemRepository.deleteAllByCart_Id(userCart.getId());

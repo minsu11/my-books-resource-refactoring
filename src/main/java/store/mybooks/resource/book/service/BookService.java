@@ -251,10 +251,11 @@ public class BookService {
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotExistException(bookId));
         Image image = imageRepository.findImageByBook_IdAndImageStatus_Id(bookId, ImageStatusEnum.THUMBNAIL.getName())
                 .orElseThrow(() -> new ImageNotExistsException("해당하는 id의 이미지가 없습니다"));
-
-
         String url = image.getPath() + image.getFileName() + image.getExtension();
-        return new BookCartResponse(book.getId(), book.getName(), url, book.getOriginalCost(), book.getSaleCost());
+        String bookStatusId = book.getBookStatus().getId();
+
+        return new BookCartResponse(book.getId(), book.getName(), url, book.getOriginalCost(), book.getSaleCost(),
+                book.getStock(), bookStatusId);
     }
 
     @Transactional(readOnly = true)
