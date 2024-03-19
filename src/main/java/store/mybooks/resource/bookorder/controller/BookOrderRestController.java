@@ -180,7 +180,7 @@ public class BookOrderRestController {
      * description : 결제 창에서 js로 서버에 호출해서 결제 관련 정보를 받음.
      * <br> *
      *
-     * @param pageable
+     * @param orderNumber 주문 번호
      * @return response entity
      */
     @GetMapping("/info/{orderNumber}/pay")

@@ -1,6 +1,7 @@
 package store.mybooks.resource.pointhistory.dto.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import store.mybooks.resource.pointhistory.dto.response.PointHistoryCreateResponse;
 import store.mybooks.resource.pointhistory.entity.PointHistory;
@@ -18,6 +19,7 @@ import store.mybooks.resource.pointhistory.entity.PointHistory;
  */
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface PointHistoryMapper {
+    @Mapping(source = "pointRule.id", target = "pointId")
     PointHistoryCreateResponse mapToPointHistoryCreateResponse(PointHistory pointHistory);
 
 }
