@@ -2,6 +2,7 @@ package store.mybooks.resource.review.service;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -122,11 +123,13 @@ public class ReviewService {
             throw new UserNotExistException(userId);
         }
 
-        if (!reviewRepository.existsById(reviewId)) {
+        Optional<ReviewGetResponse> response = reviewRepository.getReview(reviewId);
+
+        if(response.isEmpty()){
             throw new ReviewNotExistException(reviewId);
         }
 
-        return reviewRepository.getReview(reviewId);
+        return response.get();
     }
 
     public Page<ReviewGetResponse> findReviewByUserId(Long userId, Pageable pageable) {
