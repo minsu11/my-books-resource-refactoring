@@ -2,8 +2,10 @@ package store.mybooks.resource.payment.entity;
 
 import java.time.LocalDateTime;
 import javax.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import store.mybooks.resource.bookorder.entity.BookOrder;
 
 /**
@@ -18,8 +20,10 @@ import store.mybooks.resource.bookorder.entity.BookOrder;
  * 2/13/24        minsu11       최초 생성
  */
 @Getter
-@Setter
+@Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "payment")
 public class Payment {
 
@@ -49,5 +53,6 @@ public class Payment {
     @OneToOne
     @JoinColumn(name = "order_id")
     private BookOrder bookOrder;
+
 
 }
