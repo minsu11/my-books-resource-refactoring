@@ -17,7 +17,7 @@ import store.mybooks.resource.image_status.entity.ImageStatus;
 import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
 import store.mybooks.resource.image_status.exception.ImageStatusNotExistException;
 import store.mybooks.resource.image_status.repository.ImageStatusRepository;
-import store.mybooks.resource.order_detail.entity.OrderDetail;
+import store.mybooks.resource.orderdetail.entity.OrderDetail;
 import store.mybooks.resource.review.dto.mapper.ReviewMapper;
 import store.mybooks.resource.review.dto.reqeust.ReviewCreateRequest;
 import store.mybooks.resource.review.dto.reqeust.ReviewModifyRequest;
