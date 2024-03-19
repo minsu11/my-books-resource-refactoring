@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
-public class PointHistoryRequest {
+public class PointHistoryCreateRequest {
     private String orderNumber;
     private String pointName;
     private Integer pointCost;

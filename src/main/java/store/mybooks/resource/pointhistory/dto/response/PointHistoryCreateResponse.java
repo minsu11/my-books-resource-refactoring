@@ -1,6 +1,5 @@
 package store.mybooks.resource.pointhistory.dto.response;
 
-import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -18,9 +17,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class PointHistoryCreateResponse {
-    private String orderNumber;
-    private String orderName;
-    private String pointName;
-    private Integer pointCost;
-    private LocalDate createdAt;
+    private Long pointId;
 }
