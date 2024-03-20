@@ -3,6 +3,7 @@ package store.mybooks.resource.bookorder.dto.response;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
 
@@ -19,17 +20,24 @@ import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
  */
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class BookOrderInfoPayResponse {
     private String orderStatus;
     private String number;
     private Integer totalCost;
+    private Boolean isCouponUsed;
     private List<OrderDetailInfoResponse> orderDetails;
 
-    public BookOrderInfoPayResponse(String orderStatus, String number, Integer totalCost) {
+    public BookOrderInfoPayResponse(String orderStatus, String number, Integer totalCost, Boolean isCouponUsed) {
         this.orderStatus = orderStatus;
         this.number = number;
         this.totalCost = totalCost;
+        this.isCouponUsed = isCouponUsed;
+    }
+
+    public void updateOrderDetails(List<OrderDetailInfoResponse> orderDetails) {
+        this.orderDetails = orderDetails;
     }
 
 }

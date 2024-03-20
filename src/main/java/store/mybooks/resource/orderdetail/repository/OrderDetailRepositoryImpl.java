@@ -35,10 +35,25 @@ public class OrderDetailRepositoryImpl extends QuerydslRepositorySupport impleme
                 .select(Projections.constructor(
                         OrderDetailInfoResponse.class,
                         orderDetail.book.name,
+                        orderDetail.userCoupon.id,
                         orderDetail.bookCost,
                         orderDetail.isCouponUsed
                 ))
                 .where(orderDetail.id.eq(bookOrderId))
+                .fetch();
+    }
+
+    @Override
+    public List<OrderDetailInfoResponse> getOrderDetailListByOrderNumber(String orderNumber) {
+        return from(orderDetail)
+                .select(Projections.constructor(
+                        OrderDetailInfoResponse.class,
+                        orderDetail.book.name,
+                        orderDetail.userCoupon.id,
+                        orderDetail.bookCost,
+                        orderDetail.isCouponUsed
+                ))
+                .where(orderDetail.bookOrder.number.eq(orderNumber))
                 .fetch();
     }
 }

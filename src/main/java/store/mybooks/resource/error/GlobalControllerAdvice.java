@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import store.mybooks.resource.book.exception.IsbnAlreadyExistsException;
 import store.mybooks.resource.bookorder.exception.BookOrderInfoNotMatchException;
+import store.mybooks.resource.bookorder.exception.BookOrderNotExistException;
 import store.mybooks.resource.category.exception.CannotDeleteParentCategoryException;
 import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
@@ -14,6 +15,9 @@ import store.mybooks.resource.coupon.exception.CouponCannotDeleteException;
 import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotExistsException;
 import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameAlreadyExistsException;
 import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotExistsException;
+import store.mybooks.resource.orderdetailstatus.exception.OrderDetailStatusAlreadyExistException;
+import store.mybooks.resource.orderdetailstatus.exception.OrderDetailStatusNotFoundException;
+import store.mybooks.resource.payment.exception.PaymentAlreadyExistException;
 import store.mybooks.resource.publisher.exception.PublisherAlreadyExistException;
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
 import store.mybooks.resource.tag.exception.TagNameAlreadyExistsException;
@@ -53,7 +57,8 @@ public class GlobalControllerAdvice {
     @ExceptionHandler({CategoryNotExistsException.class, TagNotExistsException.class, PublisherNotExistException.class,
             DeliveryRuleNameNotExistsException.class, DeliveryRuleNotExistsException.class,
             UserNotExistException.class, UserAddressNotExistException.class, UserGradeIdNotExistException.class,
-            UserGradeNameNotExistException.class, UserStatusNotExistException.class})
+            UserGradeNameNotExistException.class, UserStatusNotExistException.class,
+            BookOrderNotExistException.class, OrderDetailStatusNotFoundException.class})
     public ResponseEntity<String> xxxNotExistsException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -70,7 +75,8 @@ public class GlobalControllerAdvice {
      */
     @ExceptionHandler({CategoryNameAlreadyExistsException.class, TagNameAlreadyExistsException.class,
             PublisherAlreadyExistException.class, DeliveryRuleNameAlreadyExistsException.class,
-            IsbnAlreadyExistsException.class, UserAlreadyExistException.class, UserAddressAlreadyExistException.class})
+            IsbnAlreadyExistsException.class, UserAlreadyExistException.class, UserAddressAlreadyExistException.class,
+            PaymentAlreadyExistException.class, OrderDetailStatusAlreadyExistException.class})
     public ResponseEntity<String> xxxAlreadyExistsException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)

@@ -2,26 +2,20 @@ package store.mybooks.resource.payment.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * packageName    : store.mybooks.resource.payment.dto.response<br>
- * fileName       : PayCreateResponse<br>
+ * fileName       : PayModifyResponse<br>
  * author         : minsu11<br>
- * date           : 3/19/24<br>
+ * date           : 3/20/24<br>
  * description    :
  * ===========================================================<br>
  * DATE              AUTHOR             NOTE<br>
  * -----------------------------------------------------------<br>
- * 3/19/24        minsu11       최초 생성<br>
+ * 3/20/24        minsu11       최초 생성<br>
  */
 @Getter
-@Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class PayCreateResponse {
-    private Long payId;
-    private String paymentKey;
-    private Integer totalAmount;
+public class PayModifyResponse {
+    private String status;
 }

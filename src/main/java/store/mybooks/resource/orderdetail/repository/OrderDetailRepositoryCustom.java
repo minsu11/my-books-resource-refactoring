@@ -19,5 +19,7 @@ import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
 public interface OrderDetailRepositoryCustom {
     List<OrderDetailInfoResponse> getOrderDetailList(Long bookOrderId);
 
+    List<OrderDetailInfoResponse> getOrderDetailListByOrderNumber(String orderNumber);
+
 
 }

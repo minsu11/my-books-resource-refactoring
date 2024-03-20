@@ -106,6 +106,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                 .select(Projections.constructor(
                                 OrderDetailInfoResponse.class,
                                 orderDetail.book.name,
+                                orderDetail.userCoupon.id,
                                 orderDetail.bookCost,
                                 orderDetail.isCouponUsed
                         )
@@ -117,10 +118,11 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                         .select(Projections.constructor(BookOrderInfoPayResponse.class,
                                 bookOrder.orderStatus.id,
                                 bookOrder.number,
-                                bookOrder.totalCost))
+                                bookOrder.totalCost,
+                                bookOrder.isCouponUsed))
                         .where(bookOrder.number.eq(orderNumber))
                         .fetchOne();
-        bookorderInfo.setOrderDetails(orderDetailInfoResponses);
+        bookorderInfo.updateOrderDetails(orderDetailInfoResponses);
 
         return Optional.of(bookorderInfo
         );

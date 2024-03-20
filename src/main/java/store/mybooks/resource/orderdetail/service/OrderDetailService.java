@@ -16,6 +16,7 @@ import store.mybooks.resource.bookorder.exception.BookOrderNotExistException;
 import store.mybooks.resource.bookorder.repository.BookOrderRepository;
 import store.mybooks.resource.orderdetail.dto.mapper.OrderDetailMapper;
 import store.mybooks.resource.orderdetail.dto.response.OrderDetailCreateResponse;
+import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
 import store.mybooks.resource.orderdetail.entity.OrderDetail;
 import store.mybooks.resource.orderdetail.enumulation.OrderDetailStatusName;
 import store.mybooks.resource.orderdetail.repository.OrderDetailRepository;
@@ -63,8 +64,6 @@ public class OrderDetailService {
      */
     public OrderDetailCreateResponse createOrderDetail(BookInfoRequest request, String number) {
         boolean isCouponUsed = false;
-        log.debug("주문 상태: {}", OrderDetailStatusName.WAIT.toString());
-        log.debug("주문 상태: {}", OrderDetailStatusName.WAIT);
         OrderDetailStatus orderDetailStatus = orderDetailStatusRepository.findById(OrderDetailStatusName.WAIT.toString())
                 .orElseThrow(OrderDetailStatusNotFoundException::new);
 
@@ -120,6 +119,9 @@ public class OrderDetailService {
         return orderDetailList;
     }
 
+    public List<OrderDetailInfoResponse> getOrderDetails(String orderNumber) {
+        return orderDetailRepository.getOrderDetailListByOrderNumber(orderNumber);
+    }
 
 }
 

@@ -54,5 +54,7 @@ public class Payment {
     @JoinColumn(name = "order_id")
     private BookOrder bookOrder;
 
-
+    public void update(String status) {
+        this.status = status;
+    }
 }

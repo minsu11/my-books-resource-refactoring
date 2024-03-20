@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import store.mybooks.resource.payment.dto.response.PayCreateResponse;
+import store.mybooks.resource.payment.dto.response.PayModifyResponse;
 import store.mybooks.resource.payment.entity.Payment;
 
 /**
@@ -20,5 +21,9 @@ import store.mybooks.resource.payment.entity.Payment;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface PaymentMapper {
     @Mapping(source = "id", target = "payId")
+    @Mapping(source = "orderNumber", target = "paymentKey")
+    @Mapping(source = "cost", target = "totalAmount")
     PayCreateResponse mapToPayCreateRequest(Payment payment);
+
+    PayModifyResponse mapToPayModifyResponse(Payment payment);
 }
