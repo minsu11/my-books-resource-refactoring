@@ -27,4 +27,7 @@ public interface ImageService {
 
     void deleteObject(Long id);
     Image getThumbNailImage(Long id);
+
+    Image getReviewImage(Long id);
+
 }
