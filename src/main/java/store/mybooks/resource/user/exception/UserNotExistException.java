@@ -18,4 +18,7 @@ public class UserNotExistException extends RuntimeException {
         super(String.format("[%d]번째 유저는 존재하지 않습니다", id));
     }
 
+    public UserNotExistException(String message) {
+        super(message);
+    }
 }
