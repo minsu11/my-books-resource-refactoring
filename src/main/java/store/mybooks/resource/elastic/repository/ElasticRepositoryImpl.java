@@ -36,9 +36,9 @@ public class ElasticRepositoryImpl implements ElasticRepositoryCustom {
         QueryBuilder queryBuilder = QueryBuilders.multiMatchQuery(query)
                 .field("book_name", 100)
                 .field("book_explanation", 10)
-                .field("tag_name", 70)
+                .field("tag_names", 70)
                 .field("publisher_name", 30)
-                .field("author_name", 50);
+                .field("author_names", 50);
 
         NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder()
                 .withQuery(queryBuilder)
