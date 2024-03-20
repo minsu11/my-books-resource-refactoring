@@ -25,7 +25,7 @@ import store.mybooks.resource.elastic.service.ElasticService;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/search")
+@RequestMapping("/api/searches")
 public class ElasticRestController {
     private final ElasticService elasticService;
 
