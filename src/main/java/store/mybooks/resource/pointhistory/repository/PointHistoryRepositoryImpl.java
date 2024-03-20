@@ -11,6 +11,7 @@ import store.mybooks.resource.pointhistory.dto.response.PointHistoryResponse;
 import store.mybooks.resource.pointhistory.dto.response.PointResponse;
 import store.mybooks.resource.pointhistory.entity.PointHistory;
 import store.mybooks.resource.pointhistory.entity.QPointHistory;
+import store.mybooks.resource.pointrule.entity.QPointRule;
 
 /**
  * packageName    : store.mybooks.resource.point_history.repository<br>
@@ -58,5 +59,20 @@ public class PointHistoryRepositoryImpl extends QuerydslRepositorySupport implem
                 .fetchCount();
 
         return new PageImpl<>(pointHistoryResponses, pageable, total);
+    }
+
+    @Override
+    public boolean isAlreadyReceivedSignUpPoint(Long userId) {
+        QPointRule pointRule = QPointRule.pointRule;
+
+        List<Long> pointHistoryIdList = from(pointHistory)
+                .leftJoin(pointRule)
+                .on(pointHistory.pointRule.id.eq(pointRule.id))
+                .where(pointHistory.user.id.eq(userId))
+                .where(pointRule.pointRuleName.id.eq("회원가입 적립"))
+                .select(pointHistory.id)
+                .fetch();
+
+        return !pointHistoryIdList.isEmpty();
     }
 }

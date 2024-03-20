@@ -30,6 +30,24 @@ public interface PointHistoryRepositoryCustom {
      */
     PointResponse getRemainingPoint(Long userId);
 
+    /**
+     * methodName : getPointHistoryByUserId <br>
+     * author : damho-lee <br>
+     * description : 포인트 내역 조회.<br>
+     *
+     * @param pageable 페이지 정보
+     * @param userId   포인트 내역을 조회할 회원의 {@code id}
+     * @return page
+     */
     Page<PointHistoryResponse> getPointHistoryByUserId(Pageable pageable, Long userId);
 
+    /**
+     * methodName : isAlreadyReceivedSignUpPoint <br>
+     * author : damho-lee <br>
+     * description : 회원가입 포인트를 받은 적이 있는지 조회.<br>
+     *
+     * @param userId 회원가입 포인트를 받았는지 조회할 회원의 {@code id}
+     * @return boolean
+     */
+    boolean isAlreadyReceivedSignUpPoint(Long userId);
 }
