@@ -53,6 +53,7 @@ public class ElasticRepositoryImpl implements ElasticRepositoryCustom {
                         elastic.getImage(),
                         elastic.getName(),
                         elastic.getRate(),
+                        elastic.getReviewCount(),
                         elastic.getCost(),
                         elastic.getSaleCost()
                 ))
