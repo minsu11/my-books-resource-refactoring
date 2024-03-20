@@ -1,6 +1,5 @@
 package store.mybooks.resource.payment.dto.request;
 
-import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class PayCreateRequest {
     private String orderNumber;
     private String status;
-    private LocalDateTime requestAt;
-    private Integer totalCost;
+    private String requestedAt;
+    private Integer totalAmount;
     private String type;
 }

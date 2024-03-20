@@ -1,5 +1,7 @@
 package store.mybooks.resource.payment.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import store.mybooks.resource.bookorder.entity.BookOrder;
@@ -34,18 +36,24 @@ public class PaymentService {
     private final PaymentMapper paymentMapper;
 
 
-    public PayCreateResponse createPayment(PayCreateRequest request, Long userId) {
+    public PayCreateResponse createPayment(PayCreateRequest request) {
         BookOrder bookOrder = bookOrderRepository.findByNumber(request.getOrderNumber())
                 .orElseThrow(BookOrderNotExistException::new);
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
+        User user = userRepository.findById(bookOrder.getUser().getId()).orElseThrow(() -> new UserNotExistException(bookOrder.getUser().getId()));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
+        LocalDateTime requestedAt = LocalDateTime.parse(request.getRequestedAt(), formatter);
+        System.out.println("시간 대: " + requestedAt.toString());
         Payment payment =
                 Payment.builder()
                         .bookOrder(bookOrder)
-                        .createdAt(request.getRequestAt())
+                        .createdAt(requestedAt)
                         .buyer(user.getName())
-                        .cost(request.getTotalCost())
+                        .cost(request.getTotalAmount())
+                        .orderNumber(request.getOrderNumber())
                         .type(request.getType())
+                        .status(request.getStatus())
                         .build();
-        return paymentMapper.mapToPayCreateRequest(payment);
+
+        return paymentMapper.mapToPayCreateRequest(paymentRepository.save(payment));
     }
 }
