@@ -40,7 +40,7 @@ public class Elastic {
     private String name;
 
     @Field(name = "avg_rate")
-    private Float rate;
+    private Double rate;
 
     @Field(name = "book_original_cost")
     private Integer cost;
@@ -55,6 +55,6 @@ public class Elastic {
     private LocalDateTime publishDate;
 
     @Field(name = "book_review_count")
-    private Integer reviewCount;
+    private Long reviewCount;
 }
 
