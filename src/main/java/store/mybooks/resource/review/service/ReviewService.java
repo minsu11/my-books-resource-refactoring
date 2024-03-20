@@ -25,6 +25,7 @@ import store.mybooks.resource.review.dto.response.ReviewCreateResponse;
 import store.mybooks.resource.review.dto.response.ReviewDetailGetResponse;
 import store.mybooks.resource.review.dto.response.ReviewGetResponse;
 import store.mybooks.resource.review.dto.response.ReviewModifyResponse;
+import store.mybooks.resource.review.dto.response.ReviewRateResponse;
 import store.mybooks.resource.review.entity.Review;
 import store.mybooks.resource.review.exception.ReviewAlreadyExistException;
 import store.mybooks.resource.review.exception.ReviewNotExistException;
@@ -113,10 +114,6 @@ public class ReviewService {
         return reviewMapper.toReviewModifyResponse(review);
     }
 
-    public Review findById(Long reviewId) {
-        return reviewRepository.findById(reviewId).orElseThrow(() -> new ReviewNotExistException(reviewId));
-    }
-
     public ReviewGetResponse findReview(Long userId, Long reviewId) {
 
         if (!userRepository.existsById(userId)) {
@@ -144,6 +141,16 @@ public class ReviewService {
             throw new BookNotExistException(bookId);
         }
         return reviewRepository.getReviewByBookId(bookId, pageable);
+    }
+
+    public ReviewRateResponse findReviewRateByBookId(Long bookId){
+
+        if (!bookRepository.existsById(bookId)) {
+            throw new BookNotExistException(bookId);
+        }
+
+
+        return reviewRepository.getReviewRate(bookId);
     }
 
 

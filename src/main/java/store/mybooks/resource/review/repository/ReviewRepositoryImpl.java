@@ -1,6 +1,6 @@
 package store.mybooks.resource.review.repository;
 
-import java.util.ArrayList;
+import com.querydsl.core.types.Projections;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -8,8 +8,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import store.mybooks.resource.book.entity.QBook;
-import store.mybooks.resource.image.dto.response.ImageResponse;
-import store.mybooks.resource.image.entity.Image;
 import store.mybooks.resource.image.entity.QImage;
 import store.mybooks.resource.image_status.entity.QImageStatus;
 import store.mybooks.resource.orderdetail.entity.QOrderDetail;
@@ -53,142 +51,133 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
     public Page<ReviewGetResponse> getReviewByUserId(Long userId, Pageable pageable) {
 
 
-        List<Review> reviews = from(review)
-                .where(review.user.id.eq(userId))
-                .select(review)
+        List<ReviewGetResponse> lists = from(user)
+                .leftJoin(review)
+                .on(review.user.eq(user))
+                .leftJoin(orderDetail)
+                .on(orderDetail.eq(review.orderDetail))
+                .leftJoin(book)
+                .on(orderDetail.book.eq(book))
+                .leftJoin(image)
+                .on(image.review.eq(review))
+                .where(
+                        user.id.eq(userId)
+                                .or(book.id.isNotNull())
+                                .or(book.name.isNotNull())
+                                .or(review.id.isNotNull())
+                                .or(user.name.isNotNull())
+                                .or(review.rate.isNotNull())
+                                .or(review.date.isNotNull())
+                                .or(review.title.isNotNull())
+                                .or(review.content.isNotNull())
+                                .or(image.path.isNotNull())
+                                .or(image.fileName.isNotNull())
+                                .or(image.extension.isNotNull())
+                )
+                .select(Projections.constructor(
+                        ReviewGetResponse.class,
+                        book.id,
+                        book.name,
+                        review.id,
+                        user.name,
+                        review.rate,
+                        review.date,
+                        review.title,
+                        review.content,
+                        image.path.concat(image.fileName).concat(image.extension)
+                )).groupBy(review, image, book)
+                .distinct()
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        List<Image> images = from(image)
-                .join(review)
-                .on(review.id.eq(image.review.id))
-                .fetch();
 
-        List<ReviewGetResponse> responseList = new ArrayList<>();
-        for (Review review : reviews) {
-
-            Optional<ImageResponse> imageResponseOptional = images.stream()
-                    .filter(image -> image.getReview().getId().equals(review.getId()))
-                    .map(image -> new ImageResponse(image.getPath(), image.getFileName(), image.getExtension()))
-                    .findFirst();
-
-            ImageResponse imageResponse = null;
-
-            if (imageResponseOptional.isPresent()) {
-                imageResponse = imageResponseOptional.get();
-            }
-
-            ReviewGetResponse response = new ReviewGetResponse(
-                    review.getOrderDetail().getBook().getId(),
-                    review.getOrderDetail().getBook().getName(),
-                    review.getId(),
-                    review.getUser().getName(),
-                    review.getRate(),
-                    review.getDate(),
-                    review.getTitle(),
-                    review.getContent(),
-                    imageResponse
-            );
-            responseList.add(response);
-        }
-
-        // 전체 리뷰 개수 조회
         long total = from(review)
                 .where(review.user.id.eq(userId))
                 .fetchCount();
 
-        return new PageImpl<>(responseList, pageable, total);
+        return new PageImpl<>(lists, pageable, total);
     }
 
     @Override
     public Page<ReviewDetailGetResponse> getReviewByBookId(Long bookId, Pageable pageable) {
 
-        List<Review> reviews = from(review)
-                .where(review.orderDetail.book.id.eq(bookId))
-                .select(review)
+
+        List<ReviewDetailGetResponse> lists = from(book)
+                .leftJoin(orderDetail)
+                .on(orderDetail.book.eq(book))
+                .join(review)
+                .on(orderDetail.eq(review.orderDetail))
+                .leftJoin(user)
+                .on(user.eq(review.user))
+                .leftJoin(image)
+                .on(image.review.eq(review))
+                .where(book.id.eq(bookId)
+                        .or(review.id.isNotNull())
+                        .or(user.name.isNotNull())
+                        .or(review.rate.isNotNull())
+                        .or(review.date.isNotNull())
+                        .or(review.title.isNotNull())
+                        .or(review.content.isNotNull())
+                        .or(image.path.isNotNull())
+                        .or(image.fileName.isNotNull())
+                        .or(image.extension.isNotNull())
+                )
+                .select(Projections.constructor(
+                        ReviewDetailGetResponse.class,
+                        review.id,
+                        user.name,
+                        review.rate,
+                        review.date,
+                        review.title,
+                        review.content,
+                        image.path.concat(image.fileName).concat(image.extension)
+                )).groupBy(image, user, review)
+                .distinct()
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        List<Image> images = from(image)
-                .join(review)
-                .on(review.id.eq(image.review.id))
-                .fetch();
-
-        List<ReviewDetailGetResponse> responseList = new ArrayList<>();
-        for (Review review : reviews) {
-
-            Optional<ImageResponse> imageResponseOptional = images.stream()
-                    .filter(image -> image.getReview().getId().equals(review.getId()))
-                    .map(image -> new ImageResponse(image.getPath(), image.getFileName(), image.getExtension()))
-                    .findFirst();
-
-            ImageResponse imageResponse = null;
-
-            if (imageResponseOptional.isPresent()) {
-                imageResponse = imageResponseOptional.get();
-            }
-
-            ReviewDetailGetResponse response = new ReviewDetailGetResponse(
-                    review.getId(),
-                    review.getUser().getName(),
-                    review.getRate(),
-                    review.getDate(),
-                    review.getTitle(),
-                    review.getContent(),
-                    imageResponse
-            );
-            responseList.add(response);
-        }
 
         long total = from(review)
-                .where(review.orderDetail.book.id.eq(bookId))
+                .leftJoin(orderDetail)
+                .on(review.orderDetail.eq(orderDetail))
+                .leftJoin(book)
+                .on(orderDetail.book.eq(book))
+                .where(book.id.eq(bookId))
                 .fetchCount();
 
-        return new PageImpl<>(responseList, pageable, total);
+        return new PageImpl<>(lists, pageable, total);
+
     }
 
     @Override
     public Optional<ReviewGetResponse> getReview(Long reviewId) {
 
-        List<Review> reviews = from(review)
+
+        List<ReviewGetResponse> response = from(review)
+                .leftJoin(image)
+                .on(image.review.eq(review))
+                .leftJoin(orderDetail)
+                .on(orderDetail.eq(review.orderDetail))
+                .leftJoin(book)
+                .on(orderDetail.book.eq(book))
                 .where(review.id.eq(reviewId))
-                .select(review)
+                .select(Projections.constructor(
+                        ReviewGetResponse.class,
+                        book.id,
+                        book.name,
+                        review.id,
+                        user.name,
+                        review.rate,
+                        review.date,
+                        review.title,
+                        review.content,
+                        image.path.concat(image.fileName).concat(image.extension)
+                ))
                 .fetch();
 
-        List<Image> images = from(image)
-                .join(review)
-                .on(review.id.eq(image.review.id))
-                .fetch();
 
-
-        ReviewGetResponse response = null;
-        for (Review review : reviews) {
-
-            Optional<ImageResponse> imageResponseOptional = images.stream()
-                    .filter(image -> image.getReview().getId().equals(review.getId()))
-                    .map(image -> new ImageResponse(image.getPath(), image.getFileName(), image.getExtension()))
-                    .findFirst();
-
-            ImageResponse imageResponse = null;
-
-            if (imageResponseOptional.isPresent()) {
-                imageResponse = imageResponseOptional.get();
-            }
-
-            response = new ReviewGetResponse(
-                    review.getOrderDetail().getBook().getId(),
-                    review.getOrderDetail().getBook().getName(),
-                    review.getId(),
-                    review.getUser().getName(),
-                    review.getRate(),
-                    review.getDate(),
-                    review.getTitle(),
-                    review.getContent(),
-                    imageResponse
-            );
-        }
-        return Optional.of(response);
+        return Optional.of(response.get(0));
     }
 }
