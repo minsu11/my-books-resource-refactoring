@@ -74,7 +74,7 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
                         review.title,
                         review.content,
                         image.path.concat(image.fileName).concat(image.extension)
-                )).groupBy(review, image, book)
+                )).groupBy(review, image, book,user)
                 .distinct()
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
