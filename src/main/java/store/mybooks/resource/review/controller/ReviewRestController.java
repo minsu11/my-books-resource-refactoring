@@ -53,13 +53,7 @@ public class ReviewRestController {
             , @RequestHeader(HeaderProperties.USER_ID) Long userId
             , @RequestPart(value = "contentImage", required = false)MultipartFile image) throws IOException {
 
-        System.out.println(reviewId);
-        System.out.println("???????");
-
         Utils.validateRequest(bindingResult);
-
-        System.out.println("@@@@#@#@#@");
-
         return new ResponseEntity<>(reviewService.modifyReview(userId, reviewId, modifyRequest,image), HttpStatus.OK);
     }
 
@@ -73,8 +67,6 @@ public class ReviewRestController {
             throws IOException {
 
         Utils.validateRequest(bindingResult);
-        System.out.println("끼에엥에엑");
-
         return new ResponseEntity<>(reviewService.createReview(createRequest, userId, image), HttpStatus.CREATED);
     }
 
