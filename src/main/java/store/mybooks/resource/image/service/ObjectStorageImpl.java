@@ -128,6 +128,13 @@ public class ObjectStorageImpl implements ImageService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Image getReviewImage(Long id) {
+        return imageRepository.findImageByReviewIdAndImageStatusId(id,ImageStatusEnum.REVIEW.getName())
+                .orElseThrow(()-> new ImageNotExistsException("해당하는 id의 이미지가 없습니다"));
+    }
+
+    @Override
     public void deleteObject(Long id) {
         Image image = imageRepository.findById(id).orElseThrow();
         String url = image.getPath() + image.getFileName() + image.getExtension();
