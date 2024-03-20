@@ -27,7 +27,9 @@ public class BookBriefResponse {
 
     private String name;
 
-//    private Double rate;
+    private Double rate;
+
+    private Long reviewCount;
 
     private Integer cost;
 
