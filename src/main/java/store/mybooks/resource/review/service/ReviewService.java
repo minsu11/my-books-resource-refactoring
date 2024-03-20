@@ -104,7 +104,8 @@ public class ReviewService {
     }
 
     @Transactional
-    public ReviewModifyResponse modifyReview(Long userId, Long reviewId, ReviewModifyRequest modifyRequest,MultipartFile modifyImage)
+    public ReviewModifyResponse modifyReview(Long userId, Long reviewId, ReviewModifyRequest modifyRequest,
+                                             MultipartFile modifyImage)
             throws IOException {
 
         if (!userRepository.existsById(userId)) {
@@ -135,7 +136,7 @@ public class ReviewService {
 
         Optional<ReviewGetResponse> response = reviewRepository.getReview(reviewId);
 
-        if(response.isEmpty()){
+        if (response.isEmpty()) {
             throw new ReviewNotExistException(reviewId);
         }
 
@@ -156,12 +157,11 @@ public class ReviewService {
         return reviewRepository.getReviewByBookId(bookId, pageable);
     }
 
-    public ReviewRateResponse findReviewRateByBookId(Long bookId){
+    public ReviewRateResponse findReviewRateByBookId(Long bookId) {
 
         if (!bookRepository.existsById(bookId)) {
             throw new BookNotExistException(bookId);
         }
-
 
         return reviewRepository.getReviewRate(bookId);
     }
