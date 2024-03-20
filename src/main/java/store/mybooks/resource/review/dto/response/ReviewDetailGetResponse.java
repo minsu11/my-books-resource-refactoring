@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import store.mybooks.resource.image.dto.response.ImageResponse;
 
 /**
  * packageName    : store.mybooks.resource.review.dto.response<br>
@@ -34,6 +33,6 @@ public class ReviewDetailGetResponse {
 
     private String content;
 
-    private ImageResponse reviewImage;
+    private String reviewImage;
 
 }
