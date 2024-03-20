@@ -52,7 +52,7 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
 
 
         List<ReviewGetResponse> lists = from(user)
-                .leftJoin(review)
+                .join(review)
                 .on(review.user.eq(user))
                 .leftJoin(orderDetail)
                 .on(orderDetail.eq(review.orderDetail))
@@ -62,17 +62,6 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
                 .on(image.review.eq(review))
                 .where(
                         user.id.eq(userId)
-                                .or(book.id.isNotNull())
-                                .or(book.name.isNotNull())
-                                .or(review.id.isNotNull())
-                                .or(user.name.isNotNull())
-                                .or(review.rate.isNotNull())
-                                .or(review.date.isNotNull())
-                                .or(review.title.isNotNull())
-                                .or(review.content.isNotNull())
-                                .or(image.path.isNotNull())
-                                .or(image.fileName.isNotNull())
-                                .or(image.extension.isNotNull())
                 )
                 .select(Projections.constructor(
                         ReviewGetResponse.class,
@@ -112,17 +101,7 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
                 .on(user.eq(review.user))
                 .leftJoin(image)
                 .on(image.review.eq(review))
-                .where(book.id.eq(bookId)
-                        .or(review.id.isNotNull())
-                        .or(user.name.isNotNull())
-                        .or(review.rate.isNotNull())
-                        .or(review.date.isNotNull())
-                        .or(review.title.isNotNull())
-                        .or(review.content.isNotNull())
-                        .or(image.path.isNotNull())
-                        .or(image.fileName.isNotNull())
-                        .or(image.extension.isNotNull())
-                )
+                .where(book.id.eq(bookId))
                 .select(Projections.constructor(
                         ReviewDetailGetResponse.class,
                         review.id,
@@ -155,13 +134,15 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
     public Optional<ReviewGetResponse> getReview(Long reviewId) {
 
 
-        List<ReviewGetResponse> response = from(review)
+        ReviewGetResponse response = from(review)
                 .leftJoin(image)
                 .on(image.review.eq(review))
                 .leftJoin(orderDetail)
                 .on(orderDetail.eq(review.orderDetail))
                 .leftJoin(book)
                 .on(orderDetail.book.eq(book))
+                .join(user)
+                .on(user.eq(review.user))
                 .where(review.id.eq(reviewId))
                 .select(Projections.constructor(
                         ReviewGetResponse.class,
@@ -175,9 +156,11 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
                         review.content,
                         image.path.concat(image.fileName).concat(image.extension)
                 ))
-                .fetch();
+                .groupBy(review,user,image,book)
+                .distinct()
+                .fetchOne();
 
 
-        return Optional.of(response.get(0));
+        return Optional.of(response);
     }
 }
