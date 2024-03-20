@@ -24,6 +24,7 @@ import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
 import store.mybooks.resource.orderdetail.entity.QOrderDetail;
 import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
 import store.mybooks.resource.publisher.entity.QPublisher;
+import store.mybooks.resource.review.dto.response.ReviewRateResponse;
 import store.mybooks.resource.review.entity.QReview;
 import store.mybooks.resource.tag.dto.response.TagGetResponseForBookDetail;
 import store.mybooks.resource.tag.entity.QTag;
@@ -124,6 +125,16 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .select(Projections.constructor(TagGetResponseForBookDetail.class, tag.id, tag.name))
                 .fetch();
 
+        ReviewRateResponse reviewRate = from(book)
+                .leftJoin(orderDetail).on(book.eq(orderDetail.book))
+                .leftJoin(review).on(orderDetail.eq(review.orderDetail))
+                .where(book.id.eq(id))
+                .select(Projections.constructor(
+                        ReviewRateResponse.class,
+                        review.count(),
+                        review.rate.avg().coalesce(0.0) // 평균 평점
+                )).fetchOne();
+
         return BookDetailResponse.builder()
                 .id(result.getId())
                 .thumbNailImage(thumbNailImage)
@@ -133,6 +144,8 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                         result.getPublisher().getName()))
                 .publishDate(result.getPublishDate())
                 .saleCost(result.getSaleCost())
+                .rate(reviewRate.getAverageRate())
+                .reviewCount(reviewRate.getTotalCount())
                 .originalCost(result.getOriginalCost())
                 .disCountRate(result.getDiscountRate())
                 .isPacking(result.getIsPackaging())

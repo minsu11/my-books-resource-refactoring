@@ -52,9 +52,9 @@ public class BookDetailResponse {
 
     private Integer disCountRate;
 
-//    private Double totalRate;
+    private Double rate;
 
-//    private Integer reviewCount;
+    private Long reviewCount;
 
     private Integer likeCount;
 
@@ -76,6 +76,5 @@ public class BookDetailResponse {
 
     private List<ImageResponse> contentImageList;
 
-//    private List<ReviewDetailResponse> review;
 }
 
