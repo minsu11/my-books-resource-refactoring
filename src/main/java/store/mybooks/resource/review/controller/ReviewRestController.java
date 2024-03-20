@@ -26,6 +26,7 @@ import store.mybooks.resource.review.dto.response.ReviewCreateResponse;
 import store.mybooks.resource.review.dto.response.ReviewDetailGetResponse;
 import store.mybooks.resource.review.dto.response.ReviewGetResponse;
 import store.mybooks.resource.review.dto.response.ReviewModifyResponse;
+import store.mybooks.resource.review.dto.response.ReviewRateResponse;
 import store.mybooks.resource.review.service.ReviewService;
 
 /**
@@ -61,7 +62,8 @@ public class ReviewRestController {
                                                              @Valid @RequestPart("request")
                                                              ReviewCreateRequest createRequest,
                                                              BindingResult bindingResult,
-                                                             @RequestPart(value = "contentImage",required = false) MultipartFile image)
+                                                             @RequestPart(value = "contentImage", required = false)
+                                                             MultipartFile image)
             throws IOException {
 
         Utils.validateRequest(bindingResult);
@@ -75,7 +77,6 @@ public class ReviewRestController {
         return new ResponseEntity<>(reviewService.findReview(userId, reviewId), HttpStatus.OK);
     }
 
-    // 내가 쓴 모든 리뷰
     @GetMapping
     public ResponseEntity<Page<ReviewGetResponse>> findReviewByUserId(
             @RequestHeader(HeaderProperties.USER_ID) Long userId,
@@ -88,6 +89,11 @@ public class ReviewRestController {
     public ResponseEntity<Page<ReviewDetailGetResponse>> findReviewByBookId(@PathVariable(name = "bookId") Long bookId,
                                                                             Pageable pageable) {
         return new ResponseEntity<>(reviewService.findReviewByBookId(bookId, pageable), HttpStatus.OK);
+    }
+
+    @GetMapping("/book/{bookId}/rate")
+    public ResponseEntity<ReviewRateResponse> findReviewRateByBookId(@PathVariable(name = "bookId") Long bookId) {
+        return new ResponseEntity<>(reviewService.findReviewRateByBookId(bookId), HttpStatus.OK);
     }
 
 
