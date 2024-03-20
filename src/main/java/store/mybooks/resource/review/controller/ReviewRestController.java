@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -50,11 +49,18 @@ public class ReviewRestController {
 
     @PutMapping("/{reviewId}")
     public ResponseEntity<ReviewModifyResponse> modifyReview(@PathVariable(name = "reviewId") Long reviewId
-            , @Valid @RequestBody ReviewModifyRequest modifyRequest, BindingResult bindingResult
-            , @RequestHeader(HeaderProperties.USER_ID) Long userId) {
+            , @Valid @RequestPart("request") ReviewModifyRequest modifyRequest, BindingResult bindingResult
+            , @RequestHeader(HeaderProperties.USER_ID) Long userId
+            , @RequestPart(value = "contentImage", required = false)MultipartFile image) throws IOException {
+
+        System.out.println(reviewId);
+        System.out.println("???????");
 
         Utils.validateRequest(bindingResult);
-        return new ResponseEntity<>(reviewService.modifyReview(userId, reviewId, modifyRequest), HttpStatus.OK);
+
+        System.out.println("@@@@#@#@#@");
+
+        return new ResponseEntity<>(reviewService.modifyReview(userId, reviewId, modifyRequest,image), HttpStatus.OK);
     }
 
     @PostMapping
@@ -67,6 +73,8 @@ public class ReviewRestController {
             throws IOException {
 
         Utils.validateRequest(bindingResult);
+        System.out.println("끼에엥에엑");
+
         return new ResponseEntity<>(reviewService.createReview(createRequest, userId, image), HttpStatus.CREATED);
     }
 

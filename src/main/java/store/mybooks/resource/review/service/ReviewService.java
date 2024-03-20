@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.repotisory.BookRepository;
+import store.mybooks.resource.image.entity.Image;
 import store.mybooks.resource.image.repository.ImageRepository;
 import store.mybooks.resource.image.service.ImageService;
 import store.mybooks.resource.image_status.entity.ImageStatus;
@@ -103,7 +104,8 @@ public class ReviewService {
     }
 
     @Transactional
-    public ReviewModifyResponse modifyReview(Long userId, Long reviewId, ReviewModifyRequest modifyRequest) {
+    public ReviewModifyResponse modifyReview(Long userId, Long reviewId, ReviewModifyRequest modifyRequest,MultipartFile modifyImage)
+            throws IOException {
 
         if (!userRepository.existsById(userId)) {
             throw new UserNotExistException(userId);
@@ -111,6 +113,17 @@ public class ReviewService {
 
         Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new ReviewNotExistException(reviewId));
         review.modifyReview(modifyRequest.getRate(), modifyRequest.getTitle(), modifyRequest.getContent());
+
+        if (Objects.nonNull(modifyImage)) {
+            ImageStatus imageStatus = imageStatusRepository.findById(ImageStatusEnum.REVIEW.getName()).orElseThrow(
+                    () -> new ImageStatusNotExistException("리뷰 이미지 상태 없음."));
+
+            Image image = imageService.getReviewImage(reviewId);
+
+            imageService.deleteObject(image.getId());
+            imageService.saveImage(imageStatus, review, null, modifyImage);
+        }
+
         return reviewMapper.toReviewModifyResponse(review);
     }
 
