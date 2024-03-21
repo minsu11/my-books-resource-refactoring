@@ -126,7 +126,7 @@ public class UserCouponService {
     /**
      * methodName : getUserCoupon <br>
      * author : minsu11 <br>
-     * description : id로 쿠폰 조회<br>
+     * description : id로 쿠폰 조회.<br>
      *
      * @param userCouponId the coupon user id
      * @return the user coupon
