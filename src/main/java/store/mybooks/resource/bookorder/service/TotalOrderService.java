@@ -88,9 +88,12 @@ public class TotalOrderService {
     @Transactional
     public PayCreateResponse payUser(PayCreateRequest request, Long userId) {
         BookOrderInfoPayResponse bookOrderInfo = bookOrderService.getBookInfo(request.getOrderNumber());
+
         checkBookStock(bookOrderInfo.getOrderDetails());
+
         PayCreateResponse response = paymentService.createPayment(request);
         calculateBookStock(bookOrderInfo.getOrderDetails());
+        // 재고 처리
         useCouponProcessing(bookOrderInfo);
         usePointProcessing(bookOrderInfo, userId);
         earnPoint(bookOrderInfo, userId);
@@ -180,6 +183,7 @@ public class TotalOrderService {
      *
      * @param orderDetailInfoList the order detail info list
      */
+
     public void calculateBookStock(List<OrderDetailInfoResponse> orderDetailInfoList) {
         for (OrderDetailInfoResponse orderDetail : orderDetailInfoList) {
             bookService.updateBookStock(orderDetail.getId(), orderDetail.getAmount());

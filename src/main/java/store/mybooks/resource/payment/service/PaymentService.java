@@ -69,6 +69,7 @@ public class PaymentService {
                         .type(request.getMethod())
                         .status(request.getStatus())
                         .build();
+
         return paymentMapper.mapToPayCreateRequest(paymentRepository.save(payment));
     }
 

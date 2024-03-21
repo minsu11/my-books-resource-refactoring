@@ -204,7 +204,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                                 review.count(), // 리뷰의 수
                                 book.originalCost,
                                 book.saleCost))
-                        .groupBy(book.id,image)
+                        .groupBy(book.id, image)
                         .where(bookStatus.id.in("판매중", "재고없음"))
                         .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
                         .offset(pageable.getOffset())
@@ -230,8 +230,20 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     @Override
     public BookResponseForOrder getBookForOrder(Long bookId) {
         return from(book)
-                .select(Projections.constructor(BookResponseForOrder.class, book.name, book.saleCost, book.originalCost,
-                        book.discountRate, book.isPackaging, book.stock))
+                .join(image)
+                .on(image.book.eq(book))
+                .join(image.imageStatus, imageStatus)
+                .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
+                .select(Projections.constructor(
+                        BookResponseForOrder.class,
+                        book.id,
+                        book.name,
+                        image.path.concat(image.fileName).concat(image.extension),
+                        book.saleCost,
+                        book.originalCost,
+                        book.discountRate,
+                        book.isPackaging,
+                        book.stock))
                 .where(book.id.eq(bookId))
                 .fetchOne();
     }
