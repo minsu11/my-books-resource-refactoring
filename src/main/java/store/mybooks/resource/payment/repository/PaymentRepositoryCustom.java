@@ -19,5 +19,5 @@ import store.mybooks.resource.payment.entity.Payment;
 public interface PaymentRepositoryCustom {
     Optional<Payment> findByOrderNumber(String orderNumber);
 
-    Boolean existPaymentByOrderNumber(String orderNumber);
+    boolean existPaymentByOrderNumber(String orderNumber);
 }

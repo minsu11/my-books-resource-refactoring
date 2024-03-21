@@ -3,7 +3,6 @@ package store.mybooks.resource.payment.service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +32,6 @@ import store.mybooks.resource.user.repository.UserRepository;
  * -----------------------------------------------------------<br>
  * 3/19/24        minsu11       최초 생성<br>
  */
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
@@ -42,12 +40,20 @@ public class PaymentService {
     private final UserRepository userRepository;
     private final PaymentMapper paymentMapper;
 
+    /**
+     * methodName : createPayment<br>
+     * author : minsu11<br>
+     * description : 결제 정보 저장. {@code Roll Back}시 성공한 결제 정보는 저장.
+     * <br>
+     *
+     * @param request the request
+     * @return the pay create response
+     */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public PayCreateResponse createPayment(PayCreateRequest request) {
         if (paymentRepository.existPaymentByOrderNumber(request.getOrderNumber())) {
             throw new PaymentAlreadyExistException();
         }
-
         BookOrder bookOrder = bookOrderRepository.findByNumber(request.getOrderNumber())
                 .orElseThrow(BookOrderNotExistException::new);
         User user = userRepository.findById(bookOrder.getUser().getId()).orElseThrow(() -> new UserNotExistException(bookOrder.getUser().getId()));
@@ -63,7 +69,6 @@ public class PaymentService {
                         .type(request.getMethod())
                         .status(request.getStatus())
                         .build();
-
         return paymentMapper.mapToPayCreateRequest(paymentRepository.save(payment));
     }
 

@@ -56,11 +56,13 @@ public class TotalOrderService {
     private final PointRuleService pointRuleService;
     private final UserCouponService userCouponService;
 
-
     /**
-     * 주문서를 만드는 통합 메서드.
+     * methodName : createOrder<br>
+     * author : minsu11<br>
+     * description : 주문서를 만드는 통합 메서드.
+     * <br> *
      *
-     * @param request the request
+     * @param request 등록할 도서 주문 정보
      * @param userId  the user id
      * @return the book order create response
      */
@@ -76,7 +78,10 @@ public class TotalOrderService {
     }
 
     /**
-     * 결제 승인 된 후 DB에 결제 정보 및 주문 쿠폰, 포인트에 대한 처리.
+     * methodName : payUser<br>
+     * author : minsu11<br>
+     * description : 결제 승인 된 후 DB에 결제 정보 및 주문 쿠폰, 포인트, 재고 처리.
+     * <br>
      *
      * @param request the request
      * @param userId  the user id
@@ -85,25 +90,22 @@ public class TotalOrderService {
     @Transactional
     public PayCreateResponse payUser(PayCreateRequest request, Long userId) {
         BookOrderInfoPayResponse bookOrderInfo = bookOrderService.getBookInfo(request.getOrderNumber());
-        log.debug("재고 확인 전");
         checkBookStock(bookOrderInfo.getOrderDetails());
-        log.debug("재고 확인 후");
         PayCreateResponse response = paymentService.createPayment(request);
-        //재고 처리
         calculateBookStock(bookOrderInfo.getOrderDetails());
-        // 쿠폰 처리
         useCouponProcessing(bookOrderInfo);
-        log.debug("쿠폰 확인 후");
         usePointProcessing(bookOrderInfo, userId);
         earnPoint(bookOrderInfo, userId);
-        // 주문 상태 변경
         bookOrderService.updateBookOrderStatus(bookOrderInfo.getNumber(), BookOrderStatusName.ORDER_COMPLETED);
         return response;
     }
 
 
     /**
-     * Use coupon processing.
+     * methodName : useCouponProcessing<br>
+     * author : minsu11<br>
+     * description : 개별이거나 전체 쿠폰에 대한 처리.
+     * <br>
      *
      * @param bookOrder the book order
      */
@@ -119,7 +121,10 @@ public class TotalOrderService {
     }
 
     /**
-     * Earn point.
+     * methodName : earnPoint<br>
+     * author : minsu11<br>
+     * description : 포인트 적립 규정에 따른 포인트 적립.
+     * <br>
      *
      * @param bookOrder the book order
      * @param userId    the user id
@@ -134,7 +139,10 @@ public class TotalOrderService {
     }
 
     /**
-     * 사용한 포인트 처리.
+     * methodName : usePointProcessing<br>
+     * author : minsu11<br>
+     * description : 포인트 사용 처리.
+     * <br>
      *
      * @param bookOrder the book order
      * @param userId    the user id
@@ -150,7 +158,10 @@ public class TotalOrderService {
     }
 
     /**
-     * 책 주문량과 재고 량 비교 체크.
+     * methodName : usePointProcessing<br>
+     * author : minsu11<br>
+     * description :  책 주문량과 재고 량 비교 체크.
+     * <br>
      *
      * @param orderDetailInfoList the order detail info list
      */
@@ -164,7 +175,10 @@ public class TotalOrderService {
     }
 
     /**
-     * Calculate book stock.
+     * methodName : calculateBookStock<br>
+     * author : minsu11<br>
+     * description : 재고 계산 처리.
+     * <br>
      *
      * @param orderDetailInfoList the order detail info list
      */

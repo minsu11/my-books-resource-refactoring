@@ -57,7 +57,10 @@ public class OrderDetailService {
 
 
     /**
-     * 상품에서 바로구매 했을 경우 주문 상세 등록.
+     * methodName : createOrderDetail<br>
+     * author : minsu11<br>
+     * description : 상품에서 바로구매 했을 경우 주문 상세 등록.
+     * <br>
      *
      * @param request the request
      * @param number  the number
@@ -104,7 +107,10 @@ public class OrderDetailService {
     }
 
     /**
-     * 장바구니를 통한 주문.
+     * methodName : createOrderDetailList<br>
+     * author : minsu11<br>
+     * description : 상세 주문 목록 생성.
+     * <br>
      *
      * @param request the request
      * @param number  the number
@@ -112,16 +118,22 @@ public class OrderDetailService {
      */
     public List<OrderDetailCreateResponse> createOrderDetailList(List<BookInfoRequest> request, String number) {
         List<OrderDetailCreateResponse> orderDetailList = new ArrayList<>();
-        log.debug("주문 상세 데이터 : {}", request);
-        log.debug("주문 번호: {}", number);
         for (int i = 0; i < request.size(); i++) {
-
             OrderDetailCreateResponse response = createOrderDetail(request.get(i), number);
             orderDetailList.add(response);
         }
         return orderDetailList;
     }
 
+    /**
+     * methodName : getOrderDetails<br>
+     * author : minsu11<br>
+     * description : 주문 번호로 상세 주문 목록 조회.
+     * <br>
+     *
+     * @param orderNumber the order number
+     * @return the order details
+     */
     public List<OrderDetailInfoResponse> getOrderDetails(String orderNumber) {
         return orderDetailRepository.getOrderDetailListByOrderNumber(orderNumber);
     }
