@@ -116,6 +116,8 @@ public class PointHistoryService {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
         LocalDate latestLoginDate = user.getLatestLogin().toLocalDate();
 
+        System.out.println(latestLoginDate);
+
         if (!latestLoginDate.isBefore(LocalDate.now())) {
             return false;
         }
@@ -137,16 +139,17 @@ public class PointHistoryService {
      * author : damho-lee <br>
      * description : 회원가입 포인트 적립.<br>
      *
-     * @param userId 회원아이디
+     * @param email 회원아이디
      */
-    public void saveSignUpPoint(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
-        if (pointHistoryRepository.isAlreadyReceivedSignUpPoint(userId)) {
+    public void saveSignUpPoint(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistException(email));
+        if (pointHistoryRepository.isAlreadyReceivedSignUpPoint(email)) {
             throw new AlreadyReceivedSignUpPoint();
         }
 
         PointRule pointRule = pointRuleRepository.findPointRuleByPointRuleName("회원가입 적립")
                 .orElseThrow(PointRuleNotExistException::new);
+
         pointHistoryRepository.save(new PointHistory(
                 pointRule.getCost(),
                 user,
