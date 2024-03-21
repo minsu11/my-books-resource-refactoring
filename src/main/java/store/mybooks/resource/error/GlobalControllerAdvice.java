@@ -15,13 +15,10 @@ import store.mybooks.resource.coupon.exception.CouponCannotDeleteException;
 import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotExistsException;
 import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameAlreadyExistsException;
 import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotExistsException;
-<<<<<<< HEAD
 import store.mybooks.resource.orderdetailstatus.exception.OrderDetailStatusAlreadyExistException;
 import store.mybooks.resource.orderdetailstatus.exception.OrderDetailStatusNotFoundException;
 import store.mybooks.resource.payment.exception.PaymentAlreadyExistException;
-=======
 import store.mybooks.resource.pointhistory.exception.AlreadyReceivedSignUpPoint;
->>>>>>> dev
 import store.mybooks.resource.publisher.exception.PublisherAlreadyExistException;
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
 import store.mybooks.resource.tag.exception.TagNameAlreadyExistsException;
@@ -80,11 +77,8 @@ public class GlobalControllerAdvice {
     @ExceptionHandler({CategoryNameAlreadyExistsException.class, TagNameAlreadyExistsException.class,
             PublisherAlreadyExistException.class, DeliveryRuleNameAlreadyExistsException.class,
             IsbnAlreadyExistsException.class, UserAlreadyExistException.class, UserAddressAlreadyExistException.class,
-<<<<<<< HEAD
-            PaymentAlreadyExistException.class, OrderDetailStatusAlreadyExistException.class})
-=======
+            PaymentAlreadyExistException.class, OrderDetailStatusAlreadyExistException.class,
             AlreadyReceivedSignUpPoint.class})
->>>>>>> dev
     public ResponseEntity<String> xxxAlreadyExistsException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
