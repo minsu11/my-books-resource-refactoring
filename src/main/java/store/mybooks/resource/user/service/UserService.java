@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import store.mybooks.resource.pointhistory.service.PointHistoryService;
 import store.mybooks.resource.user.dto.mapper.UserMapper;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.request.UserEmailRequest;
@@ -67,6 +68,7 @@ public class UserService {
 
     private final UserMapper userMapper;
 
+    private final PointHistoryService pointHistoryService;
 
     /**
      * methodName : createUser
@@ -130,6 +132,7 @@ public class UserService {
 
         if (user.isPresent()) { // 이미 있으면 = 회원가입한 회원이면
             User existUser = user.get();
+            pointHistoryService.saveLoginPoint(existUser.getId());
             existUser.modifyLatestLogin();
             return new UserLoginResponse(true, existUser.getIsAdmin(), existUser.getId(),
                     existUser.getUserStatus().getId()); // 로그인 response 보내기
@@ -297,6 +300,8 @@ public class UserService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(UserLoginFailException::new);
 
+        System.out.println("시작");
+        pointHistoryService.saveLoginPoint(user.getId());
         user.modifyLatestLogin();
 
         return new UserLoginResponse(true, user.getIsAdmin(), user.getId(), user.getUserStatus().getId());

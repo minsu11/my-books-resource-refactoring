@@ -1,7 +1,7 @@
 package store.mybooks.resource.user.controller;
 
 import javax.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.config.HeaderProperties;
 import store.mybooks.resource.error.Utils;
+import store.mybooks.resource.pointhistory.service.PointHistoryService;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.request.UserEmailRequest;
 import store.mybooks.resource.user.dto.request.UserGradeModifyRequest;
@@ -51,12 +52,15 @@ import store.mybooks.resource.user.service.UserService;
  * 2/13/24        masiljangajji       최초 생성
  */
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/users")
 public class UserRestController {
 
 
     private final UserService userService;
+
+    private final PointHistoryService pointHistoryService;
+
 
 
     /**
@@ -74,7 +78,7 @@ public class UserRestController {
         Utils.validateRequest(bindingResult);
 
         UserCreateResponse createResponse = userService.createUser(createRequest);
-
+        pointHistoryService.saveSignUpPoint(createResponse.getEmail());
         return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
     }
 
@@ -84,7 +88,6 @@ public class UserRestController {
             @Valid @RequestBody UserOauthLoginRequest loginRequest, BindingResult bindingResult) {
 
         Utils.validateRequest(bindingResult);
-
         UserLoginResponse loginResponse = userService.loginOauthUser(loginRequest);
         return new ResponseEntity<>(loginResponse, HttpStatus.OK);
     }
@@ -95,6 +98,8 @@ public class UserRestController {
 
         Utils.validateRequest(bindingResult);
         UserOauthCreateResponse createResponse = userService.createOauthUser(createRequest);
+        pointHistoryService.saveSignUpPoint(createResponse.getEmail());
+
         return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
     }
 
