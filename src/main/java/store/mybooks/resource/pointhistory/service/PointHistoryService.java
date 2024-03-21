@@ -1,5 +1,6 @@
 package store.mybooks.resource.pointhistory.service;
 
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import store.mybooks.resource.pointhistory.dto.response.PointHistoryCreateRespon
 import store.mybooks.resource.pointhistory.dto.response.PointHistoryResponse;
 import store.mybooks.resource.pointhistory.dto.response.PointResponse;
 import store.mybooks.resource.pointhistory.entity.PointHistory;
+import store.mybooks.resource.pointhistory.exception.AlreadyReceivedSignUpPoint;
 import store.mybooks.resource.pointhistory.repository.PointHistoryRepository;
 import store.mybooks.resource.pointrule.entity.PointRule;
 import store.mybooks.resource.pointrule.exception.PointRuleNotExistException;
@@ -86,7 +88,6 @@ public class PointHistoryService {
      * @return the point history create response
      */
     public PointHistoryCreateResponse createPointHistory(PointHistoryCreateRequest request, Long userId) {
-        System.out.println(request.getPointName());
         PointRuleName pointRulename = pointRuleNameRepository.findById(request.getPointName())
                 .orElseThrow(PointRuleNotExistException::new);
 
@@ -103,4 +104,54 @@ public class PointHistoryService {
         return pointHistoryMapper.mapToPointHistoryCreateResponse(pointHistoryRepository.save(pointHistory));
     }
 
+    /**
+     * methodName : saveLoginPoint <br>
+     * author : damho-lee <br>
+     * description : 날마다 첫 로그인 시 포인트 적립.<br>
+     *
+     * @param userId Long
+     * @return boolean
+     */
+    public boolean saveLoginPoint(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
+        LocalDate latestLoginDate = user.getLatestLogin().toLocalDate();
+
+        if (!latestLoginDate.isBefore(LocalDate.now())) {
+            return false;
+        }
+
+        PointRule pointRule = pointRuleRepository.findPointRuleByPointRuleName("로그인 적립")
+                .orElseThrow(PointRuleNotExistException::new);
+        pointHistoryRepository.save(new PointHistory(
+                pointRule.getCost(),
+                user,
+                pointRule,
+                null
+        ));
+
+        return true;
+    }
+
+    /**
+     * methodName : saveSignUpPoint <br>
+     * author : damho-lee <br>
+     * description : 회원가입 포인트 적립.<br>
+     *
+     * @param userId 회원아이디
+     */
+    public void saveSignUpPoint(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
+        if (pointHistoryRepository.isAlreadyReceivedSignUpPoint(userId)) {
+            throw new AlreadyReceivedSignUpPoint();
+        }
+
+        PointRule pointRule = pointRuleRepository.findPointRuleByPointRuleName("회원가입 적립")
+                .orElseThrow(PointRuleNotExistException::new);
+        pointHistoryRepository.save(new PointHistory(
+                pointRule.getCost(),
+                user,
+                pointRule,
+                null
+        ));
+    }
 }

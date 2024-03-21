@@ -1,9 +1,21 @@
 package store.mybooks.resource.review.entity;
 
 import java.time.LocalDate;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import store.mybooks.resource.orderdetail.entity.OrderDetail;
 import store.mybooks.resource.user.entity.User;
+import store.mybooks.resource.utils.TimeUtils;
 
 /**
  * packageName    : store.mybooks.resource.review.entity
@@ -18,6 +30,8 @@ import store.mybooks.resource.user.entity.User;
  */
 
 @Entity
+@Getter
+@NoArgsConstructor
 @Table(name = "review")
 public class Review {
 
@@ -46,5 +60,19 @@ public class Review {
     @Column(name = "review_content")
     private String content;
 
+    public Review(User user, OrderDetail orderDetail, Integer rate, String title, String content) {
+        this.user = user;
+        this.orderDetail = orderDetail;
+        this.rate = rate;
+        this.title = title;
+        this.content = content;
+        this.date = TimeUtils.nowDate();
+    }
+
+    public void modifyReview(Integer rate, String title, String content) {
+        this.rate = rate;
+        this.title = title;
+        this.content = content;
+    }
 
 }

@@ -7,11 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
-import store.mybooks.resource.bookorder.entity.QBookOrder;
 import store.mybooks.resource.pointhistory.dto.response.PointHistoryResponse;
 import store.mybooks.resource.pointhistory.dto.response.PointResponse;
 import store.mybooks.resource.pointhistory.entity.PointHistory;
 import store.mybooks.resource.pointhistory.entity.QPointHistory;
+import store.mybooks.resource.pointrule.entity.QPointRule;
 
 /**
  * packageName    : store.mybooks.resource.point_history.repository<br>
@@ -42,17 +42,14 @@ public class PointHistoryRepositoryImpl extends QuerydslRepositorySupport implem
 
     @Override
     public Page<PointHistoryResponse> getPointHistoryByUserId(Pageable pageable, Long userId) {
-        QBookOrder bookOrder = QBookOrder.bookOrder;
-
         List<PointHistoryResponse> pointHistoryResponses =
                 from(pointHistory)
+                        .where(pointHistory.user.id.eq(userId))
+                        .orderBy(pointHistory.createdDate.desc())
                         .select(Projections.constructor(PointHistoryResponse.class,
-                                bookOrder.number,
                                 pointHistory.pointRule.pointRuleName.id,
                                 pointHistory.pointStatusCost,
                                 pointHistory.createdDate))
-                        .leftJoin(pointHistory.bookOrder, bookOrder)
-                        .where(pointHistory.user.id.eq(userId))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .fetch();
@@ -62,5 +59,20 @@ public class PointHistoryRepositoryImpl extends QuerydslRepositorySupport implem
                 .fetchCount();
 
         return new PageImpl<>(pointHistoryResponses, pageable, total);
+    }
+
+    @Override
+    public boolean isAlreadyReceivedSignUpPoint(Long userId) {
+        QPointRule pointRule = QPointRule.pointRule;
+
+        List<Long> pointHistoryIdList = from(pointHistory)
+                .leftJoin(pointRule)
+                .on(pointHistory.pointRule.id.eq(pointRule.id))
+                .where(pointHistory.user.id.eq(userId))
+                .where(pointRule.pointRuleName.id.eq("회원가입 적립"))
+                .select(pointHistory.id)
+                .fetch();
+
+        return !pointHistoryIdList.isEmpty();
     }
 }
