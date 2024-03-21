@@ -18,4 +18,6 @@ import store.mybooks.resource.image.entity.Image;
 public interface ImageRepository extends JpaRepository<Image, Long> {
     Optional<Image> findImageByBook_IdAndImageStatus_Id(Long bookId, String imageStatusId);
 
+    Optional<Image> findImageByReviewIdAndImageStatusId(Long reviewId, String imageStatusId);
+
 }

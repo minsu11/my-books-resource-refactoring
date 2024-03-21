@@ -25,6 +25,8 @@ public class UserAddressModifyResponse {
 
     private String detail;
 
+    private String reference;
+
 
 
 }

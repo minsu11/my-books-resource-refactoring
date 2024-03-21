@@ -2,6 +2,7 @@ package store.mybooks.resource.review.repository;
 
 import com.querydsl.core.types.Projections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -13,6 +14,7 @@ import store.mybooks.resource.image_status.entity.QImageStatus;
 import store.mybooks.resource.orderdetail.entity.QOrderDetail;
 import store.mybooks.resource.review.dto.response.ReviewDetailGetResponse;
 import store.mybooks.resource.review.dto.response.ReviewGetResponse;
+import store.mybooks.resource.review.dto.response.ReviewRateResponse;
 import store.mybooks.resource.review.entity.QReview;
 import store.mybooks.resource.review.entity.Review;
 import store.mybooks.resource.user.entity.QUser;
@@ -52,27 +54,16 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
 
 
         List<ReviewGetResponse> lists = from(user)
-                .leftJoin(review)
+                .join(review)
                 .on(review.user.eq(user))
-                .leftJoin(orderDetail)
+                .join(orderDetail)
                 .on(orderDetail.eq(review.orderDetail))
-                .leftJoin(book)
+                .join(book)
                 .on(orderDetail.book.eq(book))
                 .leftJoin(image)
                 .on(image.review.eq(review))
                 .where(
                         user.id.eq(userId)
-                                .or(book.id.isNotNull())
-                                .or(book.name.isNotNull())
-                                .or(review.id.isNotNull())
-                                .or(user.name.isNotNull())
-                                .or(review.rate.isNotNull())
-                                .or(review.date.isNotNull())
-                                .or(review.title.isNotNull())
-                                .or(review.content.isNotNull())
-                                .or(image.path.isNotNull())
-                                .or(image.fileName.isNotNull())
-                                .or(image.extension.isNotNull())
                 )
                 .select(Projections.constructor(
                         ReviewGetResponse.class,
@@ -85,8 +76,7 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
                         review.title,
                         review.content,
                         image.path.concat(image.fileName).concat(image.extension)
-                )).groupBy(review, image, book)
-                .distinct()
+                )).groupBy(review, image, book, user)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -104,25 +94,15 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
 
 
         List<ReviewDetailGetResponse> lists = from(book)
-                .leftJoin(orderDetail)
+                .join(orderDetail)
                 .on(orderDetail.book.eq(book))
                 .join(review)
                 .on(orderDetail.eq(review.orderDetail))
-                .leftJoin(user)
+                .join(user)
                 .on(user.eq(review.user))
                 .leftJoin(image)
                 .on(image.review.eq(review))
-                .where(book.id.eq(bookId)
-                        .or(review.id.isNotNull())
-                        .or(user.name.isNotNull())
-                        .or(review.rate.isNotNull())
-                        .or(review.date.isNotNull())
-                        .or(review.title.isNotNull())
-                        .or(review.content.isNotNull())
-                        .or(image.path.isNotNull())
-                        .or(image.fileName.isNotNull())
-                        .or(image.extension.isNotNull())
-                )
+                .where(book.id.eq(bookId))
                 .select(Projections.constructor(
                         ReviewDetailGetResponse.class,
                         review.id,
@@ -133,16 +113,15 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
                         review.content,
                         image.path.concat(image.fileName).concat(image.extension)
                 )).groupBy(image, user, review)
-                .distinct()
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
 
         long total = from(review)
-                .leftJoin(orderDetail)
+                .join(orderDetail)
                 .on(review.orderDetail.eq(orderDetail))
-                .leftJoin(book)
+                .join(book)
                 .on(orderDetail.book.eq(book))
                 .where(book.id.eq(bookId))
                 .fetchCount();
@@ -155,13 +134,15 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
     public Optional<ReviewGetResponse> getReview(Long reviewId) {
 
 
-        List<ReviewGetResponse> response = from(review)
+        ReviewGetResponse response = from(review)
                 .leftJoin(image)
                 .on(image.review.eq(review))
-                .leftJoin(orderDetail)
+                .join(orderDetail)
                 .on(orderDetail.eq(review.orderDetail))
-                .leftJoin(book)
+                .join(book)
                 .on(orderDetail.book.eq(book))
+                .join(user)
+                .on(user.eq(review.user))
                 .where(review.id.eq(reviewId))
                 .select(Projections.constructor(
                         ReviewGetResponse.class,
@@ -175,9 +156,33 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
                         review.content,
                         image.path.concat(image.fileName).concat(image.extension)
                 ))
-                .fetch();
+                .groupBy(review, user, image, book)
+                .fetchOne();
 
 
-        return Optional.of(response.get(0));
+        return Optional.of(response);
+    }
+
+    @Override
+    public ReviewRateResponse getReviewRate(Long bookId) {
+
+
+        ReviewRateResponse response = from(review)
+                .join(review.orderDetail, orderDetail)
+                .join(orderDetail.book, book)
+                .where(book.id.eq(bookId))
+                .select(Projections.constructor(
+                        ReviewRateResponse.class,
+                        review.count(),
+                        review.rate.avg().coalesce(0.0) // 평균 평점
+                ))
+                .groupBy(book)
+                .fetchOne();
+
+        if (Objects.isNull(response)) {
+            return new ReviewRateResponse(0L, 0.0);
+        }
+
+        return response;
     }
 }

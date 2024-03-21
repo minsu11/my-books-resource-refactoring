@@ -28,5 +28,8 @@ public class UserAddressModifyRequest {
     @NotBlank
     private String detail;
 
+    @NotBlank
+    private String reference;
+
 
 }
