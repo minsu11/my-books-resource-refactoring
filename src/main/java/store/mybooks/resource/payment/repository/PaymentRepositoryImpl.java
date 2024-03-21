@@ -33,7 +33,7 @@ public class PaymentRepositoryImpl extends QuerydslRepositorySupport implements 
     }
 
     @Override
-    public Boolean existPaymentByOrderNumber(String orderNumber) {
+    public boolean existPaymentByOrderNumber(String orderNumber) {
 
         return from(payment)
                 .where(payment.bookOrder.number.eq(orderNumber))
