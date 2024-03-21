@@ -3,6 +3,7 @@ package store.mybooks.resource.usercoupon.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -49,7 +50,9 @@ import store.mybooks.resource.usercoupon.dto.request.UserCouponCreateRequest;
 import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForMyPage;
 import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForOrder;
 import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForOrderQuerydsl;
+import store.mybooks.resource.usercoupon.exception.UserCouponAlreadyUsedException;
 import store.mybooks.resource.usercoupon.exception.UserCouponNotExistsException;
+import store.mybooks.resource.usercoupon.exception.UserCouponNotUsedException;
 import store.mybooks.resource.usercoupon.service.UserCouponService;
 import store.mybooks.resource.utils.TimeUtils;
 
@@ -368,20 +371,53 @@ class UserCouponRestControllerTest {
     }
 
     @Test
-    @DisplayName("회원 쿠폰 생성 - Validation 실패")
+    @DisplayName("회원 쿠폰 생성 - Validation 실패(userId)")
     void givenWrongUserCouponCreateRequest_whenCreateUserCoupon_thenThrowRequestValidationFailedException()
             throws Exception {
         UserCouponCreateRequest userCouponCreateRequest = new UserCouponCreateRequest();
         ReflectionTestUtils.setField(userCouponCreateRequest, "userId", -1L);
         ReflectionTestUtils.setField(userCouponCreateRequest, "couponId", 1L);
-        String content = objectMapper.writeValueAsString(userCouponCreateRequest);
+        String userIdNegative = objectMapper.writeValueAsString(userCouponCreateRequest);
+
+        ReflectionTestUtils.setField(userCouponCreateRequest, "userId", null);
+        String userIdNull = objectMapper.writeValueAsString(userCouponCreateRequest);
 
         mockMvc.perform(post("/api/user-coupon")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(content))
-                .andExpect(status().isBadRequest());
+                        .content(userIdNegative))
+                .andExpect(status().isBadRequest())
+                .andDo(document("user_coupon-create-fail-validation-userIdNegative"));
+
+        mockMvc.perform(post("/api/user-coupon")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userIdNull))
+                .andExpect(status().isBadRequest())
+                .andDo(document("user_coupon-create-fail-validation-userIdNull"));
 
         verify(userCouponService, times(0)).createUserCoupon(any());
+    }
+
+    @Test
+    @DisplayName("회원 쿠폰 생성 실패 - Validation 실패(couponId)")
+    void givenInvalidUserId_whenCreateUserCoupon_thenThrowValidationException() throws Exception {
+        UserCouponCreateRequest userCouponCreateRequest = new UserCouponCreateRequest();
+        ReflectionTestUtils.setField(userCouponCreateRequest, "userId", 1L);
+        ReflectionTestUtils.setField(userCouponCreateRequest, "couponId", -1L);
+        String couponIdNegative = objectMapper.writeValueAsString(userCouponCreateRequest);
+        ReflectionTestUtils.setField(userCouponCreateRequest, "couponId", null);
+        String couponIdNull = objectMapper.writeValueAsString(userCouponCreateRequest);
+
+        mockMvc.perform(post("/api/user-coupon")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(couponIdNegative))
+                .andExpect(status().isBadRequest())
+                .andDo(document("user_coupon-create-fail-validation-couponIdNegative"));
+
+        mockMvc.perform(post("/api/user-coupon")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(couponIdNull))
+                .andExpect(status().isBadRequest())
+                .andDo(document("user_coupon-create-fail-validation-couponIdNull"));
     }
 
     @Test
@@ -400,6 +436,21 @@ class UserCouponRestControllerTest {
     }
 
     @Test
+    @DisplayName("회원 쿠폰 사용 - 이미 사용한 쿠폰")
+    void givenAlreadyUsedUserCouponId_whenUseUserCoupon_thenModifyUserCoupon() throws Exception {
+        doThrow(new UserCouponAlreadyUsedException(1L)).when(userCouponService).useUserCoupon(anyLong());
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/user-coupon/use/{userCouponId}", 1L))
+                .andExpect(status().isNotFound())
+                .andDo(document("user_coupon-use-fail-alreadyUsedCoupon",
+                        pathParameters(
+                                parameterWithName("userCouponId").description("회원 쿠폰 아이디")
+                        )));
+
+        verify(userCouponService, times(1)).useUserCoupon(anyLong());
+    }
+
+    @Test
     @DisplayName("회원 쿠폰 돌려줌")
     void givenUserCouponId_whenGiveBackUserCoupon_thenModifyUserCoupon() throws Exception {
         doNothing().when(userCouponService).giveBackUserCoupon(anyLong());
@@ -407,6 +458,21 @@ class UserCouponRestControllerTest {
         mockMvc.perform(RestDocumentationRequestBuilders.put("/api/user-coupon/return/{userCouponId}", 1L))
                 .andExpect(status().isOk())
                 .andDo(document("user-coupon-use",
+                        pathParameters(
+                                parameterWithName("userCouponId").description("회원 쿠폰 아이디")
+                        )));
+
+        verify(userCouponService, times(1)).giveBackUserCoupon(anyLong());
+    }
+
+    @Test
+    @DisplayName("회원 쿠폰 돌려줌 - 사용하지 않은 쿠폰")
+    void givenNotUsedUserCouponId_whenUseUserCoupon_thenModifyUserCoupon() throws Exception {
+        doThrow(new UserCouponNotUsedException(1L)).when(userCouponService).giveBackUserCoupon(anyLong());
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/user-coupon/return/{userCouponId}", 1L))
+                .andExpect(status().isNotFound())
+                .andDo(document("user_coupon-use-fail-notUsedCoupon",
                         pathParameters(
                                 parameterWithName("userCouponId").description("회원 쿠폰 아이디")
                         )));

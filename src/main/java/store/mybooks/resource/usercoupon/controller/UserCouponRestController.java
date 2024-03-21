@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.config.HeaderProperties;
-import store.mybooks.resource.error.RequestValidationFailedException;
+import store.mybooks.resource.error.Utils;
 import store.mybooks.resource.usercoupon.dto.request.UserCouponCreateRequest;
 import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForMyPage;
 import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForOrder;
@@ -105,9 +105,7 @@ public class UserCouponRestController {
     @PostMapping
     public ResponseEntity<Void> createUserCoupon(@Valid @RequestBody UserCouponCreateRequest request,
                                                  BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new RequestValidationFailedException(bindingResult);
-        }
+        Utils.validateRequest(bindingResult);
 
         userCouponService.createUserCoupon(request);
 

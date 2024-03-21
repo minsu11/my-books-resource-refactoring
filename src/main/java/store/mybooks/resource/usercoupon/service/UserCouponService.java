@@ -163,7 +163,6 @@ public class UserCouponService {
      *
      * @param id Long
      */
-    @Transactional
     public void useUserCoupon(Long id) {
         UserCoupon userCoupon =
                 userCouponRepository.findById(id).orElseThrow(() -> new UserCouponNotExistsException(id));
@@ -178,7 +177,6 @@ public class UserCouponService {
      * @param id Long
      */
     public void giveBackUserCoupon(Long id) {
-
         UserCoupon userCoupon =
                 userCouponRepository.findById(id).orElseThrow(() -> new UserCouponNotExistsException(id));
         userCoupon.giveBack();

@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,7 +18,6 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -62,6 +62,9 @@ import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
 import store.mybooks.resource.category.dto.response.CategoryIdNameGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
+import store.mybooks.resource.category.exception.CannotDeleteParentCategoryException;
+import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
+import store.mybooks.resource.category.exception.CategoryNotExistsException;
 import store.mybooks.resource.category.exception.CategoryValidationException;
 import store.mybooks.resource.category.service.CategoryService;
 import store.mybooks.resource.image.dto.response.ImageResponse;
@@ -255,6 +258,17 @@ class CategoryRestControllerTest {
     }
 
     @Test
+    @DisplayName("ParentCategoryId 로 ChildCategoryList 가져오기 실패 - 존재하지 않는 카테고리")
+    void givenNotExistsCategoryId_whenGetCategoriesByParentCategoryId_thenThrowCategoryNotExistsException()
+            throws Exception {
+        doThrow(new CategoryNotExistsException(1)).when(categoryService).getCategoriesByParentCategoryId(anyInt());
+
+        mockMvc.perform(get("/api/categories/parentCategoryId/{id}", 1))
+                .andExpect(status().isNotFound())
+                .andDo(document("category-getCategoriesByParentCategoryId-fail-notExistsCategoryId"));
+    }
+
+    @Test
     @DisplayName("카테고리 수정을 위한 카테고리 가져오기")
     void givenCategoryId_whenGetCategoryUpdateForm_thenReturnCategoryGetResponseForUpdate() throws Exception {
         CategoryGetResponseForUpdate categoryGetResponseForUpdate = new CategoryGetResponseForUpdate(
@@ -283,6 +297,17 @@ class CategoryRestControllerTest {
                                 fieldWithPath("levelTwoCategoryName").description("2단계 카테고리 이름")
                         )
                 ));
+    }
+
+    @Test
+    @DisplayName("ParentCategoryId 로 ChildCategoryList 가져오기 실패 - 존재하지 않는 카테고리")
+    void givenNotExistsCategoryId_whenGetCategoryForUpdate_thenThrowCategoryNotExistsException()
+            throws Exception {
+        doThrow(new CategoryNotExistsException(1)).when(categoryService).getCategoryForUpdate(anyInt());
+
+        mockMvc.perform(get("/api/categories/categoryId/{id}", 1))
+                .andExpect(status().isNotFound())
+                .andDo(document("category-getCategoryForUpdate-fail-notExistsCategoryId"));
     }
 
     @Test
@@ -476,9 +501,25 @@ class CategoryRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content))
                 .andExpect(status().isBadRequest())
+                .andDo(document("category-create-fail-validation"))
                 .andReturn();
 
         assertThat(mvcResult.getResolvedException()).isInstanceOfAny(CategoryValidationException.class);
+    }
+
+    @Test
+    @DisplayName("카테고리 생성  실패- 이미 존재하는 카테고리 이름")
+    void givenAlreadyExistsCategoryName_whenCreateCategory_thenThrowCategoryNameAlreadyExistsException()
+            throws Exception {
+        doThrow(new CategoryNameAlreadyExistsException("IT")).when(categoryService).createCategory(any());
+        CategoryCreateRequest categoryCreateRequest = new CategoryCreateRequest(null, "IT");
+        String content = objectMapper.writeValueAsString(categoryCreateRequest);
+
+        mockMvc.perform(post("/api/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isNotFound())
+                .andDo(document("category-create-fail-alreadyExistsCategoryName"));
     }
 
     @Test
@@ -493,7 +534,7 @@ class CategoryRestControllerTest {
 
         String content = objectMapper.writeValueAsString(categoryModifyRequest);
 
-        mockMvc.perform(put("/api/categories/{id}", 1)
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/categories/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content))
                 .andExpect(status().isOk())
@@ -501,6 +542,9 @@ class CategoryRestControllerTest {
                 .andExpect(jsonPath("$.parentCategoryName").value(categoryModifyResponse.getParentCategoryName()))
                 .andExpect(jsonPath("$.name").value(categoryModifyResponse.getName()))
                 .andDo(document("category-modify",
+                        pathParameters(
+                                parameterWithName("id").description("수정하려는 카테고리 아이디")
+                        ),
                         requestFields(
                                 fieldWithPath("name").description("카테고리 이름")
                         ),
@@ -518,13 +562,41 @@ class CategoryRestControllerTest {
         CategoryModifyRequest categoryModifyRequest = new CategoryModifyRequest("   ");
         String content = objectMapper.writeValueAsString(categoryModifyRequest);
 
-        MvcResult mvcResult = mockMvc.perform(put("/api/categories/{id}", 1)
+        MvcResult mvcResult = mockMvc.perform(RestDocumentationRequestBuilders.put("/api/categories/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content))
                 .andExpect(status().isBadRequest())
+                .andDo(document("category-modify-fail-validation",
+                        pathParameters(
+                                parameterWithName("id").description("수정하려는 카테고리 아이디")
+                        ),
+                        requestFields(
+                                fieldWithPath("name").description("카테고리 이름")
+                        )))
                 .andReturn();
 
         assertThat(mvcResult.getResolvedException()).isInstanceOfAny(CategoryValidationException.class);
+    }
+
+    @Test
+    @DisplayName("카테고리 생성  실패 - 이미 존재하는 카테고리 이름")
+    void givenAlreadyExistsCategoryName_whenModifyCategory_thenThrowCategoryNameAlreadyExistsException()
+            throws Exception {
+        doThrow(new CategoryNameAlreadyExistsException("IT")).when(categoryService).modifyCategory(anyInt(), any());
+        CategoryModifyRequest categoryModifyRequest = new CategoryModifyRequest("IT");
+        String content = objectMapper.writeValueAsString(categoryModifyRequest);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/categories/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isNotFound())
+                .andDo(document("category-modify-fail-alreadyExistsCategoryName",
+                        pathParameters(
+                                parameterWithName("id").description("수정하려는 카테고리 아이디")
+                        ),
+                        requestFields(
+                                fieldWithPath("name").description("카테고리 이름")
+                        )));
     }
 
     @Test
@@ -544,6 +616,33 @@ class CategoryRestControllerTest {
                         ),
                         responseFields(
                                 fieldWithPath("name").description("카테고리 이름")
+                        )));
+    }
+
+    @Test
+    @DisplayName("카테고리 삭제 실패 - 존재하지 않는 카테고리")
+    void givenNotExistsCategoryId_whenDeleteCategory_thenThrowCategoryNotExistsException() throws Exception {
+        doThrow(new CategoryNotExistsException(1)).when(categoryService).deleteCategory(anyInt());
+
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/categories/{id}", 1))
+                .andExpect(status().isNotFound())
+                .andDo(document("category-delete-fail-notExistsCategoryId",
+                        pathParameters(
+                                parameterWithName("id").description("카테고리 ID")
+                        )));
+    }
+
+    @Test
+    @DisplayName("카테고리 삭제 실패 - 자식 카테고리가 있는 경우")
+    void givenCategoryIdThatHasChildCategory_whenDeleteCategory_thenThrowCannotDeleteParentCategoryException()
+            throws Exception {
+        doThrow(new CannotDeleteParentCategoryException()).when(categoryService).deleteCategory(anyInt());
+
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/categories/{id}", 1))
+                .andExpect(status().isBadRequest())
+                .andDo(document("category-delete-fail-hasChildCategory",
+                        pathParameters(
+                                parameterWithName("id").description("카테고리 ID")
                         )));
     }
 

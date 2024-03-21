@@ -3,6 +3,7 @@ package store.mybooks.resource.booktag.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -32,8 +33,10 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.booktag.dto.request.BookTagCreateRequest;
 import store.mybooks.resource.booktag.service.BookTagService;
+import store.mybooks.resource.tag.exception.TagNotExistsException;
 
 /**
  * packageName    : store.mybooks.resource.book_tag.controller
@@ -97,7 +100,12 @@ class BookTagRestControllerTest {
         mockMvc.perform(post("/api/book-tag")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andDo(document("book_tag-create-null-tagIdList",
+                        requestFields(
+                                fieldWithPath("bookId").description("도서 ID"),
+                                fieldWithPath("tagIdList").description("null 인 태그 ID 리스트")
+                        )));
     }
 
     @Test
@@ -114,23 +122,56 @@ class BookTagRestControllerTest {
         mockMvc.perform(post("/api/book-tag")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(contentBookIdIsZero))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andDo(document("book_tag-create-fail-bookId-zero"));
 
         mockMvc.perform(post("/api/book-tag")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(contentBookIdIsNegative))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andDo(document("book_tag-create-fail-bookId-negative"));
 
         mockMvc.perform(post("/api/book-tag")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(contentBookIdIsNull))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andDo(document("book_tag-create-fail-bookId-null"));
 
         verify(bookTagService, times(0)).createBookTag(any());
     }
 
     @Test
-    @DisplayName("deleteBookTag")
+    @DisplayName("Book-Tag 추가 실패 - Book 이 존재하지 않는 경우")
+    void givenNotExistsBookId_whenCreateBookTag_thenThrowBookNotExistsException() throws Exception {
+        BookTagCreateRequest bookTagCreateRequest = new BookTagCreateRequest(1L, List.of(1, 2, 3));
+        String content = objectMapper.writeValueAsString(bookTagCreateRequest);
+
+        doThrow(new BookNotExistException(1L)).when(bookTagService).createBookTag(any());
+
+        mockMvc.perform(post("/api/book-tag")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isNotFound())
+                .andDo(document("book_tag-create-fail-bookIdNotExists"));
+    }
+
+    @Test
+    @DisplayName("Book-Tag 추가 실패 - Book 이 존재하지 않는 경우")
+    void givenNotExistsTagId_whenCreateBookTag_thenThrowTagNotExistsException() throws Exception {
+        BookTagCreateRequest bookTagCreateRequest = new BookTagCreateRequest(1L, List.of(1, 2, 3));
+        String content = objectMapper.writeValueAsString(bookTagCreateRequest);
+
+        doThrow(new TagNotExistsException(1)).when(bookTagService).createBookTag(any());
+
+        mockMvc.perform(post("/api/book-tag")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isNotFound())
+                .andDo(document("book_tag-create-fail-tagIdNotExists"));
+    }
+
+    @Test
+    @DisplayName("BookTag 삭제")
     void givenBookId_whenDeleteBookTag_thenReturnStatusCodeOk() throws Exception {
         doNothing().when(bookTagService).deleteBookTag(anyLong());
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/book-tag/{bookId}", 1))
