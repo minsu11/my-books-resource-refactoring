@@ -43,6 +43,7 @@ public class ElasticRepositoryImpl implements ElasticRepositoryCustom {
         NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder()
                 .withQuery(queryBuilder)
                 .withPageable(pageable)
+                .withSort(pageable.getSort())
                 .build();
 
         SearchHits<Elastic> searchHits = elasticsearchOperations.search(nativeSearchQuery, Elastic.class);
