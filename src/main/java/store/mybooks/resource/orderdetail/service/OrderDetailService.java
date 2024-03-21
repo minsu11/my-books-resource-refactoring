@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.book.entity.Book;
@@ -15,6 +16,7 @@ import store.mybooks.resource.bookorder.exception.BookOrderNotExistException;
 import store.mybooks.resource.bookorder.repository.BookOrderRepository;
 import store.mybooks.resource.orderdetail.dto.mapper.OrderDetailMapper;
 import store.mybooks.resource.orderdetail.dto.response.OrderDetailCreateResponse;
+import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
 import store.mybooks.resource.orderdetail.entity.OrderDetail;
 import store.mybooks.resource.orderdetail.enumulation.OrderDetailStatusName;
 import store.mybooks.resource.orderdetail.repository.OrderDetailRepository;
@@ -24,6 +26,7 @@ import store.mybooks.resource.orderdetailstatus.repository.OrderDetailStatusRepo
 import store.mybooks.resource.usercoupon.entity.UserCoupon;
 import store.mybooks.resource.usercoupon.exception.UserCouponNotExistsException;
 import store.mybooks.resource.usercoupon.repository.UserCouponRepository;
+import store.mybooks.resource.utils.TimeUtils;
 import store.mybooks.resource.wrap.entity.Wrap;
 import store.mybooks.resource.wrap.exception.WrapNotExistException;
 import store.mybooks.resource.wrap.repository.WrapRepository;
@@ -39,6 +42,7 @@ import store.mybooks.resource.wrap.repository.WrapRepository;
  * -----------------------------------------------------------<br>
  * 3/16/24        minsu11       최초 생성<br>
  */
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -53,7 +57,10 @@ public class OrderDetailService {
 
 
     /**
-     * 상품에서 바로구매 했을 경우 주문 상세 등록.
+     * methodName : createOrderDetail<br>
+     * author : minsu11<br>
+     * description : 상품에서 바로구매 했을 경우 주문 상세 등록.
+     * <br>
      *
      * @param request the request
      * @param number  the number
@@ -61,8 +68,9 @@ public class OrderDetailService {
      */
     public OrderDetailCreateResponse createOrderDetail(BookInfoRequest request, String number) {
         boolean isCouponUsed = false;
-        OrderDetailStatus orderDetailStatus = orderDetailStatusRepository.findById(OrderDetailStatusName.WAIT.name())
-                .orElseThrow(OrderDetailStatusNotFoundException::new);
+        OrderDetailStatus orderDetailStatus =
+                orderDetailStatusRepository.findById(OrderDetailStatusName.WAIT.toString())
+                        .orElseThrow(OrderDetailStatusNotFoundException::new);
 
         Book book = bookRepository.findById(request.getBookId())
                 .orElseThrow(() -> new BookNotExistException(request.getBookId()));
@@ -92,13 +100,17 @@ public class OrderDetailService {
                 .detailStatus(orderDetailStatus)
                 .userCoupon(userCoupon)
                 .wrap(wrap)
+                .createDate(TimeUtils.nowDate())
                 .build();
 
         return orderDetailMapper.mapToorderDetailCreateResponse(orderDetailRepository.save(orderDetail));
     }
 
     /**
-     * 장바구니를 통한 주문.
+     * methodName : createOrderDetailList<br>
+     * author : minsu11<br>
+     * description : 상세 주문 목록 생성.
+     * <br>
      *
      * @param request the request
      * @param number  the number
@@ -113,6 +125,18 @@ public class OrderDetailService {
         return orderDetailList;
     }
 
+    /**
+     * methodName : getOrderDetails<br>
+     * author : minsu11<br>
+     * description : 주문 번호로 상세 주문 목록 조회.
+     * <br>
+     *
+     * @param orderNumber the order number
+     * @return the order details
+     */
+    public List<OrderDetailInfoResponse> getOrderDetails(String orderNumber) {
+        return orderDetailRepository.getOrderDetailListByOrderNumber(orderNumber);
+    }
 
 }
 

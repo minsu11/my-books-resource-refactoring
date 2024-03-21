@@ -103,6 +103,10 @@ public class BookOrder {
         this.outDate = LocalDate.now();
     }
 
+    public void updateBookOrderStatus(OrdersStatus status) {
+        this.orderStatus = status;
+    }
+
     public void registerBookOrderInvoiceNumber(String invoiceNumber) {
         this.invoiceNumber = invoiceNumber;
     }

@@ -35,6 +35,6 @@ public interface BookOrderRepositoryCustom {
 
     List<BookOrderUserResponse> getUserBookOrderInfos(Long userId);
 
-    Long getUserBookOrderCount(Long userId);
+    Long getUserBookOrderCount(Long bookId);
 
 }
