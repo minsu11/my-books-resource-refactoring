@@ -7,6 +7,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -98,8 +99,9 @@ public class PointHistoryController {
      * @param userId 회원 아이디
      * @return ResponseEntity
      */
-    @PostMapping("/login-point")
-    public ResponseEntity<Boolean> saveLoginPoint(@RequestHeader(name = HeaderProperties.USER_ID) Long userId) {
+    @PostMapping("/login-point/{userId}")
+    public ResponseEntity<Boolean> saveLoginPoint(@PathVariable Long userId) {
+
         HttpStatus status = pointHistoryService.saveLoginPoint(userId) ? HttpStatus.CREATED : HttpStatus.OK;
 
         return ResponseEntity
@@ -107,20 +109,5 @@ public class PointHistoryController {
                 .build();
     }
 
-    /**
-     * methodName : saveSignUpPoint <br>
-     * author : damho-lee <br>
-     * description : 회원가입 포인트 적립.<br>
-     *
-     * @param userId 회원 아이디
-     * @return ResponseEntity
-     */
-    @PostMapping("/sign-up")
-    public ResponseEntity<Boolean> saveSignUpPoint(@RequestHeader(name = HeaderProperties.USER_ID) Long userId) {
-        pointHistoryService.saveSignUpPoint(userId);
-        
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .build();
-    }
+
 }
