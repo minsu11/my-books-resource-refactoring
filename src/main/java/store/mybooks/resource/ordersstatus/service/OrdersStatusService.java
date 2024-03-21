@@ -33,7 +33,7 @@ public class OrdersStatusService {
 
     /**
      * methodName : getOrdersStatusById<br>
-     * author : minsu11<br>
+     * author : minsu11<br>ws
      * description : id와 동일한 주문 상태 데이터를 가지고 옴<br>
      * <br>
      *
@@ -60,6 +60,5 @@ public class OrdersStatusService {
     public List<OrdersStatusResponse> getOrdersStatusList() {
         return ordersStatusRepository.getOrdersStatusList();
     }
-
 
 }

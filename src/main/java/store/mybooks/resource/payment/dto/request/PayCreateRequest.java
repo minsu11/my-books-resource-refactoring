@@ -1,12 +1,11 @@
-package store.mybooks.resource.pointhistory.dto.request;
+package store.mybooks.resource.payment.dto.request;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * packageName    : store.mybooks.resource.pointhistory.dto.request<br>
- * fileName       : PointHistoryRequest<br>
+ * packageName    : store.mybooks.resource.payment.dto.request<br>
+ * fileName       : PayCreateRequest<br>
  * author         : minsu11<br>
  * date           : 3/19/24<br>
  * description    :
@@ -17,11 +16,11 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-public class PointHistoryCreateRequest {
+public class PayCreateRequest {
     private String orderNumber;
-    private String pointName;
-    private Integer pointCost;
-
-
+    private String paymentKey;
+    private String status;
+    private String requestedAt;
+    private Integer totalAmount;
+    private String method;
 }
