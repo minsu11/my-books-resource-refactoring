@@ -1,5 +1,6 @@
 package store.mybooks.resource.orderdetail.entity;
 
+import java.time.LocalDate;
 import javax.persistence.*;
 import lombok.*;
 import store.mybooks.resource.book.entity.Book;
@@ -61,5 +62,6 @@ public class OrderDetail {
     @JoinColumn(name = "wrap_id")
     private Wrap wrap;
 
-
+    @Column(name = "order_detail_created_date")
+    private LocalDate createDate;
 }
