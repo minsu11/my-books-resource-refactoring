@@ -5,7 +5,6 @@ import javax.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 /**
  * packageName    : store.mybooks.resource.book_order.dto.request
@@ -21,13 +20,13 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor
 @Setter
-@ToString
 public class BookOrderCreateRequest {
 
     @NotNull
     private List<BookInfoRequest> bookInfoList;
 
     private BookOrderInfoRequest orderInfo;
+
     @NotBlank
     @Size(max = 20)
     private String orderNumber;

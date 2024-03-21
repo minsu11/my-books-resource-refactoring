@@ -4,7 +4,6 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
 
 /**
@@ -19,7 +18,6 @@ import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
  * 3/17/24        minsu11       최초 생성<br>
  */
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookOrderInfoPayResponse {

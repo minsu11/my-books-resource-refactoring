@@ -2,7 +2,6 @@ package store.mybooks.resource.bookorder.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.book.dto.response.BookStockResponse;
@@ -41,7 +40,6 @@ import store.mybooks.resource.usercoupon.service.UserCouponService;
  * -----------------------------------------------------------<br>
  * 3/16/24        minsu11       최초 생성<br>
  */
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TotalOrderService {
