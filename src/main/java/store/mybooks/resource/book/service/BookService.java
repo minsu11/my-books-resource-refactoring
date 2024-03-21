@@ -268,7 +268,7 @@ public class BookService {
      * author : newjaehun
      * description : 스케쥴러를 이용하여 조횟수 업데이트.
      */
-    @Scheduled(cron = "0 1 0 * * *")
+    @Scheduled(cron = "0 5 0 * * *", zone = "Asia/Seoul")
     @Transactional
     public void updateBookViewCount() {
         Set<String> keys = redisTemplate.keys("viewCount:*");
