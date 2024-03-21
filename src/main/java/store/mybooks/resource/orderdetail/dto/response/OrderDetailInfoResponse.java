@@ -21,8 +21,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDetailInfoResponse {
+    private Long id;
     private String bookName;
     private Long couponId;
     private Integer cost;
+    private Integer amount;
     private Boolean isCouponUsed;
 }

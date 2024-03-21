@@ -26,6 +26,7 @@ import store.mybooks.resource.orderdetailstatus.repository.OrderDetailStatusRepo
 import store.mybooks.resource.usercoupon.entity.UserCoupon;
 import store.mybooks.resource.usercoupon.exception.UserCouponNotExistsException;
 import store.mybooks.resource.usercoupon.repository.UserCouponRepository;
+import store.mybooks.resource.utils.TimeUtils;
 import store.mybooks.resource.wrap.entity.Wrap;
 import store.mybooks.resource.wrap.exception.WrapNotExistException;
 import store.mybooks.resource.wrap.repository.WrapRepository;
@@ -64,8 +65,9 @@ public class OrderDetailService {
      */
     public OrderDetailCreateResponse createOrderDetail(BookInfoRequest request, String number) {
         boolean isCouponUsed = false;
-        OrderDetailStatus orderDetailStatus = orderDetailStatusRepository.findById(OrderDetailStatusName.WAIT.toString())
-                .orElseThrow(OrderDetailStatusNotFoundException::new);
+        OrderDetailStatus orderDetailStatus =
+                orderDetailStatusRepository.findById(OrderDetailStatusName.WAIT.toString())
+                        .orElseThrow(OrderDetailStatusNotFoundException::new);
 
         Book book = bookRepository.findById(request.getBookId())
                 .orElseThrow(() -> new BookNotExistException(request.getBookId()));
@@ -95,6 +97,7 @@ public class OrderDetailService {
                 .detailStatus(orderDetailStatus)
                 .userCoupon(userCoupon)
                 .wrap(wrap)
+                .createDate(TimeUtils.nowDate())
                 .build();
 
         return orderDetailMapper.mapToorderDetailCreateResponse(orderDetailRepository.save(orderDetail));

@@ -27,13 +27,15 @@ public class BookOrderInfoPayResponse {
     private String number;
     private Integer totalCost;
     private Boolean isCouponUsed;
+    private Integer pointCost;
     private List<OrderDetailInfoResponse> orderDetails;
 
-    public BookOrderInfoPayResponse(String orderStatus, String number, Integer totalCost, Boolean isCouponUsed) {
+    public BookOrderInfoPayResponse(String orderStatus, String number, Integer totalCost, Boolean isCouponUsed, Integer pointCost) {
         this.orderStatus = orderStatus;
         this.number = number;
         this.totalCost = totalCost;
         this.isCouponUsed = isCouponUsed;
+        this.pointCost = pointCost;
     }
 
     public void updateOrderDetails(List<OrderDetailInfoResponse> orderDetails) {

@@ -40,6 +40,13 @@ public class PointRuleService {
     private final PointRuleMapper pointRuleMapper;
 
 
+    @Transactional(readOnly = true)
+    public PointRuleResponse getPointRuleResponseByName(String ruleName) {
+        return pointRuleRepository.getPointRuleByName(ruleName)
+                .orElseThrow(PointRuleNotExistException::new);
+
+    }
+
     /**
      * methodName : getPointRuleResponse<br>
      * author : minsu11<br>

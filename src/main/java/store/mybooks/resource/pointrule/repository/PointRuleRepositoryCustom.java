@@ -32,6 +32,8 @@ public interface PointRuleRepositoryCustom {
      */
     Optional<PointRuleResponse> getPointRuleById(Integer id);
 
+    Optional<PointRuleResponse> getPointRuleByName(String ruleName);
+
     /**
      * methodName : getPointRuleList<br>
      * author : minsu11<br>

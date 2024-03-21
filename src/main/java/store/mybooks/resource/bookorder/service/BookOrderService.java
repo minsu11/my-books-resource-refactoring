@@ -1,6 +1,5 @@
 package store.mybooks.resource.bookorder.service;
 
-import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +21,7 @@ import store.mybooks.resource.bookorder.eumulation.BookOrderStatusName;
 import store.mybooks.resource.bookorder.exception.BookOrderInfoNotMatchException;
 import store.mybooks.resource.bookorder.exception.BookOrderNotExistException;
 import store.mybooks.resource.bookorder.repository.BookOrderRepository;
+import store.mybooks.resource.bookstatus.respository.BookStatusRepository;
 import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
 import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotExistsException;
 import store.mybooks.resource.delivery_rule.repository.DeliveryRuleRepository;
@@ -36,6 +36,7 @@ import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user.exception.UserNotExistException;
 import store.mybooks.resource.user.repository.UserRepository;
 import store.mybooks.resource.user_address.repository.UserAddressRepository;
+import store.mybooks.resource.utils.TimeUtils;
 
 /**
  * packageName    : store.mybooks.resource.book_order.service<br>
@@ -54,6 +55,7 @@ import store.mybooks.resource.user_address.repository.UserAddressRepository;
 @RequiredArgsConstructor
 public class BookOrderService {
     private final BookOrderRepository bookOrderRepository;
+    private final BookStatusRepository bookStatusRepository;
     private final OrdersStatusRepository ordersStatusRepository;
     private final OrderDetailRepository orderDetailRepository;
     private final BookOrderMapper bookOrderMapper;
@@ -81,6 +83,7 @@ public class BookOrderService {
     public Page<BookOrderAdminResponse> getBookOrderAdminResponseList(Pageable pageable) {
         return bookOrderRepository.getBookOrderPageByOrderStatusId(pageable);
     }
+
 
     /**
      * methodName : modifyBookOrderStatus<br>
@@ -156,7 +159,7 @@ public class BookOrderService {
                 .receiverPhoneNumber(orderInfo.getRecipientPhoneNumber())
                 .orderStatus(ordersStatus)
                 .deliveryDate(orderInfo.getDeliveryDate())
-                .date(LocalDate.now())
+                .date(TimeUtils.nowDate())
                 .number(request.getOrderNumber())
                 .totalCost(request.getTotalCost())
                 .couponCost(request.getCouponCost())
@@ -212,6 +215,15 @@ public class BookOrderService {
                 .orElseThrow(BookOrderNotExistException::new);
     }
 
+    public void updateBookOrderStatus(String orderNumber, BookOrderStatusName statusName) {
+        BookOrder bookOrder = bookOrderRepository.findByNumber(orderNumber)
+                .orElseThrow(BookOrderNotExistException::new);
+        OrdersStatus ordersStatus = ordersStatusRepository.findById(statusName.toString())
+                .orElseThrow(OrdersStatusNotExistException::new);
+        bookOrder.updateBookOrderStatus(ordersStatus);
+
+    }
+
     public Page<BookOrderUserResponse> getUserBookOrderInfo(Pageable pageable, Long userId) {
         List<BookOrderUserResponse> bookOrderUserList = bookOrderRepository.getUserBookOrderInfos(userId);
         for (int i = 0; i < bookOrderUserList.size(); i++) {
@@ -222,4 +234,5 @@ public class BookOrderService {
         Long size = bookOrderRepository.getUserBookOrderCount(userId);
         return new PageImpl<>(bookOrderUserList, pageable, size);
     }
+
 }

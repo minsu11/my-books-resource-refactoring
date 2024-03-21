@@ -8,10 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import store.mybooks.resource.author.dto.response.AuthorGetResponse;
 import store.mybooks.resource.author.entity.QAuthor;
-import store.mybooks.resource.book.dto.response.BookBriefResponse;
-import store.mybooks.resource.book.dto.response.BookDetailResponse;
-import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
-import store.mybooks.resource.book.dto.response.BookResponseForOrder;
+import store.mybooks.resource.book.dto.response.*;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.entity.QBook;
 import store.mybooks.resource.bookauthor.entity.QBookAuthor;
@@ -232,5 +229,18 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .where(book.id.eq(bookId))
                 .set(book.viewCount, book.viewCount.add(count))
                 .execute();
+    }
+
+
+    @Override
+    public BookStockResponse getBookStockList(Long id) {
+
+        return from(book)
+                .select(Projections.constructor(
+                        BookStockResponse.class,
+                        book.id,
+                        book.stock
+                ))
+                .where(book.id.eq(id)).fetchOne();
     }
 }

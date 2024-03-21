@@ -34,8 +34,10 @@ public class OrderDetailRepositoryImpl extends QuerydslRepositorySupport impleme
                 .leftJoin(orderDetail.book, book)
                 .select(Projections.constructor(
                         OrderDetailInfoResponse.class,
+                        orderDetail.book.id,
                         orderDetail.book.name,
                         orderDetail.userCoupon.id,
+                        orderDetail.amount,
                         orderDetail.bookCost,
                         orderDetail.isCouponUsed
                 ))
@@ -48,8 +50,10 @@ public class OrderDetailRepositoryImpl extends QuerydslRepositorySupport impleme
         return from(orderDetail)
                 .select(Projections.constructor(
                         OrderDetailInfoResponse.class,
+                        orderDetail.book.id,
                         orderDetail.book.name,
                         orderDetail.userCoupon.id,
+                        orderDetail.amount,
                         orderDetail.bookCost,
                         orderDetail.isCouponUsed
                 ))
