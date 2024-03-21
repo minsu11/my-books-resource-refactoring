@@ -1,9 +1,12 @@
 package store.mybooks.resource.usercoupon.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -249,5 +252,36 @@ class UserCouponRepositoryTest {
         assertThat(userCouponGetResponseForOrderQuerydslList).isNotNull().hasSize(1);
         assertThat(userCouponGetResponseForOrderQuerydslList.get(0).getUserCouponId()).isEqualTo(
                 userTotalCoupon.getId());
+    }
+
+    @Test
+    @DisplayName("회원쿠콘 아이디로 회원쿠폰 조회")
+    void givenUserCouponId_whenGetUserCouponResponse_thenReturnOptionalUserCouponGetResponseForOrderQuerydsl() {
+        Long userCouponId = userCouponRepository.save(userBookCoupon).getId();
+
+        UserCouponGetResponseForOrderQuerydsl actual =
+                userCouponRepository.getUserCouponResponse(userCouponId).orElseThrow();
+
+        assertAll(
+                () -> assertThat(actual.getUserCouponId()).isEqualTo(userCouponId),
+                () -> assertThat(actual.getName()).isEqualTo(userBookCoupon.getCoupon().getName()),
+                () -> assertThat(actual.getOrderMin()).isEqualTo(userBookCoupon.getCoupon().getOrderMin()),
+                () -> assertThat(actual.getDiscountCost()).isEqualTo(userBookCoupon.getCoupon().getDiscountCost()),
+                () -> assertThat(actual.getMaxDiscountCost()).isEqualTo(
+                        userBookCoupon.getCoupon().getMaxDiscountCost()),
+                () -> assertThat(actual.getDiscountCost()).isEqualTo(userBookCoupon.getCoupon().getDiscountCost()),
+                () -> assertThat(actual.isRate()).isEqualTo(userBookCoupon.getCoupon().getIsRate()),
+                () -> assertThat(actual.getStartDate()).isEqualTo(userBookCoupon.getCoupon().getStartDate()),
+                () -> assertThat(actual.getEndDate()).isEqualTo(userBookCoupon.getCoupon().getEndDate())
+        );
+    }
+
+    @Test
+    @DisplayName("회원쿠폰 아이디로 회원쿠폰 조회 - 없는 아이디의 경우")
+    void givenNotExistsCouponId_givenUserCouponId_whenGetUserCouponResponse_thenReturnOptionalEmpty() {
+        Optional<UserCouponGetResponseForOrderQuerydsl> actual =
+                userCouponRepository.getUserCouponResponse(-1L);
+
+        assertTrue(actual.isEmpty());
     }
 }

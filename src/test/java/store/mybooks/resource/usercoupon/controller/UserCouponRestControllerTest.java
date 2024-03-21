@@ -48,7 +48,10 @@ import org.springframework.web.context.WebApplicationContext;
 import store.mybooks.resource.usercoupon.dto.request.UserCouponCreateRequest;
 import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForMyPage;
 import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForOrder;
+import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForOrderQuerydsl;
+import store.mybooks.resource.usercoupon.exception.UserCouponNotExistsException;
 import store.mybooks.resource.usercoupon.service.UserCouponService;
+import store.mybooks.resource.utils.TimeUtils;
 
 /**
  * packageName    : store.mybooks.resource.user_coupon.controller
@@ -172,7 +175,8 @@ class UserCouponRestControllerTest {
                                 fieldWithPath("content[].target").description("쿠폰 적용 대상"),
                                 fieldWithPath("content[].orderMin").description("최소 주문 금액"),
                                 fieldWithPath("content[].discountRateOrCost").description("할인율 / 할인금액"),
-                                fieldWithPath("content[].maxDiscountCost").description("최대 할인 금액 (정액할인쿠폰인 경우 할인 금액과 같음)"),
+                                fieldWithPath("content[].maxDiscountCost").description(
+                                        "최대 할인 금액 (정액할인쿠폰인 경우 할인 금액과 같음)"),
                                 fieldWithPath("content[].isRate").description("정률할인쿠폰인지 여부"),
                                 fieldWithPath("content[].startDate").description("쿠폰 사용기간(시작일)"),
                                 fieldWithPath("content[].endDate").description("쿠폰 사용기간(종료일)"),
@@ -408,5 +412,63 @@ class UserCouponRestControllerTest {
                         )));
 
         verify(userCouponService, times(1)).giveBackUserCoupon(anyLong());
+    }
+
+    @Test
+    @DisplayName("회원 쿠폰 조회")
+    void givenUserCouponId_whenGetUserCoupon_thenReturnUserCouponGetResponseForOrderQuerydsl() throws Exception {
+        UserCouponGetResponseForOrderQuerydsl expect =
+                new UserCouponGetResponseForOrderQuerydsl(
+                        1L,
+                        "userCoupon",
+                        0,
+                        null,
+                        3000,
+                        50,
+                        true,
+                        TimeUtils.nowDate().minusDays(3),
+                        TimeUtils.nowDate().plusDays(3)
+                );
+        when(userCouponService.getUserCoupon(anyLong())).thenReturn(expect);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/user-coupon/{userCouponId}", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userCouponId").value(expect.getUserCouponId()))
+                .andExpect(jsonPath("$.name").value(expect.getName()))
+                .andExpect(jsonPath("$.orderMin").value(expect.getOrderMin()))
+                .andExpect(jsonPath("$.discountCost").value(expect.getDiscountCost()))
+                .andExpect(jsonPath("$.maxDiscountCost").value(expect.getMaxDiscountCost()))
+                .andExpect(jsonPath("$.discountRate").value(expect.getDiscountRate()))
+                .andExpect(jsonPath("$.rate").value(expect.isRate()))
+                .andExpect(jsonPath("$.startDate").value(expect.getStartDate().toString()))
+                .andExpect(jsonPath("$.endDate").value(expect.getEndDate().toString()))
+                .andDo(document("user-coupon-get",
+                        pathParameters(
+                                parameterWithName("userCouponId").description("회원 쿠폰 아이디")
+                        ),
+                        responseFields(
+                                fieldWithPath("userCouponId").description("회원 쿠폰 아이디"),
+                                fieldWithPath("name").description("쿠폰 이름"),
+                                fieldWithPath("orderMin").description("최소 주문 금액"),
+                                fieldWithPath("discountCost").description("할인 금액"),
+                                fieldWithPath("maxDiscountCost").description("최대 할인 금액"),
+                                fieldWithPath("discountRate").description("할인율"),
+                                fieldWithPath("rate").description("정률 할인 쿠폰인지 여부"),
+                                fieldWithPath("startDate").description("쿠폰 사용 시작일"),
+                                fieldWithPath("endDate").description("쿠폰 사용 종료일")
+                        )));
+    }
+
+    @Test
+    @DisplayName("회원 쿠폰 조회 - 없는 아이디인 경우")
+    void givenNotExistsUserCouponId_whenGetUserCoupon_thenThrowUserCouponNotExistsException() throws Exception {
+        when(userCouponService.getUserCoupon(anyLong())).thenThrow(UserCouponNotExistsException.class);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/user-coupon/{userCouponId}", 1))
+                .andExpect(status().isNotFound())
+                .andDo(document("user-coupon-get-exception",
+                        pathParameters(
+                                parameterWithName("userCouponId").description("회원 쿠폰 아이디")
+                        )));
     }
 }

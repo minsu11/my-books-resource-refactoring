@@ -34,6 +34,7 @@ import store.mybooks.resource.user_address.exception.UserAddressNotExistExceptio
 import store.mybooks.resource.user_grade.exception.UserGradeIdNotExistException;
 import store.mybooks.resource.user_grade_name.exception.UserGradeNameNotExistException;
 import store.mybooks.resource.user_status.exception.UserStatusNotExistException;
+import store.mybooks.resource.usercoupon.exception.UserCouponNotExistsException;
 
 /**
  * packageName    : store.mybooks.resource.error
@@ -60,7 +61,8 @@ public class GlobalControllerAdvice {
             DeliveryRuleNameNotExistsException.class, DeliveryRuleNotExistsException.class,
             UserNotExistException.class, UserAddressNotExistException.class, UserGradeIdNotExistException.class,
             UserGradeNameNotExistException.class, UserStatusNotExistException.class,
-            BookOrderNotExistException.class, OrderDetailStatusNotFoundException.class})
+            BookOrderNotExistException.class, OrderDetailStatusNotFoundException.class,
+            UserCouponNotExistsException.class})
     public ResponseEntity<String> xxxNotExistsException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
