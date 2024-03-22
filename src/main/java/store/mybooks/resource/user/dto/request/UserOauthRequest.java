@@ -1,43 +1,43 @@
 package store.mybooks.resource.user.dto.request;
 
-import javax.validation.constraints.Email;
+import java.time.LocalDate;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * packageName    : store.mybooks.resource.user.dto.request<br>
- * fileName       : UserOauthCreateRequest<br>
+ * packageName    : store.mybooks.front.user.dto.request<br>
+ * fileName       : UserSocialModifyRequest<br>
  * author         : masiljangajji<br>
- * date           : 3/6/24<br>
+ * date           : 3/22/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 3/6/24        masiljangajji       최초 생성
+ * 3/22/24        masiljangajji       최초 생성
  */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserOauthCreateRequest {
+public class UserOauthRequest {
 
     @NotBlank
     private String name;
 
     @NotBlank
-    private String phoneNumber;
-
-    @NotBlank
-    @Email
     private String email;
 
     @NotBlank
-    private String birthMonthDay;
+    private String phoneNumber;
+
+    @NotNull
+    @PastOrPresent
+    private LocalDate birth;
 
     @NotBlank
     private String oauthId;
 
-
 }
-

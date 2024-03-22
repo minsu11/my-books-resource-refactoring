@@ -1,6 +1,5 @@
 package store.mybooks.resource.user_grade.dto.request;
 
-import java.time.LocalDate;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -25,22 +24,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserGradeCreateRequest {
 
-    @NotBlank
-    private String name;
-
-    @NotNull
-    @Positive
-    private Integer minCost;
-
-    @NotNull
-    @Positive
-    private Integer maxCost;
-
     @NotNull
     @Positive
     private Integer rate;
 
-    @NotNull
-    private LocalDate createdDate;
+    @NotBlank
+    private String userGradeNameId;
+
 
 }
