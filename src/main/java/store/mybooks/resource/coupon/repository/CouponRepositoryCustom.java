@@ -18,5 +18,13 @@ import store.mybooks.resource.coupon.dto.response.CouponGetResponseForQuerydsl;
  */
 @NoRepositoryBean
 public interface CouponRepositoryCustom {
+    /**
+     * methodName : getCoupons <br>
+     * author : damho-lee <br>
+     * description : 쿠폰 목록 페이지 조회.<br>
+     *
+     * @param pageable Pageable
+     * @return page
+     */
     Page<CouponGetResponseForQuerydsl> getCoupons(Pageable pageable);
 }
