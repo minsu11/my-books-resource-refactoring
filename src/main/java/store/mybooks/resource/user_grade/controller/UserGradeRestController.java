@@ -6,9 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.error.Utils;
 import store.mybooks.resource.user_grade.dto.request.UserGradeCreateRequest;
 import store.mybooks.resource.user_grade.dto.response.UserGradeCreateResponse;
-import store.mybooks.resource.user_grade.dto.response.UserGradeDeleteResponse;
 import store.mybooks.resource.user_grade.dto.response.UserGradeGetResponse;
 import store.mybooks.resource.user_grade.service.UserGradeService;
 
@@ -49,46 +46,15 @@ public class UserGradeRestController {
     @PostMapping
     public ResponseEntity<UserGradeCreateResponse> createUserGrade(
             @Valid @RequestBody UserGradeCreateRequest createRequest, BindingResult bindingResult) {
-        Utils.validateRequest(bindingResult);
 
+
+        Utils.validateRequest(bindingResult);
 
         UserGradeCreateResponse createResponse = userGradeService.createUserGrade(createRequest);
 
+
         return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
     }
-
-    /**
-     * methodName : deleteUserGradeById
-     * author : masiljangajji
-     * description :유저 등급을 삭제 (등급의 상태를 삭제로 만듬)
-     *
-     * @param id id
-     * @return response entity
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<UserGradeDeleteResponse> deleteUserGradeById(@PathVariable(name = "id") Integer id) {
-
-        UserGradeDeleteResponse deleteResponse = userGradeService.deleteUserGrade(id);
-
-        return new ResponseEntity<>(deleteResponse, HttpStatus.OK);
-    }
-
-    /**
-     * methodName : findUserGradeById
-     * author : masiljangajji
-     * description : 유저등급을 찾음
-     *
-     * @param id id
-     * @return response entity
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<UserGradeGetResponse> findUserGradeById(@PathVariable(name = "id") Integer id) {
-
-        UserGradeGetResponse getResponse = userGradeService.findUserGradeById(id);
-
-        return new ResponseEntity<>(getResponse, HttpStatus.OK);
-    }
-
 
     /**
      * methodName : findAllUserGrade
@@ -98,11 +64,17 @@ public class UserGradeRestController {
      * @return response entity
      */
     @GetMapping
+    public ResponseEntity<List<UserGradeGetResponse>> findAllAvailableUserGrade() {
+
+        List<UserGradeGetResponse> paginationUserGrade = userGradeService.findAllAvailableUserGrade();
+        return new ResponseEntity<>(paginationUserGrade, HttpStatus.OK);
+    }
+
+    @GetMapping("/all")
     public ResponseEntity<List<UserGradeGetResponse>> findAllUserGrade() {
 
         List<UserGradeGetResponse> paginationUserGrade = userGradeService.findAllUserGrade();
         return new ResponseEntity<>(paginationUserGrade, HttpStatus.OK);
     }
-
 
 }

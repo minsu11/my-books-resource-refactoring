@@ -1,6 +1,7 @@
 package store.mybooks.resource.pointhistory.service;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -115,10 +116,14 @@ public class PointHistoryService {
      */
     public boolean saveLoginPoint(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
-        LocalDate latestLoginDate = user.getLatestLogin().toLocalDate();
 
-        if (!latestLoginDate.isBefore(LocalDate.now())) {
-            return false;
+
+        if(Objects.nonNull(user.getLatestLogin())){
+            LocalDate latestLoginDate = user.getLatestLogin().toLocalDate();
+
+            if (!latestLoginDate.isBefore(LocalDate.now())) {
+                return false;
+            }
         }
 
         PointRule pointRule = pointRuleRepository.findPointRuleByPointRuleName("로그인 적립")
@@ -133,21 +138,37 @@ public class PointHistoryService {
         return true;
     }
 
+    public void saveOauthLoginPoint(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
+
+        PointRule pointRule = pointRuleRepository.findPointRuleByPointRuleName("로그인 적립")
+                .orElseThrow(PointRuleNotExistException::new);
+        pointHistoryRepository.save(new PointHistory(
+                pointRule.getCost(),
+                user,
+                pointRule,
+                null
+        ));
+
+    }
+
+
     /**
      * methodName : saveSignUpPoint <br>
      * author : damho-lee <br>
      * description : 회원가입 포인트 적립.<br>
      *
-     * @param userId 회원아이디
+     * @param email 회원아이디
      */
-    public void saveSignUpPoint(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
-        if (pointHistoryRepository.isAlreadyReceivedSignUpPoint(userId)) {
+    public void saveSignUpPoint(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistException(email));
+        if (pointHistoryRepository.isAlreadyReceivedSignUpPoint(email)) {
             throw new AlreadyReceivedSignUpPoint();
         }
         
         PointRule pointRule = pointRuleRepository.findPointRuleByPointRuleName("회원가입 적립")
                 .orElseThrow(PointRuleNotExistException::new);
+
         pointHistoryRepository.save(new PointHistory(
                 pointRule.getCost(),
                 user,
