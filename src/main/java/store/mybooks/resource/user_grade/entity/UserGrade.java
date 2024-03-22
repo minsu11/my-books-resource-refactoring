@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import store.mybooks.resource.user_grade_name.entity.UserGradeName;
+import store.mybooks.resource.utils.TimeUtils;
 
 /**
  * packageName    : store.mybooks.resource.user.entity<br>
@@ -62,13 +63,13 @@ public class UserGrade {
     private Boolean isAvailable;
 
 
-    public UserGrade(Integer minCost, Integer maxCost, Integer rate, LocalDate createdDate,
+    public UserGrade(Integer minCost, Integer maxCost, Integer rate,
                      UserGradeName userGradeName) {
         this.userGradeName = userGradeName;
         this.minCost = minCost;
         this.maxCost = maxCost;
         this.rate = rate;
-        this.createdDate = createdDate;
+        this.createdDate = TimeUtils.nowDate();
         this.isAvailable = true;
     }
 
