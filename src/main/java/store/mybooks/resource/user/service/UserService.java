@@ -102,7 +102,7 @@ public class UserService {
         User user = new User(createRequest.getEmail(), createRequest.getBirth(),
                 createRequest.getPassword(),
                 createRequest.getPhoneNumber(), createRequest.getIsAdmin(), createRequest.getName(), userStatus,
-                userGrade);
+                userGrade,null);
 
         userRepository.save(user);
 
@@ -121,7 +121,7 @@ public class UserService {
                 .orElseThrow(() -> new UserGradeNameNotExistException(userGradeName));
 
         User user = new User(createRequest.getEmail(), null, createRequest.getBirthMonthDay(), "dummy",
-                createRequest.getPhoneNumber(), false, createRequest.getName(), userStatus, userGrade);
+                createRequest.getPhoneNumber(), false, createRequest.getName(), userStatus, userGrade,createRequest.getOauthId());
 
         User resultUser = userRepository.save(user);
         return userMapper.toUserOauthCreateResponse(resultUser);
@@ -144,8 +144,8 @@ public class UserService {
         }
 
         User user = new User(request.getEmail(), request.getBirth(), "dummy", request.getPhoneNumber(), false,
-                request.getName(), userStatus, userGrade);
-
+                request.getName(), userStatus, userGrade,request.getOauthId());
+        user.modifyLatestLogin();
         User resultUser = userRepository.save(user);
         return userMapper.toUserOauthCreateResponse(resultUser);
     }
@@ -153,7 +153,9 @@ public class UserService {
 
     public UserLoginResponse loginOauthUser(UserOauthLoginRequest loginRequest) {
 
-        Optional<User> user = userRepository.findByEmail(loginRequest.getEmail());
+
+
+        Optional<User> user = userRepository.findByOauthId(loginRequest.getOauthId());
 
         if (user.isPresent()) { // 이미 있으면 = 회원가입한 회원이면
             User existUser = user.get();

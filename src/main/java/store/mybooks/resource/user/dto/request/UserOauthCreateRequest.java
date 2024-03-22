@@ -35,6 +35,9 @@ public class UserOauthCreateRequest {
     @NotBlank
     private String birthMonthDay;
 
+    @NotBlank
+    private String oauthId;
+
 
 }
 

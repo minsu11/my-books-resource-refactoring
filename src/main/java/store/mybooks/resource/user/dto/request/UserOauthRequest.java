@@ -37,4 +37,7 @@ public class UserOauthRequest {
     @PastOrPresent
     private LocalDate birth;
 
+    @NotBlank
+    private String oauthId;
+
 }
