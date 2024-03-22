@@ -3,7 +3,6 @@ package store.mybooks.resource.book.dto.response;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import store.mybooks.resource.image.dto.response.ImageResponse;
 
 /**
  * packageName    : store.mybooks.resource.book.dto.response
@@ -21,11 +20,13 @@ import store.mybooks.resource.image.dto.response.ImageResponse;
 public class BookBriefResponseIncludePublishDate {
     private Long id;
 
-    private ImageResponse imageResponse;
+    private String image;
 
     private String name;
 
-//    private Double rate;
+    private Double rate;
+
+    private Long reviewCount;
 
     private Integer cost;
 

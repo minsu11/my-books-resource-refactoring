@@ -29,6 +29,9 @@ import store.mybooks.resource.coupon.repository.CouponRepository;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user.exception.UserNotExistException;
 import store.mybooks.resource.user.repository.UserRepository;
+import store.mybooks.resource.user_grade.entity.UserGrade;
+import store.mybooks.resource.user_grade_name.entity.UserGradeName;
+import store.mybooks.resource.user_status.entity.UserStatus;
 import store.mybooks.resource.usercoupon.dto.request.UserCouponCreateRequest;
 import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForMyPage;
 import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForMyPageQuerydsl;
@@ -37,9 +40,7 @@ import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForOr
 import store.mybooks.resource.usercoupon.entity.UserCoupon;
 import store.mybooks.resource.usercoupon.exception.UserCouponNotExistsException;
 import store.mybooks.resource.usercoupon.repository.UserCouponRepository;
-import store.mybooks.resource.user_grade.entity.UserGrade;
-import store.mybooks.resource.user_grade_name.entity.UserGradeName;
-import store.mybooks.resource.user_status.entity.UserStatus;
+import store.mybooks.resource.utils.TimeUtils;
 
 /**
  * packageName    : store.mybooks.resource.user_coupon.service
@@ -322,6 +323,43 @@ class UserCouponServiceTest {
     }
 
     @Test
+    @DisplayName("회원쿠폰 아이디로 회원쿠폰 조회")
+    void givenUserCouponId_whenGetUserCoupon_thenReturnUserCouponGetResponseForOrderQuerydsl() {
+        UserCouponGetResponseForOrderQuerydsl expect =
+                new UserCouponGetResponseForOrderQuerydsl(
+                        1L,
+                        "userCoupon",
+                        0,
+                        null,
+                        3000,
+                        50,
+                        true,
+                        TimeUtils.nowDate().minusDays(3),
+                        TimeUtils.nowDate().plusDays(3));
+
+        when(userCouponRepository.getUserCouponResponse(anyLong())).thenReturn(Optional.of(expect));
+
+        UserCouponGetResponseForOrderQuerydsl actual = userCouponService.getUserCoupon(1L);
+        assertThat(actual).isNotNull();
+        assertThat(actual.getUserCouponId()).isEqualTo(expect.getUserCouponId());
+        assertThat(actual.getName()).isEqualTo(expect.getName());
+        assertThat(actual.getOrderMin()).isEqualTo(expect.getOrderMin());
+        assertThat(actual.getDiscountCost()).isEqualTo(expect.getDiscountCost());
+        assertThat(actual.getMaxDiscountCost()).isEqualTo(expect.getMaxDiscountCost());
+        assertThat(actual.getDiscountRate()).isEqualTo(expect.getDiscountRate());
+        assertThat(actual.isRate()).isEqualTo(expect.isRate());
+        assertThat(actual.getStartDate()).isEqualTo(expect.getStartDate());
+        assertThat(actual.getEndDate()).isEqualTo(expect.getEndDate());
+    }
+
+    @Test
+    @DisplayName("회원쿠폰 아이디로 회원쿠폰 조회 - 없는 아이디의 경우")
+    void givenNotExistsUserCouponId_whenGetUserCoupon_thenThrowUserCouponNotExistsException() {
+        when(userCouponRepository.getUserCouponResponse(anyLong())).thenReturn(Optional.empty());
+        assertThrows(UserCouponNotExistsException.class, () -> userCouponService.getUserCoupon(1L));
+    }
+
+    @Test
     @DisplayName("회원 쿠폰 생성")
     void givenUserCouponCreateRequest_whenCreateUserCoupon_thenCreateUserCoupon() {
         UserGradeName bronze = new UserGradeName("브론즈");
@@ -342,7 +380,7 @@ class UserCouponServiceTest {
                 false,
                 "test",
                 userSTatus,
-                userGrade
+                userGrade,null
         );
         ReflectionTestUtils.setField(user, "id", 1L);
         Coupon coupon = new Coupon(
@@ -405,7 +443,7 @@ class UserCouponServiceTest {
                 false,
                 "test",
                 userSTatus,
-                userGrade
+                userGrade,null
         );
         ReflectionTestUtils.setField(user, "id", 1L);
         UserCouponCreateRequest userCouponCreateRequest = new UserCouponCreateRequest();

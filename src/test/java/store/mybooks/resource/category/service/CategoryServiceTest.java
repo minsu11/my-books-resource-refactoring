@@ -370,6 +370,8 @@ class CategoryServiceTest {
                         1L,
                         null,
                         "appleBook",
+                        50D,
+                        100L,
                         10000,
                         5000,
                         LocalDate.of(2024, 1, 1));
@@ -378,16 +380,20 @@ class CategoryServiceTest {
                         2L,
                         null,
                         "bananaBook",
-                        8000,
-                        2000,
+                        10D,
+                        30L,
+                        10000,
+                        9000,
                         LocalDate.of(2022, 12, 15));
         BookBriefResponseIncludePublishDate grapeBook =
                 new BookBriefResponseIncludePublishDate(
                         3L,
                         null,
                         "grapeBook",
-                        12000,
-                        5000,
+                        20D,
+                        10L,
+                        10000,
+                        8000,
                         LocalDate.of(2021, 10, 24));
         Pageable pageable = PageRequest.of(0, 3);
         List<BookBriefResponseIncludePublishDate> expect = List.of(appleBook, bananaBook, grapeBook);

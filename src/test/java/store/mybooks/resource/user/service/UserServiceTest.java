@@ -1,31 +1,25 @@
 package store.mybooks.resource.user.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
-import java.util.Objects;
 import java.util.Optional;
-import org.hibernate.validator.constraints.time.DurationMax;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import store.mybooks.resource.pointhistory.service.PointHistoryService;
 import store.mybooks.resource.user.dto.mapper.UserMapper;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.request.UserEmailRequest;
@@ -73,6 +67,9 @@ class UserServiceTest {
 
     @Mock
     UserGradeRepository userGradeRepository;
+
+    @Mock
+    PointHistoryService pointHistoryService;
 
     @InjectMocks
     UserService userService;
@@ -352,10 +349,12 @@ class UserServiceTest {
         when(user.getId()).thenReturn(1L);
         when(user.getUserStatus()).thenReturn(userStatus);
         when(userStatus.getId()).thenReturn("test");
+        when(pointHistoryService.saveLoginPoint(user.getId())).thenReturn(true);
         userService.completeLoginProcess(userEmailRequest);
 
         verify(userRepository, times(1)).findByEmail(anyString());
         verify(user, times(1)).modifyLatestLogin();
+        verify(pointHistoryService,times(1)).saveLoginPoint(user.getId());
     }
 
     @Test

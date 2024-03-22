@@ -32,6 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import store.mybooks.resource.config.HeaderProperties;
 import store.mybooks.resource.error.RequestValidationFailedException;
+import store.mybooks.resource.pointhistory.service.PointHistoryService;
 import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.request.UserEmailRequest;
 import store.mybooks.resource.user.dto.request.UserGradeModifyRequest;
@@ -76,6 +77,9 @@ class UserRestControllerTest {
     @MockBean
     UserService userService;
 
+    @MockBean
+    PointHistoryService pointHistoryService;
+
     UserGetResponse userGetResponse1;
     UserGetResponse userGetResponse2;
 
@@ -101,7 +105,7 @@ class UserRestControllerTest {
     @DisplayName("유저 Oauth UserOauthCreateRequest - Validation 실패")
     void givenUserOauthLoginRequest_whenValidationFailure_thenReturnBadRequest() throws Exception {
 
-        UserOauthCreateRequest request = new UserOauthCreateRequest("test", "test", "dddd", null);
+        UserOauthCreateRequest request = new UserOauthCreateRequest("test", "test", "dddd", null,"");
 
         String content = objectMapper.writeValueAsString(request);
 
@@ -119,7 +123,7 @@ class UserRestControllerTest {
     void givenUserOauthCreateRequest_whenValidationFailure_thenReturnBadRequest() throws Exception {
 
 
-        UserOauthCreateRequest request = new UserOauthCreateRequest("test", "test", "dddd@test.com", null);
+        UserOauthCreateRequest request = new UserOauthCreateRequest("test", "test", "dddd@test.com", null,"oauth");
 
         String content = objectMapper.writeValueAsString(request);
 

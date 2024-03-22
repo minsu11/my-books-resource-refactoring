@@ -82,9 +82,13 @@ public class User {
     @Column(name = "user_grade_changed_date")
     private LocalDate gradeChangedDate;
 
+    @Column(name = "user_oauth_id")
+    private String oauthId;
+
+
     public User(String email, LocalDate birth, String password, String phoneNumber, Boolean isAdmin, String name,
                 UserStatus userStatus,
-                UserGrade userGrade) {
+                UserGrade userGrade, String oauthId) {
         this.email = email;
 
         this.birthYear = birth.getYear();
@@ -95,15 +99,15 @@ public class User {
         this.name = name;
         this.userStatus = userStatus;
         this.userGrade = userGrade;
-
         this.createdAt = TimeUtils.nowDateTime();
         this.gradeChangedDate = null;
         this.deletedAt = null;
         this.latestLogin = null;
+        this.oauthId = oauthId;
     }
 
     public User(String email, Integer birthYear, String birthMonthDay, String password, String phoneNumber,
-                Boolean isAdmin, String name, UserStatus userStatus, UserGrade userGrade) {
+                Boolean isAdmin, String name, UserStatus userStatus, UserGrade userGrade, String oauthId) {
 
         this.email = email;
         this.birthYear = birthYear;
@@ -118,14 +122,13 @@ public class User {
         this.gradeChangedDate = null;
         this.deletedAt = null;
         this.latestLogin = null;
+        this.oauthId = oauthId;
     }
 
 
     public void modifyUser(String name, String phoneNumber) {
-
         this.name = name;
         this.phoneNumber = phoneNumber;
-
     }
 
     public void modifyUserStatus(UserStatus userStatus) {

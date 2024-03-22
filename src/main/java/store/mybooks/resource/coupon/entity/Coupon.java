@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.category.entity.Category;
+import store.mybooks.resource.utils.TimeUtils;
 
 /**
  * packageName    : store.mybooks.resource.coupon.entity
@@ -105,6 +106,6 @@ public class Coupon {
         this.endDate = endDate;
         this.isRate = isRate;
         this.isTargetOrder = isTargetOrder;
-        this.createdDate = LocalDate.now();
+        this.createdDate = TimeUtils.nowDate();
     }
 }

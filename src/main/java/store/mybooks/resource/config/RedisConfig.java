@@ -13,10 +13,13 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.PatternTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-//import store.mybooks.front.cart.domain.CartDetail;
+import store.mybooks.resource.cart_item.redis.RedisKeyExpirationListener;
 
 /**
  * packageName    : store.mybooks.front.config <br/>
@@ -80,5 +83,19 @@ public class RedisConfig {
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(cacheConfiguration)
                 .build();
+    }
+
+    @Bean
+    RedisMessageListenerContainer container(RedisConnectionFactory redisConnectionFactory,
+                                            MessageListenerAdapter listenerAdapter) {
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        container.setConnectionFactory(redisConnectionFactory);
+        container.addMessageListener(listenerAdapter, new PatternTopic("__keyevent@*:expired"));
+        return container;
+    }
+
+    @Bean
+    MessageListenerAdapter listenerAdapter(RedisKeyExpirationListener listener) {
+        return new MessageListenerAdapter(listener);
     }
 }

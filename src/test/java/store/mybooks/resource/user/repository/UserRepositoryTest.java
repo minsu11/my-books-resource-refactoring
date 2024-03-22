@@ -53,15 +53,15 @@ class UserRepositoryTest {
 
         UserStatus userStatus = new UserStatus("test");
         UserGradeName userGradeName = new UserGradeName("test");
-        UserGrade userGrade = new UserGrade(1, 100, 100, LocalDate.now(), userGradeName);
+        UserGrade userGrade = new UserGrade(1, 100, 100,  userGradeName);
         userGradeNameRepository.save(userGradeName);
         UserStatus resultUserStatus = userStatusRepository.save(userStatus);
         UserGrade resultUserGrade = userGradeRepository.save(userGrade);
 
         User user1 =
-                new User("test1@naver.com", LocalDate.now(), "test1", "test1", false, "test1", resultUserStatus, resultUserGrade);
+                new User("test1@naver.com", LocalDate.now(), "test1", "test1", false, "test1", resultUserStatus, resultUserGrade,null);
         User user2 =
-                new User("test2@naver.com", LocalDate.now(), "test2", "test2", false, "test2", resultUserStatus, resultUserGrade);
+                new User("test2@naver.com", LocalDate.now(), "test2", "test2", false, "test2", resultUserStatus, resultUserGrade,null);
         User resultUser = userRepository.save(user1);
 
         id = resultUser.getId();

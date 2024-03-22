@@ -66,10 +66,10 @@ class UserAddressRepositoryTest {
         userStatusRepository.save(userStatus);
         userGradeNameRepository.save(userGradeName);
 
-        UserGrade userGrade = new UserGrade(1, 1, 1, LocalDate.now(), userGradeName);
+        UserGrade userGrade = new UserGrade(1, 1, 1, userGradeName);
         userGradeRepository.save(userGrade);
 
-        User user = new User("test@naver.com", LocalDate.now(), "test", "test", false, "test", userStatus, userGrade);
+        User user = new User("test@naver.com", LocalDate.now(), "test", "test", false, "test", userStatus, userGrade,null);
         User resultUser = userRepository.save(user);
         userId = resultUser.getId();
 

@@ -13,8 +13,8 @@ import store.mybooks.resource.pointhistory.dto.response.PointHistoryResponse;
 import store.mybooks.resource.pointhistory.dto.response.PointResponse;
 import store.mybooks.resource.pointhistory.entity.PointHistory;
 import store.mybooks.resource.pointhistory.entity.QPointHistory;
-import store.mybooks.resource.pointrulename.enumulation.PointRuleNameEnum;
 import store.mybooks.resource.pointrule.entity.QPointRule;
+import store.mybooks.resource.pointrulename.enumulation.PointRuleNameEnum;
 
 /**
  * packageName    : store.mybooks.resource.point_history.repository<br>
@@ -63,7 +63,6 @@ public class PointHistoryRepositoryImpl extends QuerydslRepositorySupport implem
                         .where(pointHistory.user.id.eq(userId))
                         .orderBy(pointHistory.createdDate.desc())
                         .select(Projections.constructor(PointHistoryResponse.class,
-                                bookOrder.number,
                                 pointHistory.pointRule.pointRuleName.id,
                                 pointHistory.pointStatusCost,
                                 pointHistory.createdDate))
@@ -81,13 +80,13 @@ public class PointHistoryRepositoryImpl extends QuerydslRepositorySupport implem
     }
 
     @Override
-    public boolean isAlreadyReceivedSignUpPoint(Long userId) {
+    public boolean isAlreadyReceivedSignUpPoint(String email) {
         QPointRule pointRule = QPointRule.pointRule;
 
         List<Long> pointHistoryIdList = from(pointHistory)
                 .leftJoin(pointRule)
                 .on(pointHistory.pointRule.id.eq(pointRule.id))
-                .where(pointHistory.user.id.eq(userId))
+                .where(pointHistory.user.email.eq(email))
                 .where(pointRule.pointRuleName.id.eq("회원가입 적립"))
                 .select(pointHistory.id)
                 .fetch();
