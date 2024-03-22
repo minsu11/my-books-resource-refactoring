@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.user_grade.dto.mapper.UserGradeMapper;
 import store.mybooks.resource.user_grade.dto.request.UserGradeCreateRequest;
 import store.mybooks.resource.user_grade.dto.response.UserGradeCreateResponse;
-import store.mybooks.resource.user_grade.dto.response.UserGradeDeleteResponse;
 import store.mybooks.resource.user_grade.dto.response.UserGradeGetResponse;
 import store.mybooks.resource.user_grade.entity.UserGrade;
 import store.mybooks.resource.user_grade.exception.UserGradeIdNotExistException;
@@ -47,64 +46,37 @@ public class UserGradeService {
      *
      * @param createRequest request
      * @return user grade create response
-     * @throws UserGradeNameNotExistException 유저의 이름이 존재하지 않는 경우
+     * @throws UserGradeNameNotExistException 유저등급 이름이 존재하지 않는 경우
      */
     @Transactional
     public UserGradeCreateResponse createUserGrade(UserGradeCreateRequest createRequest) {
 
-        String userGradeNameRequest = createRequest.getName();
+        String userGradeNameRequest = createRequest.getUserGradeNameId();
 
         UserGradeName userGradeName = userGradeNameRepository.findById(userGradeNameRequest)
                 .orElseThrow(() -> new UserGradeNameNotExistException(userGradeNameRequest));
 
-        UserGrade userGrade =
-                new UserGrade(createRequest.getMinCost(), createRequest.getMaxCost(), createRequest.getRate(),
-                        createRequest.getCreatedDate(), userGradeName);
-
-
         Optional<UserGrade> optionalUserGrade =
                 userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(userGradeNameRequest);
-        optionalUserGrade.ifPresent(UserGrade::deleteUserGrade);
 
-        userGradeRepository.save(userGrade);
 
+        if (optionalUserGrade.isEmpty()) {
+            throw new UserGradeIdNotExistException();
+        }
+
+        UserGrade userGrade = optionalUserGrade.get();
+        userGrade.deleteUserGrade();
+
+        UserGrade resultUserGrade =
+                new UserGrade(userGrade.getMinCost(), userGrade.getMaxCost(), createRequest.getRate(), userGradeName);
+
+        userGradeRepository.save(resultUserGrade);
         return userGradeMapper.toUserGradeCreateResponse(userGrade);
     }
 
-    /**
-     * methodName : deleteUserGrade
-     * author : masiljangajji
-     * description : 유저 등급을 삭제
-     *
-     * @param id id
-     * @return user grade delete response
-     * @throws UserGradeIdNotExistException 유저등급이 존재하지 않는 경우
-     */
-    @Transactional
-    public UserGradeDeleteResponse deleteUserGrade(Integer id) {
 
-        UserGrade userGrade = userGradeRepository.findById(id).orElseThrow(UserGradeIdNotExistException::new);
 
-        userGrade.deleteUserGrade();
-        return new UserGradeDeleteResponse("UserGrade 삭제완료");
-    }
 
-    /**
-     * methodName : findUserGradeById
-     * author : masiljangajji
-     * description : 유저등급을 찾음
-     *
-     * @param id id
-     * @return user grade get response
-     * @throws UserGradeIdNotExistException 유저등급이 존재하지 않는 경우
-     */
-    public UserGradeGetResponse findUserGradeById(Integer id) {
-
-        if (!userGradeRepository.existsById(id)) {
-            throw new UserGradeIdNotExistException();
-        }
-        return userGradeRepository.queryById(id);
-    }
 
 
     /**
@@ -114,8 +86,12 @@ public class UserGradeService {
      *
      * @return list
      */
+    public List<UserGradeGetResponse> findAllAvailableUserGrade() {
+        return userGradeRepository.queryAllByIsAvailableIsTrueOrderByMinCost();
+    }
+
     public List<UserGradeGetResponse> findAllUserGrade() {
-        return userGradeRepository.queryAllByAndIsAvailableIsTrue();
+        return userGradeRepository.queryAllByOrderByMinCost();
     }
 
 

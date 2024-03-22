@@ -11,17 +11,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.book.dto.request.BookCreateRequest;
 import store.mybooks.resource.book.dto.request.BookModifyRequest;
-import store.mybooks.resource.book.dto.response.BookBriefResponse;
-import store.mybooks.resource.book.dto.response.BookCartResponse;
-import store.mybooks.resource.book.dto.response.BookCreateResponse;
-import store.mybooks.resource.book.dto.response.BookDetailResponse;
-import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
-import store.mybooks.resource.book.dto.response.BookModifyResponse;
-import store.mybooks.resource.book.dto.response.BookResponseForOrder;
+import store.mybooks.resource.book.dto.response.*;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.exception.IsbnAlreadyExistsException;
@@ -33,6 +28,7 @@ import store.mybooks.resource.bookcategory.dto.request.BookCategoryCreateRequest
 import store.mybooks.resource.bookcategory.service.BookCategoryService;
 import store.mybooks.resource.booklike.repository.BookLikeRepository;
 import store.mybooks.resource.bookstatus.entity.BookStatus;
+import store.mybooks.resource.bookstatus.enumeration.BookStatusEnum;
 import store.mybooks.resource.bookstatus.exception.BookStatusNotExistException;
 import store.mybooks.resource.bookstatus.respository.BookStatusRepository;
 import store.mybooks.resource.booktag.dto.request.BookTagCreateRequest;
@@ -285,5 +281,41 @@ public class BookService {
                 }
             }
         }
+    }
+
+    /**
+     * methodName : getBookStockResponse<br>
+     * author : mins11<br>
+     * description : 책의 재고를 가지고 오는 메서드.<br>
+     *
+     * @param bookId the book id
+     * @return the book stock response
+     */
+    @Transactional(readOnly = true)
+    public BookStockResponse getBookStockResponse(Long bookId) {
+        return bookRepository.getBookStockList(bookId);
+    }
+
+    /**
+     * methodName : updateBookStock<br>
+     * author : mins11<br>
+     * description : 책 재고 업데이트.<br>
+     *
+     * @param bookId the book id
+     * @param stock  the stock
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void updateBookStock(Long bookId, Integer stock) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new BookNotExistException(bookId));
+        int resultStock = book.getStock() - stock;
+        if (resultStock == 0) {
+            BookStatus bookStatus = bookStatusRepository.findById(BookStatusEnum.NO_STOCK.getName())
+                    .orElseThrow(() -> new BookStatusNotExistException(BookStatusEnum.NO_STOCK.getName()));
+            book.soldOut(resultStock, bookStatus);
+        } else {
+            book.modifyStock(resultStock);
+        }
+
     }
 }

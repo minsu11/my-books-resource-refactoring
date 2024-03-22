@@ -14,7 +14,7 @@ import store.mybooks.resource.bookorder.dto.response.*;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminModifyResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminResponse;
 import store.mybooks.resource.bookorder.service.BookOrderService;
-import store.mybooks.resource.bookorder.service.OrderService;
+import store.mybooks.resource.bookorder.service.TotalOrderService;
 import store.mybooks.resource.config.HeaderProperties;
 
 /**
@@ -34,7 +34,7 @@ import store.mybooks.resource.config.HeaderProperties;
 @RequiredArgsConstructor
 public class BookOrderRestController {
     private final BookOrderService bookOrderService;
-    private final OrderService orderService;
+    private final TotalOrderService orderService;
 
     /**
      * methodName : getBookOrderPageById<br>

@@ -5,7 +5,6 @@ import javax.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 /**
  * packageName    : store.mybooks.resource.bookorder.dto.request<br>
@@ -21,7 +20,6 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor
 @Setter
-@ToString
 public class BookOrderInfoRequest {
 
     @Positive
@@ -39,6 +37,7 @@ public class BookOrderInfoRequest {
     @Size(max = 100)
     private String recipientAddress;
 
+
     @NotBlank
     @Size(max = 13)
     private String recipientPhoneNumber;
@@ -51,4 +50,5 @@ public class BookOrderInfoRequest {
     private Integer wrapCost;
     @PositiveOrZero
     private Integer couponApplicationAmount;
+
 }

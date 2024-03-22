@@ -4,7 +4,6 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * packageName    : store.mybooks.resource.bookorder.dto.request<br>
@@ -19,7 +18,6 @@ import lombok.ToString;
  */
 @Getter
 @NoArgsConstructor
-@ToString
 public class BookInfoRequest {
     @Positive
     private Long bookId;

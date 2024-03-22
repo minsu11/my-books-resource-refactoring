@@ -13,6 +13,8 @@ import store.mybooks.resource.booklike.entity.QBookLike;
 import store.mybooks.resource.image.entity.QImage;
 import store.mybooks.resource.image_status.entity.QImageStatus;
 import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
+import store.mybooks.resource.orderdetail.entity.QOrderDetail;
+import store.mybooks.resource.review.entity.QReview;
 import store.mybooks.resource.user.entity.QUser;
 
 /**
@@ -37,6 +39,10 @@ public class BookLikeRepositoryImpl extends QuerydslRepositorySupport implements
     QImage image = QImage.image;
     QImageStatus imageStatus = QImageStatus.imageStatus;
 
+    QReview review = QReview.review;
+
+    QOrderDetail orderDetail = QOrderDetail.orderDetail;
+
     @Override
     public Page<BookBriefResponse> getUserBookLike(Long userId, Pageable pageable) {
         List<BookBriefResponse> lists =
@@ -44,6 +50,8 @@ public class BookLikeRepositoryImpl extends QuerydslRepositorySupport implements
                         .join(bookLike.user, user)
                         .join(bookLike.book, book)
                         .join(image).on(image.book.eq(book))
+                        .leftJoin(orderDetail).on(book.eq(orderDetail.book))
+                        .leftJoin(review).on(orderDetail.eq(review.orderDetail))
                         .join(image.imageStatus, imageStatus)
                         .where(bookLike.user.id.eq(userId))
                         .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
@@ -52,15 +60,18 @@ public class BookLikeRepositoryImpl extends QuerydslRepositorySupport implements
                                 book.id,
                                 image.path.concat(image.fileName).concat(image.extension),
                                 book.name,
+                                review.rate.avg().coalesce(0.0),
+                                review.count(),
                                 book.originalCost,
-                                book.saleCost))
+                                book.saleCost
+                        ))
+                        .groupBy(book.id, image)
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .fetch();
 
         long total = from(bookLike)
                 .join(bookLike.user, user)
-                .join(bookLike.book, book)
                 .where(bookLike.user.id.eq(userId))
                 .fetchCount();
 

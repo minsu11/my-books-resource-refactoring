@@ -3,6 +3,7 @@ package store.mybooks.resource.image.service;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.book.entity.Book;
+import store.mybooks.resource.book.repotisory.BookRepository;
 import store.mybooks.resource.config.ObjectStorageProperties;
 import store.mybooks.resource.image.dto.mapper.ImageMapper;
 import store.mybooks.resource.image.dto.request.ImageTokenRequest;
@@ -32,6 +34,7 @@ import store.mybooks.resource.image.exception.ImageNotExistsException;
 import store.mybooks.resource.image.repository.ImageRepository;
 import store.mybooks.resource.image_status.entity.ImageStatus;
 import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
+import store.mybooks.resource.image_status.repository.ImageStatusRepository;
 import store.mybooks.resource.review.entity.Review;
 
 
@@ -54,7 +57,9 @@ public class ObjectStorageImpl implements ImageService {
     private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
     private final RestTemplate restTemplate;
+    private final BookRepository bookRepository;
     private static final String X_AUTH_TOKEN = "X-Auth-Token";
+    private final ImageStatusRepository imageStatusRepository;
 
 
     private String requestToken() {
@@ -76,6 +81,35 @@ public class ObjectStorageImpl implements ImageService {
                 + "/"
                 + objectStorageProperties.getContainerName()
                 + "/";
+    }
+
+    @Override
+    public void updateImage(Book book, MultipartFile thumbNailFile, List<MultipartFile> content) throws IOException {
+        if (Objects.isNull(thumbNailFile) && (Objects.isNull(content) || content.isEmpty())) {
+            return;
+        }
+
+        if (Objects.nonNull(thumbNailFile)) {
+            ImageStatus thumbNailImageStatus =
+                    imageStatusRepository.findById(ImageStatusEnum.THUMBNAIL.name()).orElseThrow();
+            Image thumbNailImage =
+                    imageRepository.findImageByBook_IdAndImageStatus_Id(book.getId(), thumbNailImageStatus.getId())
+                            .orElseThrow();
+            imageRepository.deleteById(thumbNailImage.getId());
+            deleteObject(thumbNailImage.getId());
+            saveImage(thumbNailImageStatus, null, book, thumbNailFile);
+            return;
+        }
+
+        ImageStatus contentImageStatus = imageStatusRepository.findById(ImageStatusEnum.CONTENT.name()).orElseThrow();
+        List<Image> contentImage =
+                imageRepository.findAllByBook_IdAndImageStatus_Id(book.getId(), contentImageStatus.getId());
+
+        contentImage.forEach(image -> deleteObject(image.getId()));
+        contentImage.forEach(image -> imageRepository.deleteById(image.getId()));
+        for (MultipartFile file : content) {
+            saveImage(contentImageStatus, null, book, file);
+        }
     }
 
     @Override
@@ -124,6 +158,13 @@ public class ObjectStorageImpl implements ImageService {
     @Transactional(readOnly = true)
     public Image getThumbNailImage(Long id) {
         return imageRepository.findImageByBook_IdAndImageStatus_Id(id, ImageStatusEnum.THUMBNAIL.getName())
+                .orElseThrow(() -> new ImageNotExistsException("해당하는 id의 이미지가 없습니다"));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Image getReviewImage(Long id) {
+        return imageRepository.findImageByReviewIdAndImageStatusId(id, ImageStatusEnum.REVIEW.getName())
                 .orElseThrow(() -> new ImageNotExistsException("해당하는 id의 이미지가 없습니다"));
     }
 

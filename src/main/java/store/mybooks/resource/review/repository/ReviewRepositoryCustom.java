@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
 import store.mybooks.resource.review.dto.response.ReviewDetailGetResponse;
 import store.mybooks.resource.review.dto.response.ReviewGetResponse;
+import store.mybooks.resource.review.dto.response.ReviewRateResponse;
 
 /**
  * packageName    : store.mybooks.resource.review.repository<br>
@@ -26,5 +27,7 @@ public interface ReviewRepositoryCustom {
     Page<ReviewDetailGetResponse> getReviewByBookId(Long bookId, Pageable pageable);
 
     Optional<ReviewGetResponse> getReview(Long reviewId);
+
+    ReviewRateResponse getReviewRate(Long bookId);
 
 }
