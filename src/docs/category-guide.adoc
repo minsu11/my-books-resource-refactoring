@@ -1,7 +1,5 @@
 = Category
 
-카테고리 등록, 수정, 조회, 삭제를 할 수 있습니다.
-
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
@@ -12,6 +10,8 @@
 :sectanchors:
 
 == 카테고리 API
+
+카테고리 등록, 수정, 조회, 삭제를 할 수 있습니다.
 
 === 카테고리 생성
 
