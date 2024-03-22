@@ -190,17 +190,28 @@ class CouponRestControllerTest {
                                 fieldWithPath("content[].isRate").description("정률 할인 쿠폰인지 판단"),
                                 fieldWithPath("content[].startDate").description("쿠폰 유효기간(시작일)"),
                                 fieldWithPath("content[].endDate").description("쿠폰 유효기간(종료일)"),
-                                fieldWithPath("pageable.sort.*").ignored(),
-                                fieldWithPath("pageable.*").ignored(),
-                                fieldWithPath("totalElements").ignored(),
-                                fieldWithPath("totalPages").ignored(),
-                                fieldWithPath("last").ignored(),
-                                fieldWithPath("numberOfElements").ignored(),
-                                fieldWithPath("size").ignored(),
-                                fieldWithPath("number").ignored(),
-                                fieldWithPath("first").ignored(),
-                                fieldWithPath("sort.*").ignored(),
-                                fieldWithPath("empty").ignored()
+                                fieldWithPath("pageable").description("페이지정보"),
+                                fieldWithPath("pageable.sort").description("페이지 정렬 정보"),
+                                fieldWithPath("pageable.sort.sorted").description("페이지 정렬되었는지 여부(true: 정렬 됨)"),
+                                fieldWithPath("pageable.sort.unsorted").description("페이지 정렬되지 않았는지 여부(true: 정렬 안 됨)"),
+                                fieldWithPath("pageable.sort.empty").description("페이지 정렬 정보가 비어 있는지 여부(true: 비어있음)"),
+                                fieldWithPath("pageable.pageSize").description("전체 페이지 수"),
+                                fieldWithPath("pageable.pageNumber").description("현재 페이지 번호(0부터 시작)"),
+                                fieldWithPath("pageable.offset").description("현재 페이지의 시작 오프셋(0부터 시작)"),
+                                fieldWithPath("pageable.paged").description("페이지네이션을 사용하는지 여부(true: 사용함)"),
+                                fieldWithPath("pageable.unpaged").description("페이지네이션을 사용하는지 여부(true: 사용 안 함)"),
+                                fieldWithPath("totalPages").description("전체 페이지 수"),
+                                fieldWithPath("totalElements").description("전체 요소(항목) 수"),
+                                fieldWithPath("last").description("마지막 페이지 여부(true: 마지막 페이지)"),
+                                fieldWithPath("numberOfElements").description("혀재 페이지의 요소(항목) 수"),
+                                fieldWithPath("size").description("페이지 당 요소(항목) 수"),
+                                fieldWithPath("sort").description("결과 정렬 정보를 담은 객체"),
+                                fieldWithPath("sort.sorted").description("결과가 정렬되었는지 여부(true: 정렬 됨)"),
+                                fieldWithPath("sort.unsorted").description("결과가 정렬되지 않았는지 여부(true: 정렬 안 됨)"),
+                                fieldWithPath("sort.empty").description("결과 정렬 정보가 비어 있는지 여부(true: 비어있음)"),
+                                fieldWithPath("number").description("현재 페이지 번호(0부터 시작)"),
+                                fieldWithPath("first").description("첫 페이지 여부(true: 첫 페이지)"),
+                                fieldWithPath("empty").description("결과가 비어 있는지 여부(true: 비어있음)")
                         )));
 
         verify(couponService, times(1)).getCoupons(any());
@@ -263,7 +274,7 @@ class CouponRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(longName))
                 .andExpect(status().isBadRequest())
-                .andDo(document("coupon-create-fail-validation-longName"));
+                .andDo(document("coupon-create-fail-validation-tooLongName"));
     }
 
     @Test
