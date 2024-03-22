@@ -19,9 +19,9 @@ public class UserNotExistException extends RuntimeException {
     }
 
 
+
     public UserNotExistException(String email) {
         super(String.format("[%s]아이디 유저는 존재하지 않습니다", email));
     }
-
 
 }
