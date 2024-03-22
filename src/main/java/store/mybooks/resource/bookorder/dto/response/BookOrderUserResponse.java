@@ -43,7 +43,8 @@ public class BookOrderUserResponse {
         this.orderDetailInfoList = orderDetailInfoList;
     }
 
-    public BookOrderUserResponse(String statusId, String deliveryRuleName, Integer deliveryCost, LocalDate orderDate, String invoiceNumber, String receiverName, String receiverAddress, String receiverPhoneNumber, String receiverMessage, Integer totalCost, Integer pointCost, Integer couponCost, String number, String image) {
+    public BookOrderUserResponse(String statusId, String deliveryRuleName, Integer deliveryCost, LocalDate orderDate, String invoiceNumber, String receiverName, String receiverAddress, String receiverPhoneNumber, String receiverMessage,
+                                 Integer totalCost, Integer pointCost, Integer couponCost, String number, String image) {
         this.statusId = statusId;
         this.deliveryRuleName = deliveryRuleName;
         this.deliveryCost = deliveryCost;

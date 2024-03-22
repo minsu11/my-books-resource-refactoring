@@ -43,7 +43,7 @@ public class BookOrderRestController {
      * <br> *
      *
      * @param id
-     * @param pageable
+     * @param pageable 페이징
      * @return response entity
      */
 
@@ -149,7 +149,7 @@ public class BookOrderRestController {
     public ResponseEntity<BookOrderCreateResponse> createResponseResponseEntity(
             @RequestBody BookOrderCreateRequest request,
             @RequestHeader(name = HeaderProperties.USER_ID) Long id) {
-
+        log.debug("주문 생성 :{}", request.getOrderInfo());
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(orderService.createOrder(request, id));

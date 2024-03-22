@@ -31,7 +31,6 @@ public class OrderDetailRepositoryImpl extends QuerydslRepositorySupport impleme
     public List<OrderDetailInfoResponse> getOrderDetailList(Long bookOrderId) {
         QBook book = QBook.book;
         return from(orderDetail)
-                .leftJoin(orderDetail.book, book)
                 .select(Projections.constructor(
                         OrderDetailInfoResponse.class,
                         orderDetail.book.id,
