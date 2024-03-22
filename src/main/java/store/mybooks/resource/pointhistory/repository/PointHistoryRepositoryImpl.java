@@ -13,8 +13,8 @@ import store.mybooks.resource.pointhistory.dto.response.PointHistoryResponse;
 import store.mybooks.resource.pointhistory.dto.response.PointResponse;
 import store.mybooks.resource.pointhistory.entity.PointHistory;
 import store.mybooks.resource.pointhistory.entity.QPointHistory;
-import store.mybooks.resource.pointrulename.enumulation.PointRuleNameEnum;
 import store.mybooks.resource.pointrule.entity.QPointRule;
+import store.mybooks.resource.pointrulename.enumulation.PointRuleNameEnum;
 
 /**
  * packageName    : store.mybooks.resource.point_history.repository<br>
@@ -63,7 +63,6 @@ public class PointHistoryRepositoryImpl extends QuerydslRepositorySupport implem
                         .where(pointHistory.user.id.eq(userId))
                         .orderBy(pointHistory.createdDate.desc())
                         .select(Projections.constructor(PointHistoryResponse.class,
-                                bookOrder.number,
                                 pointHistory.pointRule.pointRuleName.id,
                                 pointHistory.pointStatusCost,
                                 pointHistory.createdDate))
