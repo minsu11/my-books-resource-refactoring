@@ -70,7 +70,6 @@ import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsExcept
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
 import store.mybooks.resource.category.exception.CategoryValidationException;
 import store.mybooks.resource.category.service.CategoryService;
-import store.mybooks.resource.image.dto.response.ImageResponse;
 
 /**
  * packageName    : store.mybooks.resource.category.controller
@@ -464,24 +463,26 @@ class CategoryRestControllerTest {
     void givenCategoryIdAndPageable_whenGetBooksForCategoryView_thenReturnPageOfBookBriefResponseIncludePublishDate()
             throws Exception {
         Pageable pageable = PageRequest.of(0, 2);
-        ImageResponse appleImageResponse = new ImageResponse("path", "apple", "png");
         BookBriefResponseIncludePublishDate appleBook =
                 new BookBriefResponseIncludePublishDate(
                         1L,
-                        appleImageResponse,
+                        "path/apple.png",
                         "appleBook",
+                        5D,
+                        10L,
                         10000,
-                        5000,
+                        8000,
                         LocalDate.now()
                 );
-        ImageResponse bananaImageResponse = new ImageResponse("path", "apple", "png");
         BookBriefResponseIncludePublishDate bananaBook =
                 new BookBriefResponseIncludePublishDate(
                         1L,
-                        bananaImageResponse,
+                        "path/apple.png",
                         "bananaBook",
+                        5D,
+                        10L,
                         10000,
-                        5000,
+                        8000,
                         LocalDate.now()
                 );
         List<BookBriefResponseIncludePublishDate> bookBriefResponseIncludePublishDateList =
@@ -510,6 +511,39 @@ class CategoryRestControllerTest {
                         requestParameters(
                                 parameterWithName("page").description("요청 페이지 번호(0부터 시작, default = 0)"),
                                 parameterWithName("size").description("페이지 사이즈(default = 10)")
+                        ),
+                        responseFields(
+                                fieldWithPath("content").description("도서 간단 정보 리스트"),
+                                fieldWithPath("content[].id").description("도서 아이디"),
+                                fieldWithPath("content[].image").description("도서 이미지 주소"),
+                                fieldWithPath("content[].name").description("도서 이름"),
+                                fieldWithPath("content[].rate").description("도서 평점"),
+                                fieldWithPath("content[].reviewCount").description("도서 리뷰 수"),
+                                fieldWithPath("content[].cost").description("도서 정가"),
+                                fieldWithPath("content[].saleCost").description("도서 할인가"),
+                                fieldWithPath("content[].publishDate").description("도서 출간일"),
+                                fieldWithPath("pageable").description("페이지정보"),
+                                fieldWithPath("pageable.sort").description("페이지 정렬 정보"),
+                                fieldWithPath("pageable.sort.sorted").description("페이지 정렬되었는지 여부(true: 정렬 됨)"),
+                                fieldWithPath("pageable.sort.unsorted").description("페이지 정렬되지 않았는지 여부(true: 정렬 안 됨)"),
+                                fieldWithPath("pageable.sort.empty").description("페이지 정렬 정보가 비어 있는지 여부(true: 비어있음)"),
+                                fieldWithPath("pageable.pageSize").description("전체 페이지 수"),
+                                fieldWithPath("pageable.pageNumber").description("현재 페이지 번호(0부터 시작)"),
+                                fieldWithPath("pageable.offset").description("현재 페이지의 시작 오프셋(0부터 시작)"),
+                                fieldWithPath("pageable.paged").description("페이지네이션을 사용하는지 여부(true: 사용함)"),
+                                fieldWithPath("pageable.unpaged").description("페이지네이션을 사용하는지 여부(true: 사용 안 함)"),
+                                fieldWithPath("totalPages").description("전체 페이지 수"),
+                                fieldWithPath("totalElements").description("전체 요소(항목) 수"),
+                                fieldWithPath("last").description("마지막 페이지 여부(true: 마지막 페이지)"),
+                                fieldWithPath("numberOfElements").description("혀재 페이지의 요소(항목) 수"),
+                                fieldWithPath("size").description("페이지 당 요소(항목) 수"),
+                                fieldWithPath("sort").description("결과 정렬 정보를 담은 객체"),
+                                fieldWithPath("sort.sorted").description("결과가 정렬되었는지 여부(true: 정렬 됨)"),
+                                fieldWithPath("sort.unsorted").description("결과가 정렬되지 않았는지 여부(true: 정렬 안 됨)"),
+                                fieldWithPath("sort.empty").description("결과 정렬 정보가 비어 있는지 여부(true: 비어있음)"),
+                                fieldWithPath("number").description("현재 페이지 번호(0부터 시작)"),
+                                fieldWithPath("first").description("첫 페이지 여부(true: 첫 페이지)"),
+                                fieldWithPath("empty").description("결과가 비어 있는지 여부(true: 비어있음)")
                         )
                 ));
     }

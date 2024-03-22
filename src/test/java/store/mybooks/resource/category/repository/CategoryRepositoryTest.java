@@ -251,9 +251,7 @@ class CategoryRepositoryTest {
         assertThat(actualPage.getContent()).isNotNull().hasSize(1);
         List<BookBriefResponseIncludePublishDate> actualList = actualPage.getContent();
         assertThat(actualList.get(0).getId()).isNotNull().isEqualTo(bananaBook.getId());
-        assertThat(actualList.get(0).getImageResponse().getPath()).isNotNull().isEqualTo(bananaImage.getPath());
-        assertThat(actualList.get(0).getImageResponse().getFileName()).isNotNull().isEqualTo(bananaImage.getFileName());
-        assertThat(actualList.get(0).getImageResponse().getExtension()).isNotNull()
-                .isEqualTo(bananaImage.getExtension());
+        assertThat(actualList.get(0).getImage()).isNotNull().isEqualTo(
+                bananaImage.getPath().concat(bananaImage.getFileName()).concat(bananaImage.getExtension()));
     }
 }
