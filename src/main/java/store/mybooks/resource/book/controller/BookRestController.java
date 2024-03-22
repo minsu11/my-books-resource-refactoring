@@ -137,9 +137,9 @@ public class BookRestController {
                                                          @RequestPart("thumbnail") MultipartFile thumbnail,
                                                          @RequestPart("content") List<MultipartFile> content,
                                                          BindingResult bindingResult)
-            throws BindException, IOException {
+            throws IOException {
         if (bindingResult.hasErrors()) {
-            throw new BindException(bindingResult);
+            throw new RequestValidationFailedException(bindingResult);
         }
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -159,13 +159,17 @@ public class BookRestController {
     @PutMapping("/{id}")
     public ResponseEntity<BookModifyResponse> modifyBook(@PathVariable("id") Long bookId,
                                                          @Valid @RequestBody BookModifyRequest modifyRequest,
-                                                         BindingResult bindingResult) {
+                                                         @RequestPart(value = "thumbnail", required = false)
+                                                         MultipartFile thumbnail,
+                                                         @RequestPart(value = "content", required = false)
+                                                         List<MultipartFile> content,
+                                                         BindingResult bindingResult) throws IOException {
         if (bindingResult.hasErrors()) {
             throw new RequestValidationFailedException(bindingResult);
         }
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(bookService.modifyBook(bookId, modifyRequest));
+                .body(bookService.modifyBook(bookId, modifyRequest, thumbnail, content));
     }
 
     @GetMapping("/cart-books/{id}")

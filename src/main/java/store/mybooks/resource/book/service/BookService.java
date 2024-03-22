@@ -218,7 +218,7 @@ public class BookService {
      */
     @Transactional
     public BookModifyResponse modifyBook(Long bookId, BookModifyRequest modifyRequest, MultipartFile thumbnail,
-                                         List<MultipartFile> content) {
+                                         List<MultipartFile> content) throws IOException {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotExistException(bookId));
 
@@ -251,7 +251,7 @@ public class BookService {
         if (modifyRequest.getTagList() != null) {
             bookTagService.createBookTag(new BookTagCreateRequest(bookId, modifyRequest.getTagList()));
         }
-
+        imageService.updateImage(book, thumbnail, content);
 
         return bookMapper.modifyResponse(book);
     }
