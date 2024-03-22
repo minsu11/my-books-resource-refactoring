@@ -14,6 +14,7 @@ import store.mybooks.resource.user.dto.request.UserGradeModifyRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
 import store.mybooks.resource.user.dto.request.UserOauthCreateRequest;
 import store.mybooks.resource.user.dto.request.UserOauthLoginRequest;
+import store.mybooks.resource.user.dto.request.UserOauthRequest;
 import store.mybooks.resource.user.dto.request.UserPasswordModifyRequest;
 import store.mybooks.resource.user.dto.request.UserStatusModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
@@ -125,6 +126,30 @@ public class UserService {
         User resultUser = userRepository.save(user);
         return userMapper.toUserOauthCreateResponse(resultUser);
     }
+
+    public UserOauthCreateResponse createOauthUser(UserOauthRequest request) {
+
+        String userStatusName = UserStatusEnum.ACTIVE.toString();
+        String userGradeName = UserGradeNameEnum.NORMAL.toString();
+
+        UserStatus userStatus = userStatusRepository.findById(userStatusName)
+                .orElseThrow(() -> new UserStatusNotExistException(userStatusName));
+
+        UserGrade userGrade = userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(userGradeName)
+                .orElseThrow(() -> new UserGradeNameNotExistException(userGradeName));
+
+        // 이미 존재하면 예외처리
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new UserAlreadyExistException(request.getEmail());
+        }
+
+        User user = new User(request.getEmail(), request.getBirth(), "dummy", request.getPhoneNumber(), false,
+                request.getName(), userStatus, userGrade);
+
+        User resultUser = userRepository.save(user);
+        return userMapper.toUserOauthCreateResponse(resultUser);
+    }
+
 
     public UserLoginResponse loginOauthUser(UserOauthLoginRequest loginRequest) {
 
@@ -296,11 +321,9 @@ public class UserService {
      */
     public UserLoginResponse completeLoginProcess(UserEmailRequest request) {
 
-        // 로그인 인증은 프론트에서 하도록
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(UserLoginFailException::new);
 
-        System.out.println("시작");
         pointHistoryService.saveLoginPoint(user.getId());
         user.modifyLatestLogin();
 
@@ -341,6 +364,7 @@ public class UserService {
         user.modifyPassword(request.getPassword());
         return new UserInactiveVerificationResponse(userStatus.getId());
     }
+
 
 }
 

@@ -25,6 +25,7 @@ import store.mybooks.resource.user.dto.request.UserGradeModifyRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
 import store.mybooks.resource.user.dto.request.UserOauthCreateRequest;
 import store.mybooks.resource.user.dto.request.UserOauthLoginRequest;
+import store.mybooks.resource.user.dto.request.UserOauthRequest;
 import store.mybooks.resource.user.dto.request.UserPasswordModifyRequest;
 import store.mybooks.resource.user.dto.request.UserStatusModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
@@ -102,6 +103,18 @@ public class UserRestController {
 
         return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
     }
+
+    @PostMapping("/oauth/no-info")
+    public ResponseEntity<UserOauthCreateResponse> createAndLoginOauthUser(@Valid @RequestBody UserOauthRequest request,BindingResult bindingResult){
+
+        Utils.validateRequest(bindingResult);
+        UserOauthCreateResponse createResponse = userService.createOauthUser(request);
+        pointHistoryService.saveSignUpPoint(createResponse.getEmail());
+        pointHistoryService.saveOauthLoginPoint(createResponse.getId());
+        return new ResponseEntity<>(createResponse,HttpStatus.CREATED);
+    }
+
+
 
     /**
      * methodName : modifyUser
@@ -277,5 +290,7 @@ public class UserRestController {
         UserInactiveVerificationResponse response = userService.verifyLockUser(id, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
 
 }
