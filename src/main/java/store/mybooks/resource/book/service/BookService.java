@@ -3,6 +3,7 @@ package store.mybooks.resource.book.service;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -229,7 +230,8 @@ public class BookService {
                 publisherRepository.findById(modifyRequest.getPublisherId())
                         .orElseThrow(() -> new PublisherNotExistException(modifyRequest.getPublisherId()));
 
-        if (bookRepository.existsByIsbn(modifyRequest.getIsbn())) {
+        if ((!Objects.equals(book.getIsbn(), modifyRequest.getIsbn()))
+                && (bookRepository.existsByIsbn(modifyRequest.getIsbn()))) {
             throw new IsbnAlreadyExistsException(modifyRequest.getIsbn());
         }
 
