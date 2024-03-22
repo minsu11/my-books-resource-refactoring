@@ -11,11 +11,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -96,7 +99,10 @@ class CategoryRestControllerTest {
                RestDocumentationContextProvider restDocumentation) {
 
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .apply(documentationConfiguration(restDocumentation))
+                .apply(documentationConfiguration(restDocumentation)
+                        .operationPreprocessors()
+                        .withRequestDefaults(modifyUris(), prettyPrint())
+                        .withResponseDefaults(prettyPrint()))
                 .build();
     }
 
@@ -112,11 +118,8 @@ class CategoryRestControllerTest {
         when(categoryService.getCategoriesOrderByParentCategoryIdForAdminPage(any())).thenReturn(
                 categoryGetResponsePage);
 
-        String content = objectMapper.writeValueAsString(pageable);
-
-        mockMvc.perform(get("/api/categories/page")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content))
+        mockMvc.perform(get("/api/categories/page?page=" + pageable.getPageNumber()
+                        + "&size=" + pageable.getPageSize()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()").value(2))
                 .andExpect(jsonPath("$.content[0].id").value(1))
@@ -126,30 +129,37 @@ class CategoryRestControllerTest {
                 .andExpect(jsonPath("$.content[1].name").value("childCategory"))
                 .andExpect(jsonPath("$.content[1].parentCategoryName").value("parentCategory"))
                 .andDo(document("category-get-page",
-                        requestFields(
-                                fieldWithPath("pageNumber").description("페이지"),
-                                fieldWithPath("pageSize").description("사이즈"),
-                                fieldWithPath("sort.*").ignored(),
-                                fieldWithPath("offset").ignored(),
-                                fieldWithPath("paged").ignored(),
-                                fieldWithPath("unpaged").ignored()
+                        requestParameters(
+                                parameterWithName("page").description("요청 페이지 번호(0부터 시작, default = 0)"),
+                                parameterWithName("size").description("페이지 사이즈(default = 9)")
                         ),
                         responseFields(
                                 fieldWithPath("content").description("리스트"),
                                 fieldWithPath("content[].id").description("카테고리 아이디"),
                                 fieldWithPath("content[].name").description("카테고리 이름"),
                                 fieldWithPath("content[].parentCategoryName").description("부모 카테고리 이름").optional(),
-                                fieldWithPath("pageable.sort.*").ignored(),
-                                fieldWithPath("pageable.*").ignored(),
-                                fieldWithPath("totalElements").ignored(),
-                                fieldWithPath("totalPages").ignored(),
-                                fieldWithPath("last").ignored(),
-                                fieldWithPath("numberOfElements").ignored(),
-                                fieldWithPath("size").ignored(),
-                                fieldWithPath("number").ignored(),
-                                fieldWithPath("first").ignored(),
-                                fieldWithPath("sort.*").ignored(),
-                                fieldWithPath("empty").ignored()
+                                fieldWithPath("pageable").description("페이지정보"),
+                                fieldWithPath("pageable.sort").description("페이지 정렬 정보"),
+                                fieldWithPath("pageable.sort.sorted").description("페이지 정렬되었는지 여부(true: 정렬 됨)"),
+                                fieldWithPath("pageable.sort.unsorted").description("페이지 정렬되지 않았는지 여부(true: 정렬 안 됨)"),
+                                fieldWithPath("pageable.sort.empty").description("페이지 정렬 정보가 비어 있는지 여부(true: 비어있음)"),
+                                fieldWithPath("pageable.pageSize").description("전체 페이지 수"),
+                                fieldWithPath("pageable.pageNumber").description("현재 페이지 번호(0부터 시작)"),
+                                fieldWithPath("pageable.offset").description("현재 페이지의 시작 오프셋(0부터 시작)"),
+                                fieldWithPath("pageable.paged").description("페이지네이션을 사용하는지 여부(true: 사용함)"),
+                                fieldWithPath("pageable.unpaged").description("페이지네이션을 사용하는지 여부(true: 사용 안 함)"),
+                                fieldWithPath("totalPages").description("전체 페이지 수"),
+                                fieldWithPath("totalElements").description("전체 요소(항목) 수"),
+                                fieldWithPath("last").description("마지막 페이지 여부(true: 마지막 페이지)"),
+                                fieldWithPath("numberOfElements").description("혀재 페이지의 요소(항목) 수"),
+                                fieldWithPath("size").description("페이지 당 요소(항목) 수"),
+                                fieldWithPath("sort").description("결과 정렬 정보를 담은 객체"),
+                                fieldWithPath("sort.sorted").description("결과가 정렬되었는지 여부(true: 정렬 됨)"),
+                                fieldWithPath("sort.unsorted").description("결과가 정렬되지 않았는지 여부(true: 정렬 안 됨)"),
+                                fieldWithPath("sort.empty").description("결과 정렬 정보가 비어 있는지 여부(true: 비어있음)"),
+                                fieldWithPath("number").description("현재 페이지 번호(0부터 시작)"),
+                                fieldWithPath("first").description("첫 페이지 여부(true: 첫 페이지)"),
+                                fieldWithPath("empty").description("결과가 비어 있는지 여부(true: 비어있음)")
                         )));
 
         verify(categoryService, times(1)).getCategoriesOrderByParentCategoryIdForAdminPage(any());
@@ -251,9 +261,7 @@ class CategoryRestControllerTest {
                                 fieldWithPath("[].parentCategory.parentCategory").description("부모 카테고리"),
                                 fieldWithPath("[].parentCategory.id").description("부모 카테고리 ID"),
                                 fieldWithPath("[].parentCategory.name").description("부모 카테고리 이름")
-
                         )
-
                 ));
     }
 
@@ -305,9 +313,12 @@ class CategoryRestControllerTest {
             throws Exception {
         doThrow(new CategoryNotExistsException(1)).when(categoryService).getCategoryForUpdate(anyInt());
 
-        mockMvc.perform(get("/api/categories/categoryId/{id}", 1))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/categories/categoryId/{id}", 1))
                 .andExpect(status().isNotFound())
-                .andDo(document("category-getCategoryForUpdate-fail-notExistsCategoryId"));
+                .andDo(document("category-getCategoryForUpdate-fail-notExistsCategoryId",
+                        pathParameters(
+                                parameterWithName("id").description("부모 카테고리 아이디")
+                        )));
     }
 
     @Test
@@ -322,7 +333,7 @@ class CategoryRestControllerTest {
         categoryIdNameGetResponseList.add(thirdCategoryIdNameGetResponse);
         when(categoryService.getCategoryNameForBookView(anyLong())).thenReturn(categoryIdNameGetResponseList);
 
-        mockMvc.perform(get("/api/categories/bookId/{bookId}", 1))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/categories/bookId/{bookId}", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(categoryIdNameGetResponseList.size()))
                 .andExpect(jsonPath("$[0].id").value(firstCategoryIdNameGetResponse.getId()))
@@ -330,7 +341,16 @@ class CategoryRestControllerTest {
                 .andExpect(jsonPath("$[1].id").value(secondCategoryIdNameGetResponse.getId()))
                 .andExpect(jsonPath("$[1].name").value(secondCategoryIdNameGetResponse.getName()))
                 .andExpect(jsonPath("$[2].id").value(thirdCategoryIdNameGetResponse.getId()))
-                .andExpect(jsonPath("$[2].name").value(thirdCategoryIdNameGetResponse.getName()));
+                .andExpect(jsonPath("$[2].name").value(thirdCategoryIdNameGetResponse.getName()))
+                .andDo(document("category-getCategoryNameForBookView",
+                        pathParameters(
+                                parameterWithName("bookId").description("도서 아이디")
+                        ),
+                        responseFields(
+                                fieldWithPath("[]").description("카테고리 이름 리스트"),
+                                fieldWithPath("[].id").description("카테고리 아이디"),
+                                fieldWithPath("[].name").description("카테고리 이름")
+                        )));
     }
 
     @Test
@@ -374,7 +394,16 @@ class CategoryRestControllerTest {
                 .andExpect(jsonPath("$[1].childCategoryList.size()").value(childOfEconomyCategoryList.size()))
                 .andExpect(jsonPath("$[1].childCategoryList[0].id").value(corporateManagement.getId()))
                 .andExpect(jsonPath("$[1].childCategoryList[1].id").value(marketing.getId()))
-                .andExpect(jsonPath("$[1].childCategoryList[2].id").value(investment.getId()));
+                .andExpect(jsonPath("$[1].childCategoryList[2].id").value(investment.getId()))
+                .andDo(document("category-getCategoriesForMainView",
+                        responseFields(
+                                fieldWithPath("[]").description("결과 리스트"),
+                                fieldWithPath("[].parentCategoryId").description("1단계(최상위) 카테고리 아이디"),
+                                fieldWithPath("[].parentCategoryName").description("1단계(최상위) 카테고리 이름"),
+                                fieldWithPath("[].childCategoryList[]").description("2단계(자식) 카테고리 리스트"),
+                                fieldWithPath("[].childCategoryList[].id").description("2단계(자식) 카테고리 아이디"),
+                                fieldWithPath("[].childCategoryList[].name").description("2단계(자식) 카테고리 이름")
+                        )));
     }
 
     @Test
@@ -399,7 +428,7 @@ class CategoryRestControllerTest {
 
         when(categoryService.getCategoriesForCategoryView(anyInt())).thenReturn(expect);
 
-        mockMvc.perform(get("/api/categories/view/{categoryId}", 1))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/categories/view/{categoryId}", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.highestCategoryName").value(highestCategoryName))
                 .andExpect(jsonPath("$.name").value(name))
@@ -413,7 +442,21 @@ class CategoryRestControllerTest {
                 .andExpect(jsonPath("$.targetCategories[0].id").value(mysql.getId()))
                 .andExpect(jsonPath("$.targetCategories[0].name").value(mysql.getName()))
                 .andExpect(jsonPath("$.targetCategories[1].id").value(mssql.getId()))
-                .andExpect(jsonPath("$.targetCategories[1].name").value(mssql.getName()));
+                .andExpect(jsonPath("$.targetCategories[1].name").value(mssql.getName()))
+                .andDo(document("category-getCategoriesForCategoryView",
+                        pathParameters(
+                                parameterWithName("categoryId").description("카테고리 아이디")
+                        ),
+                        responseFields(
+                                fieldWithPath("highestCategoryName").description("선택한 카테고리의 최상위 카테고리"),
+                                fieldWithPath("name").description("선택한 카테고리 이름"),
+                                fieldWithPath("levelTwoCategories").description("2단계 카테고리 리스트"),
+                                fieldWithPath("levelTwoCategories[].id").description("2단계 카테고리 아이디"),
+                                fieldWithPath("levelTwoCategories[].name").description("2단계 카테고리 이름"),
+                                fieldWithPath("targetCategories").description("선택한 카테고리의 자식 카테고리 리스트"),
+                                fieldWithPath("targetCategories[].id").description("선택한 카테고리의 자식 카테고리 아이디"),
+                                fieldWithPath("targetCategories[].name").description("선택한 카테고리의 자식 카테고리 이름")
+                        )));
     }
 
     @Test
@@ -452,12 +495,23 @@ class CategoryRestControllerTest {
 
         when(categoryService.getBooksForCategoryView(anyInt(), any())).thenReturn(expect);
 
-        mockMvc.perform(get("/api/categories/view/book/{categoryId}", 1))
+        mockMvc.perform(RestDocumentationRequestBuilders.get(
+                        "/api/categories/view/book/{categoryId}?page=" + pageable.getPageNumber()
+                                + "&size=" + pageable.getPageSize(), 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()").value(bookBriefResponseIncludePublishDateList.size()))
                 .andExpect(jsonPath("$.content[0].id").value(appleBook.getId()))
                 .andExpect(jsonPath("$.content[1].id").value(bananaBook.getId()))
-                .andExpect(jsonPath("$.totalPages").value(total / pageable.getPageSize()));
+                .andExpect(jsonPath("$.totalPages").value(total / pageable.getPageSize()))
+                .andDo(document("category-getBooksForCategoryView",
+                        pathParameters(
+                                parameterWithName("categoryId").description("카테고리 아이디")
+                        ),
+                        requestParameters(
+                                parameterWithName("page").description("요청 페이지 번호(0부터 시작, default = 0)"),
+                                parameterWithName("size").description("페이지 사이즈(default = 10)")
+                        )
+                ));
     }
 
     @Test
