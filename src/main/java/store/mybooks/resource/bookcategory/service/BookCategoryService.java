@@ -26,6 +26,7 @@ import store.mybooks.resource.category.repository.CategoryRepository;
  */
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BookCategoryService {
     private final BookCategoryRepository bookCategoryRepository;
     private final BookRepository bookRepository;
@@ -38,7 +39,6 @@ public class BookCategoryService {
      *
      * @param bookCategoryCreateRequest BookCategoryCreateRequest
      */
-    @Transactional
     public void createBookCategory(BookCategoryCreateRequest bookCategoryCreateRequest) {
         Long bookId = bookCategoryCreateRequest.getBookId();
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotExistException(bookId));
@@ -61,7 +61,6 @@ public class BookCategoryService {
      *
      * @param bookId long
      */
-    @Transactional
     public void deleteBookCategory(Long bookId) {
         if (!bookCategoryRepository.existsByPk_BookId(bookId)) {
             throw new BookNotExistException(bookId);

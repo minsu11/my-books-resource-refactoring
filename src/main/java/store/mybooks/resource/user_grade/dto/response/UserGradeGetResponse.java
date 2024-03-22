@@ -14,6 +14,8 @@ import java.time.LocalDate;
  * 2/19/24        masiljangajji       최초 생성
  */
 public interface UserGradeGetResponse {
+
+    String getId();
     String getUserGradeNameId();
 
     Integer getMinCost();

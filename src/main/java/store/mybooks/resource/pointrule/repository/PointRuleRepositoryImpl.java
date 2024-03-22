@@ -33,7 +33,7 @@ public class PointRuleRepositoryImpl extends QuerydslRepositorySupport implement
 
     @Override
     public Optional<PointRuleResponse> getPointRuleById(Integer id) {
-        return Optional.of(from(pointRule)
+        return Optional.ofNullable(from(pointRule)
                 .select(Projections.constructor(
                         PointRuleResponse.class,
                         pointRule.id,
@@ -43,6 +43,23 @@ public class PointRuleRepositoryImpl extends QuerydslRepositorySupport implement
                 .where(pointRule.isAvailable.eq(true)
                         .and(pointRule.id.eq(id)))
                 .fetchOne());
+    }
+
+    @Override
+    public Optional<PointRuleResponse> getPointRuleByName(String ruleName) {
+        return Optional.ofNullable(
+                from(pointRule)
+                        .select(Projections.constructor(
+                                PointRuleResponse.class,
+                                pointRule.id,
+                                pointRule.pointRuleName.id,
+                                pointRule.rate,
+                                pointRule.cost
+                        ))
+                        .where(pointRule.isAvailable.eq(true))
+                        .where(pointRule.pointRuleName.id.eq(ruleName))
+                        .fetchOne()
+        );
     }
 
     @Override
@@ -58,13 +75,13 @@ public class PointRuleRepositoryImpl extends QuerydslRepositorySupport implement
     }
 
     @Override
-    public PointRule findPointRuleByPointRuleName(String pointRuleName) {
-        return
+    public Optional<PointRule> findPointRuleByPointRuleName(String pointRuleName) {
+        return Optional.ofNullable(
                 from(pointRule)
                         .where(pointRule.isAvailable.eq(true)
                                 .and(
                                         pointRule.pointRuleName.id.eq(pointRuleName)))
-                        .fetchOne();
+                        .fetchOne());
     }
 
     @Override

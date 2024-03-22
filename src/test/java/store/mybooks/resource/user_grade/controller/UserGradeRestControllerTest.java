@@ -1,12 +1,8 @@
 package store.mybooks.resource.user_grade.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -16,32 +12,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import org.hibernate.validator.constraints.time.DurationMax;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import store.mybooks.resource.config.HeaderProperties;
 import store.mybooks.resource.error.RequestValidationFailedException;
-import store.mybooks.resource.error.exception.ValidationFailException;
-import store.mybooks.resource.user_address.dto.request.UserAddressCreateRequest;
 import store.mybooks.resource.user_grade.dto.request.UserGradeCreateRequest;
 import store.mybooks.resource.user_grade.dto.response.UserGradeCreateResponse;
-import store.mybooks.resource.user_grade.dto.response.UserGradeDeleteResponse;
 import store.mybooks.resource.user_grade.dto.response.UserGradeGetResponse;
 import store.mybooks.resource.user_grade.service.UserGradeService;
 
@@ -79,7 +63,7 @@ class UserGradeRestControllerTest {
     @DisplayName("유저 UserGradeCreateRequest - Validation 실패")
     void givenUserGradeCreateRequest_whenValidationFailure_thenReturnBadRequest() throws Exception {
 
-        UserGradeCreateRequest request = new UserGradeCreateRequest("alias",-1,100,100,null);
+        UserGradeCreateRequest request = new UserGradeCreateRequest(100,"");
 
         String content = objectMapper.writeValueAsString(request);
 
@@ -96,7 +80,7 @@ class UserGradeRestControllerTest {
     @DisplayName("UserGradeCreateRequest 로 createUserGrade 실행시 UserGradeCreateRequest 반환")
     void givenUserGradeCreateRequest_whenCallCCreateUserGrade_thenReturnUserGradeCreateRequest() throws Exception {
 
-        UserGradeCreateRequest userGradeCreateRequest = new UserGradeCreateRequest("test", 1, 100, 3, LocalDate.now());
+        UserGradeCreateRequest userGradeCreateRequest = new UserGradeCreateRequest(100, "test");
         UserGradeCreateResponse userGradeCreateResponse =
                 new UserGradeCreateResponse("test", 1, 100, 3, LocalDate.now());
 
@@ -113,35 +97,9 @@ class UserGradeRestControllerTest {
                 .andExpect(jsonPath("$.createdDate").exists());
     }
 
-    @Test
-    @DisplayName("UserGradeId 로 deleteUserGradeById 실행시 UserGrade 삭제")
-    void givenUserGradeId_whenCallDeleteUserGradeById_thenReturnUserGradeDeleteResponse() throws Exception {
-
-        UserGradeDeleteResponse userGradeDeleteResponse = new UserGradeDeleteResponse("test");
-
-        when(userGradeService.deleteUserGrade(anyInt())).thenReturn(userGradeDeleteResponse);
-
-        mockMvc.perform(delete("/api/users-grades/{id}", 1)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").exists());
-    }
-
-    @Test
-    @DisplayName("UserGradeID 로 findUserGradeById 실행시 UserGrade 조회")
-    void givenUserGradeId_whenCallFindUserGradeById_thenReturnUserGradeGetResponse() throws Exception {
 
 
-        when(userGradeService.findUserGradeById(anyInt())).thenReturn(userGradeGetResponse1);
 
-        mockMvc.perform(get("/api/users-grades/{id}", 1)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.minCost").exists())
-                .andExpect(jsonPath("$.maxCost").exists())
-                .andExpect(jsonPath("$.rate").exists())
-                .andExpect(jsonPath("$.createdDate").exists())
-                .andExpect(jsonPath("$.userGradeNameId").exists());
-    }
 
     @Test
     @DisplayName("findAllUserGrade 실행시 모든 UserGrade 를 List 로 조회")
@@ -153,7 +111,7 @@ class UserGradeRestControllerTest {
 
         when(userGradeService.findAllUserGrade()).thenReturn(userGradeList);
 
-        mockMvc.perform(get("/api/users-grades")
+        mockMvc.perform(get("/api/users-grades/all")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpectAll(jsonPath("$.[*].minCost").exists())
@@ -168,6 +126,11 @@ class UserGradeRestControllerTest {
     void setUp() {
 
         userGradeGetResponse1 = new UserGradeGetResponse() {
+            @Override
+            public String getId() {
+                return "1";
+            }
+
             @Override
             public String getUserGradeNameId() {
                 return "test";
@@ -195,6 +158,11 @@ class UserGradeRestControllerTest {
         };
 
         userGradeGetResponse2 = new UserGradeGetResponse() {
+            @Override
+            public String getId() {
+                return "2";
+            }
+
             @Override
             public String getUserGradeNameId() {
                 return "test";

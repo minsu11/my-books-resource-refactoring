@@ -1,7 +1,6 @@
 package store.mybooks.resource.user_address.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -9,12 +8,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,23 +20,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.result.HandlerResultMatchers;
 import store.mybooks.resource.config.HeaderProperties;
 import store.mybooks.resource.error.RequestValidationFailedException;
-import store.mybooks.resource.error.exception.ValidationFailException;
-import store.mybooks.resource.user.dto.request.UserCreateRequest;
-import store.mybooks.resource.user.dto.response.UserDeleteResponse;
 import store.mybooks.resource.user_address.dto.request.UserAddressCreateRequest;
 import store.mybooks.resource.user_address.dto.request.UserAddressModifyRequest;
 import store.mybooks.resource.user_address.dto.response.UserAddressCreateResponse;
@@ -48,7 +37,6 @@ import store.mybooks.resource.user_address.dto.response.UserAddressDeleteRespons
 import store.mybooks.resource.user_address.dto.response.UserAddressGetResponse;
 import store.mybooks.resource.user_address.dto.response.UserAddressModifyResponse;
 import store.mybooks.resource.user_address.service.UserAddressService;
-import store.mybooks.resource.user_grade.dto.response.UserGradeGetResponse;
 
 /**
  * packageName    : store.mybooks.resource.user_address.controller
@@ -100,7 +88,7 @@ class UserAddressRestControllerTest {
     @DisplayName("유저 UserAddressModifyRequest - Validation 실패")
     void givenUserAddressModifyRequest_whenValidationFailure_thenReturnBadRequest() throws Exception {
 
-        UserAddressModifyRequest request = new UserAddressModifyRequest("","");
+        UserAddressModifyRequest request = new UserAddressModifyRequest("","","");
 
         String content = objectMapper.writeValueAsString(request);
 
@@ -146,9 +134,9 @@ class UserAddressRestControllerTest {
             throws Exception {
 
         UserAddressModifyRequest userAddressModifyRequest =
-                new UserAddressModifyRequest("test", "test");
+                new UserAddressModifyRequest("test", "test","test");
         UserAddressModifyResponse userAddressModifyResponse =
-                new UserAddressModifyResponse("test", "test");
+                new UserAddressModifyResponse("test", "test","test");
 
         when(userAddressService.modifyUserAddress(anyLong(), anyLong(),
                 any(UserAddressModifyRequest.class))).thenReturn(userAddressModifyResponse);

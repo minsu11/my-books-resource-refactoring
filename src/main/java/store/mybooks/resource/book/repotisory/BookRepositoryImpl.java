@@ -8,10 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import store.mybooks.resource.author.dto.response.AuthorGetResponse;
 import store.mybooks.resource.author.entity.QAuthor;
-import store.mybooks.resource.book.dto.response.BookBriefResponse;
-import store.mybooks.resource.book.dto.response.BookDetailResponse;
-import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
-import store.mybooks.resource.book.dto.response.BookResponseForOrder;
+import store.mybooks.resource.book.dto.response.*;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.entity.QBook;
 import store.mybooks.resource.bookauthor.entity.QBookAuthor;
@@ -21,8 +18,11 @@ import store.mybooks.resource.image.dto.response.ImageResponse;
 import store.mybooks.resource.image.entity.QImage;
 import store.mybooks.resource.image_status.entity.QImageStatus;
 import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
+import store.mybooks.resource.orderdetail.entity.QOrderDetail;
 import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
 import store.mybooks.resource.publisher.entity.QPublisher;
+import store.mybooks.resource.review.dto.response.ReviewRateResponse;
+import store.mybooks.resource.review.entity.QReview;
 import store.mybooks.resource.tag.dto.response.TagGetResponseForBookDetail;
 import store.mybooks.resource.tag.entity.QTag;
 
@@ -82,6 +82,10 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
      */
     QImageStatus imageStatus = QImageStatus.imageStatus;
 
+    QReview review = QReview.review;
+
+    QOrderDetail orderDetail = QOrderDetail.orderDetail;
+
     @Override
     public BookDetailResponse getBookDetailInfo(Long id) {
         Book result = from(book)
@@ -111,12 +115,22 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .where(bookAuthor.book.id.eq(id))
                 .select(Projections.constructor(AuthorGetResponse.class, author.id, author.name, author.content))
                 .fetch();
-        
+
         List<TagGetResponseForBookDetail> tagList = from(bookTag)
                 .join(bookTag.tag, tag)
                 .where(bookTag.book.id.eq(id))
                 .select(Projections.constructor(TagGetResponseForBookDetail.class, tag.id, tag.name))
                 .fetch();
+
+        ReviewRateResponse reviewRate = from(book)
+                .leftJoin(orderDetail).on(book.eq(orderDetail.book))
+                .leftJoin(review).on(orderDetail.eq(review.orderDetail))
+                .where(book.id.eq(id))
+                .select(Projections.constructor(
+                        ReviewRateResponse.class,
+                        review.count(),
+                        review.rate.avg().coalesce(0.0) // 평균 평점
+                )).fetchOne();
 
         return BookDetailResponse.builder()
                 .id(result.getId())
@@ -127,6 +141,8 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                         result.getPublisher().getName()))
                 .publishDate(result.getPublishDate())
                 .saleCost(result.getSaleCost())
+                .rate(reviewRate.getAverageRate())
+                .reviewCount(reviewRate.getTotalCount())
                 .originalCost(result.getOriginalCost())
                 .disCountRate(result.getDiscountRate())
                 .isPacking(result.getIsPackaging())
@@ -144,22 +160,23 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     @Override
     public Page<BookBriefResponse> getBookBriefInfo(Pageable pageable) {
         List<BookBriefResponse> lists = from(book)
-                .join(image)
-                .on(image.book.eq(book))
+                .join(image).on(image.book.eq(book))
+                .leftJoin(orderDetail).on(book.eq(orderDetail.book))
+                .leftJoin(review).on(orderDetail.eq(review.orderDetail))
                 .join(image.imageStatus, imageStatus)
                 .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
                 .select(Projections.constructor(
                         BookBriefResponse.class,
                         book.id,
-                        Projections.constructor(
-                                ImageResponse.class,
-                                image.path,
-                                image.fileName,
-                                image.extension),
+                        image.path.concat(image.fileName).concat(image.extension),
                         book.name,
+                        review.rate.avg().coalesce(0.0), // 평균 평점
+                        review.count(), // 리뷰의 수
                         book.originalCost,
                         book.saleCost
-                )).offset(pageable.getOffset())
+                ))
+                .groupBy(book.id, image) // 그룹화된 기준으로 추가
+                .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
@@ -176,16 +193,18 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                         .join(book.bookStatus, bookStatus)
                         .join(image)
                         .on(image.book.eq(book))
+                        .leftJoin(orderDetail).on(book.eq(orderDetail.book))
+                        .leftJoin(review).on(orderDetail.eq(review.orderDetail))
                         .join(image.imageStatus, imageStatus)
                         .select(Projections.constructor(BookBriefResponse.class,
                                 book.id,
-                                Projections.constructor(ImageResponse.class,
-                                        image.path,
-                                        image.fileName,
-                                        image.extension),
+                                image.path.concat(image.fileName).concat(image.extension),
                                 book.name,
+                                review.rate.avg().coalesce(0.0), // 평균 평점
+                                review.count(), // 리뷰의 수
                                 book.originalCost,
                                 book.saleCost))
+                        .groupBy(book.id,image)
                         .where(bookStatus.id.in("판매중", "재고없음"))
                         .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
                         .offset(pageable.getOffset())
@@ -223,5 +242,18 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .where(book.id.eq(bookId))
                 .set(book.viewCount, book.viewCount.add(count))
                 .execute();
+    }
+
+
+    @Override
+    public BookStockResponse getBookStockList(Long id) {
+
+        return from(book)
+                .select(Projections.constructor(
+                        BookStockResponse.class,
+                        book.id,
+                        book.stock
+                ))
+                .where(book.id.eq(id)).fetchOne();
     }
 }

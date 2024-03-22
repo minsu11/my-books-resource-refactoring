@@ -1,9 +1,9 @@
 package store.mybooks.resource.usercoupon.repository;
 
 import com.querydsl.core.types.Projections;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -19,6 +19,7 @@ import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForMy
 import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForOrderQuerydsl;
 import store.mybooks.resource.usercoupon.entity.QUserCoupon;
 import store.mybooks.resource.usercoupon.entity.UserCoupon;
+import store.mybooks.resource.utils.TimeUtils;
 
 /**
  * packageName    : store.mybooks.resource.user_coupon.repository
@@ -103,8 +104,8 @@ public class UserCouponRepositoryImpl extends QuerydslRepositorySupport implemen
                 .where(userCoupon.user.id.eq(userId))
                 .where(userCoupon.isUsed.isFalse())
                 .where(coupon.category.id.in(categoryIdSet))
-                .where(coupon.startDate.loe(LocalDate.now()))
-                .where(coupon.endDate.goe(LocalDate.now()))
+                .where(coupon.startDate.loe(TimeUtils.nowDate()))
+                .where(coupon.endDate.goe(TimeUtils.nowDate()))
                 .select(Projections.constructor(UserCouponGetResponseForOrderQuerydsl.class,
                         userCoupon.id,
                         coupon.name,
@@ -129,8 +130,8 @@ public class UserCouponRepositoryImpl extends QuerydslRepositorySupport implemen
                 .where(userCoupon.user.id.eq(userId))
                 .where(coupon.book.id.eq(bookId))
                 .where(userCoupon.isUsed.isFalse())
-                .where(coupon.startDate.loe(LocalDate.now()))
-                .where(coupon.endDate.goe(LocalDate.now()))
+                .where(coupon.startDate.loe(TimeUtils.nowDate()))
+                .where(coupon.endDate.goe(TimeUtils.nowDate()))
                 .select(Projections.constructor(UserCouponGetResponseForOrderQuerydsl.class,
                         userCoupon.id,
                         coupon.name,
@@ -156,8 +157,8 @@ public class UserCouponRepositoryImpl extends QuerydslRepositorySupport implemen
                 .where(userCoupon.isUsed.isFalse())
                 .where(coupon.book.isNull())
                 .where(coupon.category.isNull())
-                .where(coupon.startDate.loe(LocalDate.now()))
-                .where(coupon.endDate.goe(LocalDate.now()))
+                .where(coupon.startDate.loe(TimeUtils.nowDate()))
+                .where(coupon.endDate.goe(TimeUtils.nowDate()))
                 .select(Projections.constructor(UserCouponGetResponseForOrderQuerydsl.class,
                         userCoupon.id,
                         coupon.name,
@@ -169,5 +170,27 @@ public class UserCouponRepositoryImpl extends QuerydslRepositorySupport implemen
                         coupon.startDate,
                         coupon.endDate))
                 .fetch();
+    }
+
+    @Override
+    public Optional<UserCouponGetResponseForOrderQuerydsl> getUserCouponResponse(Long userCouponId) {
+        QCoupon coupon = QCoupon.coupon;
+        QUserCoupon userCoupon = QUserCoupon.userCoupon;
+        return Optional.ofNullable(
+                from(userCoupon)
+                        .select(Projections.constructor(UserCouponGetResponseForOrderQuerydsl.class,
+                                userCoupon.id,
+                                coupon.name,
+                                coupon.orderMin,
+                                coupon.discountCost,
+                                coupon.maxDiscountCost,
+                                coupon.discountRate,
+                                coupon.isRate,
+                                coupon.startDate,
+                                coupon.endDate)
+                        )
+                        .where(userCoupon.id.eq(userCouponId))
+                        .fetchOne()
+        );
     }
 }

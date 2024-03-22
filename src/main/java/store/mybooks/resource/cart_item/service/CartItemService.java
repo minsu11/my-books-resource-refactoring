@@ -1,18 +1,19 @@
 package store.mybooks.resource.cart_item.service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import store.mybooks.front.cart.domain.CartDetail;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.repotisory.BookRepository;
-import store.mybooks.resource.cart.dto.CartUserRedisKeyNameRequest;
 import store.mybooks.resource.cart.entity.Cart;
 import store.mybooks.resource.cart.repository.CartRepository;
-import store.mybooks.resource.cart_item.dto.CartDetail;
+import store.mybooks.resource.cart_item.dto.CartUserRedisKeyNameRequest;
 import store.mybooks.resource.cart_item.entity.CartItem;
 import store.mybooks.resource.cart_item.repository.CartItemRepository;
 import store.mybooks.resource.image.entity.Image;
@@ -38,22 +39,18 @@ import store.mybooks.resource.user.repository.UserRepository;
 public class CartItemService {
     private final CartItemRepository cartItemRepository;
     private final RedisTemplate<String, CartDetail> redisTemplate;
+    private final RedisTemplate<String, String> stringRedisTemplate;
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
     private final ImageService imageService;
+    private static final String EXPIRED_KEY = "EXPIRED_CART";
 
-
-    public void registerMysqlDataFromRedisData(Long userId, CartUserRedisKeyNameRequest cartUserRedisKeyNameRequest) {
-        List<CartDetail> cartDetailList = redisTemplate.opsForList().range(cartUserRedisKeyNameRequest.getCartKey(), 0, -1);
-        if (Objects.isNull(cartDetailList) || cartDetailList.isEmpty()) {
-            return;
-        }
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotExistException(userId));
-        Optional<Cart> optionalCart = cartRepository.findCartByUserId(user.getId());
-        Cart userCart = optionalCart.orElseGet(() -> cartRepository.save(new Cart(user)));
+    public void registerRedisToMysql(String userEmail, List<CartDetail> cartDetailList) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserNotExistException("해당하는 이메일의 유저가 없습니다."));
+        Cart userCart =
+                cartRepository.findCartByUserId(user.getId()).orElseGet(() -> cartRepository.save(new Cart(user)));
         cartItemRepository.deleteAllByCart_Id(userCart.getId());
 
         for (CartDetail cartDetail : cartDetailList) {
@@ -61,35 +58,47 @@ public class CartItemService {
             CartItem cartItem = new CartItem(cartDetail.getCartDetailAmount(), userCart, book);
             cartItemRepository.save(cartItem);
         }
-        redisTemplate.delete(cartUserRedisKeyNameRequest.getCartKey());
     }
 
-    public void registerRedisDataFromMysqlData(Long userId, CartUserRedisKeyNameRequest cartUserRedisKeyNameRequest) {
+    public List<CartDetail> registerMysqlToRedis(Long userId, CartUserRedisKeyNameRequest cartUserRedisKeyNameRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotExistException(userId));
         Optional<Cart> optionalCart = cartRepository.findCartByUserId(user.getId());
         if (optionalCart.isEmpty()) {
-            return;
+            return new ArrayList<>();
         }
         Cart userCart = optionalCart.get();
         List<CartItem> cartItemList = cartItemRepository.findCartItemsByCart_Id(userCart.getId());
         if (cartItemList.isEmpty()) {
-            return;
+            return new ArrayList<>();
         }
+        redisTemplate.delete(cartUserRedisKeyNameRequest.getCartKey());
+        List<CartDetail> cartDetailList = new ArrayList<>();
 
         for (CartItem cartItem : cartItemList) {
             Image thumbNailImage = imageService.getThumbNailImage(cartItem.getBook().getId());
+            CartDetail cartDetail = new CartDetail(
+                    cartItem.getBook().getId(),
+                    cartItem.getAmount(),
+                    cartItem.getBook().getName(),
+                    imageService.getObject(thumbNailImage.getId()).getFilePathName(),
+                    cartItem.getBook().getOriginalCost(),
+                    cartItem.getBook().getSaleCost(),
+                    cartItem.getBook().getStock(),
+                    cartItem.getBook().getBookStatus().getId());
+            cartDetailList.add(cartDetail);
             redisTemplate.opsForList().rightPush(
-                    cartUserRedisKeyNameRequest.getCartKey(),
-                    new CartDetail(
-                            cartItem.getBook().getId(),
-                            cartItem.getAmount(),
-                            cartItem.getBook().getName(),
-                            imageService.getObject(thumbNailImage.getId()).getFilePathName(), cartItem.getBook().getOriginalCost(), cartItem.getBook().getSaleCost())
+                    cartUserRedisKeyNameRequest.getCartKey(), cartDetail
             );
-
-            cartItemRepository.deleteAllByCart_Id(userCart.getId());
         }
+        stringRedisTemplate.expire(getExpiredKey(cartUserRedisKeyNameRequest.getCartKey()), 179, TimeUnit.MINUTES);
+        redisTemplate.expire(cartUserRedisKeyNameRequest.getCartKey(), 180, TimeUnit.MINUTES);
+
+
+        return cartDetailList;
     }
 
+    public String getExpiredKey(String cartKey) {
+        return EXPIRED_KEY + " " + cartKey;
+    }
 }

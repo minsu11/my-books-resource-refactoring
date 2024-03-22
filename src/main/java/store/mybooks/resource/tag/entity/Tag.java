@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import store.mybooks.resource.tag.dto.request.TagModifyRequest;
+import store.mybooks.resource.utils.TimeUtils;
 
 /**
  * packageName    : store.mybooks.resource.domain.entity
@@ -42,7 +43,7 @@ public class Tag {
 
     public Tag(String name) {
         this.name = name;
-        this.createdDate = LocalDate.now();
+        this.createdDate = TimeUtils.nowDate();
     }
 
     public void setByTagModifyRequest(TagModifyRequest tagModifyRequest) {

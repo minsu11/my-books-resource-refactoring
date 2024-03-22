@@ -94,7 +94,7 @@ public class UserAddressService {
                 .orElseThrow(() -> new UserAddressNotExistException(addressId));
 
         userAddress.modifyByUserAddressModifyRequest(modifyRequest.getAlias(),
-                modifyRequest.getDetail());
+                modifyRequest.getDetail(), modifyRequest.getReference());
 
         return userAddressMapper.toUserAddressModifyResponse(userAddress);
 

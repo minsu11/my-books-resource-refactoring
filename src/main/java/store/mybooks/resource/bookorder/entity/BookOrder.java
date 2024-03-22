@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
-import store.mybooks.resource.orders_status.entity.OrdersStatus;
+import store.mybooks.resource.ordersstatus.entity.OrdersStatus;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.usercoupon.entity.UserCoupon;
 
@@ -101,6 +101,10 @@ public class BookOrder {
     public void modifyBookOrderAdmin(OrdersStatus ordersStatus) {
         this.orderStatus = ordersStatus;
         this.outDate = LocalDate.now();
+    }
+
+    public void updateBookOrderStatus(OrdersStatus status) {
+        this.orderStatus = status;
     }
 
     public void registerBookOrderInvoiceNumber(String invoiceNumber) {

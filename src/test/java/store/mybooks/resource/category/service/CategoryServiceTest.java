@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,12 +26,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import store.mybooks.resource.book.dto.response.BookBriefResponseIncludePublishDate;
 import store.mybooks.resource.category.dto.request.CategoryCreateRequest;
 import store.mybooks.resource.category.dto.request.CategoryModifyRequest;
 import store.mybooks.resource.category.dto.response.CategoryCreateResponse;
 import store.mybooks.resource.category.dto.response.CategoryDeleteResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForBookCreate;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForCategoryView;
+import store.mybooks.resource.category.dto.response.CategoryGetResponseForMainView;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForQuerydsl;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
@@ -301,6 +305,182 @@ class CategoryServiceTest {
         when(categoryRepository.existsById(anyInt())).thenReturn(false);
         assertThrows(CategoryNotExistsException.class, () -> categoryService.getCategoriesByParentCategoryId(1));
         verify(categoryRepository, times(1)).existsById(1);
+    }
+
+    @Test
+    @DisplayName("getCategoriesForMainView 테스트")
+    void whenGetCategoriesForMainView_thenReturnListOfCategoryGetResponseForMainView() {
+        CategoryGetResponse it = makeCategoryGetResponse(1, null, "IT");
+        CategoryGetResponse economy = makeCategoryGetResponse(2, null, "경제");
+        CategoryGetResponse novel = makeCategoryGetResponse(3, null, "소설");
+        List<CategoryGetResponse> highestCategoryList = Arrays.asList(it, economy, novel);
+
+        CategoryGetResponse database = makeCategoryGetResponse(4, it, "데이터베이스");
+        CategoryGetResponse network = makeCategoryGetResponse(5, it, "네트워크");
+        CategoryGetResponse investment = makeCategoryGetResponse(6, economy, "투자");
+        CategoryGetResponse marketing = makeCategoryGetResponse(7, economy, "마케팅");
+        CategoryGetResponse genre = makeCategoryGetResponse(8, novel, "장르");
+        CategoryGetResponse classic = makeCategoryGetResponse(9, novel, "고전");
+
+        List<CategoryGetResponse> childOfIt = Arrays.asList(database, network);
+        List<CategoryGetResponse> childOfEconomy = Arrays.asList(investment, marketing);
+        List<CategoryGetResponse> childOfNovel = Arrays.asList(genre, classic);
+
+        when(categoryRepository.findAllByParentCategoryIsNull()).thenReturn(highestCategoryList);
+        when(categoryRepository.findAllByParentCategory_Id(1)).thenReturn(childOfIt);
+        when(categoryRepository.findAllByParentCategory_Id(2)).thenReturn(childOfEconomy);
+        when(categoryRepository.findAllByParentCategory_Id(3)).thenReturn(childOfNovel);
+
+        List<CategoryGetResponseForMainView> actualList = categoryService.getCategoriesForMainView();
+        assertThat(actualList).isNotNull().hasSize(3);
+        assertThat(actualList.get(0).getParentCategoryId()).isEqualTo(it.getId());
+        assertThat(actualList.get(0).getParentCategoryName()).isEqualTo(it.getName());
+        assertThat(actualList.get(0).getChildCategoryList()).isNotNull().hasSize(2);
+        assertThat(actualList.get(0).getChildCategoryList().get(0).getId()).isEqualTo(database.getId());
+        assertThat(actualList.get(0).getChildCategoryList().get(1).getId()).isEqualTo(network.getId());
+
+        assertThat(actualList.get(1).getParentCategoryId()).isEqualTo(economy.getId());
+        assertThat(actualList.get(1).getParentCategoryName()).isEqualTo(economy.getName());
+        assertThat(actualList.get(1).getChildCategoryList()).isNotNull().hasSize(2);
+        assertThat(actualList.get(1).getChildCategoryList().get(0).getId()).isEqualTo(investment.getId());
+        assertThat(actualList.get(1).getChildCategoryList().get(1).getId()).isEqualTo(marketing.getId());
+
+        assertThat(actualList.get(2).getParentCategoryId()).isEqualTo(novel.getId());
+        assertThat(actualList.get(2).getParentCategoryName()).isEqualTo(novel.getName());
+        assertThat(actualList.get(2).getChildCategoryList()).isNotNull().hasSize(2);
+        assertThat(actualList.get(2).getChildCategoryList().get(0).getId()).isEqualTo(genre.getId());
+        assertThat(actualList.get(2).getChildCategoryList().get(1).getId()).isEqualTo(classic.getId());
+
+        verify(categoryRepository, times(1)).findAllByParentCategoryIsNull();
+        verify(categoryRepository, times(3)).findAllByParentCategory_Id(anyInt());
+    }
+
+    @Test
+    @DisplayName("getCategoriesForMainView - 카테고리 아이디에 해당하는 카테고리가 없는 경우")
+    void givenNotExistsCategoryId_whenGetCategoriesForMainView_thenThrowCategoryNotExistsException() {
+        when(categoryRepository.existsById(anyInt())).thenReturn(false);
+        assertThrows(CategoryNotExistsException.class, () -> categoryService.getCategoriesForCategoryView(1));
+    }
+
+    @Test
+    @DisplayName("getBooksForCategoryView")
+    void givenCategoryIdAndPageable_whenGetBooksForCategoryView_thenReturnPageOfBookBriefResponseIncludePublishDate() {
+        BookBriefResponseIncludePublishDate appleBook =
+                new BookBriefResponseIncludePublishDate(
+                        1L,
+                        null,
+                        "appleBook",
+                        50D,
+                        100L,
+                        10000,
+                        5000,
+                        LocalDate.of(2024, 1, 1));
+        BookBriefResponseIncludePublishDate bananaBook =
+                new BookBriefResponseIncludePublishDate(
+                        2L,
+                        null,
+                        "bananaBook",
+                        10D,
+                        30L,
+                        10000,
+                        9000,
+                        LocalDate.of(2022, 12, 15));
+        BookBriefResponseIncludePublishDate grapeBook =
+                new BookBriefResponseIncludePublishDate(
+                        3L,
+                        null,
+                        "grapeBook",
+                        20D,
+                        10L,
+                        10000,
+                        8000,
+                        LocalDate.of(2021, 10, 24));
+        Pageable pageable = PageRequest.of(0, 3);
+        List<BookBriefResponseIncludePublishDate> expect = List.of(appleBook, bananaBook, grapeBook);
+        when(categoryRepository.getBooksForCategoryView(anyInt(), any())).thenReturn(new PageImpl<>(
+                expect,
+                pageable,
+                10
+        ));
+
+        Page<BookBriefResponseIncludePublishDate> actual = categoryService.getBooksForCategoryView(1, pageable);
+
+        assertThat(actual).isNotNull();
+        assertThat(actual.getContent()).isNotNull().hasSize(expect.size());
+        assertThat(actual.getContent().get(0).getId()).isNotNull().isEqualTo(appleBook.getId());
+        assertThat(actual.getContent().get(1).getId()).isNotNull().isEqualTo(bananaBook.getId());
+        assertThat(actual.getContent().get(2).getId()).isNotNull().isEqualTo(grapeBook.getId());
+        assertThat(actual.getTotalPages()).isEqualTo(10 / 3 + 1);
+        assertThat(actual.getTotalElements()).isEqualTo(10L);
+    }
+
+    @Test
+    @DisplayName("getCategoriesForCategoryView")
+    void givenCategoryId_whenGetCategoriesForCategoryView_thenReturnCategoryGetResponseForCategoryView() {
+        Integer categoryId = 3;
+        Category it = new Category(
+                1,
+                null,
+                null,
+                "IT",
+                LocalDate.now());
+        Category database = new Category(
+                categoryId,
+                it,
+                null,
+                "데이터베이스",
+                LocalDate.now()
+        );
+        Category network = new Category(
+                4,
+                it,
+                null,
+                "네트워크",
+                LocalDate.now()
+        );
+        Category mysql = new Category(
+                10,
+                database,
+                null,
+                "MySQL",
+                LocalDate.now()
+        );
+        CategoryGetResponse itGetResponse = makeCategoryGetResponse(it.getId(), null, it.getName());
+        CategoryGetResponse databaseGetResponse = makeCategoryGetResponse(
+                database.getId(),
+                itGetResponse,
+                database.getName());
+        CategoryGetResponse networkGetResponse = makeCategoryGetResponse(
+                network.getId(),
+                itGetResponse,
+                itGetResponse.getName());
+        List<CategoryGetResponse> levelTwoCategories = List.of(databaseGetResponse, networkGetResponse);
+
+        CategoryGetResponse mysqlGetResponse = makeCategoryGetResponse(
+                mysql.getId(),
+                databaseGetResponse,
+                mysql.getName());
+        List<CategoryGetResponse> targetCategories = List.of(mysqlGetResponse);
+
+        when(categoryRepository.existsById(anyInt())).thenReturn(true);
+        when(categoryRepository.findHighestCategoryId(anyInt())).thenReturn(it.getId());
+        when(categoryRepository.findCategoryById(it.getId())).thenReturn(
+                new CategoryIdNameGetResponse(it.getId(), it.getName()));
+        when(categoryRepository.findCategoryById(categoryId)).thenReturn(
+                new CategoryIdNameGetResponse(database.getId(), database.getName()));
+        when(categoryRepository.findAllByParentCategory_Id(it.getId())).thenReturn(levelTwoCategories);
+        when(categoryRepository.findAllByParentCategory_Id(categoryId)).thenReturn(targetCategories);
+
+        CategoryGetResponseForCategoryView actual = categoryService.getCategoriesForCategoryView(categoryId);
+
+        assertThat(actual).isNotNull();
+        assertThat(actual.getHighestCategoryName()).isEqualTo(it.getName());
+        assertThat(actual.getName()).isEqualTo(database.getName());
+        assertThat(actual.getLevelTwoCategories()).isNotNull().hasSize(levelTwoCategories.size());
+        assertThat(actual.getLevelTwoCategories().get(0).getId()).isEqualTo(database.getId());
+        assertThat(actual.getLevelTwoCategories().get(1).getId()).isEqualTo(network.getId());
+        assertThat(actual.getTargetCategories()).isNotNull().hasSize(targetCategories.size());
+        assertThat(actual.getTargetCategories().get(0).getId()).isEqualTo(mysql.getId());
     }
 
     @Test

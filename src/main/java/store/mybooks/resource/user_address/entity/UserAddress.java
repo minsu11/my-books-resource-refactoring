@@ -67,11 +67,11 @@ public class UserAddress {
         this.reference = reference;
     }
 
-    public void modifyByUserAddressModifyRequest(String alias, String detail) {
+    public void modifyByUserAddressModifyRequest(String alias, String detail, String reference) {
 
         this.alias = alias;
         this.detail = detail;
-
+        this.reference = reference;
     }
 
 

@@ -25,7 +25,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DeliveryRuleModifyRequest {
-
+    @Min(1)
     private Integer id;
 
     @NotBlank

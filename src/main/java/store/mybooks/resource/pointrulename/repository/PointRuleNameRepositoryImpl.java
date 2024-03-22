@@ -28,7 +28,7 @@ public class PointRuleNameRepositoryImpl extends QuerydslRepositorySupport imple
     @Override
     public Optional<PointRuleNameResponse> getPointRuleNameById(String id) {
 
-        return Optional.of(
+        return Optional.ofNullable(
                 from(pointRuleName)
                         .select(Projections.constructor(PointRuleNameResponse.class, pointRuleName.id))
                         .where(pointRuleName.id.eq(id))

@@ -13,10 +13,13 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.PatternTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-//import store.mybooks.front.cart.domain.CartDetail;
+import store.mybooks.resource.cart_item.redis.RedisKeyExpirationListener;
 
 /**
  * packageName    : store.mybooks.front.config <br/>
@@ -34,7 +37,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @EnableCaching
 public class RedisConfig {
     private final RedisProperties redisProperties;
-    private final ObjectMapper objectMapper;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
@@ -60,26 +62,40 @@ public class RedisConfig {
         return redisTemplate;
     }
 
-//    @Bean
-//    public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
-//        PolymorphicTypeValidator typeValidator = BasicPolymorphicTypeValidator
-//                .builder()
-//                .allowIfSubType(Object.class)
-//                .build();
-//
-//        objectMapper.activateDefaultTyping(typeValidator, ObjectMapper.DefaultTyping.NON_FINAL);
-//
-//        GenericJackson2JsonRedisSerializer redisSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
-//
-//        RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration
-//                .defaultCacheConfig()
-//                .disableCachingNullValues()
-//                .serializeKeysWith(RedisSerializationContext.SerializationPair
-//                        .fromSerializer(new StringRedisSerializer()))
-//                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer));
-//
-//        return RedisCacheManager.builder(redisConnectionFactory)
-//                .cacheDefaults(cacheConfiguration)
-//                .build();
-//    }
+    @Bean
+    public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
+        PolymorphicTypeValidator typeValidator = BasicPolymorphicTypeValidator
+                .builder()
+                .allowIfSubType(Object.class)
+                .build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.activateDefaultTyping(typeValidator, ObjectMapper.DefaultTyping.NON_FINAL);
+
+        GenericJackson2JsonRedisSerializer redisSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
+
+        RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration
+                .defaultCacheConfig()
+                .disableCachingNullValues()
+                .serializeKeysWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer));
+
+        return RedisCacheManager.builder(redisConnectionFactory)
+                .cacheDefaults(cacheConfiguration)
+                .build();
+    }
+
+    @Bean
+    RedisMessageListenerContainer container(RedisConnectionFactory redisConnectionFactory,
+                                            MessageListenerAdapter listenerAdapter) {
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        container.setConnectionFactory(redisConnectionFactory);
+        container.addMessageListener(listenerAdapter, new PatternTopic("__keyevent@*:expired"));
+        return container;
+    }
+
+    @Bean
+    MessageListenerAdapter listenerAdapter(RedisKeyExpirationListener listener) {
+        return new MessageListenerAdapter(listener);
+    }
 }

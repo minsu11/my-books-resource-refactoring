@@ -65,7 +65,7 @@ public class BookCategoryRestController {
     public ResponseEntity<Void> deleteBookCategory(@PathVariable("bookId") Long bookId) {
         bookCategoryService.deleteBookCategory(bookId);
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(HttpStatus.NO_CONTENT)
                 .build();
     }
 }

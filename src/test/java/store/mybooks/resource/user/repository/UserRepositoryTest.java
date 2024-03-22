@@ -1,26 +1,17 @@
 package store.mybooks.resource.user.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.netflix.discovery.converters.Auto;
 import java.time.LocalDate;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import store.mybooks.resource.user.dto.request.UserCreateRequest;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
 import store.mybooks.resource.user.entity.User;
-import store.mybooks.resource.user_grade.dto.request.UserGradeCreateRequest;
 import store.mybooks.resource.user_grade.entity.UserGrade;
 import store.mybooks.resource.user_grade.repository.UserGradeRepository;
 import store.mybooks.resource.user_grade_name.entity.UserGradeName;
@@ -62,15 +53,15 @@ class UserRepositoryTest {
 
         UserStatus userStatus = new UserStatus("test");
         UserGradeName userGradeName = new UserGradeName("test");
-        UserGrade userGrade = new UserGrade(1, 100, 100, LocalDate.now(), userGradeName);
+        UserGrade userGrade = new UserGrade(1, 100, 100,  userGradeName);
         userGradeNameRepository.save(userGradeName);
         UserStatus resultUserStatus = userStatusRepository.save(userStatus);
         UserGrade resultUserGrade = userGradeRepository.save(userGrade);
 
         User user1 =
-                new User("test1@naver.com", LocalDate.now(), "test1", "test1", false, "test1", resultUserStatus, resultUserGrade);
+                new User("test1@naver.com", LocalDate.now(), "test1", "test1", false, "test1", resultUserStatus, resultUserGrade,null);
         User user2 =
-                new User("test2@naver.com", LocalDate.now(), "test2", "test2", false, "test2", resultUserStatus, resultUserGrade);
+                new User("test2@naver.com", LocalDate.now(), "test2", "test2", false, "test2", resultUserStatus, resultUserGrade,null);
         User resultUser = userRepository.save(user1);
 
         id = resultUser.getId();

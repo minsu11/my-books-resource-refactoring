@@ -3,7 +3,6 @@ package store.mybooks.resource.delivery_rule_name.repository;
 import com.querydsl.core.types.Projections;
 import java.util.List;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
-import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameDto;
 import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameResponse;
 import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 import store.mybooks.resource.delivery_rule_name.entity.QDeliveryRuleName;
