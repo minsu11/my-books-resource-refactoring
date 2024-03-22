@@ -244,7 +244,7 @@ public class CategoryRestController {
     @DeleteMapping("/{id}")
     public ResponseEntity<CategoryDeleteResponse> deleteCategory(@PathVariable("id") int id) {
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(HttpStatus.NO_CONTENT)
                 .body(categoryService.deleteCategory(id));
     }
 }
