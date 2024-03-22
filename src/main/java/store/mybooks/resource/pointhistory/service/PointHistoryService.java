@@ -1,6 +1,7 @@
 package store.mybooks.resource.pointhistory.service;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -116,10 +117,13 @@ public class PointHistoryService {
     public boolean saveLoginPoint(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
 
-        LocalDate latestLoginDate = user.getLatestLogin().toLocalDate();
 
-        if (!latestLoginDate.isBefore(LocalDate.now())) {
-            return false;
+        if(Objects.nonNull(user.getLatestLogin())){
+            LocalDate latestLoginDate = user.getLatestLogin().toLocalDate();
+
+            if (!latestLoginDate.isBefore(LocalDate.now())) {
+                return false;
+            }
         }
 
         PointRule pointRule = pointRuleRepository.findPointRuleByPointRuleName("로그인 적립")
