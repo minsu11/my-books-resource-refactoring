@@ -2,10 +2,8 @@ package store.mybooks.resource.elastic.entity;
 
 import java.time.LocalDateTime;
 import javax.persistence.Id;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 
@@ -22,9 +20,7 @@ import org.springframework.data.elasticsearch.annotations.Field;
  * 3/19/24        newjaehun       최초 생성<br/>
  */
 @Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Document(indexName = "mybooks")
 public class Elastic {
     @Id
