@@ -98,17 +98,19 @@ public class ObjectStorageImpl implements ImageService {
             imageRepository.deleteById(thumbNailImage.getId());
             deleteObject(thumbNailImage.getId());
             saveImage(thumbNailImageStatus, null, book, thumbNailFile);
-            return;
         }
 
-        ImageStatus contentImageStatus = imageStatusRepository.findById(ImageStatusEnum.CONTENT.name()).orElseThrow();
-        List<Image> contentImage =
-                imageRepository.findAllByBook_IdAndImageStatus_Id(book.getId(), contentImageStatus.getId());
+        if (!(Objects.isNull(content) || content.isEmpty())) {
+            ImageStatus contentImageStatus =
+                    imageStatusRepository.findById(ImageStatusEnum.CONTENT.name()).orElseThrow();
+            List<Image> contentImage =
+                    imageRepository.findAllByBook_IdAndImageStatus_Id(book.getId(), contentImageStatus.getId());
 
-        contentImage.forEach(image -> deleteObject(image.getId()));
-        contentImage.forEach(image -> imageRepository.deleteById(image.getId()));
-        for (MultipartFile file : content) {
-            saveImage(contentImageStatus, null, book, file);
+            contentImage.forEach(image -> deleteObject(image.getId()));
+            contentImage.forEach(image -> imageRepository.deleteById(image.getId()));
+            for (MultipartFile file : content) {
+                saveImage(contentImageStatus, null, book, file);
+            }
         }
     }
 
