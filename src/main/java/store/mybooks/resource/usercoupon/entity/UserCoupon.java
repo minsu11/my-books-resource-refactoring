@@ -16,6 +16,7 @@ import store.mybooks.resource.coupon.entity.Coupon;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.usercoupon.exception.UserCouponAlreadyUsedException;
 import store.mybooks.resource.usercoupon.exception.UserCouponNotUsedException;
+import store.mybooks.resource.utils.TimeUtils;
 
 /**
  * packageName    : store.mybooks.resource.user_coupon.entity
@@ -64,7 +65,7 @@ public class UserCoupon {
     public UserCoupon(User user, Coupon coupon) {
         this.user = user;
         this.coupon = coupon;
-        this.createdDate = LocalDate.now();
+        this.createdDate = TimeUtils.nowDate();
         this.date = null;
         this.isUsed = false;
     }
@@ -79,7 +80,7 @@ public class UserCoupon {
             throw new UserCouponAlreadyUsedException(this.id);
         }
 
-        this.date = LocalDate.now();
+        this.date = TimeUtils.nowDate();
         this.isUsed = true;
     }
 

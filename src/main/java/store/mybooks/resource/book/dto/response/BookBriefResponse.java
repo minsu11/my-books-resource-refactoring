@@ -1,6 +1,5 @@
 package store.mybooks.resource.book.dto.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,7 +18,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class BookBriefResponse {
     private Long id;
 
@@ -34,4 +32,15 @@ public class BookBriefResponse {
     private Integer cost;
 
     private Integer saleCost;
+
+    public BookBriefResponse(Long id, String image, String name, Double rate, Long reviewCount, Integer cost,
+                             Integer saleCost) {
+        this.id = id;
+        this.image = image;
+        this.name = name;
+        this.rate = Math.round(rate * 10.0) / 10.0;
+        this.reviewCount = reviewCount;
+        this.cost = cost;
+        this.saleCost = saleCost;
+    }
 }

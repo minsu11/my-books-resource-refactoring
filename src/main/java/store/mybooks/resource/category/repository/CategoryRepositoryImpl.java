@@ -12,9 +12,10 @@ import store.mybooks.resource.bookcategory.entity.QBookCategory;
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForQuerydsl;
 import store.mybooks.resource.category.entity.Category;
 import store.mybooks.resource.category.entity.QCategory;
-import store.mybooks.resource.image.dto.response.ImageResponse;
 import store.mybooks.resource.image.entity.QImage;
 import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
+import store.mybooks.resource.orderdetail.entity.QOrderDetail;
+import store.mybooks.resource.review.entity.QReview;
 
 /**
  * packageName    : store.mybooks.resource.category.repository
@@ -95,6 +96,8 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
         QBookCategory bookCategory = QBookCategory.bookCategory;
         QBook book = QBook.book;
         QImage image = QImage.image;
+        QOrderDetail orderDetail = QOrderDetail.orderDetail;
+        QReview review = QReview.review;
 
         List<Integer> childCategoryIds =
                 from(category1)
@@ -117,19 +120,24 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
                         .on(book.id.eq(bookCategory.book.id))
                         .leftJoin(image)
                         .on(book.id.eq(image.book.id))
+                        .leftJoin(orderDetail)
+                        .on(book.id.eq(orderDetail.book.id))
+                        .leftJoin(review)
+                        .on(orderDetail.id.eq(review.orderDetail.id))
                         .where(book.bookStatus.id.in("판매중", "재고없음"))
                         .where(image.imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
                         .where(bookCategory.category.id.in(childCategoryIds))
+                        .groupBy(book.id, book.name, book.originalCost, book.saleCost, book.publishDate,
+                                image.path.concat(image.fileName).concat(image.extension))
                         .orderBy(book.publishDate.desc())
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .select(Projections.constructor(BookBriefResponseIncludePublishDate.class,
                                 book.id,
-                                Projections.constructor(ImageResponse.class,
-                                        image.path,
-                                        image.fileName,
-                                        image.extension),
+                                image.path.concat(image.fileName).concat(image.extension),
                                 book.name,
+                                review.rate.avg().coalesce(0.0),
+                                review.count(),
                                 book.originalCost,
                                 book.saleCost,
                                 book.publishDate))
