@@ -342,7 +342,7 @@ class UserCouponServiceTest {
                 false,
                 "test",
                 userSTatus,
-                userGrade
+                userGrade,null
         );
         ReflectionTestUtils.setField(user, "id", 1L);
         Coupon coupon = new Coupon(
@@ -405,7 +405,7 @@ class UserCouponServiceTest {
                 false,
                 "test",
                 userSTatus,
-                userGrade
+                userGrade,null
         );
         ReflectionTestUtils.setField(user, "id", 1L);
         UserCouponCreateRequest userCouponCreateRequest = new UserCouponCreateRequest();
