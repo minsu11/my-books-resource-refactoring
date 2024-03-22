@@ -115,9 +115,8 @@ public class PointHistoryService {
      */
     public boolean saveLoginPoint(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
-        LocalDate latestLoginDate = user.getLatestLogin().toLocalDate();
 
-        System.out.println(latestLoginDate);
+        LocalDate latestLoginDate = user.getLatestLogin().toLocalDate();
 
         if (!latestLoginDate.isBefore(LocalDate.now())) {
             return false;
@@ -134,6 +133,21 @@ public class PointHistoryService {
 
         return true;
     }
+
+    public void saveOauthLoginPoint(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
+
+        PointRule pointRule = pointRuleRepository.findPointRuleByPointRuleName("로그인 적립")
+                .orElseThrow(PointRuleNotExistException::new);
+        pointHistoryRepository.save(new PointHistory(
+                pointRule.getCost(),
+                user,
+                pointRule,
+                null
+        ));
+
+    }
+
 
     /**
      * methodName : saveSignUpPoint <br>
