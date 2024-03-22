@@ -75,7 +75,6 @@ class BookOrderRestControllerTest {
                 .andExpect(jsonPath("$.content[0].couponCost").value(100))
                 .andExpect(jsonPath("$.content[0].number").value("123123123"))
                 .andExpect(jsonPath("$.content[0].findPassword").value(""));
-
     }
 
     private static BookOrderUserResponse getBookOrderUserResponse() {

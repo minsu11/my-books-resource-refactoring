@@ -81,13 +81,13 @@ public class PointHistoryRepositoryImpl extends QuerydslRepositorySupport implem
     }
 
     @Override
-    public boolean isAlreadyReceivedSignUpPoint(Long userId) {
+    public boolean isAlreadyReceivedSignUpPoint(String email) {
         QPointRule pointRule = QPointRule.pointRule;
 
         List<Long> pointHistoryIdList = from(pointHistory)
                 .leftJoin(pointRule)
                 .on(pointHistory.pointRule.id.eq(pointRule.id))
-                .where(pointHistory.user.id.eq(userId))
+                .where(pointHistory.user.email.eq(email))
                 .where(pointRule.pointRuleName.id.eq("회원가입 적립"))
                 .select(pointHistory.id)
                 .fetch();

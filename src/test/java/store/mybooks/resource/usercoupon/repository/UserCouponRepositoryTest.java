@@ -103,7 +103,6 @@ class UserCouponRepositoryTest {
                 10000,
                 100000,
                 3,
-                LocalDate.now(),
                 userGradeName
         );
         testEntityManager.persist(userGrade);
@@ -117,7 +116,7 @@ class UserCouponRepositoryTest {
                 false,
                 "신재훈",
                 userStatus,
-                userGrade);
+                userGrade,null);
         testEntityManager.persist(user);
 
         Category category = new Category(null, "카테고리");
