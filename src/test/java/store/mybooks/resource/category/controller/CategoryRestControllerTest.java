@@ -327,20 +327,19 @@ class CategoryRestControllerTest {
         CategoryIdNameGetResponse secondCategoryIdNameGetResponse = makeCategoryIdNameGetResponse(2, "secondCategory");
         CategoryIdNameGetResponse thirdCategoryIdNameGetResponse = makeCategoryIdNameGetResponse(3, "thirdCategory");
         List<CategoryIdNameGetResponse> categoryIdNameGetResponseList = new ArrayList<>();
-        categoryIdNameGetResponseList.add(firstCategoryIdNameGetResponse);
-        categoryIdNameGetResponseList.add(secondCategoryIdNameGetResponse);
-        categoryIdNameGetResponseList.add(thirdCategoryIdNameGetResponse);
+        CategoryIdNameGetResponse expect = new CategoryIdNameGetResponse(thirdCategoryIdNameGetResponse.getId(),
+                firstCategoryIdNameGetResponse.getName() +
+                        " > " + secondCategoryIdNameGetResponse.getName() +
+                        " > " + thirdCategoryIdNameGetResponse.getName());
+        categoryIdNameGetResponseList.add(expect);
+
         when(categoryService.getCategoryNameForBookView(anyLong())).thenReturn(categoryIdNameGetResponseList);
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/categories/bookId/{bookId}", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(categoryIdNameGetResponseList.size()))
-                .andExpect(jsonPath("$[0].id").value(firstCategoryIdNameGetResponse.getId()))
-                .andExpect(jsonPath("$[0].name").value(firstCategoryIdNameGetResponse.getName()))
-                .andExpect(jsonPath("$[1].id").value(secondCategoryIdNameGetResponse.getId()))
-                .andExpect(jsonPath("$[1].name").value(secondCategoryIdNameGetResponse.getName()))
-                .andExpect(jsonPath("$[2].id").value(thirdCategoryIdNameGetResponse.getId()))
-                .andExpect(jsonPath("$[2].name").value(thirdCategoryIdNameGetResponse.getName()))
+                .andExpect(jsonPath("$[0].id").value(expect.getId()))
+                .andExpect(jsonPath("$[0].name").value(expect.getName()))
                 .andDo(document("category-getCategoryNameForBookView",
                         pathParameters(
                                 parameterWithName("bookId").description("도서 아이디")
@@ -476,13 +475,13 @@ class CategoryRestControllerTest {
                 );
         BookBriefResponseIncludePublishDate bananaBook =
                 new BookBriefResponseIncludePublishDate(
-                        1L,
-                        "path/apple.png",
+                        2L,
+                        "path/banana.png",
                         "bananaBook",
-                        5D,
-                        10L,
-                        10000,
-                        8000,
+                        4.5D,
+                        13L,
+                        20000,
+                        14600,
                         LocalDate.now()
                 );
         List<BookBriefResponseIncludePublishDate> bookBriefResponseIncludePublishDateList =
@@ -581,18 +580,29 @@ class CategoryRestControllerTest {
     @Test
     @DisplayName("카테고리 생성 - Validation 실패")
     void givenCreateCategory_whenValidationFailure_thenReturnBadRequest() throws Exception {
-        CategoryCreateRequest categoryCreateRequest = new CategoryCreateRequest(null, null);
+        CategoryCreateRequest categoryNameBlank = new CategoryCreateRequest(null, null);
+        CategoryCreateRequest categoryNameTooLong = new CategoryCreateRequest(null,
+                "tooLongCategoryNametooLongCategoryNametooLongCategoryNametooLongCategoryName");
 
-        String content = objectMapper.writeValueAsString(categoryCreateRequest);
+        String categoryNameBlankContent = objectMapper.writeValueAsString(categoryNameBlank);
+        String categoryNameTooLongContent = objectMapper.writeValueAsString(categoryNameTooLong);
 
-        MvcResult mvcResult = mockMvc.perform(post("/api/categories")
+        MvcResult nameBlankResult = mockMvc.perform(post("/api/categories")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(content))
+                        .content(categoryNameBlankContent))
                 .andExpect(status().isBadRequest())
-                .andDo(document("category-create-fail-validation"))
+                .andDo(document("category-create-fail-validation-blank"))
                 .andReturn();
 
-        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(CategoryValidationException.class);
+        MvcResult nameTooLongResult = mockMvc.perform(post("/api/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(categoryNameTooLongContent))
+                .andExpect(status().isBadRequest())
+                .andDo(document("category-create-fail-validation-tooLong"))
+                .andReturn();
+
+        assertThat(nameBlankResult.getResolvedException()).isInstanceOfAny(CategoryValidationException.class);
+        assertThat(nameTooLongResult.getResolvedException()).isInstanceOfAny(CategoryValidationException.class);
     }
 
     @Test
@@ -647,23 +657,42 @@ class CategoryRestControllerTest {
     @Test
     @DisplayName("카테고리 수정 - Validation 실패")
     void givenModifyCategory_whenValidationFailure_thenReturnBadRequest() throws Exception {
-        CategoryModifyRequest categoryModifyRequest = new CategoryModifyRequest("   ");
-        String content = objectMapper.writeValueAsString(categoryModifyRequest);
+        CategoryModifyRequest categoryNameBlank = new CategoryModifyRequest("   ");
+        String categoryNameBlankContent = objectMapper.writeValueAsString(categoryNameBlank);
+        CategoryModifyRequest categoryNameTooLong = new CategoryModifyRequest(
+                "tooLongCategoryNametooLongCategoryNametooLongCategoryNametooLongCategoryName");
+        String categoryNameTooLongContent = objectMapper.writeValueAsString(categoryNameTooLong);
 
-        MvcResult mvcResult = mockMvc.perform(RestDocumentationRequestBuilders.put("/api/categories/{id}", 1)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content))
-                .andExpect(status().isBadRequest())
-                .andDo(document("category-modify-fail-validation",
-                        pathParameters(
-                                parameterWithName("id").description("수정하려는 카테고리 아이디")
-                        ),
-                        requestFields(
-                                fieldWithPath("name").description("카테고리 이름")
-                        )))
-                .andReturn();
+        MvcResult categoryNameBlankResult =
+                mockMvc.perform(RestDocumentationRequestBuilders.put("/api/categories/{id}", 1)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(categoryNameBlankContent))
+                        .andExpect(status().isBadRequest())
+                        .andDo(document("category-modify-fail-validation-categoryNameBlank",
+                                pathParameters(
+                                        parameterWithName("id").description("수정하려는 카테고리 아이디")
+                                ),
+                                requestFields(
+                                        fieldWithPath("name").description("카테고리 이름")
+                                )))
+                        .andReturn();
 
-        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(CategoryValidationException.class);
+        MvcResult categoryNameTooLongResult =
+                mockMvc.perform(RestDocumentationRequestBuilders.put("/api/categories/{id}", 1)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(categoryNameTooLongContent))
+                        .andExpect(status().isBadRequest())
+                        .andDo(document("category-modify-fail-validation-categoryNameTooLong",
+                                pathParameters(
+                                        parameterWithName("id").description("수정하려는 카테고리 아이디")
+                                ),
+                                requestFields(
+                                        fieldWithPath("name").description("카테고리 이름")
+                                )))
+                        .andReturn();
+
+        assertThat(categoryNameBlankResult.getResolvedException()).isInstanceOfAny(CategoryValidationException.class);
+        assertThat(categoryNameTooLongResult.getResolvedException()).isInstanceOfAny(CategoryValidationException.class);
     }
 
     @Test
@@ -696,7 +725,7 @@ class CategoryRestControllerTest {
         when(categoryService.deleteCategory(anyInt())).thenReturn(categoryDeleteResponse);
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/categories/{id}", 1))
-                .andExpect(status().isOk())
+                .andExpect(status().isNoContent())
                 .andExpect(jsonPath("$.name").value(categoryDeleteResponse.getName()))
                 .andDo(document("category-delete",
                         pathParameters(
