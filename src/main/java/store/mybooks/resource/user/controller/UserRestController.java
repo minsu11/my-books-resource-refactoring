@@ -97,9 +97,11 @@ public class UserRestController {
     public ResponseEntity<UserOauthCreateResponse> createOauthUser(
             @Valid @RequestBody UserOauthCreateRequest createRequest,BindingResult bindingResult) {
 
+
         Utils.validateRequest(bindingResult);
         UserOauthCreateResponse createResponse = userService.createOauthUser(createRequest);
         pointHistoryService.saveSignUpPoint(createResponse.getEmail());
+        pointHistoryService.saveOauthLoginPoint(createResponse.getId());
 
         return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
     }
