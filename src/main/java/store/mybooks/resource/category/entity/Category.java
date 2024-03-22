@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import store.mybooks.resource.utils.TimeUtils;
 
 /**
  * packageName    : store.mybooks.resource.category.entity
@@ -61,7 +62,7 @@ public class Category {
     public Category(Category parentCategory, String name) {
         this.parentCategory = parentCategory;
         this.name = name;
-        this.createdDate = LocalDate.now();
+        this.createdDate = TimeUtils.nowDate();
         this.childCategoryList = new ArrayList<>();
     }
 
