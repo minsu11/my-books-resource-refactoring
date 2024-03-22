@@ -15,6 +15,11 @@ public enum UserStatusEnum {
 
 
     ACTIVE("활성"),
+
+    DORMANCY("휴면"),
+    LOCK("잠금"),
+
+    SOCIAL("소셜"),
     RESIGN("탈퇴");
 
 
