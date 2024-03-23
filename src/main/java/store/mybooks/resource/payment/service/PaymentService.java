@@ -14,8 +14,10 @@ import store.mybooks.resource.payment.dto.request.PayCreateRequest;
 import store.mybooks.resource.payment.dto.request.PayModifyRequest;
 import store.mybooks.resource.payment.dto.response.PayCreateResponse;
 import store.mybooks.resource.payment.dto.response.PayModifyResponse;
+import store.mybooks.resource.payment.dto.response.PaymentResponse;
 import store.mybooks.resource.payment.entity.Payment;
 import store.mybooks.resource.payment.exception.PaymentAlreadyExistException;
+import store.mybooks.resource.payment.exception.PaymentNotExistException;
 import store.mybooks.resource.payment.repository.PaymentRepository;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user.exception.UserNotExistException;
@@ -91,6 +93,22 @@ public class PaymentService {
         payment.update(request.getStatus());
 
         return paymentMapper.mapToPayModifyResponse(payment);
+    }
+
+    /**
+     * methodName : getPaymentKey<br>
+     * author : minsu11<br>
+     * description : 주문 번호로 toss payment key 조회.
+     * <br>
+     *
+     * @param orderNumber 주문 번호
+     * @return the payment key
+     */
+    @Transactional(readOnly = true)
+    public PaymentResponse getPaymentKey(String orderNumber) {
+        return paymentRepository.getPaymentKey(orderNumber)
+                .orElseThrow(PaymentNotExistException::new);
+
     }
 
 

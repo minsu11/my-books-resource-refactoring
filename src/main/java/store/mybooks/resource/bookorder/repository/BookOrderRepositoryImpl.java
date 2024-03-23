@@ -145,7 +145,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                 )
                 .where(orderDetail.bookOrder.number.eq(orderNumber))
                 .fetch();
-        BookOrderInfoPayResponse bookorderInfo =
+        BookOrderInfoPayResponse bookOrderInfo =
                 from(bookOrder)
                         .select(Projections.constructor(BookOrderInfoPayResponse.class,
                                 bookOrder.orderStatus.id,
@@ -155,10 +155,9 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                                 bookOrder.pointCost))
                         .where(bookOrder.number.eq(orderNumber))
                         .fetchOne();
-        bookorderInfo.updateOrderDetails(orderDetailInfoResponses);
+        bookOrderInfo.updateOrderDetails(orderDetailInfoResponses);
 
-        return Optional.of(bookorderInfo
-        );
+        return Optional.of(bookOrderInfo);
     }
 
     @Override

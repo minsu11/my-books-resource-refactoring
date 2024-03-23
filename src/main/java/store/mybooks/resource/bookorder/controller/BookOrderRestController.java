@@ -156,6 +156,19 @@ public class BookOrderRestController {
     }
 
     /**
+     * @param request the request
+     * @return the response entity
+     */
+    @PostMapping("/non/user")
+    public ResponseEntity<BookOrderCreateResponse> createNonUserOrderResponseResponseEntity(
+            @RequestBody BookOrderCreateRequest request) {
+        log.debug("주문 생성 :{}", request.getOrderInfo());
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(orderService.createOrder(request, 0L));
+    }
+
+    /**
      * methodName : getBookOrderInfo<br>
      * author : minsu11<br>
      * description : 주문 창에서 결제 창으로 넘어갈 때 필요한 정보를 조회.

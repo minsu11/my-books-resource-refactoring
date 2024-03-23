@@ -3,7 +3,6 @@ package store.mybooks.resource.orderdetail.repository;
 import com.querydsl.core.types.Projections;
 import java.util.List;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
-import store.mybooks.resource.book.entity.QBook;
 import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
 import store.mybooks.resource.orderdetail.entity.OrderDetail;
 import store.mybooks.resource.orderdetail.entity.QOrderDetail;
@@ -29,15 +28,14 @@ public class OrderDetailRepositoryImpl extends QuerydslRepositorySupport impleme
 
     @Override
     public List<OrderDetailInfoResponse> getOrderDetailList(Long bookOrderId) {
-        QBook book = QBook.book;
         return from(orderDetail)
                 .select(Projections.constructor(
                         OrderDetailInfoResponse.class,
                         orderDetail.book.id,
                         orderDetail.book.name,
                         orderDetail.userCoupon.id,
-                        orderDetail.amount,
                         orderDetail.bookCost,
+                        orderDetail.amount,
                         orderDetail.isCouponUsed
                 ))
                 .where(orderDetail.id.eq(bookOrderId))
@@ -52,8 +50,8 @@ public class OrderDetailRepositoryImpl extends QuerydslRepositorySupport impleme
                         orderDetail.book.id,
                         orderDetail.book.name,
                         orderDetail.userCoupon.id,
-                        orderDetail.amount,
                         orderDetail.bookCost,
+                        orderDetail.amount,
                         orderDetail.isCouponUsed
                 ))
                 .where(orderDetail.bookOrder.number.eq(orderNumber))
