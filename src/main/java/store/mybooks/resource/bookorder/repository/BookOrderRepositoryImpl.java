@@ -88,7 +88,8 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                                     orderDetail.bookCost,
                                     orderDetail.isCouponUsed,
                                     image.path.concat(image.fileName).concat(image.extension),
-                                    orderDetail.detailStatus.id
+                                    orderDetail.detailStatus.id,
+                                    orderDetail.id
                             ))
                             .where(orderDetail.bookOrder.number
                                     .eq(bookOrderUserResponse.getNumber()))

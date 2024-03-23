@@ -29,4 +29,5 @@ public class OrderDetailInfoResponse {
     private Boolean isCouponUsed;
     private String image;
     private String statusId;
+    private Long orderDetailId;
 }
