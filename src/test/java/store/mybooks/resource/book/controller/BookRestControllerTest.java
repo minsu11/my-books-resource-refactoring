@@ -756,7 +756,7 @@ class BookRestControllerTest {
     }
 
     @Test
-    @DisplayName("도서 재고를 조회")
+    @DisplayName("도서 재고 조회")
     void givenBookId_whenGetBookStock_thenReturnBookStockResponse() throws Exception {
         Long bookId = 1L;
         BookStockResponse response = new BookStockResponse(1L, 1);
@@ -766,7 +766,7 @@ class BookRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(response.getId()))
                 .andExpect(jsonPath("$.stock").value(response.getStock()))
-                .andDo(document("get-book-stock",
+                .andDo(document("book-getBookStock",
                         pathParameters(
                                 parameterWithName("id").description("도서 ID")
                         ),

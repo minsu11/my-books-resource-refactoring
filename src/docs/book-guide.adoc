@@ -74,6 +74,180 @@ include::{snippets}/book-modify-error/http-request.adoc[]
 
 include::{snippets}/book-modify-error/http-response.adoc[]
 
+=== 도서 상세 정보 조회
+
+==== Path Parameters
+
+include::{snippets}/book-detail/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/book-detail/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-detail/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-detail/response-fields.adoc[]
+
+=== 페이징된 전체 도서 미리보기
+
+==== Request Parameters
+
+include::{snippets}/book-getBookBrief/request-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/book-getBookBrief/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-getBookBrief/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-getBookBrief/response-fields.adoc[]
+
+=== 출판일순으로 정렬된 도서 리스트
+
+==== HTTP Request
+
+include::{snippets}/book-getBookPublicationDate/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-getBookPublicationDate/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-getBookPublicationDate/response-fields.adoc[]
+
+=== 평점순으로 정렬된 도서 리스트
+
+==== HTTP Request
+
+include::{snippets}/book-getBookRating/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-getBookRating/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-getBookRating/response-fields.adoc[]
+
+=== 리뷰수로 정렬된 도서 리스트
+
+==== HTTP Request
+
+include::{snippets}/book-getBookReview/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-getBookReview/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-getBookReview/response-fields.adoc[]
+
+=== 좋아요수로 정렬된 도서 리스트
+
+==== HTTP Request
+
+include::{snippets}/book-getBookLike/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-getBookLike/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-getBookLike/response-fields.adoc[]
+
+=== 조수로 정렬된 도서 리스트
+
+==== HTTP Request
+
+include::{snippets}/book-getBookPopularity/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-getBookPopularity/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-getBookPopularity/response-fields.adoc[]
+
+=== 쿠폰 등록시 사용할 도서 리스
+
+==== HTTP Request
+
+include::{snippets}/book-getBookForCoupon/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-getBookForCoupon/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-getBookForCoupon/response-fields.adoc[]
+
+=== 주문시 사용할 도서 정보
+
+==== Path Parameters
+
+include::{snippets}/book-getBookForOrder/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/book-getBookForOrder/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-getBookForOrder/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-getBookForOrder/response-fields.adoc[]
+
+=== 장바구니내 도서의 정보 조
+
+==== Path Parameters
+
+include::{snippets}/book-getBookInCart/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/book-getBookInCart/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-getBookInCart/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-getBookInCart/response-fields.adoc[]
+
+=== 도서 재고 조회
+
+==== Path Parameters
+
+include::{snippets}/book-getBookStock/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/book-getBookStock/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-getBookStock/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-getBookStock/response-fields.adoc[]
+
 == 도서-상태 API
 
 === 도서 상태 목록
