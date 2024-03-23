@@ -10,14 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.book.dto.request.BookCreateRequest;
 import store.mybooks.resource.book.dto.request.BookModifyRequest;
@@ -115,6 +108,42 @@ public class BookRestController {
                 .status(HttpStatus.OK)
                 .body(bookService.getBookForCoupon());
     }
+
+    @GetMapping("/popularity")
+    public ResponseEntity<List<BookPopularityResponse>> getBookPopularity() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookPopularityList());
+    }
+
+    @GetMapping("/bookLike")
+    public ResponseEntity<List<BookLikeResponse>> getBookLike() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookLikeList());
+    }
+
+    @GetMapping("/bookReviewCount")
+    public ResponseEntity<List<BookReviewResponse>> getBookReview() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookReviewList());
+    }
+
+    @GetMapping("/bookRating")
+    public ResponseEntity<List<BookRatingResponse>> getBookRating() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookRatingList());
+    }
+
+    @GetMapping("/bookPublicationDate")
+    public ResponseEntity<List<BookPublicationDateResponse>> getBookPublicationDate() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookPublicationDateList());
+    }
+
 
     /**
      * methodName : createBook

@@ -5,6 +5,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
 import store.mybooks.resource.book.dto.response.*;
+import store.mybooks.resource.book.dto.response.BookBriefResponse;
+import store.mybooks.resource.book.dto.response.BookDetailResponse;
+import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
+import store.mybooks.resource.book.dto.response.BookLikeResponse;
+import store.mybooks.resource.book.dto.response.BookPopularityResponse;
+import store.mybooks.resource.book.dto.response.BookPublicationDateResponse;
+import store.mybooks.resource.book.dto.response.BookRatingResponse;
+import store.mybooks.resource.book.dto.response.BookResponseForOrder;
+import store.mybooks.resource.book.dto.response.BookReviewResponse;
 
 /**
  * packageName    : store.mybooks.resource.book.repotisory <br/>
@@ -32,4 +41,14 @@ public interface BookRepositoryCustom {
     void updateBookViewCount(Long bookId, Integer count);
 
     BookStockResponse getBookStockList(Long id);
+
+    List<BookPopularityResponse> getBookPopularity();
+
+    List<BookLikeResponse> getBookLike();
+
+    List<BookReviewResponse> getBookReview();
+
+    List<BookRatingResponse> getBookRating();
+
+    List<BookPublicationDateResponse> getBookPublicationDate();
 }
