@@ -27,4 +27,5 @@ public class OrderDetailInfoResponse {
     private Integer cost;
     private Integer amount;
     private Boolean isCouponUsed;
+    private String image;
 }
