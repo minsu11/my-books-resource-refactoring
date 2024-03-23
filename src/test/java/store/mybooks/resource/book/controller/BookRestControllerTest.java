@@ -141,7 +141,7 @@ class BookRestControllerTest {
                         requestParts(
                                 partWithName("request").description("도서 생성 요청 본문"),
                                 partWithName("thumbnail").description("도서 썸네일 이미지"),
-                                partWithName("content").description("도서 내용 파일들")
+                                partWithName("content").description("도서 설명 이미지 파일들")
                         ),
                         requestPartFields("request",
                                 fieldWithPath("bookStatusId").description("도서 상태 ID"),
@@ -231,7 +231,7 @@ class BookRestControllerTest {
                         requestParts(
                                 partWithName("request").description("도서 수정 요청 본문"),
                                 partWithName("thumbnail").description("도서 썸네일 이미지"),
-                                partWithName("content").description("도서 내용 파일들")
+                                partWithName("content").description("도서 설명 이미지 파일들")
                         ),
                         requestPartFields("request",
                                 fieldWithPath("bookStatusId").description("도서 상태 ID"),
@@ -348,11 +348,11 @@ class BookRestControllerTest {
                         ),
                         responseFields(
                                 fieldWithPath("id").description("도서 ID"),
-                                fieldWithPath("thumbNailImage").description("썸네일 이미지 경로"),
+                                fieldWithPath("thumbNailImage").description("도서 썸네일 이미지"),
                                 fieldWithPath("name").description("도서명"),
                                 fieldWithPath("bookStatus").description("도서 상태"),
                                 subsectionWithPath("authorList").description("저자 목록"),
-                                subsectionWithPath("publisher").description("출판사 정보"),
+                                subsectionWithPath("publisher").description("출판사"),
                                 fieldWithPath("publishDate").description("출판일"),
                                 fieldWithPath("saleCost").description("판매가"),
                                 fieldWithPath("originalCost").description("정가"),
@@ -368,7 +368,7 @@ class BookRestControllerTest {
                                 fieldWithPath("stock").description("재고"),
                                 fieldWithPath("index").description("목차"),
                                 fieldWithPath("explanation").description("설명"),
-                                fieldWithPath("contentImageList").description("콘텐츠 이미지 목록")
+                                fieldWithPath("contentImageList").description("도서 설명 이미지 파일들")
                         )
                 ));
         verify(bookService, times(1)).getBookDetailInfo(bookId);
@@ -428,12 +428,12 @@ class BookRestControllerTest {
                         responseFields(
                                 fieldWithPath("content").description("리스트"),
                                 fieldWithPath("content[].id").description("도서 ID"),
-                                fieldWithPath("content[].image").description("도서 썸네일 이미지 URL"),
+                                fieldWithPath("content[].image").description("도서 썸네일 이미지"),
                                 fieldWithPath("content[].name").description("도서명"),
-                                fieldWithPath("content[].rate").description("도서 총평점"),
-                                fieldWithPath("content[].reviewCount").description("도서 리뷰 갯수"),
-                                fieldWithPath("content[].cost").description("도서 정가"),
-                                fieldWithPath("content[].saleCost").description("도서 판매가"),
+                                fieldWithPath("content[].rate").description("평점"),
+                                fieldWithPath("content[].reviewCount").description("도서 리뷰 수"),
+                                fieldWithPath("content[].cost").description("정가"),
+                                fieldWithPath("content[].saleCost").description("판매가"),
                                 fieldWithPath("pageable").description("페이지정보"),
                                 fieldWithPath("pageable.sort").description("페이지 정렬 정보"),
                                 fieldWithPath("pageable.sort.sorted").description("페이지 정렬되었는지 여부(true: 정렬 됨)"),
@@ -493,8 +493,8 @@ class BookRestControllerTest {
                                 fieldWithPath("[].image").description("도서 이미지 경로"),
                                 fieldWithPath("[].name").description("도서명"),
                                 fieldWithPath("[].reviewCount").description("리뷰 수"),
-                                fieldWithPath("[].cost").description("도서 원가"),
-                                fieldWithPath("[].saleCost").description("도서 판매가"),
+                                fieldWithPath("[].cost").description("정가"),
+                                fieldWithPath("[].saleCost").description("판매가"),
                                 fieldWithPath("[].rate").description("평점"),
                                 fieldWithPath("[].publicationDate").description("출판일")
                         )));
@@ -533,8 +533,8 @@ class BookRestControllerTest {
                                 fieldWithPath("[].image").description("도서 이미지 경로"),
                                 fieldWithPath("[].name").description("도서명"),
                                 fieldWithPath("[].reviewCount").description("리뷰 수"),
-                                fieldWithPath("[].cost").description("도서 원가"),
-                                fieldWithPath("[].saleCost").description("도서 판매가"),
+                                fieldWithPath("[].cost").description("정가"),
+                                fieldWithPath("[].saleCost").description("판매가"),
                                 fieldWithPath("[].rate").description("평점")
                         )));
         verify(bookService, times(1)).getBookRatingList();
@@ -572,8 +572,8 @@ class BookRestControllerTest {
                                 fieldWithPath("[].image").description("도서 이미지 경로"),
                                 fieldWithPath("[].name").description("도서명"),
                                 fieldWithPath("[].reviewCount").description("리뷰 수"),
-                                fieldWithPath("[].cost").description("도서 원가"),
-                                fieldWithPath("[].saleCost").description("도서 판매가"),
+                                fieldWithPath("[].cost").description("정가"),
+                                fieldWithPath("[].saleCost").description("판매가"),
                                 fieldWithPath("[].rate").description("평점")
                         )));
         verify(bookService, times(1)).getBookReviewList();
@@ -613,10 +613,10 @@ class BookRestControllerTest {
                                 fieldWithPath("[].image").description("도서 이미지 경로"),
                                 fieldWithPath("[].name").description("도서명"),
                                 fieldWithPath("[].reviewCount").description("리뷰 수"),
-                                fieldWithPath("[].cost").description("도서 원가"),
-                                fieldWithPath("[].saleCost").description("도서 판매가"),
+                                fieldWithPath("[].cost").description("정가"),
+                                fieldWithPath("[].saleCost").description("판매가"),
                                 fieldWithPath("[].rate").description("평점"),
-                                fieldWithPath("[].likeCount").description("좋아요수")
+                                fieldWithPath("[].likeCount").description("좋아요 수")
                         )));
         verify(bookService, times(1)).getBookLikeList();
     }
@@ -655,8 +655,8 @@ class BookRestControllerTest {
                                 fieldWithPath("[].image").description("도서 이미지 경로"),
                                 fieldWithPath("[].name").description("도서명"),
                                 fieldWithPath("[].reviewCount").description("리뷰 수"),
-                                fieldWithPath("[].cost").description("도서 원가"),
-                                fieldWithPath("[].saleCost").description("도서 판매가"),
+                                fieldWithPath("[].cost").description("정가"),
+                                fieldWithPath("[].saleCost").description("판매가"),
                                 fieldWithPath("[].rate").description("평점"),
                                 fieldWithPath("[].viewCount").description("조횟수")
                         )));
