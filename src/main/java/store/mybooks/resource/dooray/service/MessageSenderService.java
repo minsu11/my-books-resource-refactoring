@@ -1,6 +1,6 @@
 package store.mybooks.resource.dooray.service;
 
-import java.util.Random;
+import java.security.SecureRandom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import store.mybooks.resource.dooray.config.MessageBot;
@@ -23,7 +23,7 @@ public class MessageSenderService {
 
     private final MessageSender messageSender;
 
-    private final Random random = new Random();
+    private final SecureRandom random = new SecureRandom();
 
     /**
      * methodName : sendMessage
