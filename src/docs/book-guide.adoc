@@ -10,6 +10,70 @@
 
 == 도서 API
 
+=== 도서 등록
+
+==== Request Parts
+
+include::{snippets}/book-create/request-parts.adoc[]
+
+==== Request PartFields
+
+include::{snippets}/book-create/request-part-request-fields.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/book-create/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-create/http-response.adoc[]
+
+==== ResponseFields
+
+include::{snippets}/book-create/response-fields.adoc[]
+
+=== 도서 등록(검증 실패)
+
+==== HTTP Request
+
+include::{snippets}/book-create-error/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-create-error/http-response.adoc[]
+
+=== 도서 수정
+
+==== Request Parts
+
+include::{snippets}/book-modify/request-parts.adoc[]
+
+==== Request PartFields
+
+include::{snippets}/book-modify/request-part-request-fields.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/book-modify/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-modify/http-response.adoc[]
+
+==== ResponseFields
+
+include::{snippets}/book-modify/response-fields.adoc[]
+
+=== 도서 수정(검증 실패)
+
+==== HTTP Request
+
+include::{snippets}/book-modify-error/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-modify-error/http-response.adoc[]
+
 == 도서-상태 API
 
 === 도서 상태 목록
