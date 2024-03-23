@@ -36,14 +36,23 @@ public class BookOrderUserResponse {
     private Integer pointCost;
     private Integer couponCost;
     private String number;
+
+    private Long id;
+
+
     private List<OrderDetailInfoResponse> orderDetailInfoList;
 
     public void createOrderDetailInfos(List<OrderDetailInfoResponse> orderDetailInfoList) {
         this.orderDetailInfoList = orderDetailInfoList;
     }
 
-    public BookOrderUserResponse(String statusId, String deliveryRuleName, Integer deliveryCost, LocalDate orderDate, String invoiceNumber, String receiverName, String receiverAddress, String receiverPhoneNumber, String receiverMessage,
-                                 Integer totalCost, Integer pointCost, Integer couponCost, String number) {
+
+    public BookOrderUserResponse(String statusId, String deliveryRuleName, Integer deliveryCost, LocalDate orderDate,
+                                 String invoiceNumber, String receiverName, String receiverAddress,
+                                 String receiverPhoneNumber, String receiverMessage,
+                                 Integer totalCost, Integer pointCost, Integer couponCost, String number, Long id) {
+
+
         this.statusId = statusId;
         this.deliveryRuleName = deliveryRuleName;
         this.deliveryCost = deliveryCost;
@@ -57,5 +66,8 @@ public class BookOrderUserResponse {
         this.pointCost = pointCost;
         this.couponCost = couponCost;
         this.number = number;
+
+        this.id = id;
+
     }
 }

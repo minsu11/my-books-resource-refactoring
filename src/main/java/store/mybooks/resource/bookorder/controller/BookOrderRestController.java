@@ -49,9 +49,11 @@ public class BookOrderRestController {
      */
 
     @GetMapping("/users")
-    public ResponseEntity<Page<BookOrderUserResponse>> getBookOrderPageById(@RequestHeader(name = HeaderProperties.USER_ID) Long userId,
-                                                                            @PageableDefault Pageable pageable) {
-        Page<BookOrderUserResponse> bookOrderResponses = bookOrderService.getBookOrderResponseList(userId, pageable);
+
+    public ResponseEntity<Page<BookOrderUserResponse>> getBookOrderPageById(
+            Pageable pageable, @RequestHeader(name = HeaderProperties.USER_ID) Long id) {
+        Page<BookOrderUserResponse> bookOrderResponses = bookOrderService.getBookOrderResponseList(id, pageable);
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookOrderResponses);
@@ -84,7 +86,8 @@ public class BookOrderRestController {
      * @return response entity
      */
     @PutMapping("/admin/statuses")
-    public ResponseEntity<BookOrderAdminModifyResponse> modifyOrderStatus(@RequestBody BookOrderAdminModifyRequest request) {
+    public ResponseEntity<BookOrderAdminModifyResponse> modifyOrderStatus(
+            @RequestBody BookOrderAdminModifyRequest request) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookOrderService.modifyBookOrderAdminStatus(request));
@@ -100,7 +103,8 @@ public class BookOrderRestController {
      * @return response entity
      */
     @PutMapping("/admin/invoiceNumbers")
-    public ResponseEntity<BookOrderRegisterInvoiceResponse> registerInvoiceNumber(@RequestBody BookOrderRegisterInvoiceRequest request) {
+    public ResponseEntity<BookOrderRegisterInvoiceResponse> registerInvoiceNumber(
+            @RequestBody BookOrderRegisterInvoiceRequest request) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookOrderService.registerBookOrderInvoiceNumber(request));
@@ -206,7 +210,8 @@ public class BookOrderRestController {
 
     @GetMapping("/page")
     public ResponseEntity<Page<BookOrderUserResponse>> getBookOrderUserPage(Pageable pageable,
-                                                                            @RequestHeader(name = HeaderProperties.USER_ID) Long userId) {
+                                                                            @RequestHeader(name = HeaderProperties.USER_ID)
+                                                                            Long userId) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookOrderService.getUserBookOrderInfo(pageable, userId));

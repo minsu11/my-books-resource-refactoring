@@ -19,6 +19,7 @@ import store.mybooks.resource.image_status.entity.QImageStatus;
 import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
 import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
 import store.mybooks.resource.orderdetail.entity.QOrderDetail;
+import store.mybooks.resource.orderdetailstatus.entity.QOrderDetailStatus;
 import store.mybooks.resource.ordersstatus.enumulation.OrdersStatusEnum;
 
 /**
@@ -36,6 +37,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
     private static final QBookOrder bookOrder = QBookOrder.bookOrder;
     private static final QImage image = QImage.image;
 
+    private static final QOrderDetailStatus orderDetailStatus = QOrderDetailStatus.orderDetailStatus;
 
     public BookOrderRepositoryImpl() {
         super(BookOrder.class);
@@ -63,7 +65,10 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                                 bookOrder.totalCost,
                                 bookOrder.pointCost,
                                 bookOrder.couponCost,
-                                bookOrder.number
+
+                                bookOrder.number,
+                                bookOrder.id
+
                         ))
                         .where(bookOrder.user.id.eq(userId))
                         .offset(pageable.getOffset())
@@ -74,6 +79,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                     from(orderDetail)
                             .join(image).on(image.book.eq(orderDetail.book))
                             .join(image.imageStatus, imageStatus)
+                            .join(orderDetail.detailStatus,orderDetailStatus)
                             .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
                             .select(Projections.constructor(
                                     OrderDetailInfoResponse.class,
@@ -83,13 +89,20 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                                     orderDetail.amount,
                                     orderDetail.bookCost,
                                     orderDetail.isCouponUsed,
-                                    image.path.concat(image.fileName).concat(image.extension)
+
+                                    image.path.concat(image.fileName).concat(image.extension),
+                                    orderDetail.detailStatus.id,
+                                    orderDetail.id
+
                             ))
                             .where(orderDetail.bookOrder.number
                                     .eq(bookOrderUserResponse.getNumber()))
                             .fetch();
             bookOrderUserResponse.createOrderDetailInfos(orderDetailInfoResponses);
         }
+
+
+
 
         long count = from(bookOrder).
                 where(bookOrder.user.id.eq(userId))
