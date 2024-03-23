@@ -65,8 +65,10 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                                 bookOrder.totalCost,
                                 bookOrder.pointCost,
                                 bookOrder.couponCost,
+
                                 bookOrder.number,
                                 bookOrder.id
+
                         ))
                         .where(bookOrder.user.id.eq(userId))
                         .offset(pageable.getOffset())
@@ -87,15 +89,19 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                                     orderDetail.amount,
                                     orderDetail.bookCost,
                                     orderDetail.isCouponUsed,
+
                                     image.path.concat(image.fileName).concat(image.extension),
                                     orderDetail.detailStatus.id,
                                     orderDetail.id
+
                             ))
                             .where(orderDetail.bookOrder.number
                                     .eq(bookOrderUserResponse.getNumber()))
                             .fetch();
             bookOrderUserResponse.createOrderDetailInfos(orderDetailInfoResponses);
         }
+
+
 
 
         long count = from(bookOrder).
