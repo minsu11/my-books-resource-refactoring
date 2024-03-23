@@ -101,8 +101,8 @@ public class DatabaseConfig {
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder
-                .setConnectTimeout(Duration.ofSeconds(3L))
-                .setReadTimeout(Duration.ofSeconds(3L))
+                .setConnectTimeout(Duration.ofSeconds(10L))
+                .setReadTimeout(Duration.ofSeconds(10L))
                 .build();
     }
 
