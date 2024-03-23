@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
@@ -171,9 +172,8 @@ public class ObjectStorageImpl implements ImageService {
 
     @Override
     @Transactional(readOnly = true)
-    public Image getReviewImage(Long id) {
-        return imageRepository.findImageByReviewIdAndImageStatusId(id, ImageStatusEnum.REVIEW.getName())
-                .orElseThrow(() -> new ImageNotExistsException("해당하는 id의 이미지가 없습니다"));
+    public Optional<Image> getReviewImage(Long id) {
+        return imageRepository.findImageByReviewIdAndImageStatusId(id, ImageStatusEnum.REVIEW.getName());
     }
 
     @Override

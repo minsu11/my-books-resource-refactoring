@@ -17,6 +17,7 @@ import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
 import store.mybooks.resource.orderdetail.service.OrderDetailService;
 import store.mybooks.resource.orderdetailstatus.service.OrderDetailStatusService;
 import store.mybooks.resource.ordersstatus.service.OrdersStatusService;
+import store.mybooks.resource.payment.dto.request.PayCancelRequest;
 import store.mybooks.resource.payment.dto.request.PayCreateRequest;
 import store.mybooks.resource.payment.dto.response.PayCreateResponse;
 import store.mybooks.resource.payment.service.PaymentService;
@@ -89,10 +90,13 @@ public class TotalOrderService {
     public PayCreateResponse payUser(PayCreateRequest request, Long userId) {
         BookOrderInfoPayResponse bookOrderInfo = bookOrderService.getBookInfo(request.getOrderNumber());
         checkBookStock(bookOrderInfo.getOrderDetails());
+
         PayCreateResponse response = paymentService.createPayment(request);
-        calculateBookStock(bookOrderInfo.getOrderDetails());
+
+        calculateBookStock(bookOrderInfo.getOrderDetails(), BookOrderStatusName.ORDER_COMPLETED);
+
         useCouponProcessing(bookOrderInfo);
-        usePointProcessing(bookOrderInfo, userId);
+        pointProcessing(bookOrderInfo.getNumber(), bookOrderInfo.getPointCost(), userId, PointRuleNameEnum.USE_POINT);
         earnPoint(bookOrderInfo, userId);
         bookOrderService.updateBookOrderStatus(bookOrderInfo.getNumber(), BookOrderStatusName.ORDER_COMPLETED);
         return response;
@@ -102,20 +106,17 @@ public class TotalOrderService {
     /**
      * methodName : useCouponProcessing<br>
      * author : minsu11<br>
-     * description : 개별이거나 전체 쿠폰에 대한 처리.
+     * description : 개별 쿠폰에 대한 처리.
      * <br>
      *
      * @param bookOrder the book order
      */
     public void useCouponProcessing(BookOrderInfoPayResponse bookOrder) {
-        if (bookOrder.getIsCouponUsed()) { // 전체 쿠폰 사용 했을 경우
+        bookOrder.getOrderDetails()
+                .stream()
+                .filter(OrderDetailInfoResponse::getIsCouponUsed)
+                .forEach(order -> userCouponService.useUserCoupon(order.getCouponId()));
 
-        } else {
-            bookOrder.getOrderDetails()
-                    .stream()
-                    .filter(OrderDetailInfoResponse::getIsCouponUsed)
-                    .forEach(order -> userCouponService.useUserCoupon(order.getCouponId()));
-        }
     }
 
     /**
@@ -128,6 +129,9 @@ public class TotalOrderService {
      * @param userId    the user id
      */
     public void earnPoint(BookOrderInfoPayResponse bookOrder, Long userId) {
+        if (userId == 0L) {
+            return;
+        }
         PointRuleResponse pointRule = pointRuleService
                 .getPointRuleResponseByName(PointRuleNameEnum.BOOK_POINT.getValue());
         int earnPoint = (bookOrder.getTotalCost() * pointRule.getRate()) / 100;
@@ -137,22 +141,31 @@ public class TotalOrderService {
     }
 
     /**
-     * methodName : usePointProcessing<br>
+     * methodName : pointProcessing<br>
      * author : minsu11<br>
      * description : 포인트 사용 처리.
      * <br>
      *
-     * @param bookOrder the book order
-     * @param userId    the user id
+     * @param orderNumber the book order
+     * @param pointValue
+     * @param userId      the user id
      */
-    public void usePointProcessing(BookOrderInfoPayResponse bookOrder, Long userId) {
-        if (bookOrder.getPointCost() > 0) {
-            PointRuleNameResponse pointRuleName = pointRuleNameService
-                    .getPointRuleName(PointRuleNameEnum.USE_POINT.getValue());
-            PointHistoryCreateRequest point = new PointHistoryCreateRequest(bookOrder.getNumber(),
-                    pointRuleName.getId(), bookOrder.getPointCost());
-            pointHistoryService.createPointHistory(point, userId);
+    public void pointProcessing(String orderNumber, Integer pointValue,
+                                Long userId, PointRuleNameEnum pointRuleNameEnum) {
+        PointRuleNameResponse pointRuleName = new PointRuleNameResponse();
+        PointHistoryCreateRequest point;
+        if (pointValue > 0 || userId != 0) {
+            pointRuleName = pointRuleNameService
+                    .getPointRuleName(pointRuleNameEnum.getValue());
         }
+        if (pointRuleNameEnum == PointRuleNameEnum.USE_POINT) {
+            point = new PointHistoryCreateRequest(orderNumber,
+                    pointRuleName.getId(), -pointValue);
+        } else {
+            point = new PointHistoryCreateRequest(orderNumber,
+                    pointRuleName.getId(), pointValue);
+        }
+        pointHistoryService.createPointHistory(point, userId);
     }
 
     /**
@@ -180,10 +193,36 @@ public class TotalOrderService {
      *
      * @param orderDetailInfoList the order detail info list
      */
-    public void calculateBookStock(List<OrderDetailInfoResponse> orderDetailInfoList) {
+
+
+    public void calculateBookStock(List<OrderDetailInfoResponse> orderDetailInfoList,
+                                   BookOrderStatusName bookOrderStatusName) {
+
         for (OrderDetailInfoResponse orderDetail : orderDetailInfoList) {
-            bookService.updateBookStock(orderDetail.getId(), orderDetail.getAmount());
+            bookService.updateBookStock(orderDetail.getId(), orderDetail.getAmount(), bookOrderStatusName);
         }
     }
 
+    /**
+     * 주문 취소에 관련된 프로세스.
+     *
+     * @param request the request
+     * @param userId  the user id
+     */
+    @Transactional
+    public void cancelOrderProcess(PayCancelRequest request, Long userId) {
+        // 주문의 상태 값 변경
+        BookOrderInfoPayResponse bookOrderInfo = bookOrderService.getBookInfo(request.getOrderNumber());
+        bookOrderService.updateBookOrderStatus(bookOrderInfo.getNumber(), BookOrderStatusName.ORDER_CANCEL);
+
+        // 재고 플러스 처리
+        calculateBookStock(bookOrderInfo.getOrderDetails(), BookOrderStatusName.ORDER_CANCEL);
+
+        // 포인트를 사용한 주문에 대한 포인트 다시 적립
+
+        // 총합 포인트 처리
+        pointProcessing(request.getOrderNumber(), request.getTotalAmount(), userId, PointRuleNameEnum.RETURN_POINT);
+
+
+    }
 }

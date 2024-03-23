@@ -143,7 +143,7 @@ public class BookOrderService {
      * description : 주문서 생성.
      * <br> *
      *
-     * @param request 등록할 송장 번호.
+     * @param request 주문서 생성할 dto.
      * @return book order register invoice response
      */
     public BookOrderCreateResponse createBookOrder(BookOrderCreateRequest request, Long userId) {
@@ -153,6 +153,35 @@ public class BookOrderService {
         OrdersStatus ordersStatus = ordersStatusRepository.findById(BookOrderStatusName.ORDER_WAIT.toString())
                 .orElseThrow(OrdersStatusNotExistException::new);
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
+        BookOrder bookOrder = BookOrder.builder()
+                .user(user)
+                .deliveryRule(deliveryRule)
+                .receiverName(orderInfo.getRecipientName())
+                .receiverAddress(orderInfo.getRecipientAddress())
+                .receiverMessage(orderInfo.getReceiverMessage())
+                .receiverPhoneNumber(orderInfo.getRecipientPhoneNumber())
+                .orderStatus(ordersStatus)
+                .deliveryDate(orderInfo.getDeliveryDate())
+                .date(TimeUtils.nowDate())
+                .number(request.getOrderNumber())
+                .totalCost(request.getTotalCost())
+                .couponCost(request.getCouponCost())
+                .userCoupon(null)
+                .isCouponUsed(false)
+                .pointCost(request.getPointCost())
+                .build();
+
+        bookOrderRepository.save(bookOrder);
+        return bookOrderMapper.mapToBookOrderCreateResponse(bookOrder);
+    }
+
+    public BookOrderCreateResponse createBookOrderNonUser(BookOrderCreateRequest request) {
+        BookOrderInfoRequest orderInfo = request.getOrderInfo();
+        DeliveryRule deliveryRule = deliveryRuleRepository.findById(orderInfo.getDeliveryId())
+                .orElseThrow(() -> new DeliveryRuleNotExistsException("배송 규정 없음"));
+        OrdersStatus ordersStatus = ordersStatusRepository.findById(BookOrderStatusName.ORDER_WAIT.toString())
+                .orElseThrow(OrdersStatusNotExistException::new);
+        User user = userRepository.findById(0L).orElseThrow(() -> new UserNotExistException(0L));
         BookOrder bookOrder = BookOrder.builder()
                 .user(user)
                 .deliveryRule(deliveryRule)

@@ -66,6 +66,7 @@ public class ReviewRestController {
                                                              MultipartFile image)
             throws IOException {
 
+
         Utils.validateRequest(bindingResult);
         return new ResponseEntity<>(reviewService.createReview(createRequest, userId, image), HttpStatus.CREATED);
     }

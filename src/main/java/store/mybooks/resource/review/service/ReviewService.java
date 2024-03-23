@@ -11,14 +11,34 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.repotisory.BookRepository;
+import store.mybooks.resource.bookorder.entity.BookOrder;
+import store.mybooks.resource.bookorder.exception.BookOrderNotExistException;
+import store.mybooks.resource.bookorder.repository.BookOrderRepository;
 import store.mybooks.resource.image.entity.Image;
-import store.mybooks.resource.image.repository.ImageRepository;
 import store.mybooks.resource.image.service.ImageService;
 import store.mybooks.resource.image_status.entity.ImageStatus;
 import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
 import store.mybooks.resource.image_status.exception.ImageStatusNotExistException;
 import store.mybooks.resource.image_status.repository.ImageStatusRepository;
 import store.mybooks.resource.orderdetail.entity.OrderDetail;
+import store.mybooks.resource.orderdetail.enumulation.OrderDetailStatusName;
+import store.mybooks.resource.orderdetail.exception.OrderDetailNotExistException;
+import store.mybooks.resource.orderdetail.repository.OrderDetailRepository;
+import store.mybooks.resource.orderdetailstatus.entity.OrderDetailStatus;
+import store.mybooks.resource.orderdetailstatus.exception.OrderDetailStatusNotFoundException;
+import store.mybooks.resource.orderdetailstatus.repository.OrderDetailStatusRepository;
+import store.mybooks.resource.pointhistory.entity.PointHistory;
+import store.mybooks.resource.pointhistory.repository.PointHistoryRepository;
+import store.mybooks.resource.pointhistory.service.PointHistoryService;
+import store.mybooks.resource.pointrule.entity.PointRule;
+import store.mybooks.resource.pointrule.exception.PointRuleNotExistException;
+import store.mybooks.resource.pointrule.repository.PointRuleRepository;
+import store.mybooks.resource.pointrule.service.PointRuleService;
+import store.mybooks.resource.pointrulename.entity.PointRuleName;
+import store.mybooks.resource.pointrulename.enumulation.PointRuleNameEnum;
+import store.mybooks.resource.pointrulename.exception.PointRuleNameNotExistException;
+import store.mybooks.resource.pointrulename.repository.PointRuleNameRepository;
+import store.mybooks.resource.pointrulename.service.PointRuleNameService;
 import store.mybooks.resource.review.dto.mapper.ReviewMapper;
 import store.mybooks.resource.review.dto.reqeust.ReviewCreateRequest;
 import store.mybooks.resource.review.dto.reqeust.ReviewModifyRequest;
@@ -64,7 +84,22 @@ public class ReviewService {
 
     private final BookRepository bookRepository;
 
-    private final ImageRepository imageRepository;
+    private final OrderDetailRepository orderDetailRepository;
+
+    private final OrderDetailStatusRepository orderDetailStatusRepository;
+
+    private final PointHistoryRepository pointHistoryRepository;
+
+    private final PointRuleNameRepository pointRuleNameRepository;
+
+    private final BookOrderRepository bookOrderRepository;
+
+    private final PointRuleRepository pointRuleRepository;
+    private final PointHistoryService pointHistoryService;
+
+    private final PointRuleService pointRuleService;
+
+    private final PointRuleNameService pointRuleNameService;
 
     @Transactional
     public ReviewCreateResponse createReview(ReviewCreateRequest createRequest, Long userId,
@@ -73,34 +108,60 @@ public class ReviewService {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
 
-        // todo id를 통해서 오더 디테일 찾아오기
-        OrderDetail orderDetail = new OrderDetail();
+        OrderDetail orderDetail = orderDetailRepository.findById(createRequest.getOrderDetailId())
+                .orElseThrow(() -> new OrderDetailNotExistException(createRequest.getOrderDetailId()));
 
         // 리뷰 이미 존재하는지 확인
         if (reviewRepository.existsByOrderDetailId(orderDetail.getId())) {
             throw new ReviewAlreadyExistException(createRequest.getOrderDetailId());
         }
 
-        // todo orderDetail 을 넣어주기
         Review review = new Review(user, orderDetail, createRequest.getRate(), createRequest.getTitle(),
                 createRequest.getContent());
 
-//        Review resultReview = reviewRepository.save(review);
+        Review resultReview = reviewRepository.save(review);
 
 
-        // todo 이거 원래는 resultReview 로 해야 함
-        Review mockReview = reviewRepository.findById(3L).get();
+        OrderDetailStatus orderDetailStatus =
+                orderDetailStatusRepository.findById(OrderDetailStatusName.PURCHASE_CONFIRMATION.getValue())
+                        .orElseThrow(
+                                OrderDetailStatusNotFoundException::new);
+
+        orderDetail.setDetailStatus(orderDetailStatus);
+
+        PointHistory pointHistory;
+        PointRuleName pointRuleName;
+        PointRule pointRule;
+
+        BookOrder bookOrder = bookOrderRepository.findById(createRequest.getOrderId()).orElseThrow(
+                BookOrderNotExistException::new);
 
         if (Objects.nonNull(image)) {
+
+            pointRuleName = pointRuleNameRepository.findById(PointRuleNameEnum.REVIEW_IMAGE_POINT.getValue())
+                    .orElseThrow(PointRuleNameNotExistException::new);
+
+            pointRule = pointRuleRepository.findPointRuleByPointRuleName(pointRuleName.getId()).orElseThrow(
+                    PointRuleNotExistException::new);
+
             ImageStatus imageStatus = imageStatusRepository.findById(ImageStatusEnum.REVIEW.getName()).orElseThrow(
                     () -> new ImageStatusNotExistException("리뷰 이미지 상태 없음."));
 
-            // todo 원래는 resultReview 로 해야 함
-            imageService.saveImage(imageStatus, mockReview, null, image);
+            pointHistory = new PointHistory(pointRule.getCost(), user, pointRule, bookOrder);
+            imageService.saveImage(imageStatus, resultReview, null, image);
+        } else {
+
+            pointRuleName = pointRuleNameRepository.findById(PointRuleNameEnum.REVIEW_POINT.getValue())
+                    .orElseThrow(PointRuleNameNotExistException::new);
+
+            pointRule = pointRuleRepository.findPointRuleByPointRuleName(pointRuleName.getId()).orElseThrow(
+                    PointRuleNotExistException::new);
+
+            pointHistory = new PointHistory(pointRule.getCost(), user, pointRule, bookOrder);
         }
 
-
-        return reviewMapper.toReviewCreateResponse(mockReview);
+        pointHistoryRepository.save(pointHistory);
+        return reviewMapper.toReviewCreateResponse(resultReview);
     }
 
     @Transactional
@@ -119,9 +180,11 @@ public class ReviewService {
             ImageStatus imageStatus = imageStatusRepository.findById(ImageStatusEnum.REVIEW.getName()).orElseThrow(
                     () -> new ImageStatusNotExistException("리뷰 이미지 상태 없음."));
 
-            Image image = imageService.getReviewImage(reviewId);
+            Optional<Image> image = imageService.getReviewImage(reviewId);
 
-            imageService.deleteObject(image);
+
+            image.ifPresent(value -> imageService.deleteObject(value));
+
             imageService.saveImage(imageStatus, review, null, modifyImage);
         }
 

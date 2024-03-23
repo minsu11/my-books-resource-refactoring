@@ -20,7 +20,9 @@ public enum PointRuleNameEnum {
     LOGIN_POINT("로그인 적립"),
     BOOK_POINT("상품 적립"),
     REVIEW_POINT("리뷰 작성 적립"),
+    REVIEW_IMAGE_POINT("리뷰 이미지 작성 적립"),
     SIGNUP_POINT("회원 가입 적립"),
-    USE_POINT("포인트 사용");
+    USE_POINT("포인트 사용"),
+    RETURN_POINT("주문 취소 포인트");
     private final String value;
 }

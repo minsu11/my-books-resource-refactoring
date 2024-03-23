@@ -143,7 +143,6 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
                 .on(orderDetail.book.eq(book))
                 .join(user)
                 .on(user.eq(review.user))
-                .where(review.id.eq(reviewId))
                 .select(Projections.constructor(
                         ReviewGetResponse.class,
                         book.id,
@@ -156,7 +155,8 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
                         review.content,
                         image.path.concat(image.fileName).concat(image.extension)
                 ))
-                .groupBy(review, user, image, book)
+                .groupBy(review,user,image,book)
+                .where(review.id.eq(reviewId))
                 .fetchOne();
 
 
