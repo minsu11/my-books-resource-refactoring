@@ -17,26 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.book.dto.request.BookCreateRequest;
 import store.mybooks.resource.book.dto.request.BookModifyRequest;
 import store.mybooks.resource.book.dto.response.*;
-import store.mybooks.resource.book.dto.response.BookBriefResponse;
-import store.mybooks.resource.book.dto.response.BookCartResponse;
-import store.mybooks.resource.book.dto.response.BookCreateResponse;
-import store.mybooks.resource.book.dto.response.BookDetailResponse;
-import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
-import store.mybooks.resource.book.dto.response.BookLikeResponse;
-import store.mybooks.resource.book.dto.response.BookModifyResponse;
-import store.mybooks.resource.book.dto.response.BookPopularityResponse;
-import store.mybooks.resource.book.dto.response.BookPublicationDateResponse;
-import store.mybooks.resource.book.dto.response.BookRatingResponse;
-import store.mybooks.resource.book.dto.response.BookResponseForOrder;
-import store.mybooks.resource.book.dto.response.BookReviewResponse;
-import store.mybooks.resource.book.dto.response.BookBriefResponse;
-import store.mybooks.resource.book.dto.response.BookCartResponse;
-import store.mybooks.resource.book.dto.response.BookCreateResponse;
-import store.mybooks.resource.book.dto.response.BookDetailResponse;
-import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
-import store.mybooks.resource.book.dto.response.BookModifyResponse;
-import store.mybooks.resource.book.dto.response.BookResponseForOrder;
-import store.mybooks.resource.book.dto.response.BookStockResponse;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.exception.IsbnAlreadyExistsException;
@@ -47,6 +27,7 @@ import store.mybooks.resource.bookauthor.service.BookAuthorService;
 import store.mybooks.resource.bookcategory.dto.request.BookCategoryCreateRequest;
 import store.mybooks.resource.bookcategory.service.BookCategoryService;
 import store.mybooks.resource.booklike.repository.BookLikeRepository;
+import store.mybooks.resource.bookorder.eumulation.BookOrderStatusName;
 import store.mybooks.resource.bookstatus.entity.BookStatus;
 import store.mybooks.resource.bookstatus.enumeration.BookStatusEnum;
 import store.mybooks.resource.bookstatus.exception.BookStatusNotExistException;
@@ -367,17 +348,30 @@ public class BookService {
      * @param stock  the stock
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void updateBookStock(Long bookId, Integer stock) {
+    public void updateBookStock(Long bookId, Integer stock, BookOrderStatusName bookOrderStatusName) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotExistException(bookId));
-        int resultStock = book.getStock() - stock;
-        if (resultStock == 0) {
-            BookStatus bookStatus = bookStatusRepository.findById(BookStatusEnum.NO_STOCK.getName())
-                    .orElseThrow(() -> new BookStatusNotExistException(BookStatusEnum.NO_STOCK.getName()));
-            book.soldOut(resultStock, bookStatus);
-        } else {
-            book.modifyStock(resultStock);
+        int resultStock = 0;
+        if (bookOrderStatusName == BookOrderStatusName.ORDER_COMPLETED) {
+            resultStock = book.getStock() - stock;
+            if (resultStock == 0) {
+                BookStatus bookStatus = bookStatusRepository.findById(BookStatusEnum.NO_STOCK.getName())
+                        .orElseThrow(() -> new BookStatusNotExistException(BookStatusEnum.NO_STOCK.getName()));
+                book.soldOut(resultStock, bookStatus);
+            } else {
+                book.modifyStock(resultStock);
+            }
+        } else if (bookOrderStatusName == BookOrderStatusName.ORDER_CANCEL) {
+            resultStock = book.getStock() + stock;
+            if (resultStock == 0) {
+                BookStatus bookStatus = bookStatusRepository.findById(BookStatusEnum.SELLING_ING.getName())
+                        .orElseThrow(() -> new BookStatusNotExistException(BookStatusEnum.NO_STOCK.getName()));
+                book.soldOut(resultStock, bookStatus);
+            } else {
+                book.modifyStock(resultStock);
+            }
         }
+
 
     }
 }

@@ -2,6 +2,7 @@ package store.mybooks.resource.pointrulename.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * packageName    : store.mybooks.resource.point_rule_name.dto.response<br>
@@ -15,6 +16,7 @@ import lombok.Getter;
  * 3/7/24        minsu11       최초 생성<br>
  */
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 public class PointRuleNameResponse {
     private String id;

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import store.mybooks.resource.bookorder.service.TotalOrderService;
 import store.mybooks.resource.config.HeaderProperties;
+import store.mybooks.resource.payment.dto.request.PayCancelRequest;
 import store.mybooks.resource.payment.dto.request.PayCreateRequest;
 import store.mybooks.resource.payment.dto.response.PayCreateResponse;
 import store.mybooks.resource.payment.dto.response.PaymentResponse;
@@ -76,5 +77,11 @@ public class PaymentRestController {
 
     }
 
-
+    @PostMapping("/cancel")
+    public ResponseEntity<Void> cancelProcessing(@RequestBody PayCancelRequest request,
+                                                 @RequestHeader(name = HeaderProperties.USER_ID) Long userId) {
+        totalOrderService.cancelOrderProcess(request, userId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .build();
+    }
 }
