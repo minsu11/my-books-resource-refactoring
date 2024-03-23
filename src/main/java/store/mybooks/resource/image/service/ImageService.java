@@ -2,6 +2,7 @@ package store.mybooks.resource.image.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.image.dto.response.ImageGetResponse;
@@ -31,7 +32,7 @@ public interface ImageService {
 
     Image getThumbNailImage(Long id);
 
-    Image getReviewImage(Long id);
+    Optional<Image> getReviewImage(Long id);
 
     void updateImage(Book book, MultipartFile thumbNailFile, List<MultipartFile> content) throws IOException;
 
