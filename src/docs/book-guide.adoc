@@ -22,14 +22,6 @@
 
 === 도서 좋아요 요청
 
-==== HTTP Request
-
-include::{snippets}/bookLike-update/http-request.adoc[]
-
-==== HTTP Response
-
-include::{snippets}/bookLike-update/http-response.adoc[]
-
 ==== Request Headers
 
 include::{snippets}/bookLike-update/request-headers.adoc[]
@@ -38,15 +30,33 @@ include::{snippets}/bookLike-update/request-headers.adoc[]
 
 include::{snippets}/bookLike-update/path-parameters.adoc[]
 
-=== 사용자가 좋아요한 도서 조회
-
 ==== HTTP Request
 
-include::{snippets}/bookLike-getBookListByUserId/http-request.adoc[]
+include::{snippets}/bookLike-update/http-request.adoc[]
 
 ==== HTTP Response
 
-include::{snippets}/bookLike-getBookListByUserId/http-response.adoc[]
+include::{snippets}/bookLike-update/http-response.adoc[]
+
+=== 사용자가 해당 도서를 좋아요 했는지 조회
+
+==== Request Headers
+
+include::{snippets}/bookLike-isLike/request-headers.adoc[]
+
+==== Path Parameters
+
+include::{snippets}/bookLike-isLike/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/bookLike-isLike/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/bookLike-isLike/http-response.adoc[]
+
+=== 사용자가 좋아요한 도서 목록 조회
 
 ==== Request Headers
 
@@ -55,6 +65,14 @@ include::{snippets}/bookLike-getBookListByUserId/request-headers.adoc[]
 ==== Request Parameters
 
 include::{snippets}/bookLike-getBookListByUserId/request-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/bookLike-getBookListByUserId/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/bookLike-getBookListByUserId/http-response.adoc[]
 
 ==== Response Fields
 
