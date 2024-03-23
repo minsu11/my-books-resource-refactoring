@@ -64,13 +64,6 @@ public class ObjectStorageImpl implements ImageService {
     private static final String X_AUTH_TOKEN = "X-Auth-Token";
     private final ImageStatusRepository imageStatusRepository;
 
-    private String getToken() {
-        if (Objects.isNull(this.token) || expireToken.minusMinutes(1).isAfter(LocalDateTime.now())) {
-            token = requestToken();
-        }
-        return this.token;
-    }
-
     private String requestToken() {
         String identityUrl = objectStorageProperties.getIdentity() + "/tokens";
 
@@ -83,10 +76,10 @@ public class ObjectStorageImpl implements ImageService {
         HttpEntity<ImageTokenRequest> httpEntity = new HttpEntity<>(imageTokenRequest, httpHeaders);
         ResponseEntity<ImageTokenResponse> response
                 = this.restTemplate.exchange(identityUrl, HttpMethod.POST, httpEntity, ImageTokenResponse.class);
-        String tokenId = Objects.requireNonNull(response.getBody()).getAccess().getToken().getId();
+        token = Objects.requireNonNull(response.getBody()).getAccess().getToken().getId();
         expireToken = Objects.requireNonNull(response.getBody()).getAccess().getToken().getDateTime();
 
-        return tokenId;
+        return this.token;
     }
 
     private String getPath() {
@@ -97,7 +90,8 @@ public class ObjectStorageImpl implements ImageService {
     }
 
     @Override
-    public void updateImage(Book book, MultipartFile thumbNailFile, List<MultipartFile> content) throws IOException {
+    public void updateImage(Book book, MultipartFile thumbNailFile, List<MultipartFile> content) throws
+            IOException {
         if (Objects.isNull(thumbNailFile) && (Objects.isNull(content) || content.isEmpty())) {
             return;
         }
@@ -108,19 +102,20 @@ public class ObjectStorageImpl implements ImageService {
             Image thumbNailImage =
                     imageRepository.findImageByBook_IdAndImageStatus_Id(book.getId(), thumbNailImageStatus.getId())
                             .orElseThrow();
-            deleteObject(thumbNailImage.getId());
+            deleteObject(thumbNailImage);
             saveImage(thumbNailImageStatus, null, book, thumbNailFile);
-            return;
+
         }
+        if (Objects.isNull(content) || content.isEmpty()) {
+            ImageStatus contentImageStatus =
+                    imageStatusRepository.findById(ImageStatusEnum.CONTENT.getName()).orElseThrow();
+            List<Image> contentImage =
+                    imageRepository.findAllByBook_IdAndImageStatus_Id(book.getId(), contentImageStatus.getId());
 
-        ImageStatus contentImageStatus =
-                imageStatusRepository.findById(ImageStatusEnum.CONTENT.getName()).orElseThrow();
-        List<Image> contentImage =
-                imageRepository.findAllByBook_IdAndImageStatus_Id(book.getId(), contentImageStatus.getId());
-
-        contentImage.forEach(image -> deleteObject(image.getId()));
-        for (MultipartFile file : content) {
-            saveImage(contentImageStatus, null, book, file);
+            contentImage.forEach(this::deleteObject);
+            for (MultipartFile file : content) {
+                saveImage(contentImageStatus, null, book, file);
+            }
         }
     }
 
@@ -137,7 +132,7 @@ public class ObjectStorageImpl implements ImageService {
         InputStream inputStream = new ByteArrayInputStream(file.getBytes());
         final RequestCallback requestCallback = new RequestCallback() {
             public void doWithRequest(final ClientHttpRequest request) throws IOException {
-                request.getHeaders().add(X_AUTH_TOKEN, getToken());
+                request.getHeaders().add(X_AUTH_TOKEN, requestToken());
                 IOUtils.copy(inputStream, request.getBody());
             }
         };
@@ -160,7 +155,8 @@ public class ObjectStorageImpl implements ImageService {
     @Override
     @Transactional(readOnly = true)
     public ImageGetResponse getObject(Long id) {
-        Image image = imageRepository.findById(id).orElseThrow(() -> new ImageNotExistsException("해당하는 id의 이미지가 없습니다"));
+        Image image =
+                imageRepository.findById(id).orElseThrow(() -> new ImageNotExistsException("해당하는 id의 이미지가 없습니다"));
         String url = image.getPath() + image.getFileName() + image.getExtension();
 
         return new ImageGetResponse(url);
@@ -181,17 +177,17 @@ public class ObjectStorageImpl implements ImageService {
     }
 
     @Override
-    public void deleteObject(Long id) {
-        Image image = imageRepository.findById(id).orElseThrow();
+    public void deleteObject(Image image) {
         String url = image.getPath() + image.getFileName() + image.getExtension();
-
+        System.out.println("hihihihi");
+        System.out.println(url);
         HttpHeaders headers = new HttpHeaders();
-        headers.add(X_AUTH_TOKEN, getToken());
+        headers.add(X_AUTH_TOKEN, requestToken());
         HttpEntity<String> requestHttpEntity = new HttpEntity<>(null, headers);
 
         this.restTemplate.exchange(url, HttpMethod.DELETE, requestHttpEntity, String.class);
 
-        imageRepository.deleteById(id);
+        imageRepository.deleteById(image.getId());
     }
 
 }

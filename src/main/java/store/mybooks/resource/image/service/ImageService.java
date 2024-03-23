@@ -27,7 +27,7 @@ public interface ImageService {
 
     ImageGetResponse getObject(Long id);
 
-    void deleteObject(Long id);
+    void deleteObject(Image image);
 
     Image getThumbNailImage(Long id);
 

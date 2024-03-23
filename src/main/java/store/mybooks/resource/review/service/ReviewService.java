@@ -121,7 +121,7 @@ public class ReviewService {
 
             Image image = imageService.getReviewImage(reviewId);
 
-            imageService.deleteObject(image.getId());
+            imageService.deleteObject(image);
             imageService.saveImage(imageStatus, review, null, modifyImage);
         }
 
