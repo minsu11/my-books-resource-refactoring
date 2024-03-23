@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
 
 
@@ -20,7 +19,6 @@ import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
  * 2/15/24        minsu11       최초 생성
  */
 @Getter
-@RequiredArgsConstructor
 @AllArgsConstructor
 public class BookOrderUserResponse {
     private String statusId;

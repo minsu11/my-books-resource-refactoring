@@ -1,12 +1,13 @@
 package store.mybooks.resource.bookorder.controller;
 
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import store.mybooks.resource.bookorder.dto.request.BookOrderAdminModifyRequest;
 import store.mybooks.resource.bookorder.dto.request.BookOrderCreateRequest;
@@ -17,6 +18,8 @@ import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminRespons
 import store.mybooks.resource.bookorder.service.BookOrderService;
 import store.mybooks.resource.bookorder.service.TotalOrderService;
 import store.mybooks.resource.config.HeaderProperties;
+import store.mybooks.resource.error.RequestValidationFailedException;
+import store.mybooks.resource.error.Utils;
 
 /**
  * packageName    : store.mybooks.resource.book_order.controller<br>
@@ -49,7 +52,6 @@ public class BookOrderRestController {
      */
 
     @GetMapping("/users")
-
     public ResponseEntity<Page<BookOrderUserResponse>> getBookOrderPageById(
             Pageable pageable, @RequestHeader(name = HeaderProperties.USER_ID) Long id) {
         Page<BookOrderUserResponse> bookOrderResponses = bookOrderService.getBookOrderResponseList(id, pageable);
@@ -85,9 +87,13 @@ public class BookOrderRestController {
      * @param request 변경할 DTO
      * @return response entity
      */
-    @PutMapping("/admin/statuses")
+    @PutMapping("/statuses")
     public ResponseEntity<BookOrderAdminModifyResponse> modifyOrderStatus(
-            @RequestBody BookOrderAdminModifyRequest request) {
+            @Valid @RequestBody BookOrderAdminModifyRequest request,
+            BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new RequestValidationFailedException(bindingResult);
+        }
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookOrderService.modifyBookOrderAdminStatus(request));
@@ -102,9 +108,11 @@ public class BookOrderRestController {
      * @param request 송장 번호 DTO
      * @return response entity
      */
-    @PutMapping("/admin/invoiceNumbers")
+    @PutMapping("/invoiceNumbers")
     public ResponseEntity<BookOrderRegisterInvoiceResponse> registerInvoiceNumber(
-            @RequestBody BookOrderRegisterInvoiceRequest request) {
+            @Valid @RequestBody BookOrderRegisterInvoiceRequest request,
+            BindingResult bindingResult) {
+        Utils.validateRequest(bindingResult);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookOrderService.registerBookOrderInvoiceNumber(request));
@@ -152,9 +160,10 @@ public class BookOrderRestController {
      */
     @PostMapping
     public ResponseEntity<BookOrderCreateResponse> createResponseResponseEntity(
-            @RequestBody BookOrderCreateRequest request,
+            @Valid @RequestBody BookOrderCreateRequest request,
+            BindingResult bindingResult,
             @RequestHeader(name = HeaderProperties.USER_ID) Long id) {
-        log.debug("주문 생성 :{}", request.getOrderInfo());
+        Utils.validateRequest(bindingResult);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(orderService.createOrder(request, id));
@@ -167,7 +176,6 @@ public class BookOrderRestController {
     @PostMapping("/non/user")
     public ResponseEntity<BookOrderCreateResponse> createNonUserOrderResponseResponseEntity(
             @RequestBody BookOrderCreateRequest request) {
-        log.debug("주문 생성 :{}", request.getOrderInfo());
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(orderService.createOrder(request, 0L));

@@ -21,28 +21,42 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 public class BookOrderCreateRequest {
+    @NotBlank
+    @Size(min = 2, max = 10)
     private String name;
+
+    @Email
+    @NotBlank
+    @Size(max = 30)
     private String email;
+
+    @NotBlank
+    @Size(min = 10, max = 13)
     private String phone;
 
     @NotNull
     private List<BookInfoRequest> bookInfoList;
 
+    @NotNull
     private BookOrderInfoRequest orderInfo;
 
     @NotBlank
     @Size(max = 20)
     private String orderNumber;
 
+    @NotNull
     @PositiveOrZero
     private Integer pointCost;
 
+    @NotNull
     @PositiveOrZero
     private Integer couponCost;
 
+    @NotNull
     @Positive
     private Integer totalCost;
-    @Positive
+
+    @PositiveOrZero
     private Integer wrapCost;
 
 

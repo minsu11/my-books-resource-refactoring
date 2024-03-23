@@ -1,6 +1,9 @@
 package store.mybooks.resource.bookorder.dto.request;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,9 +21,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class BookOrderAdminModifyRequest {
-    @NotBlank
+    @NotNull
+    @Positive
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "송장 번호 에러")
+    @Size(min = 8, max = 20, message = "송장번호 사이즈 에러")
     private String invoiceNumber;
 }

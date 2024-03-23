@@ -1,6 +1,7 @@
 package store.mybooks.resource.bookorder.dto.request;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import lombok.Getter;
@@ -20,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class BookOrderRegisterInvoiceRequest {
-    @NotBlank
+    @NotNull
     @Positive
     private Long id;
 

@@ -36,6 +36,8 @@ import store.mybooks.resource.ordersstatus.enumulation.OrdersStatusEnum;
 public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implements BookOrderRepositoryCustom {
     private static final QBookOrder bookOrder = QBookOrder.bookOrder;
     private static final QImage image = QImage.image;
+    private QOrderDetail orderDetail = QOrderDetail.orderDetail;
+
 
     private static final QOrderDetailStatus orderDetailStatus = QOrderDetailStatus.orderDetailStatus;
 
@@ -79,7 +81,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                     from(orderDetail)
                             .join(image).on(image.book.eq(orderDetail.book))
                             .join(image.imageStatus, imageStatus)
-                            .join(orderDetail.detailStatus,orderDetailStatus)
+                            .join(orderDetail.detailStatus, orderDetailStatus)
                             .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
                             .select(Projections.constructor(
                                     OrderDetailInfoResponse.class,
@@ -100,8 +102,6 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                             .fetch();
             bookOrderUserResponse.createOrderDetailInfos(orderDetailInfoResponses);
         }
-
-
 
 
         long count = from(bookOrder).
@@ -143,21 +143,28 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
 
     @Override
     public Optional<BookOrderInfoPayResponse> findBookOrderInfo(String orderNumber) {
-        QOrderDetail orderDetail = QOrderDetail.orderDetail;
-
-        List<OrderDetailInfoResponse> orderDetailInfoResponses = from(orderDetail)
-                .select(Projections.constructor(
-                                OrderDetailInfoResponse.class,
-                                orderDetail.book.id,
-                                orderDetail.book.name,
-                                orderDetail.userCoupon.id,
-                                orderDetail.bookCost,
-                                orderDetail.amount,
-                                orderDetail.isCouponUsed
+        QImageStatus imageStatus = QImageStatus.imageStatus;
+        List<OrderDetailInfoResponse> orderDetailInfoResponses =
+                from(orderDetail)
+                        .join(image).on(image.book.eq(orderDetail.book))
+                        .join(image.imageStatus, imageStatus)
+                        .join(orderDetail.detailStatus, orderDetailStatus)
+                        .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
+                        .select(Projections.constructor(
+                                        OrderDetailInfoResponse.class,
+                                        orderDetail.book.id,
+                                        orderDetail.book.name,
+                                        orderDetail.userCoupon.id,
+                                        orderDetail.bookCost,
+                                        orderDetail.amount,
+                                        orderDetail.isCouponUsed,
+                                        image.path.concat(image.fileName).concat(image.extension),
+                                        orderDetail.detailStatus.id,
+                                        orderDetail.id
+                                )
                         )
-                )
-                .where(orderDetail.bookOrder.number.eq(orderNumber))
-                .fetch();
+                        .where(orderDetail.bookOrder.number.eq(orderNumber))
+                        .fetch();
         BookOrderInfoPayResponse bookOrderInfo =
                 from(bookOrder)
                         .select(Projections.constructor(BookOrderInfoPayResponse.class,
@@ -170,7 +177,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                         .fetchOne();
         bookOrderInfo.updateOrderDetails(orderDetailInfoResponses);
 
-        return Optional.of(bookOrderInfo);
+        return Optional.ofNullable(bookOrderInfo);
     }
 
     @Override
