@@ -19,6 +19,7 @@ import store.mybooks.resource.image_status.entity.QImageStatus;
 import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
 import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
 import store.mybooks.resource.orderdetail.entity.QOrderDetail;
+import store.mybooks.resource.orderdetailstatus.entity.QOrderDetailStatus;
 import store.mybooks.resource.ordersstatus.enumulation.OrdersStatusEnum;
 
 /**
@@ -36,6 +37,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
     private static final QBookOrder bookOrder = QBookOrder.bookOrder;
     private static final QImage image = QImage.image;
 
+    private static final QOrderDetailStatus orderDetailStatus = QOrderDetailStatus.orderDetailStatus;
 
     public BookOrderRepositoryImpl() {
         super(BookOrder.class);
@@ -49,11 +51,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
 
 
         List<BookOrderUserResponse> bookOrderResponseList =
-                from(orderDetail)
-                        .join(bookOrder).on(bookOrder.eq(orderDetail.bookOrder))
-                        .join(image).on(image.book.eq(orderDetail.book))
-                        .join(image.imageStatus, imageStatus)
-                        .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
+                from(bookOrder)
                         .select(Projections.constructor(BookOrderUserResponse.class,
                                 bookOrder.orderStatus.id,
                                 bookOrder.deliveryRule.deliveryRuleName.id,
@@ -68,16 +66,19 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                                 bookOrder.pointCost,
                                 bookOrder.couponCost,
                                 bookOrder.number,
-                                image.path.concat(image.fileName).concat(image.extension)
+                                bookOrder.id
                         ))
                         .where(bookOrder.user.id.eq(userId))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .fetch();
-
         for (BookOrderUserResponse bookOrderUserResponse : bookOrderResponseList) {
             List<OrderDetailInfoResponse> orderDetailInfoResponses =
                     from(orderDetail)
+                            .join(image).on(image.book.eq(orderDetail.book))
+                            .join(image.imageStatus, imageStatus)
+                            .join(orderDetail.detailStatus,orderDetailStatus)
+                            .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
                             .select(Projections.constructor(
                                     OrderDetailInfoResponse.class,
                                     orderDetail.book.id,
@@ -85,7 +86,9 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                                     orderDetail.userCoupon.id,
                                     orderDetail.amount,
                                     orderDetail.bookCost,
-                                    orderDetail.isCouponUsed
+                                    orderDetail.isCouponUsed,
+                                    image.path.concat(image.fileName).concat(image.extension),
+                                    orderDetail.detailStatus.id
                             ))
                             .where(orderDetail.bookOrder.number
                                     .eq(bookOrderUserResponse.getNumber()))
@@ -93,7 +96,10 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
             bookOrderUserResponse.createOrderDetailInfos(orderDetailInfoResponses);
         }
 
-        long count = from(bookOrder).fetchCount();
+
+        long count = from(bookOrder).
+                where(bookOrder.user.id.eq(userId))
+                .fetchCount();
 
         return new PageImpl<>(bookOrderResponseList, pageable, count);
     }
