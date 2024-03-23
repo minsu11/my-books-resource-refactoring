@@ -182,7 +182,9 @@ public class ReviewService {
 
             Optional<Image> image = imageService.getReviewImage(reviewId);
 
-            image.ifPresent(value -> imageService.deleteObject(value.getId()));
+
+            image.ifPresent(value -> imageService.deleteObject(value));
+
             imageService.saveImage(imageStatus, review, null, modifyImage);
         }
 
