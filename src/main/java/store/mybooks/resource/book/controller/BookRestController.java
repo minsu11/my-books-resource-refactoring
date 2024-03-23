@@ -25,8 +25,13 @@ import store.mybooks.resource.book.dto.response.BookCartResponse;
 import store.mybooks.resource.book.dto.response.BookCreateResponse;
 import store.mybooks.resource.book.dto.response.BookDetailResponse;
 import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
+import store.mybooks.resource.book.dto.response.BookLikeResponse;
 import store.mybooks.resource.book.dto.response.BookModifyResponse;
+import store.mybooks.resource.book.dto.response.BookPopularityResponse;
+import store.mybooks.resource.book.dto.response.BookPublicationDateResponse;
+import store.mybooks.resource.book.dto.response.BookRatingResponse;
 import store.mybooks.resource.book.dto.response.BookResponseForOrder;
+import store.mybooks.resource.book.dto.response.BookReviewResponse;
 import store.mybooks.resource.book.service.BookService;
 import store.mybooks.resource.error.RequestValidationFailedException;
 
@@ -120,6 +125,42 @@ public class BookRestController {
                 .status(HttpStatus.OK)
                 .body(bookService.getBookForCoupon());
     }
+
+    @GetMapping("/popularity")
+    public ResponseEntity<List<BookPopularityResponse>> getBookPopularity() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookPopularityList());
+    }
+
+    @GetMapping("/bookLike")
+    public ResponseEntity<List<BookLikeResponse>> getBookLike() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookLikeList());
+    }
+
+    @GetMapping("/bookReviewCount")
+    public ResponseEntity<List<BookReviewResponse>> getBookReview() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookReviewList());
+    }
+
+    @GetMapping("/bookRating")
+    public ResponseEntity<List<BookRatingResponse>> getBookRating() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookRatingList());
+    }
+
+    @GetMapping("/bookPublicationDate")
+    public ResponseEntity<List<BookPublicationDateResponse>> getBookPublicationDate() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookPublicationDateList());
+    }
+
 
     /**
      * methodName : createBook

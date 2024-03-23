@@ -65,7 +65,7 @@ public class ObjectStorageImpl implements ImageService {
     private final ImageStatusRepository imageStatusRepository;
 
     private String getToken() {
-        if (Objects.isNull(this.token) || expireToken.minusMinutes(1).isBefore(LocalDateTime.now())) {
+        if (Objects.isNull(this.token) || expireToken.minusMinutes(1).isAfter(LocalDateTime.now())) {
             token = requestToken();
         }
         return this.token;
