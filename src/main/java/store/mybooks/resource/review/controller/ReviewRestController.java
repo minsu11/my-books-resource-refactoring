@@ -66,10 +66,6 @@ public class ReviewRestController {
                                                              MultipartFile image)
             throws IOException {
 
-        System.out.println("끼에에에엥엑");
-        System.out.println(createRequest.getOrderId());
-        System.out.println(createRequest.getOrderDetailId());
-
 
         Utils.validateRequest(bindingResult);
         return new ResponseEntity<>(reviewService.createReview(createRequest, userId, image), HttpStatus.CREATED);

@@ -106,60 +106,42 @@ public class ReviewService {
                                              MultipartFile image)
             throws IOException {
 
-        System.out.println("오냐??");
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
 
         OrderDetail orderDetail = orderDetailRepository.findById(createRequest.getOrderDetailId())
                 .orElseThrow(() -> new OrderDetailNotExistException(createRequest.getOrderDetailId()));
 
-        System.out.println("있냐??");
         // 리뷰 이미 존재하는지 확인
         if (reviewRepository.existsByOrderDetailId(orderDetail.getId())) {
             throw new ReviewAlreadyExistException(createRequest.getOrderDetailId());
         }
 
-        System.out.println("44444444444");
         Review review = new Review(user, orderDetail, createRequest.getRate(), createRequest.getTitle(),
                 createRequest.getContent());
 
         Review resultReview = reviewRepository.save(review);
 
-        System.out.println("*******");
-
-        System.out.println(OrderDetailStatusName.PURCHASE_CONFIRMATION);
-
-
 
         OrderDetailStatus orderDetailStatus =
-                orderDetailStatusRepository.findById(OrderDetailStatusName.PURCHASE_CONFIRMATION.getValue()).orElseThrow(
-                        OrderDetailStatusNotFoundException::new);
+                orderDetailStatusRepository.findById(OrderDetailStatusName.PURCHASE_CONFIRMATION.getValue())
+                        .orElseThrow(
+                                OrderDetailStatusNotFoundException::new);
 
-        System.out.println(orderDetailStatus.getId());
-
-        System.out.println("55555555");
-        System.out.println(orderDetail.getId());
         orderDetail.setDetailStatus(orderDetailStatus);
-        System.out.println(orderDetail.getDetailStatus().getId());
-        System.out.println("어째서??????");
-        orderDetailRepository.save(orderDetail);
-
 
         PointHistory pointHistory;
         PointRuleName pointRuleName;
         PointRule pointRule;
 
-        System.out.println("666666");
-
         BookOrder bookOrder = bookOrderRepository.findById(createRequest.getOrderId()).orElseThrow(
                 BookOrderNotExistException::new);
 
-        System.out.println("77777");
         if (Objects.nonNull(image)) {
 
-            pointRuleName=pointRuleNameRepository.findById(PointRuleNameEnum.REVIEW_IMAGE_POINT.getValue())
+            pointRuleName = pointRuleNameRepository.findById(PointRuleNameEnum.REVIEW_IMAGE_POINT.getValue())
                     .orElseThrow(PointRuleNameNotExistException::new);
 
-            pointRule=pointRuleRepository.findPointRuleByPointRuleName(pointRuleName.getId()).orElseThrow(
+            pointRule = pointRuleRepository.findPointRuleByPointRuleName(pointRuleName.getId()).orElseThrow(
                     PointRuleNotExistException::new);
 
             ImageStatus imageStatus = imageStatusRepository.findById(ImageStatusEnum.REVIEW.getName()).orElseThrow(
@@ -169,7 +151,7 @@ public class ReviewService {
             imageService.saveImage(imageStatus, resultReview, null, image);
         } else {
 
-            pointRuleName=pointRuleNameRepository.findById(PointRuleNameEnum.REVIEW_POINT.getValue())
+            pointRuleName = pointRuleNameRepository.findById(PointRuleNameEnum.REVIEW_POINT.getValue())
                     .orElseThrow(PointRuleNameNotExistException::new);
 
             pointRule = pointRuleRepository.findPointRuleByPointRuleName(pointRuleName.getId()).orElseThrow(
@@ -179,8 +161,6 @@ public class ReviewService {
         }
 
         pointHistoryRepository.save(pointHistory);
-
-        System.out.println("메무리~~");
         return reviewMapper.toReviewCreateResponse(resultReview);
     }
 
@@ -200,9 +180,9 @@ public class ReviewService {
             ImageStatus imageStatus = imageStatusRepository.findById(ImageStatusEnum.REVIEW.getName()).orElseThrow(
                     () -> new ImageStatusNotExistException("리뷰 이미지 상태 없음."));
 
-            Image image = imageService.getReviewImage(reviewId);
+            Optional<Image> image = imageService.getReviewImage(reviewId);
 
-            imageService.deleteObject(image.getId());
+            image.ifPresent(value -> imageService.deleteObject(value.getId()));
             imageService.saveImage(imageStatus, review, null, modifyImage);
         }
 
