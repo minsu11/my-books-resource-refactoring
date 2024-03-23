@@ -31,6 +31,9 @@ public class ReviewCreateRequest {
     private Long orderDetailId;
 
     @NotNull
+    private Long orderId;
+
+    @NotNull
     @Min(1)
     @Max(5)
     private Integer rate;
