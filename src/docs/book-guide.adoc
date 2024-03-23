@@ -12,11 +12,19 @@
 
 == 도서-상태 API
 
-== 도서-저자 API
+=== 도서 상태 목록
 
-== 도서-카테고리 API
+==== HTTP Request
 
-== 도서-태그 API
+include::{snippets}/bookStatus/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/bookStatus/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/bookStatus/response-fields.adoc[]
 
 == 도서-좋아요 API
 
