@@ -165,7 +165,7 @@ class BookLikeRestControllerTest {
     }
 
     @Test
-    @DisplayName("사용자가 도서 좋아요 요청")
+    @DisplayName("사용자가 도서 좋아요 요청으로 좋아요 한 경우")
     void givenUserIdAndBookId_whenUpdateUserBookLike_thenReturnTrue() throws Exception {
         when(bookLikeService.updateUserBookLike(userId, bookId)).thenReturn(true);
 
@@ -188,7 +188,31 @@ class BookLikeRestControllerTest {
     }
 
     @Test
-    @DisplayName("사용자가 해당도서 좋아요 유무조회")
+    @DisplayName("사용자가 도서 좋아요 요청으로 좋아요 취소 한 경우")
+    void givenUserIdAndBookId_whenUpdateUserBookLike_thenReturnFalse() throws Exception {
+        when(bookLikeService.updateUserBookLike(userId, bookId)).thenReturn(false);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post(url + "/{bookId}", bookId)
+                        .header("X-User-Id", userId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string("false"))
+                .andDo(document("bookLike-updateCancel",
+                        requestHeaders(
+                                headerWithName("X-User-Id").description("User ID")
+                        ),
+                        pathParameters(
+                                parameterWithName("bookId").description("도서 ID")
+                        )
+                ));
+
+        verify(bookLikeService, times(1)).updateUserBookLike(userId, bookId);
+    }
+
+
+    @Test
+    @DisplayName("사용자가 해당도서 좋아요 했을경우")
     void givenUserIdAndBookId_whenIsUserBookLike_thenReturnTrue() throws Exception {
         when(bookLikeService.isUserBookLike(userId, bookId)).thenReturn(true);
 
@@ -199,6 +223,29 @@ class BookLikeRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("true"))
                 .andDo(document("bookLike-isLike",
+                        requestHeaders(
+                                headerWithName("X-User-Id").description("User ID")
+                        ),
+                        pathParameters(
+                                parameterWithName("bookId").description("도서 ID")
+                        )
+                ));
+
+        verify(bookLikeService, times(1)).isUserBookLike(userId, bookId);
+    }
+
+    @Test
+    @DisplayName("사용자가 해당도서 좋아요 안했을경우")
+    void givenUserIdAndBookId_whenIsUserBookLike_thenReturnFalse() throws Exception {
+        when(bookLikeService.isUserBookLike(userId, bookId)).thenReturn(false);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get(url + "/{bookId}", bookId)
+                        .header("X-User-Id", userId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string("false"))
+                .andDo(document("bookLike-isNotLike",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("User ID")
                         ),

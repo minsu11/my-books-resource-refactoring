@@ -46,7 +46,25 @@ include::{snippets}/bookLike-update/http-request.adoc[]
 
 include::{snippets}/bookLike-update/http-response.adoc[]
 
-=== 사용자가 해당 도서를 좋아요 했는지 조회
+=== 도서 좋아요 취소요청
+
+==== Request Headers
+
+include::{snippets}/bookLike-updateCancel/request-headers.adoc[]
+
+==== Path Parameters
+
+include::{snippets}/bookLike-updateCancel/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/bookLike-updateCancel/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/bookLike-updateCancel/http-response.adoc[]
+
+=== 사용자가 해당 도서를 좋아요 했는지 조회시 좋아요 경우
 
 ==== Request Headers
 
@@ -63,6 +81,24 @@ include::{snippets}/bookLike-isLike/http-request.adoc[]
 ==== HTTP Response
 
 include::{snippets}/bookLike-isLike/http-response.adoc[]
+
+=== 사용자가 해당 도서를 좋아요 했는지 조회시 좋아요 아닌 경우
+
+==== Request Headers
+
+include::{snippets}/bookLike-isNotLike/request-headers.adoc[]
+
+==== Path Parameters
+
+include::{snippets}/bookLike-isNotLike/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/bookLike-isNotLike/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/bookLike-isNotLike/http-response.adoc[]
 
 === 사용자가 좋아요한 도서 목록 조회
 
