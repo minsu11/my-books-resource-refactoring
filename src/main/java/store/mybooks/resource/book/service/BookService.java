@@ -16,6 +16,19 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.book.dto.request.BookCreateRequest;
 import store.mybooks.resource.book.dto.request.BookModifyRequest;
+import store.mybooks.resource.book.dto.response.*;
+import store.mybooks.resource.book.dto.response.BookBriefResponse;
+import store.mybooks.resource.book.dto.response.BookCartResponse;
+import store.mybooks.resource.book.dto.response.BookCreateResponse;
+import store.mybooks.resource.book.dto.response.BookDetailResponse;
+import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
+import store.mybooks.resource.book.dto.response.BookLikeResponse;
+import store.mybooks.resource.book.dto.response.BookModifyResponse;
+import store.mybooks.resource.book.dto.response.BookPopularityResponse;
+import store.mybooks.resource.book.dto.response.BookPublicationDateResponse;
+import store.mybooks.resource.book.dto.response.BookRatingResponse;
+import store.mybooks.resource.book.dto.response.BookResponseForOrder;
+import store.mybooks.resource.book.dto.response.BookReviewResponse;
 import store.mybooks.resource.book.dto.response.BookBriefResponse;
 import store.mybooks.resource.book.dto.response.BookCartResponse;
 import store.mybooks.resource.book.dto.response.BookCreateResponse;
@@ -142,6 +155,31 @@ public class BookService {
         }
         return bookRepository.getBookForOrder(bookId);
 
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookPopularityResponse> getBookPopularityList() {
+        return bookRepository.getBookPopularity();
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookLikeResponse> getBookLikeList() {
+        return bookRepository.getBookLike();
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookReviewResponse> getBookReviewList() {
+        return bookRepository.getBookReview();
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookRatingResponse> getBookRatingList() {
+        return bookRepository.getBookRating();
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookPublicationDateResponse> getBookPublicationDateList() {
+        return bookRepository.getBookPublicationDate();
     }
 
     /**
