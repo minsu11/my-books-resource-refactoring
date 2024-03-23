@@ -39,7 +39,7 @@ public class PointHistoryController {
     /**
      * methodName : getRemainPoint<br>
      * author : minsu11<br>
-     * description : 회원의 잔여 포인트 조회
+     * description : 회원의 잔여 포인트 조회.
      * <br> *
      *
      * @param userId 유저아이디
@@ -118,7 +118,7 @@ public class PointHistoryController {
     @PostMapping("/sign-up")
     public ResponseEntity<Boolean> saveSignUpPoint(@RequestHeader(name = HeaderProperties.USER_ID) Long userId) {
         pointHistoryService.saveSignUpPoint(userId);
-        
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .build();
