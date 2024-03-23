@@ -2,7 +2,6 @@ package store.mybooks.resource.pointhistory.repository;
 
 import com.querydsl.core.types.Projections;
 import java.util.List;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,7 +13,6 @@ import store.mybooks.resource.pointhistory.dto.response.PointResponse;
 import store.mybooks.resource.pointhistory.entity.PointHistory;
 import store.mybooks.resource.pointhistory.entity.QPointHistory;
 import store.mybooks.resource.pointrule.entity.QPointRule;
-import store.mybooks.resource.pointrulename.enumulation.PointRuleNameEnum;
 
 /**
  * packageName    : store.mybooks.resource.point_history.repository<br>
@@ -37,21 +35,13 @@ public class PointHistoryRepositoryImpl extends QuerydslRepositorySupport implem
 
     @Override
     public PointResponse getRemainingPoint(Long userId) {
-        int earnPoint = from(pointHistory)
-                .select(pointHistory.pointStatusCost.sum())
+        return from(pointHistory)
+                .select(Projections.constructor(
+                        PointResponse.class,
+                        pointHistory.pointStatusCost.sum()
+                ))
                 .where(pointHistory.user.id.eq(userId))
-                .where(pointHistory.pointRule.pointRuleName.id
-                        .notEqualsIgnoreCase(PointRuleNameEnum.USE_POINT.getValue()))
                 .fetchOne();
-
-        Integer usedPoint = Optional.ofNullable(from(pointHistory)
-                .select(pointHistory.pointStatusCost.sum())
-                .where(pointHistory.user.id.eq(userId))
-                .where(pointHistory.pointRule.pointRuleName.id
-                        .eq(PointRuleNameEnum.USE_POINT.getValue()))
-                .fetchOne()).orElse(0);
-
-        return new PointResponse(earnPoint - usedPoint);
     }
 
     @Override

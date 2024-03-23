@@ -15,6 +15,8 @@ import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminRespons
 import store.mybooks.resource.bookorder.entity.BookOrder;
 import store.mybooks.resource.bookorder.entity.QBookOrder;
 import store.mybooks.resource.image.entity.QImage;
+import store.mybooks.resource.image_status.entity.QImageStatus;
+import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
 import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
 import store.mybooks.resource.orderdetail.entity.QOrderDetail;
 import store.mybooks.resource.ordersstatus.enumulation.OrdersStatusEnum;
@@ -32,6 +34,8 @@ import store.mybooks.resource.ordersstatus.enumulation.OrdersStatusEnum;
  */
 public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implements BookOrderRepositoryCustom {
     private static final QBookOrder bookOrder = QBookOrder.bookOrder;
+    private static final QImage image = QImage.image;
+
 
     public BookOrderRepositoryImpl() {
         super(BookOrder.class);
@@ -40,13 +44,20 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
 
     @Override
     public Page<BookOrderUserResponse> getBookOrderPageByUserId(Long userId, Pageable pageable) {
+        QImageStatus imageStatus = QImageStatus.imageStatus;
+        QOrderDetail orderDetail = QOrderDetail.orderDetail;
+
 
         List<BookOrderUserResponse> bookOrderResponseList =
-                from(bookOrder)
+                from(orderDetail)
+                        .join(bookOrder).on(bookOrder.eq(orderDetail.bookOrder))
+                        .join(image).on(image.book.eq(orderDetail.book))
+                        .join(image.imageStatus, imageStatus)
+                        .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
                         .select(Projections.constructor(BookOrderUserResponse.class,
-                                bookOrder.user.id,
                                 bookOrder.orderStatus.id,
-                                bookOrder.deliveryRule.id,
+                                bookOrder.deliveryRule.deliveryRuleName.id,
+                                bookOrder.deliveryRule.cost,
                                 bookOrder.date,
                                 bookOrder.invoiceNumber,
                                 bookOrder.receiverName,
@@ -57,11 +68,30 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                                 bookOrder.pointCost,
                                 bookOrder.couponCost,
                                 bookOrder.number,
-                                bookOrder.findPassword))
+                                image.path.concat(image.fileName).concat(image.extension)
+                        ))
                         .where(bookOrder.user.id.eq(userId))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .fetch();
+
+        for (BookOrderUserResponse bookOrderUserResponse : bookOrderResponseList) {
+            List<OrderDetailInfoResponse> orderDetailInfoResponses =
+                    from(orderDetail)
+                            .select(Projections.constructor(
+                                    OrderDetailInfoResponse.class,
+                                    orderDetail.book.id,
+                                    orderDetail.book.name,
+                                    orderDetail.userCoupon.id,
+                                    orderDetail.amount,
+                                    orderDetail.bookCost,
+                                    orderDetail.isCouponUsed
+                            ))
+                            .where(orderDetail.bookOrder.number
+                                    .eq(bookOrderUserResponse.getNumber()))
+                            .fetch();
+            bookOrderUserResponse.createOrderDetailInfos(orderDetailInfoResponses);
+        }
 
         long count = from(bookOrder).fetchCount();
 
@@ -115,7 +145,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                 )
                 .where(orderDetail.bookOrder.number.eq(orderNumber))
                 .fetch();
-        BookOrderInfoPayResponse bookorderInfo =
+        BookOrderInfoPayResponse bookOrderInfo =
                 from(bookOrder)
                         .select(Projections.constructor(BookOrderInfoPayResponse.class,
                                 bookOrder.orderStatus.id,
@@ -125,10 +155,9 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                                 bookOrder.pointCost))
                         .where(bookOrder.number.eq(orderNumber))
                         .fetchOne();
-        bookorderInfo.updateOrderDetails(orderDetailInfoResponses);
+        bookOrderInfo.updateOrderDetails(orderDetailInfoResponses);
 
-        return Optional.of(bookorderInfo
-        );
+        return Optional.of(bookOrderInfo);
     }
 
     @Override
@@ -157,11 +186,11 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
 
         if (count > 1) {
             count -= 1;
-            orderName.append("외 " + count + "건");
+            orderName.append("외 ").append(count).append("건");
         }
         bookOrderInfoPayResponse.updateOrderName(orderName.toString());
 
-        return Optional.ofNullable(
+        return Optional.of(
                 bookOrderInfoPayResponse
         );
     }
@@ -176,7 +205,6 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
 
     @Override
     public List<BookOrderUserResponse> getUserBookOrderInfos(Long userId) {
-        QImage image = QImage.image;
         QOrderDetail orderDetail = QOrderDetail.orderDetail;
         return from(orderDetail)
                 .join(image)
