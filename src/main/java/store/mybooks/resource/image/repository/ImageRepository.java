@@ -1,5 +1,6 @@
 package store.mybooks.resource.image.repository;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import store.mybooks.resource.image.entity.Image;
@@ -19,5 +20,7 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     Optional<Image> findImageByBook_IdAndImageStatus_Id(Long bookId, String imageStatusId);
 
     Optional<Image> findImageByReviewIdAndImageStatusId(Long reviewId, String imageStatusId);
+
+    List<Image> findAllByBook_IdAndImageStatus_Id(Long bookId, String imageStatusId);
 
 }

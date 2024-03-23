@@ -8,11 +8,22 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import store.mybooks.resource.author.dto.response.AuthorGetResponse;
 import store.mybooks.resource.author.entity.QAuthor;
+import store.mybooks.resource.book.dto.response.BookBriefResponse;
+import store.mybooks.resource.book.dto.response.BookDetailResponse;
+import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
+import store.mybooks.resource.book.dto.response.BookLikeResponse;
+import store.mybooks.resource.book.dto.response.BookPopularityResponse;
+import store.mybooks.resource.book.dto.response.BookPublicationDateResponse;
+import store.mybooks.resource.book.dto.response.BookRatingResponse;
+import store.mybooks.resource.book.dto.response.BookResponseForOrder;
+import store.mybooks.resource.book.dto.response.BookReviewResponse;
 import store.mybooks.resource.book.dto.response.*;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.entity.QBook;
 import store.mybooks.resource.bookauthor.entity.QBookAuthor;
+import store.mybooks.resource.booklike.entity.QBookLike;
 import store.mybooks.resource.bookstatus.entity.QBookStatus;
+import store.mybooks.resource.bookstatus.enumeration.BookStatusEnum;
 import store.mybooks.resource.booktag.entity.QBookTag;
 import store.mybooks.resource.image.dto.response.ImageResponse;
 import store.mybooks.resource.image.entity.QImage;
@@ -204,7 +215,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                                 review.count(), // 리뷰의 수
                                 book.originalCost,
                                 book.saleCost))
-                        .groupBy(book.id,image)
+                        .groupBy(book.id, image)
                         .where(bookStatus.id.in("판매중", "재고없음"))
                         .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
                         .offset(pageable.getOffset())
@@ -230,8 +241,20 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     @Override
     public BookResponseForOrder getBookForOrder(Long bookId) {
         return from(book)
-                .select(Projections.constructor(BookResponseForOrder.class, book.name, book.saleCost, book.originalCost,
-                        book.discountRate, book.isPackaging, book.stock))
+                .join(image)
+                .on(image.book.eq(book))
+                .join(image.imageStatus, imageStatus)
+                .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
+                .select(Projections.constructor(
+                        BookResponseForOrder.class,
+                        book.id,
+                        book.name,
+                        image.path.concat(image.fileName).concat(image.extension),
+                        book.saleCost,
+                        book.originalCost,
+                        book.discountRate,
+                        book.isPackaging,
+                        book.stock))
                 .where(book.id.eq(bookId))
                 .fetchOne();
     }
@@ -256,4 +279,147 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 ))
                 .where(book.id.eq(id)).fetchOne();
     }
+
+
+    /**
+     * Gets book popularity.
+     *
+     * @return the book popularity
+     */
+    @Override
+    public List<BookPopularityResponse> getBookPopularity() {
+        return from(book)
+                .join(image).on(image.book.eq(book))
+                .leftJoin(orderDetail).on(book.eq(orderDetail.book))
+                .leftJoin(review).on(orderDetail.eq(review.orderDetail))
+                .join(image.imageStatus, imageStatus)
+                .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
+                .where(book.bookStatus.id.eq(BookStatusEnum.SELLING_ING.getName())
+                        .or(book.bookStatus.id.eq(BookStatusEnum.NO_STOCK.getName())))
+                .groupBy(book.id, image.path.concat(image.fileName).concat(image.extension), book.name,
+                        book.originalCost, book.saleCost, book.viewCount)
+                .orderBy(book.viewCount.desc())
+                .limit(8)
+                .select(Projections.constructor(
+                        BookPopularityResponse.class,
+                        book.id,
+                        image.path.concat(image.fileName).concat(image.extension),
+                        book.name,
+                        review.count(),
+                        book.originalCost,
+                        book.saleCost,
+                        review.rate.avg().coalesce(0.0),
+                        book.viewCount
+                )).fetch();
+    }
+
+    @Override
+    public List<BookLikeResponse> getBookLike() {
+        QBookLike bookLike = QBookLike.bookLike;
+        return from(book)
+                .join(image).on(image.book.eq(book))
+                .leftJoin(orderDetail).on(book.eq(orderDetail.book))
+                .leftJoin(review).on(orderDetail.eq(review.orderDetail))
+                .join(image.imageStatus, imageStatus)
+                .join(bookLike).on(book.eq(bookLike.book))
+                .where(book.bookStatus.id.eq(BookStatusEnum.SELLING_ING.getName())
+                        .or(book.bookStatus.id.eq(BookStatusEnum.NO_STOCK.getName())))
+                .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
+                .groupBy(book.id, image.path.concat(image.fileName).concat(image.extension), book.name,
+                        book.originalCost, book.saleCost)
+                .orderBy(bookLike.count().desc())
+                .limit(4)
+                .select(Projections.constructor(
+                        BookLikeResponse.class,
+                        book.id,
+                        image.path.concat(image.fileName).concat(image.extension),
+                        book.name,
+                        review.count(),
+                        book.originalCost,
+                        book.saleCost,
+                        review.rate.avg().coalesce(0.0),
+                        bookLike.count()
+                )).fetch();
+    }
+
+    @Override
+    public List<BookReviewResponse> getBookReview() {
+        return from(book)
+                .join(image).on(image.book.eq(book))
+                .leftJoin(orderDetail).on(book.eq(orderDetail.book))
+                .leftJoin(review).on(orderDetail.eq(review.orderDetail))
+                .join(image.imageStatus, imageStatus)
+                .where(book.bookStatus.id.eq(BookStatusEnum.SELLING_ING.getName())
+                        .or(book.bookStatus.id.eq(BookStatusEnum.NO_STOCK.getName())))
+                .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
+                .groupBy(book.id, image.path.concat(image.fileName).concat(image.extension), book.name,
+                        book.originalCost, book.saleCost)
+                .orderBy(review.count().desc())
+                .limit(4)
+                .select(Projections.constructor(
+                        BookReviewResponse.class,
+                        book.id,
+                        image.path.concat(image.fileName).concat(image.extension),
+                        book.name,
+                        review.count(),
+                        book.originalCost,
+                        book.saleCost,
+                        review.rate.avg().coalesce(0.0)
+                )).fetch();
+    }
+
+    @Override
+    public List<BookRatingResponse> getBookRating() {
+        return from(book)
+                .join(image).on(image.book.eq(book))
+                .leftJoin(orderDetail).on(book.eq(orderDetail.book))
+                .leftJoin(review).on(orderDetail.eq(review.orderDetail))
+                .join(image.imageStatus, imageStatus)
+                .where(book.bookStatus.id.eq(BookStatusEnum.SELLING_ING.getName())
+                        .or(book.bookStatus.id.eq(BookStatusEnum.NO_STOCK.getName())))
+                .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
+                .groupBy(book.id, image.path.concat(image.fileName).concat(image.extension), book.name,
+                        book.originalCost, book.saleCost)
+                .orderBy(review.rate.avg().coalesce(0.0).desc())
+                .limit(4)
+                .select(Projections.constructor(
+                        BookRatingResponse.class,
+                        book.id,
+                        image.path.concat(image.fileName).concat(image.extension),
+                        book.name,
+                        review.count(),
+                        book.originalCost,
+                        book.saleCost,
+                        review.rate.avg().coalesce(0.0)
+                )).fetch();
+    }
+
+    @Override
+    public List<BookPublicationDateResponse> getBookPublicationDate() {
+        return from(book)
+                .join(image).on(image.book.eq(book))
+                .leftJoin(orderDetail).on(book.eq(orderDetail.book))
+                .leftJoin(review).on(orderDetail.eq(review.orderDetail))
+                .join(image.imageStatus, imageStatus)
+                .where(book.bookStatus.id.eq(BookStatusEnum.SELLING_ING.getName())
+                        .or(book.bookStatus.id.eq(BookStatusEnum.NO_STOCK.getName())))
+                .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
+                .groupBy(book.id, image.path.concat(image.fileName).concat(image.extension), book.name,
+                        book.originalCost, book.saleCost, book.publishDate)
+                .orderBy(book.publishDate.desc())
+                .limit(8)
+                .select(Projections.constructor(
+                        BookPublicationDateResponse.class,
+                        book.id,
+                        image.path.concat(image.fileName).concat(image.extension),
+                        book.name,
+                        review.count(),
+                        book.originalCost,
+                        book.saleCost,
+                        review.rate.avg().coalesce(0.0),
+                        book.publishDate
+                )).fetch();
+
+    }
+
 }

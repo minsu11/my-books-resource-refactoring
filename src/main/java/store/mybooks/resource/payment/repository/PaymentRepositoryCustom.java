@@ -2,6 +2,7 @@ package store.mybooks.resource.payment.repository;
 
 import java.util.Optional;
 import org.springframework.data.repository.NoRepositoryBean;
+import store.mybooks.resource.payment.dto.response.PaymentResponse;
 import store.mybooks.resource.payment.entity.Payment;
 
 /**
@@ -20,4 +21,6 @@ public interface PaymentRepositoryCustom {
     Optional<Payment> findByOrderNumber(String orderNumber);
 
     boolean existPaymentByOrderNumber(String orderNumber);
+
+    Optional<PaymentResponse> getPaymentKey(String orderNumber);
 }

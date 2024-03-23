@@ -10,24 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.book.dto.request.BookCreateRequest;
 import store.mybooks.resource.book.dto.request.BookModifyRequest;
-import store.mybooks.resource.book.dto.response.BookBriefResponse;
-import store.mybooks.resource.book.dto.response.BookCartResponse;
-import store.mybooks.resource.book.dto.response.BookCreateResponse;
-import store.mybooks.resource.book.dto.response.BookDetailResponse;
-import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
-import store.mybooks.resource.book.dto.response.BookModifyResponse;
-import store.mybooks.resource.book.dto.response.BookResponseForOrder;
+import store.mybooks.resource.book.dto.response.*;
 import store.mybooks.resource.book.service.BookService;
 import store.mybooks.resource.error.RequestValidationFailedException;
 
@@ -122,6 +109,42 @@ public class BookRestController {
                 .body(bookService.getBookForCoupon());
     }
 
+    @GetMapping("/popularity")
+    public ResponseEntity<List<BookPopularityResponse>> getBookPopularity() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookPopularityList());
+    }
+
+    @GetMapping("/bookLike")
+    public ResponseEntity<List<BookLikeResponse>> getBookLike() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookLikeList());
+    }
+
+    @GetMapping("/bookReviewCount")
+    public ResponseEntity<List<BookReviewResponse>> getBookReview() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookReviewList());
+    }
+
+    @GetMapping("/bookRating")
+    public ResponseEntity<List<BookRatingResponse>> getBookRating() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookRatingList());
+    }
+
+    @GetMapping("/bookPublicationDate")
+    public ResponseEntity<List<BookPublicationDateResponse>> getBookPublicationDate() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.getBookPublicationDateList());
+    }
+
+
     /**
      * methodName : createBook
      * author : newjaehun
@@ -137,9 +160,9 @@ public class BookRestController {
                                                          @RequestPart("thumbnail") MultipartFile thumbnail,
                                                          @RequestPart("content") List<MultipartFile> content,
                                                          BindingResult bindingResult)
-            throws BindException, IOException {
+            throws IOException {
         if (bindingResult.hasErrors()) {
-            throw new BindException(bindingResult);
+            throw new RequestValidationFailedException(bindingResult);
         }
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -158,14 +181,18 @@ public class BookRestController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<BookModifyResponse> modifyBook(@PathVariable("id") Long bookId,
-                                                         @Valid @RequestBody BookModifyRequest modifyRequest,
-                                                         BindingResult bindingResult) {
+                                                         @Valid @RequestPart("request") BookModifyRequest modifyRequest,
+                                                         @RequestPart(value = "thumbnail", required = false)
+                                                         MultipartFile thumbnail,
+                                                         @RequestPart(value = "content", required = false)
+                                                         List<MultipartFile> content,
+                                                         BindingResult bindingResult) throws IOException {
         if (bindingResult.hasErrors()) {
             throw new RequestValidationFailedException(bindingResult);
         }
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(bookService.modifyBook(bookId, modifyRequest));
+                .body(bookService.modifyBook(bookId, modifyRequest, thumbnail, content));
     }
 
     @GetMapping("/cart-books/{id}")
@@ -175,4 +202,18 @@ public class BookRestController {
                 .body(bookService.getBookInCart(bookId));
     }
 
+    /**
+     * methodName : getBookStock
+     * author : minsu11
+     * description : {@code bookId}인 도서의 재고.
+     *
+     * @param bookId the book id
+     * @return the book stock
+     */
+    @GetMapping("/{id}/order/stock")
+    public ResponseEntity<BookStockResponse> getBookStock(@PathVariable("id") Long bookId) {
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(bookService.getBookStockResponse(bookId));
+    }
 }

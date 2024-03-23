@@ -2,8 +2,8 @@ package store.mybooks.resource.book.service;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,6 +17,26 @@ import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.book.dto.request.BookCreateRequest;
 import store.mybooks.resource.book.dto.request.BookModifyRequest;
 import store.mybooks.resource.book.dto.response.*;
+import store.mybooks.resource.book.dto.response.BookBriefResponse;
+import store.mybooks.resource.book.dto.response.BookCartResponse;
+import store.mybooks.resource.book.dto.response.BookCreateResponse;
+import store.mybooks.resource.book.dto.response.BookDetailResponse;
+import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
+import store.mybooks.resource.book.dto.response.BookLikeResponse;
+import store.mybooks.resource.book.dto.response.BookModifyResponse;
+import store.mybooks.resource.book.dto.response.BookPopularityResponse;
+import store.mybooks.resource.book.dto.response.BookPublicationDateResponse;
+import store.mybooks.resource.book.dto.response.BookRatingResponse;
+import store.mybooks.resource.book.dto.response.BookResponseForOrder;
+import store.mybooks.resource.book.dto.response.BookReviewResponse;
+import store.mybooks.resource.book.dto.response.BookBriefResponse;
+import store.mybooks.resource.book.dto.response.BookCartResponse;
+import store.mybooks.resource.book.dto.response.BookCreateResponse;
+import store.mybooks.resource.book.dto.response.BookDetailResponse;
+import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
+import store.mybooks.resource.book.dto.response.BookModifyResponse;
+import store.mybooks.resource.book.dto.response.BookResponseForOrder;
+import store.mybooks.resource.book.dto.response.BookStockResponse;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.exception.IsbnAlreadyExistsException;
@@ -34,7 +54,6 @@ import store.mybooks.resource.bookstatus.respository.BookStatusRepository;
 import store.mybooks.resource.booktag.dto.request.BookTagCreateRequest;
 import store.mybooks.resource.booktag.service.BookTagService;
 import store.mybooks.resource.category.service.CategoryService;
-import store.mybooks.resource.image.dto.response.ImageRegisterResponse;
 import store.mybooks.resource.image.entity.Image;
 import store.mybooks.resource.image.exception.ImageNotExistsException;
 import store.mybooks.resource.image.repository.ImageRepository;
@@ -138,6 +157,31 @@ public class BookService {
 
     }
 
+    @Transactional(readOnly = true)
+    public List<BookPopularityResponse> getBookPopularityList() {
+        return bookRepository.getBookPopularity();
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookLikeResponse> getBookLikeList() {
+        return bookRepository.getBookLike();
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookReviewResponse> getBookReviewList() {
+        return bookRepository.getBookReview();
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookRatingResponse> getBookRatingList() {
+        return bookRepository.getBookRating();
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookPublicationDateResponse> getBookPublicationDateList() {
+        return bookRepository.getBookPublicationDate();
+    }
+
     /**
      * methodName : createBook
      * author : newjaehun
@@ -188,16 +232,15 @@ public class BookService {
             bookTagService.createBookTag(new BookTagCreateRequest(bookId, createRequest.getTagList()));
         }
 
-        List<ImageRegisterResponse> imageRegisterResponseList = new ArrayList<>();
         ImageStatus thumbnailEnum = imageStatusRepository.findById(ImageStatusEnum.THUMBNAIL.getName()).orElseThrow(
                 () -> new ImageStatusNotExistException("해당 하는 id의 이미지 상태가 없습니다."));
-        ImageRegisterResponse imageRegisterResponse = imageService.saveImage(thumbnailEnum, null, book, thumbnail);
-        imageRegisterResponseList.add(imageRegisterResponse);
+        imageService.saveImage(thumbnailEnum, null, book, thumbnail);
+
 
         ImageStatus contentEnum = imageStatusRepository.findById(ImageStatusEnum.CONTENT.getName())
                 .orElseThrow(() -> new ImageStatusNotExistException("해당 하는 id의 이미지 상태가 없습니다."));
         for (MultipartFile file : content) {
-            imageRegisterResponseList.add(imageService.saveImage(contentEnum, null, book, file));
+            imageService.saveImage(contentEnum, null, book, file);
         }
         return bookMapper.createResponse(newBook);
     }
@@ -213,16 +256,33 @@ public class BookService {
      * @return book modify response
      */
     @Transactional
-    public BookModifyResponse modifyBook(Long bookId, BookModifyRequest modifyRequest) {
+    public BookModifyResponse modifyBook(Long bookId, BookModifyRequest modifyRequest, MultipartFile thumbnail,
+                                         List<MultipartFile> content) throws IOException {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotExistException(bookId));
 
         BookStatus bookStatus = bookStatusRepository.findById(modifyRequest.getBookStatusId())
                 .orElseThrow(() -> new BookStatusNotExistException(modifyRequest.getBookStatusId()));
 
-        book.setModifyRequest(bookStatus, modifyRequest.getSaleCost(),
+        Publisher publisher =
+                publisherRepository.findById(modifyRequest.getPublisherId())
+                        .orElseThrow(() -> new PublisherNotExistException(modifyRequest.getPublisherId()));
+
+        if ((!Objects.equals(book.getIsbn(), modifyRequest.getIsbn()))
+                && (bookRepository.existsByIsbn(modifyRequest.getIsbn()))) {
+            throw new IsbnAlreadyExistsException(modifyRequest.getIsbn());
+        }
+
+        book.setModifyRequest(bookStatus, publisher, modifyRequest.getName(), modifyRequest.getIsbn(),
+                modifyRequest.getPublishDate(), modifyRequest.getPage(), modifyRequest.getIndex(),
+                modifyRequest.getExplanation(), modifyRequest.getOriginalCost(), modifyRequest.getSaleCost(),
                 ((book.getOriginalCost() - modifyRequest.getSaleCost()) * 100) / book.getOriginalCost(),
                 modifyRequest.getStock(), modifyRequest.getIsPacking());
+
+
+        bookAuthorService.deleteBookAuthor(bookId);
+        bookAuthorService.createBookAuthor(new BookAuthorCreateRequest(bookId, modifyRequest.getAuthorList()));
+
 
         bookCategoryService.deleteBookCategory(bookId);
         bookCategoryService.createBookCategory(new BookCategoryCreateRequest(bookId, modifyRequest.getCategoryList()));
@@ -231,13 +291,15 @@ public class BookService {
         if (modifyRequest.getTagList() != null) {
             bookTagService.createBookTag(new BookTagCreateRequest(bookId, modifyRequest.getTagList()));
         }
+        imageService.updateImage(book, thumbnail, content);
+
         return bookMapper.modifyResponse(book);
     }
 
     /**
      * methodName : getBookInCart
      * author : Fiat_lux
-     * description : 장바구니 안에 있는 책의 필요한 정보 가져오는 메서드
+     * description : 장바구니 안에 있는 책의 필요한 정보 가져오는 메서드.
      *
      * @param bookId the book id
      * @return BookCartResponse dto

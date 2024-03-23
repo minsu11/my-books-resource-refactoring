@@ -90,37 +90,5 @@ public class PointHistoryController {
                 .body(pointHistoryService.createPointHistory(request, userId));
     }
 
-    /**
-     * methodName : saveLoginPoint <br>
-     * author : damho-lee <br>
-     * description : 로그인 포인트 적립.<br>
-     *
-     * @param userId 회원 아이디
-     * @return ResponseEntity
-     */
-    @PostMapping("/login-point")
-    public ResponseEntity<Boolean> saveLoginPoint(@RequestHeader(name = HeaderProperties.USER_ID) Long userId) {
-        HttpStatus status = pointHistoryService.saveLoginPoint(userId) ? HttpStatus.CREATED : HttpStatus.OK;
 
-        return ResponseEntity
-                .status(status)
-                .build();
-    }
-
-    /**
-     * methodName : saveSignUpPoint <br>
-     * author : damho-lee <br>
-     * description : 회원가입 포인트 적립.<br>
-     *
-     * @param userId 회원 아이디
-     * @return ResponseEntity
-     */
-    @PostMapping("/sign-up")
-    public ResponseEntity<Boolean> saveSignUpPoint(@RequestHeader(name = HeaderProperties.USER_ID) Long userId) {
-        pointHistoryService.saveSignUpPoint(userId);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .build();
-    }
 }

@@ -88,9 +88,12 @@ public class TotalOrderService {
     @Transactional
     public PayCreateResponse payUser(PayCreateRequest request, Long userId) {
         BookOrderInfoPayResponse bookOrderInfo = bookOrderService.getBookInfo(request.getOrderNumber());
+
         checkBookStock(bookOrderInfo.getOrderDetails());
+
         PayCreateResponse response = paymentService.createPayment(request);
         calculateBookStock(bookOrderInfo.getOrderDetails());
+
         useCouponProcessing(bookOrderInfo);
         usePointProcessing(bookOrderInfo, userId);
         earnPoint(bookOrderInfo, userId);
@@ -128,6 +131,9 @@ public class TotalOrderService {
      * @param userId    the user id
      */
     public void earnPoint(BookOrderInfoPayResponse bookOrder, Long userId) {
+        if (userId == 0L) {
+            return;
+        }
         PointRuleResponse pointRule = pointRuleService
                 .getPointRuleResponseByName(PointRuleNameEnum.BOOK_POINT.getValue());
         int earnPoint = (bookOrder.getTotalCost() * pointRule.getRate()) / 100;
@@ -146,7 +152,7 @@ public class TotalOrderService {
      * @param userId    the user id
      */
     public void usePointProcessing(BookOrderInfoPayResponse bookOrder, Long userId) {
-        if (bookOrder.getPointCost() > 0) {
+        if (bookOrder.getPointCost() > 0 || userId != 0) {
             PointRuleNameResponse pointRuleName = pointRuleNameService
                     .getPointRuleName(PointRuleNameEnum.USE_POINT.getValue());
             PointHistoryCreateRequest point = new PointHistoryCreateRequest(bookOrder.getNumber(),
@@ -180,6 +186,7 @@ public class TotalOrderService {
      *
      * @param orderDetailInfoList the order detail info list
      */
+
     public void calculateBookStock(List<OrderDetailInfoResponse> orderDetailInfoList) {
         for (OrderDetailInfoResponse orderDetail : orderDetailInfoList) {
             bookService.updateBookStock(orderDetail.getId(), orderDetail.getAmount());

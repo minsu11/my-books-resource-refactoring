@@ -13,7 +13,6 @@ import store.mybooks.resource.pointhistory.dto.response.PointResponse;
 import store.mybooks.resource.pointhistory.entity.PointHistory;
 import store.mybooks.resource.pointhistory.entity.QPointHistory;
 import store.mybooks.resource.pointrule.entity.QPointRule;
-import store.mybooks.resource.pointrulename.enumulation.PointRuleNameEnum;
 
 /**
  * packageName    : store.mybooks.resource.point_history.repository<br>
@@ -35,21 +34,13 @@ public class PointHistoryRepositoryImpl extends QuerydslRepositorySupport implem
 
     @Override
     public PointResponse getRemainingPoint(Long userId) {
-        int earnPoint = from(pointHistory)
-                .select(pointHistory.pointStatusCost.sum())
+        return from(pointHistory)
+                .select(Projections.constructor(
+                        PointResponse.class,
+                        pointHistory.pointStatusCost.sum()
+                ))
                 .where(pointHistory.user.id.eq(userId))
-                .where(pointHistory.pointRule.pointRuleName.id
-                        .notEqualsIgnoreCase(PointRuleNameEnum.USE_POINT.getValue()))
                 .fetchOne();
-
-        Integer usedPoint = Optional.ofNullable(from(pointHistory)
-                .select(pointHistory.pointStatusCost.sum())
-                .where(pointHistory.user.id.eq(userId))
-                .where(pointHistory.pointRule.pointRuleName.id
-                        .eq(PointRuleNameEnum.USE_POINT.getValue()))
-                .fetchOne()).orElse(0);
-
-        return new PointResponse(earnPoint - usedPoint);
     }
 
     @Override
@@ -78,13 +69,13 @@ public class PointHistoryRepositoryImpl extends QuerydslRepositorySupport implem
     }
 
     @Override
-    public boolean isAlreadyReceivedSignUpPoint(Long userId) {
+    public boolean isAlreadyReceivedSignUpPoint(String email) {
         QPointRule pointRule = QPointRule.pointRule;
 
         List<Long> pointHistoryIdList = from(pointHistory)
                 .leftJoin(pointRule)
                 .on(pointHistory.pointRule.id.eq(pointRule.id))
-                .where(pointHistory.user.id.eq(userId))
+                .where(pointHistory.user.email.eq(email))
                 .where(pointRule.pointRuleName.id.eq("회원가입 적립"))
                 .select(pointHistory.id)
                 .fetch();
