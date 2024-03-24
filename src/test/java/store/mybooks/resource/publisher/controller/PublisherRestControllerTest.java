@@ -6,7 +6,13 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -30,7 +36,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import store.mybooks.resource.publisher.dto.request.PublisherCreateRequest;
 import store.mybooks.resource.publisher.dto.request.PublisherModifyRequest;
 import store.mybooks.resource.publisher.dto.response.PublisherCreateResponse;
@@ -50,10 +61,9 @@ import store.mybooks.resource.publisher.service.PublisherService;
  * -----------------------------------------------------------
  * 2/18/24        newjaehun       최초 생성
  */
-@WebMvcTest(value = PublisherRestController.class)
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(PublisherRestController.class)
+@ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 class PublisherRestControllerTest {
-    @Autowired
     private MockMvc mockMvc;
 
     @Autowired
@@ -69,8 +79,13 @@ class PublisherRestControllerTest {
     private static final String name = "publisherName1";
 
     @BeforeEach
-    void setUp() {
+    void setUp(WebApplicationContext webApplicationContext,
+               RestDocumentationContextProvider restDocumentation) {
         publisher = new Publisher(1, name, LocalDate.now());
+
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                .apply(documentationConfiguration(restDocumentation))
+                .build();
     }
 
     @Test
@@ -90,7 +105,12 @@ class PublisherRestControllerTest {
                 .andExpect(jsonPath("$.[0].id").value(id))
                 .andExpect(jsonPath("$.[0].name").value(name))
                 .andExpect(jsonPath("$.[1].id").value(id2))
-                .andExpect(jsonPath("$.[1].name").value(name2));
+                .andExpect(jsonPath("$.[1].name").value(name2))
+                .andDo(document("publishers-list",
+                        responseFields(
+                                fieldWithPath("[].id").description("출판사 ID"),
+                                fieldWithPath("[].name").description("출판사 이름")
+                        )));
 
         verify(publisherService, times(1)).getAllPublishers();
     }
@@ -112,10 +132,40 @@ class PublisherRestControllerTest {
 
         when(publisherService.getPagedPublisher(pageable)).thenReturn(publisherGetResponsePage);
 
-        mockMvc.perform(get(url + "/page?page=" + page + "&size=" + size).accept("application/json"))
-                .andExpect(status().isOk()).andExpect(jsonPath("$.content[0].id").value(id))
-                .andExpect(jsonPath("$.content[0].name").value(name)).andExpect(jsonPath("$.content[1].id").value(id2))
-                .andExpect(jsonPath("$.content[1].name").value(name2));
+        mockMvc.perform(get(url + "/page?page=" + page + "&size=" + size)
+                        .accept("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(id))
+                .andExpect(jsonPath("$.content[0].name").value(name))
+                .andExpect(jsonPath("$.content[1].id").value(id2))
+                .andExpect(jsonPath("$.content[1].name").value(name2))
+                .andDo(document("publishers-paged-list",
+                        responseFields(
+                                fieldWithPath("content[].id").description("출판사 ID"),
+                                fieldWithPath("content[].name").description("출판사 이름"),
+                                fieldWithPath("pageable").description("페이지정보"),
+                                fieldWithPath("pageable.sort").description("페이지 정렬 정보"),
+                                fieldWithPath("pageable.sort.sorted").description("페이지 정렬되었는지 여부(true: 정렬 됨)"),
+                                fieldWithPath("pageable.sort.unsorted").description("페이지 정렬되지 않았는지 여부(true: 정렬 안 됨)"),
+                                fieldWithPath("pageable.sort.empty").description("페이지 정렬 정보가 비어 있는지 여부(true: 비어있음)"),
+                                fieldWithPath("pageable.pageSize").description("전체 페이지 수"),
+                                fieldWithPath("pageable.pageNumber").description("현재 페이지 번호(0부터 시작)"),
+                                fieldWithPath("pageable.offset").description("현재 페이지의 시작 오프셋(0부터 시작)"),
+                                fieldWithPath("pageable.paged").description("페이지네이션을 사용하는지 여부(true: 사용함)"),
+                                fieldWithPath("pageable.unpaged").description("페이지네이션을 사용하는지 여부(true: 사용 안 함)"),
+                                fieldWithPath("totalPages").description("전체 페이지 수"),
+                                fieldWithPath("totalElements").description("전체 요소(항목) 수"),
+                                fieldWithPath("last").description("마지막 페이지 여부(true: 마지막 페이지)"),
+                                fieldWithPath("numberOfElements").description("혀재 페이지의 요소(항목) 수"),
+                                fieldWithPath("size").description("페이지 당 요소(항목) 수"),
+                                fieldWithPath("sort").description("결과 정렬 정보를 담은 객체"),
+                                fieldWithPath("sort.sorted").description("결과가 정렬되었는지 여부(true: 정렬 됨)"),
+                                fieldWithPath("sort.unsorted").description("결과가 정렬되지 않았는지 여부(true: 정렬 안 됨)"),
+                                fieldWithPath("sort.empty").description("결과 정렬 정보가 비어 있는지 여부(true: 비어있음)"),
+                                fieldWithPath("number").description("현재 페이지 번호(0부터 시작)"),
+                                fieldWithPath("first").description("첫 페이지 여부(true: 첫 페이지)"),
+                                fieldWithPath("empty").description("결과가 비어 있는지 여부(true: 비어있음)")
+                        )));
         verify(publisherService, times(1)).getPagedPublisher(pageable);
     }
 
@@ -129,9 +179,19 @@ class PublisherRestControllerTest {
 
         when(publisherService.createPublisher(any(PublisherCreateRequest.class))).thenReturn(response);
 
-        mockMvc.perform(post(url).accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(request))).andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value(response.getName()));
+        mockMvc.perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value(response.getName()))
+                .andDo(document("publisher-create",
+                        requestFields(
+                                fieldWithPath("name").description("출판사 이름")
+                        ),
+                        responseFields(
+                                fieldWithPath("name").description("등록된 출판사 이름")
+                        )));
+
         verify(publisherService, times(1)).createPublisher(any(PublisherCreateRequest.class));
     }
 
@@ -145,8 +205,8 @@ class PublisherRestControllerTest {
         when(publisherService.createPublisher(any(PublisherCreateRequest.class))).thenReturn(response);
 
         mockMvc.perform(post(url).accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(request))).andExpect(status().isBadRequest());
-
+                        .content(new ObjectMapper().writeValueAsString(request))).andExpect(status().isBadRequest())
+                .andDo(document("publisher-create-error"));
 
         verify(publisherService, times(0)).createPublisher(any(PublisherCreateRequest.class));
     }
@@ -162,9 +222,21 @@ class PublisherRestControllerTest {
 
         when(publisherService.modifyPublisher(eq(id), any(PublisherModifyRequest.class))).thenReturn(response);
 
-        mockMvc.perform(put(url + "/{id}", id).contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))).andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(response.getName()));
+        mockMvc.perform(RestDocumentationRequestBuilders.put(url + "/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value(response.getName()))
+                .andDo(document("publisher-modify",
+                        pathParameters(
+                                parameterWithName("id").description("출판사 ID")
+                        ),
+                        requestFields(
+                                fieldWithPath("changeName").description("변경할 출판사 이름")
+                        ),
+                        responseFields(
+                                fieldWithPath("name").description("변경된 출판사 이름")
+                        )));
 
         verify(publisherService, times(1)).modifyPublisher(eq(id), any(PublisherModifyRequest.class));
     }
@@ -181,7 +253,8 @@ class PublisherRestControllerTest {
         when(publisherService.modifyPublisher(eq(id), any(PublisherModifyRequest.class))).thenReturn(response);
 
         mockMvc.perform(put(url + "/{id}", id).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))).andExpect(status().isBadRequest());
+                        .content(objectMapper.writeValueAsString(request))).andExpect(status().isBadRequest())
+                .andDo(document("publisher-modify-error"));
 
         verify(publisherService, times(0)).modifyPublisher(eq(id), any(PublisherModifyRequest.class));
     }
@@ -191,8 +264,12 @@ class PublisherRestControllerTest {
     void givenPublisherId_whenDeletePublisher_thenDeletePublisherAndReturnPublisherDeleteResponse() throws Exception {
         doNothing().when(publisherService).deletePublisher(id);
 
-        mockMvc.perform(delete(url + "/{id}", id).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(RestDocumentationRequestBuilders.delete(url + "/{id}", id))
+                .andExpect(status().isNoContent())
+                .andDo(document("publisher-delete",
+                        pathParameters(
+                                parameterWithName("id").description("삭제할 출판사 ID")
+                        )));
 
         verify(publisherService, times(1)).deletePublisher(id);
     }

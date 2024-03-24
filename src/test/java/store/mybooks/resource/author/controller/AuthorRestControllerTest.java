@@ -67,7 +67,6 @@ class AuthorRestControllerTest {
     private final String url = "/api/authors";
 
     private final Integer authorId = 1;
-    private final String authorName = "authorName";
     private final String authorContent = "authorContent";
     private final String authorContent2 = "authorContent2";
 
@@ -84,6 +83,7 @@ class AuthorRestControllerTest {
     @DisplayName("저자 등록(검증 통과)")
     void givenValidAuthorCreateRequest_whenCreateAuthor_thenSaveAuthorAndReturnAuthorCreateResponse()
             throws Exception {
+        String authorName = "authorName";
         AuthorCreateRequest createRequest = new AuthorCreateRequest(authorName, authorContent);
 
         AuthorCreateResponse createResponse = new AuthorCreateResponse();
@@ -124,7 +124,8 @@ class AuthorRestControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequest)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andDo(document("author-create-error"));
 
         verify(authorService, times(0)).createAuthor(any(AuthorCreateRequest.class));
     }
@@ -172,7 +173,9 @@ class AuthorRestControllerTest {
         mockMvc.perform(put(url + "/{id}", authorId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(modifyRequest)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andDo(document("author-modify-error"));
+
 
         verify(authorService, times(0)).modifyAuthor(eq(authorId), any(AuthorModifyRequest.class));
     }

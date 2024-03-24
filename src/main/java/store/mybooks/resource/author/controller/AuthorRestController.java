@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +22,7 @@ import store.mybooks.resource.author.dto.response.AuthorCreateResponse;
 import store.mybooks.resource.author.dto.response.AuthorGetResponse;
 import store.mybooks.resource.author.dto.response.AuthorModifyResponse;
 import store.mybooks.resource.author.service.AuthorService;
+import store.mybooks.resource.error.Utils;
 
 /**
  * packageName    : store.mybooks.resource.author.controller
@@ -97,10 +97,8 @@ public class AuthorRestController {
      */
     @PostMapping
     public ResponseEntity<AuthorCreateResponse> createAuthor(
-            @Valid @RequestBody AuthorCreateRequest createRequest, BindingResult bindingResult) throws BindException {
-        if (bindingResult.hasErrors()) {
-            throw new BindException(bindingResult);
-        }
+            @Valid @RequestBody AuthorCreateRequest createRequest, BindingResult bindingResult) {
+        Utils.validateRequest(bindingResult);
         AuthorCreateResponse createResponse = authorService.createAuthor(createRequest);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -119,10 +117,8 @@ public class AuthorRestController {
     @PutMapping("/{id}")
     public ResponseEntity<AuthorModifyResponse> modifyAuthor(@PathVariable("id") Integer authorId,
                                                              @Valid @RequestBody AuthorModifyRequest modifyRequest,
-                                                             BindingResult bindingResult) throws BindException {
-        if (bindingResult.hasErrors()) {
-            throw new BindException(bindingResult);
-        }
+                                                             BindingResult bindingResult) {
+        Utils.validateRequest(bindingResult);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(authorService.modifyAuthor(authorId, modifyRequest));
