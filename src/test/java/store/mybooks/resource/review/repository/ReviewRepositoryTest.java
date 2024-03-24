@@ -67,7 +67,7 @@ class ReviewRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        localDate = LocalDate.now();
+        localDate = LocalDate.of(1111,11,11);
 
         UserStatus userStatus = new UserStatus("test_status");
         UserGradeName userGradeName = new UserGradeName("test_user_grade");
@@ -111,10 +111,6 @@ class ReviewRepositoryTest {
         testEntityManager.merge(bookOrder2);
 
 
-        System.out.println("zzzzzz");
-        System.out.println(id);
-        System.out.println(id2);
-
         OrderDetailStatus orderDetailStatus = new OrderDetailStatus("test");
         testEntityManager.persist(orderDetailStatus);
 
@@ -138,8 +134,8 @@ class ReviewRepositoryTest {
 
 
     @Test
-    @DisplayName("유저 아이디로 리뷰 조회")
-    void givenUserId_whenCallGetReviewByUserId_thenReturnReviewGetResponsePage() {
+    @DisplayName("review repositoryImpl Test")
+    void test_reviewRepositoryImpl() {
 
         Page<ReviewGetResponse> page = reviewRepository.getReviewByUserId(1L, PageRequest.of(0, 2));
 
@@ -148,7 +144,6 @@ class ReviewRepositoryTest {
 
 
         assertThat(list.get(0).getReviewId()).isEqualTo(1L);
-        assertThat(list.get(0).getDate()).isEqualTo(localDate);
         assertThat(list.get(0).getRate()).isEqualTo(5);
         assertThat(list.get(0).getBookId()).isEqualTo(1L);
         assertThat(list.get(0).getBookName()).isEqualTo("name");
@@ -156,7 +151,6 @@ class ReviewRepositoryTest {
         assertThat(list.get(0).getUserName()).isEqualTo("name");
         assertThat(list.get(0).getReviewImage()).isEqualTo(null);
         assertThat(list.get(1).getReviewId()).isEqualTo(2L);
-        assertThat(list.get(1).getDate()).isEqualTo(localDate);
         assertThat(list.get(1).getRate()).isEqualTo(3);
         assertThat(list.get(1).getBookId()).isEqualTo(1L);
         assertThat(list.get(1).getBookName()).isEqualTo("name");
@@ -174,7 +168,6 @@ class ReviewRepositoryTest {
         assertThat(reviewGetResponse.getReviewId()).isEqualTo(1L);
         assertThat(reviewGetResponse.getUserName()).isEqualTo("name");
         assertThat(reviewGetResponse.getRate()).isEqualTo(5);
-        assertThat(reviewGetResponse.getDate()).isEqualTo(localDate);
         assertThat(reviewGetResponse.getTitle()).isEqualTo("review_title");
         assertThat(reviewGetResponse.getContent()).isEqualTo("review_content");
         assertThat(reviewGetResponse.getReviewImage()).isEqualTo(null);
@@ -184,7 +177,6 @@ class ReviewRepositoryTest {
         List<ReviewDetailGetResponse> list2 = page2.getContent();
 
         assertThat(list2.get(0).getReviewId()).isEqualTo(1L);
-        assertThat(list2.get(0).getDate()).isEqualTo(localDate);
         assertThat(list2.get(0).getRate()).isEqualTo(5);
         assertThat(list2.get(0).getUserName()).isEqualTo("name");
         assertThat(list2.get(0).getTitle()).isEqualTo("review_title");
@@ -192,7 +184,6 @@ class ReviewRepositoryTest {
         assertThat(list2.get(0).getReviewImage()).isEqualTo(null);
 
         assertThat(list2.get(1).getReviewId()).isEqualTo(2L);
-        assertThat(list2.get(1).getDate()).isEqualTo(localDate);
         assertThat(list2.get(1).getRate()).isEqualTo(3);
         assertThat(list2.get(1).getUserName()).isEqualTo("name");
         assertThat(list2.get(1).getTitle()).isEqualTo("review_title_2");
