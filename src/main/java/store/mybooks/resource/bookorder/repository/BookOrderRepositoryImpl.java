@@ -75,6 +75,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                         .where(bookOrder.user.id.eq(userId))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
+                        .orderBy(bookOrder.date.desc())
                         .fetch();
         for (BookOrderUserResponse bookOrderUserResponse : bookOrderResponseList) {
             List<OrderDetailInfoResponse> orderDetailInfoResponses =
@@ -91,7 +92,6 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                                     orderDetail.amount,
                                     orderDetail.bookCost,
                                     orderDetail.isCouponUsed,
-
                                     image.path.concat(image.fileName).concat(image.extension),
                                     orderDetail.detailStatus.id,
                                     orderDetail.id
@@ -99,13 +99,14 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                             ))
                             .where(orderDetail.bookOrder.number
                                     .eq(bookOrderUserResponse.getNumber()))
+                            .orderBy(orderDetail.bookOrder.date.desc())
                             .fetch();
             bookOrderUserResponse.createOrderDetailInfos(orderDetailInfoResponses);
         }
 
 
-        long count = from(bookOrder).
-                where(bookOrder.user.id.eq(userId))
+        long count = from(bookOrder)
+                .where(bookOrder.user.id.eq(userId))
                 .fetchCount();
 
         return new PageImpl<>(bookOrderResponseList, pageable, count);
