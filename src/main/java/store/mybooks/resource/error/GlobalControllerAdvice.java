@@ -23,6 +23,8 @@ import store.mybooks.resource.orderdetailstatus.exception.OrderDetailStatusAlrea
 import store.mybooks.resource.orderdetailstatus.exception.OrderDetailStatusNotFoundException;
 import store.mybooks.resource.payment.exception.PaymentAlreadyExistException;
 import store.mybooks.resource.pointhistory.exception.AlreadyReceivedSignUpPoint;
+import store.mybooks.resource.pointrule.exception.PointRuleNotExistException;
+import store.mybooks.resource.pointrulename.exception.PointRuleNameNotExistException;
 import store.mybooks.resource.publisher.exception.PublisherAlreadyExistException;
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
 import store.mybooks.resource.tag.exception.TagNameAlreadyExistsException;
@@ -67,7 +69,8 @@ public class GlobalControllerAdvice {
             UserNotExistException.class, UserAddressNotExistException.class, UserGradeIdNotExistException.class,
             UserGradeNameNotExistException.class, UserStatusNotExistException.class,
             BookOrderNotExistException.class, OrderDetailStatusNotFoundException.class,
-            UserCouponNotExistsException.class, BookNotExistException.class, CouponNotExistsException.class})
+            UserCouponNotExistsException.class, BookNotExistException.class, CouponNotExistsException.class,
+            PointRuleNameNotExistException.class, PointRuleNotExistException.class})
     public ResponseEntity<String> xxxNotExistsException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
