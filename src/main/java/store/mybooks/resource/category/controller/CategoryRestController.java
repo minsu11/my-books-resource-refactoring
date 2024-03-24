@@ -30,8 +30,8 @@ import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
 import store.mybooks.resource.category.dto.response.CategoryIdNameGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
-import store.mybooks.resource.category.exception.CategoryValidationException;
 import store.mybooks.resource.category.service.CategoryService;
+import store.mybooks.resource.error.Utils;
 
 /**
  * packageName    : store.mybooks.resource.category.controller
@@ -53,7 +53,7 @@ public class CategoryRestController {
     /**
      * methodName : getCategories <br>
      * author : damho-lee <br>
-     * description : ParentCategoryId 를 기준으로 Caetgory 를 오름차수으로 반환. null 인 값이 가장 먼저 반환. 즉, 최상위 카테고리부터 반환됨. <br>
+     * description : ParentCategoryId 를 기준으로 Caetgory 를 오름차순으로 반환. null 인 값이 가장 먼저 반환. 즉, 최상위 카테고리부터 반환됨. <br>
      *
      * @param pageable pagination. (default: page = 0, size = 10)
      * @return ResponseEntity
@@ -201,9 +201,7 @@ public class CategoryRestController {
     public ResponseEntity<CategoryCreateResponse> createCategory(
             @Valid @RequestBody CategoryCreateRequest categoryCreateRequest,
             BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new CategoryValidationException(bindingResult);
-        }
+        Utils.validateRequest(bindingResult);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -224,9 +222,7 @@ public class CategoryRestController {
             @PathVariable("id") int id,
             @Valid @RequestBody CategoryModifyRequest categoryModifyRequest,
             BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new CategoryValidationException(bindingResult);
-        }
+        Utils.validateRequest(bindingResult);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -244,7 +240,7 @@ public class CategoryRestController {
     @DeleteMapping("/{id}")
     public ResponseEntity<CategoryDeleteResponse> deleteCategory(@PathVariable("id") int id) {
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(HttpStatus.NO_CONTENT)
                 .body(categoryService.deleteCategory(id));
     }
 }

@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import store.mybooks.resource.error.Utils;
@@ -76,8 +75,7 @@ public class PublisherRestController {
      */
     @PostMapping
     public ResponseEntity<PublisherCreateResponse> createPublisher(
-            @Valid @RequestBody PublisherCreateRequest createRequest, BindingResult bindingResult)
-            throws BindException {
+            @Valid @RequestBody PublisherCreateRequest createRequest, BindingResult bindingResult) {
         Utils.validateRequest(bindingResult);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -97,7 +95,7 @@ public class PublisherRestController {
     public ResponseEntity<PublisherModifyResponse> modifyPublisher(@PathVariable("id") Integer publisherId,
                                                                    @Valid @RequestBody
                                                                    PublisherModifyRequest modifyRequest,
-                                                                   BindingResult bindingResult) throws BindException {
+                                                                   BindingResult bindingResult) {
         Utils.validateRequest(bindingResult);
         return ResponseEntity
                 .status(HttpStatus.OK)

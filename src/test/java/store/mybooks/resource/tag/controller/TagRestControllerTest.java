@@ -6,6 +6,8 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -40,13 +42,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import store.mybooks.resource.error.RequestValidationFailedException;
 import store.mybooks.resource.tag.dto.request.TagCreateRequest;
 import store.mybooks.resource.tag.dto.request.TagModifyRequest;
 import store.mybooks.resource.tag.dto.response.TagCreateResponse;
 import store.mybooks.resource.tag.dto.response.TagDeleteResponse;
 import store.mybooks.resource.tag.dto.response.TagGetResponse;
 import store.mybooks.resource.tag.dto.response.TagModifyResponse;
-import store.mybooks.resource.tag.exception.TagValidationException;
+import store.mybooks.resource.tag.exception.TagNameAlreadyExistsException;
 import store.mybooks.resource.tag.service.TagService;
 
 /**
@@ -74,9 +77,11 @@ class TagRestControllerTest {
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,
                RestDocumentationContextProvider restDocumentation) {
-
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .apply(documentationConfiguration(restDocumentation))
+                .apply(documentationConfiguration(restDocumentation)
+                        .operationPreprocessors()
+                        .withRequestDefaults(modifyUris(), prettyPrint())
+                        .withResponseDefaults(prettyPrint()))
                 .build();
     }
 
@@ -102,7 +107,7 @@ class TagRestControllerTest {
 
     @Test
     @DisplayName("태그 전부 조회")
-    void when_getTags_thenReturnListOfTagGetResponse() throws Exception {
+    void whenGetTags_thenReturnListOfTagGetResponse() throws Exception {
         List<TagGetResponse> expectedList = new ArrayList<>();
         TagGetResponse firstTag = makeTagGetResponse(1, "firstTag");
         TagGetResponse secondTag = makeTagGetResponse(2, "secondTag");
@@ -132,7 +137,7 @@ class TagRestControllerTest {
 
     @Test
     @DisplayName("태그 pageable 조회")
-    void givenGetTags_whenNormalCase_thenReturnIsOk() throws Exception {
+    void givenPageable_whenGetTags_thenReturnPageOfTagGetResponse() throws Exception {
         List<TagGetResponse> tagGetResponseList = new ArrayList<>();
         tagGetResponseList.add(makeTagGetResponse(1, "firstTagName"));
         tagGetResponseList.add(makeTagGetResponse(2, "secondTagName"));
@@ -184,7 +189,7 @@ class TagRestControllerTest {
 
     @Test
     @DisplayName("태그 생성")
-    void givenCreateTag_whenNormalCase_thenReturnIsCreated() throws Exception {
+    void givenTagCreateRequest_whenCreateTag_thenReturnIsCreated() throws Exception {
         TagCreateRequest tagCreateRequest = new TagCreateRequest("tagName");
         TagCreateResponse tagCreateResponse = new TagCreateResponse();
         tagCreateResponse.setName(tagCreateRequest.getName());
@@ -207,24 +212,55 @@ class TagRestControllerTest {
     }
 
     @Test
-    @DisplayName("태그 생성 - Validation 실패")
-    void givenCreateTag_whenValidationFailure_thenReturnBadRequest() throws Exception {
-        TagCreateRequest tagCreateRequest = new TagCreateRequest(null);
+    @DisplayName("태그 생성 실패 - Validation")
+    void givenTagCreateRequest_whenCreateTag_thenReturnBadRequest() throws Exception {
+        TagCreateRequest blankName = new TagCreateRequest("   ");
+        TagCreateRequest nullName = new TagCreateRequest(null);
 
+        String blankNameContent = objectMapper.writeValueAsString(blankName);
+        String nullNameContent = objectMapper.writeValueAsString(nullName);
+
+        MvcResult blankNameResult = mockMvc.perform(RestDocumentationRequestBuilders.post("/api/tags", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(blankNameContent))
+                .andExpect(status().isBadRequest())
+                .andDo(document("tag-create-blankName"))
+                .andReturn();
+
+        MvcResult nullNameResult = mockMvc.perform(RestDocumentationRequestBuilders.post("/api/tags", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(nullNameContent))
+                .andExpect(status().isBadRequest())
+                .andDo(document("tag-create-nullName"))
+                .andReturn();
+
+        assertThat(blankNameResult.getResolvedException()).isInstanceOfAny(RequestValidationFailedException.class);
+        assertThat(nullNameResult.getResolvedException()).isInstanceOfAny(RequestValidationFailedException.class);
+    }
+
+    @Test
+    @DisplayName("태그 생성 실패 - 이미 존재하는 태그 이름인 경우")
+    void givenAlreadyExistsTagNAme_whenCreateTag_thenReturnBadRequest() throws Exception {
+        TagCreateRequest tagCreateRequest = new TagCreateRequest("alreadyExistsTagName");
         String content = objectMapper.writeValueAsString(tagCreateRequest);
+        when(tagService.createTag(any())).thenThrow(new TagNameAlreadyExistsException(tagCreateRequest.getName()));
 
         MvcResult mvcResult = mockMvc.perform(post("/api/tags")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
+                .andDo(document("tag-create-alreadyExistsTagName",
+                        requestFields(
+                                fieldWithPath("name").description("태그 이름")
+                        )))
                 .andReturn();
 
-        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(TagValidationException.class);
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(TagNameAlreadyExistsException.class);
     }
 
     @Test
     @DisplayName("태그 수정")
-    void givenModifyTag_whenNormalCase_thenReturnIsOk() throws Exception {
+    void givenTagModifyRequest_whenModifyTag_thenReturnIsOk() throws Exception {
         TagModifyRequest tagModifyRequest = new TagModifyRequest("tagName");
         TagModifyResponse tagModifyResponse = new TagModifyResponse();
         tagModifyResponse.setName(tagModifyRequest.getName());
@@ -250,30 +286,64 @@ class TagRestControllerTest {
     }
 
     @Test
-    @DisplayName("태그 수정 - Validation 실패")
-    void givenModifyTag_whenValidationFailure_thenReturnBadRequest() throws Exception {
-        TagModifyRequest tagModifyRequest = new TagModifyRequest("   ");
+    @DisplayName("태그 수정 실패 - Validation")
+    void givenEmptyTagName_whenModifyTag_thenReturnBadRequest() throws Exception {
+        TagModifyRequest blankName = new TagModifyRequest("   ");
+        TagModifyRequest nullName = new TagModifyRequest(null);
+
+        String blankNameContent = objectMapper.writeValueAsString(blankName);
+        String nullNameContent = objectMapper.writeValueAsString(nullName);
+
+        MvcResult blankNameResult = mockMvc.perform(RestDocumentationRequestBuilders.put("/api/tags/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(blankNameContent))
+                .andExpect(status().isBadRequest())
+                .andDo(document("tag-modify-blankName"))
+                .andReturn();
+
+        MvcResult nullNameResult = mockMvc.perform(RestDocumentationRequestBuilders.put("/api/tags/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(nullNameContent))
+                .andExpect(status().isBadRequest())
+                .andDo(document("tag-modify-nullName"))
+                .andReturn();
+
+        assertThat(blankNameResult.getResolvedException()).isInstanceOfAny(RequestValidationFailedException.class);
+        assertThat(nullNameResult.getResolvedException()).isInstanceOfAny(RequestValidationFailedException.class);
+    }
+
+    @Test
+    @DisplayName("태그 수정 실패- 이미 존재하는 태그 이름인 경우")
+    void givenAlreadyExistsTagName_whenModifyTag_thenReturnNotFound() throws Exception {
+        TagModifyRequest tagModifyRequest = new TagModifyRequest("alreadyExistsTagName");
 
         String content = objectMapper.writeValueAsString(tagModifyRequest);
+
+        when(tagService.modifyTag(anyInt(), any())).thenThrow(
+                new TagNameAlreadyExistsException(tagModifyRequest.getName()));
 
         MvcResult mvcResult = mockMvc.perform(put("/api/tags/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
+                .andDo(document("tag-modify-alreadyExistsTagName",
+                        requestFields(
+                                fieldWithPath("name").description("태그 이름")
+                        )))
                 .andReturn();
 
-        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(TagValidationException.class);
+        assertThat(mvcResult.getResolvedException()).isInstanceOfAny(TagNameAlreadyExistsException.class);
     }
 
     @Test
     @DisplayName("태그 삭제")
-    void givenDeleteTag_whenNormalCase_thenReturnIsOk() throws Exception {
+    void givenTagId_whenDeleteTag_thenReturnIsOk() throws Exception {
         TagDeleteResponse tagDeleteResponse = new TagDeleteResponse();
         tagDeleteResponse.setName("tagName");
         when(tagService.deleteTag(anyInt())).thenReturn(tagDeleteResponse);
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/tags/{id}", 1))
-                .andExpect(status().isOk())
+                .andExpect(status().isNoContent())
                 .andExpect(jsonPath("$.name").value(tagDeleteResponse.getName()))
                 .andDo(document("tag-delete",
                         pathParameters(
