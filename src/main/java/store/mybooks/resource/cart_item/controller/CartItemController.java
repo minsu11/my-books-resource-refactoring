@@ -33,6 +33,15 @@ public class CartItemController {
     private final CartItemService cartItemService;
 
 
+    /**
+     * methodName : moveDataMysqlToRedis<br>
+     * author : Fiat_lux<br>
+     * description : post 요청으로 key 값을 가져와서 mysql에 있는 장바구니 데이터 redis로 이동 응답 <br>
+     *
+     * @param userId                      : user id
+     * @param cartUserRedisKeyNameRequest : user의 redis의 키값
+     * @return cartDetail list<br>
+     */
     @PostMapping("/get/items")
     public ResponseEntity<List<CartDetail>> moveDataMysqlToRedis(
             @RequestHeader(name = HeaderProperties.USER_ID) Long userId,

@@ -63,7 +63,9 @@ public class DeliveryRuleService {
     }
 
     /**
-     * Gets delivery rule list.
+     * methodName : getDeliveryRuleList<br>
+     * author : Fiat_lux<br>
+     * description : 모든 배송 규칙 데이터 조회 <br>
      *
      * @return the delivery rule list
      */
