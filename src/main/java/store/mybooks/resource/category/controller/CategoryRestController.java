@@ -30,8 +30,8 @@ import store.mybooks.resource.category.dto.response.CategoryGetResponseForUpdate
 import store.mybooks.resource.category.dto.response.CategoryGetResponseForView;
 import store.mybooks.resource.category.dto.response.CategoryIdNameGetResponse;
 import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
-import store.mybooks.resource.category.exception.CategoryValidationException;
 import store.mybooks.resource.category.service.CategoryService;
+import store.mybooks.resource.error.Utils;
 
 /**
  * packageName    : store.mybooks.resource.category.controller
@@ -201,9 +201,7 @@ public class CategoryRestController {
     public ResponseEntity<CategoryCreateResponse> createCategory(
             @Valid @RequestBody CategoryCreateRequest categoryCreateRequest,
             BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new CategoryValidationException(bindingResult);
-        }
+        Utils.validateRequest(bindingResult);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -224,9 +222,7 @@ public class CategoryRestController {
             @PathVariable("id") int id,
             @Valid @RequestBody CategoryModifyRequest categoryModifyRequest,
             BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new CategoryValidationException(bindingResult);
-        }
+        Utils.validateRequest(bindingResult);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
