@@ -2,7 +2,6 @@ package store.mybooks.resource.user.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * packageName    : store.mybooks.resource.user.dto.response<br>
@@ -17,7 +16,6 @@ import lombok.Setter;
  */
 
 @Getter
-@Setter
 @AllArgsConstructor
 public class UserCreateResponse {
 

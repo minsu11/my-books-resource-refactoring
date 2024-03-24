@@ -154,8 +154,6 @@ public class UserService {
 
     public UserLoginResponse loginOauthUser(UserOauthLoginRequest loginRequest) {
 
-
-
         Optional<User> user = userRepository.findByOauthId(loginRequest.getOauthId());
 
         if (user.isPresent()) { // 이미 있으면 = 회원가입한 회원이면
