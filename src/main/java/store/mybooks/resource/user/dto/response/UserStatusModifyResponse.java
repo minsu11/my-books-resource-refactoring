@@ -17,7 +17,6 @@ import lombok.Setter;
  * 2/25/24        masiljangajji       최초 생성
  */
 @Getter
-@Setter
 @AllArgsConstructor
 public class UserStatusModifyResponse {
 

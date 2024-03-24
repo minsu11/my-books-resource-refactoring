@@ -169,7 +169,8 @@ class UserServiceTest {
 
     @Test
     @DisplayName("ModifyUser 실행시 동작테스트")
-    void givenUserModifyRequest_whenCallModifyUser_thenReturnUserModifyResponse(@Mock UserModifyRequest modifyRequest, @Mock User user, @Mock
+    void givenUserModifyRequest_whenCallModifyUser_thenReturnUserModifyResponse(@Mock UserModifyRequest modifyRequest,
+                                                                                @Mock User user, @Mock
                                                                                 UserModifyResponse userModifyResponse) {
 
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
@@ -177,18 +178,19 @@ class UserServiceTest {
         when(modifyRequest.getPhoneNumber()).thenReturn("modify phone");
         when(userMapper.toUserModifyResponse(user)).thenReturn(userModifyResponse);
 
-        userService.modifyUser(1L,modifyRequest);
+        userService.modifyUser(1L, modifyRequest);
 
         verify(userRepository, times(1)).findById(anyLong());
         verify(modifyRequest, times(1)).getName();
         verify(modifyRequest, times(1)).getPhoneNumber();
-        verify(user,times(1)).modifyUser(anyString(),anyString());
+        verify(user, times(1)).modifyUser(anyString(), anyString());
 
     }
 
     @Test
     @DisplayName("회원가입시 유저 이메일 확인")
-    void givenUserEmailRequest_whenCallVerifyUserEmail_thenReturnUserEmailCheckResponse(@Mock UserEmailRequest request) {
+    void givenUserEmailRequest_whenCallVerifyUserEmail_thenReturnUserEmailCheckResponse(
+            @Mock UserEmailRequest request) {
 
         when(request.getEmail()).thenReturn("email@test.com");
         when(userRepository.existsByEmail(anyString())).thenReturn(true);
@@ -197,6 +199,12 @@ class UserServiceTest {
         verify(request, times(1)).getEmail();
         verify(userRepository, times(1)).existsByEmail(anyString());
 
+
+        when(userRepository.existsByEmail(anyString())).thenReturn(false);
+        userService.verifyUserEmail(request);
+
+        verify(request, times(2)).getEmail();
+        verify(userRepository, times(2)).existsByEmail(anyString());
     }
 
     @Test
@@ -350,7 +358,6 @@ class UserServiceTest {
         when(userOauthCreateRequest.getBirthMonthDay()).thenReturn("1217");
         when(userOauthCreateRequest.getPhoneNumber()).thenReturn("01012345678");
         when(userOauthCreateRequest.getName()).thenReturn("test");
-
         userService.createOauthUser(userOauthCreateRequest);
 
         verify(userStatusRepository, times(1)).findById(anyString());
@@ -358,10 +365,24 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 UserStatus 를 이용해 createOauthUser 실행시 UserStatusNotExistException")
+    @DisplayName("존재하지 않는 UserStatus 를 이용해 createOauthUser(UserOauthCreateRequest) 실행시 UserStatusNotExistException")
     void givenNotExistUserStatus_whenCallCreateOauthUser_thenThrowUserStatusNotExistException(
             @Mock UserOauthCreateRequest userOauthCreateRequest) {
         assertThrows(UserStatusNotExistException.class, () -> userService.createOauthUser(userOauthCreateRequest));
+    }
+
+    @Test
+    @DisplayName("이미 존재하는 이메일을 이용해 createOauthUser(userOauthRequest) 실행시 UserAlreadyExistException")
+    void givenNotExistUserStatus_whenCallCreateOauthUser_thenThrowUserAlreadyExistException(
+            @Mock UserOauthRequest userOauthRequest, @Mock UserStatus userStatus, @Mock UserGrade userGrade) {
+
+        when(userStatusRepository.findById(anyString())).thenReturn(Optional.ofNullable(userStatus));
+
+        when(userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(anyString())).thenReturn(
+                Optional.ofNullable(userGrade));
+        when(userOauthRequest.getEmail()).thenReturn("null");
+        when(userRepository.existsByEmail(anyString())).thenReturn(true);
+        assertThrows(UserAlreadyExistException.class, () -> userService.createOauthUser(userOauthRequest));
     }
 
     @Test
@@ -586,7 +607,8 @@ class UserServiceTest {
     @DisplayName("oauth 유저 로그인 실행 (이미 회원가입한 회원인 경우)")
     void givenUserOauthLoginRequest_whenCallLoginOauthUser_thenReturnUserLoginResponse(@Mock
                                                                                        UserOauthLoginRequest loginRequest,
-                                                                                    @Mock User user,@Mock UserStatus userStatus) {
+                                                                                       @Mock User user,
+                                                                                       @Mock UserStatus userStatus) {
 
 
         when(loginRequest.getOauthId()).thenReturn("oauthID");
@@ -594,7 +616,8 @@ class UserServiceTest {
         when(user.getIsAdmin()).thenReturn(false);
         when(user.getUserStatus()).thenReturn(userStatus);
         when(userStatus.getId()).thenReturn("활성");
-        doNothing().when(user).modifyLatestLogin();;
+        doNothing().when(user).modifyLatestLogin();
+        ;
         when(pointHistoryService.saveLoginPoint(anyLong())).thenReturn(true);
         userService.loginOauthUser(loginRequest);
         verify(loginRequest, times(1)).getOauthId();
@@ -603,6 +626,21 @@ class UserServiceTest {
         verify(userStatus, times(1)).getId();
         verify(user, times(1)).modifyLatestLogin();
         verify(pointHistoryService, times(1)).saveLoginPoint(anyLong());
+        verify(userRepository, times(1)).findByOauthId(anyString());
+
+    }
+
+
+    @Test
+    @DisplayName("oauth 유저 로그인 실행 (최초 회원인 경우)")
+    void givenUserOauthLoginRequest_whenCallLoginOauthUserAndFirstLogin_thenReturnUserLoginResponse(@Mock
+                                                                                                    UserOauthLoginRequest loginRequest) {
+
+
+        when(loginRequest.getOauthId()).thenReturn("oauthID");
+        when(userRepository.findByOauthId(anyString())).thenReturn(Optional.empty());
+        userService.loginOauthUser(loginRequest);
+        verify(loginRequest, times(1)).getOauthId();
         verify(userRepository, times(1)).findByOauthId(anyString());
 
     }

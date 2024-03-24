@@ -33,7 +33,6 @@ import store.mybooks.resource.user.exception.UserAlreadyExistException;
 import store.mybooks.resource.user.exception.UserAlreadyResignException;
 import store.mybooks.resource.user.exception.UserLoginFailException;
 import store.mybooks.resource.user.exception.UserNotExistException;
-import store.mybooks.resource.user_address.exception.UserAddressAlreadyExistException;
 import store.mybooks.resource.user_address.exception.UserAddressFullException;
 import store.mybooks.resource.user_address.exception.UserAddressNotExistException;
 import store.mybooks.resource.user_grade.exception.UserGradeIdNotExistException;
@@ -77,6 +76,7 @@ public class GlobalControllerAdvice {
                 .body(exception.getMessage());
     }
 
+
     /**
      * methodName : xxxAlreadyExistsException
      * author : damho-lee
@@ -87,7 +87,7 @@ public class GlobalControllerAdvice {
      */
     @ExceptionHandler({CategoryNameAlreadyExistsException.class, TagNameAlreadyExistsException.class,
             PublisherAlreadyExistException.class, DeliveryRuleNameAlreadyExistsException.class,
-            IsbnAlreadyExistsException.class, UserAlreadyExistException.class, UserAddressAlreadyExistException.class,
+            IsbnAlreadyExistsException.class, UserAlreadyExistException.class,
             PaymentAlreadyExistException.class, OrderDetailStatusAlreadyExistException.class,
             AlreadyReceivedSignUpPoint.class, UserCouponAlreadyUsedException.class, UserCouponNotUsedException.class})
     public ResponseEntity<String> xxxAlreadyExistsException(Exception exception) {
