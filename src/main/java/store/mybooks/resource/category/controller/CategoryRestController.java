@@ -53,7 +53,7 @@ public class CategoryRestController {
     /**
      * methodName : getCategories <br>
      * author : damho-lee <br>
-     * description : ParentCategoryId 를 기준으로 Caetgory 를 오름차수으로 반환. null 인 값이 가장 먼저 반환. 즉, 최상위 카테고리부터 반환됨. <br>
+     * description : ParentCategoryId 를 기준으로 Caetgory 를 오름차순으로 반환. null 인 값이 가장 먼저 반환. 즉, 최상위 카테고리부터 반환됨. <br>
      *
      * @param pageable pagination. (default: page = 0, size = 10)
      * @return ResponseEntity
@@ -244,7 +244,7 @@ public class CategoryRestController {
     @DeleteMapping("/{id}")
     public ResponseEntity<CategoryDeleteResponse> deleteCategory(@PathVariable("id") int id) {
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(HttpStatus.NO_CONTENT)
                 .body(categoryService.deleteCategory(id));
     }
 }

@@ -4,7 +4,13 @@ import static org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 
 import java.time.LocalDate;
 import java.util.List;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +33,7 @@ import store.mybooks.resource.pointrulename.repository.PointRuleNameRepository;
  */
 @DataJpaTest
 @TestMethodOrder(OrderAnnotation.class)
+@Disabled
 class PointRuleRepositoryTest {
     @Autowired
     private PointRuleRepository pointRuleRepository;

@@ -11,6 +11,8 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.headerWit
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -46,6 +48,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import store.mybooks.resource.coupon.exception.CouponNotExistsException;
+import store.mybooks.resource.user.exception.UserNotExistException;
 import store.mybooks.resource.usercoupon.dto.request.UserCouponCreateRequest;
 import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForMyPage;
 import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForOrder;
@@ -83,7 +87,10 @@ class UserCouponRestControllerTest {
                RestDocumentationContextProvider restDocumentation) {
 
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .apply(documentationConfiguration(restDocumentation))
+                .apply(documentationConfiguration(restDocumentation)
+                        .operationPreprocessors()
+                        .withRequestDefaults(modifyUris(), prettyPrint())
+                        .withResponseDefaults(prettyPrint()))
                 .build();
     }
 
@@ -154,10 +161,9 @@ class UserCouponRestControllerTest {
         when(userCouponService.getUserCoupons(anyLong(), any())).thenReturn(userCouponPage);
 
         mockMvc.perform(
-                        get("/api/user-coupon/page")
+                        get("/api/user-coupon/page?page=" + pageable.getPageNumber()
+                                + "&size=" + pageable.getPageSize())
                                 .header("X-USER-ID", 1)
-                                .param("page", String.valueOf(pageable.getPageNumber()))
-                                .param("size", String.valueOf(pageable.getPageSize()))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()").value(2))
@@ -274,7 +280,7 @@ class UserCouponRestControllerTest {
                 .andExpect(jsonPath("$[1].userCouponId").value(secondUserCoupon.getUserCouponId()))
                 .andExpect(jsonPath("$[2].userCouponId").value(thirdUserCoupon.getUserCouponId()))
                 .andExpect(jsonPath("$[3].userCouponId").value(fourthUserCoupon.getUserCouponId()))
-                .andDo(document("user-coupon-list",
+                .andDo(document("user_coupon-usable-bookCategoryCoupon",
                         requestHeaders(
                                 headerWithName("X-USER-ID").description("회원 아이디")
                         ),
@@ -349,14 +355,29 @@ class UserCouponRestControllerTest {
 
         when(userCouponService.getUsableTotalCoupons(anyLong())).thenReturn(userCouponList);
 
-        mockMvc.perform(get("/api/user-coupon/usable-coupon")
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/user-coupon/usable-coupon")
                         .header("X-USER-ID", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(userCouponList.size()))
                 .andExpect(jsonPath("$[0].userCouponId").value(firstUserCoupon.getUserCouponId()))
                 .andExpect(jsonPath("$[1].userCouponId").value(secondUserCoupon.getUserCouponId()))
                 .andExpect(jsonPath("$[2].userCouponId").value(thirdUserCoupon.getUserCouponId()))
-                .andExpect(jsonPath("$[3].userCouponId").value(fourthUserCoupon.getUserCouponId()));
+                .andExpect(jsonPath("$[3].userCouponId").value(fourthUserCoupon.getUserCouponId()))
+                .andDo(document("user_coupon-usable-totalUserCoupon",
+                        requestHeaders(
+                                headerWithName("X-USER-ID").description("회원 아이디")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].userCouponId").description("회원 쿠폰 아이디"),
+                                fieldWithPath("[].name").description("쿠폰 이름"),
+                                fieldWithPath("[].orderMin").description("최소 주문 금액"),
+                                fieldWithPath("[].discountRateOrCost").description("할인율 / 할인금액"),
+                                fieldWithPath("[].maxDiscountCost").description("최대 할인 금액 (정액할인쿠폰인 경우 할인 금액과 같음)"),
+                                fieldWithPath("[].rate").description("정률할인쿠폰인지 여부"),
+                                fieldWithPath("[].startDate").description("쿠폰 사용기간(시작일)"),
+                                fieldWithPath("[].endDate").description("쿠폰 사용기간(종료일)")
+                        )
+                ));
     }
 
     @Test
@@ -432,6 +453,38 @@ class UserCouponRestControllerTest {
     }
 
     @Test
+    @DisplayName("회원 쿠폰 생성 실패 - 존재하지 않는 couponId 인 경우")
+    void givenNotExistsCouponId_whenCreateUserCoupon_thenThrowCouponNotExistsException() throws Exception {
+        UserCouponCreateRequest userCouponCreateRequest = new UserCouponCreateRequest();
+        ReflectionTestUtils.setField(userCouponCreateRequest, "userId", 1L);
+        ReflectionTestUtils.setField(userCouponCreateRequest, "couponId", 1L);
+        String content = objectMapper.writeValueAsString(userCouponCreateRequest);
+        doThrow(new CouponNotExistsException(1)).when(userCouponService).createUserCoupon(any());
+
+        mockMvc.perform(post("/api/user-coupon")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isNotFound())
+                .andDo(document("user_coupon-create-fail-validation-couponNotExists"));
+    }
+
+    @Test
+    @DisplayName("회원 쿠폰 생성 실패 - 존재하지 않는 userId 인 경우")
+    void givenNotExistsUserId_whenCreateUserCoupon_thenThrowUserNotExistsException() throws Exception {
+        UserCouponCreateRequest userCouponCreateRequest = new UserCouponCreateRequest();
+        ReflectionTestUtils.setField(userCouponCreateRequest, "userId", 1L);
+        ReflectionTestUtils.setField(userCouponCreateRequest, "couponId", 1L);
+        String content = objectMapper.writeValueAsString(userCouponCreateRequest);
+        doThrow(new UserNotExistException(1L)).when(userCouponService).createUserCoupon(any());
+
+        mockMvc.perform(post("/api/user-coupon")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isNotFound())
+                .andDo(document("user_coupon-create-fail-validation-userNotExists"));
+    }
+
+    @Test
     @DisplayName("회원 쿠폰 사용")
     void givenUserCouponId_whenUseUserCoupon_thenModifyUserCoupon() throws Exception {
         doNothing().when(userCouponService).useUserCoupon(anyLong());
@@ -462,13 +515,28 @@ class UserCouponRestControllerTest {
     }
 
     @Test
+    @DisplayName("회원 쿠폰 사용 - 존재하지 않는 회원 쿠폰")
+    void givenNotExistsUserCouponId_whenUseUserCoupon_thenModifyUserCoupon() throws Exception {
+        doThrow(new UserCouponNotExistsException(1L)).when(userCouponService).useUserCoupon(anyLong());
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/user-coupon/use/{userCouponId}", 1L))
+                .andExpect(status().isNotFound())
+                .andDo(document("user_coupon-use-fail-notExistsUserCoupon",
+                        pathParameters(
+                                parameterWithName("userCouponId").description("회원 쿠폰 아이디")
+                        )));
+
+        verify(userCouponService, times(1)).useUserCoupon(anyLong());
+    }
+
+    @Test
     @DisplayName("회원 쿠폰 돌려줌")
     void givenUserCouponId_whenGiveBackUserCoupon_thenModifyUserCoupon() throws Exception {
         doNothing().when(userCouponService).giveBackUserCoupon(anyLong());
 
         mockMvc.perform(RestDocumentationRequestBuilders.put("/api/user-coupon/return/{userCouponId}", 1L))
                 .andExpect(status().isOk())
-                .andDo(document("user-coupon-use",
+                .andDo(document("user-coupon-giveBack",
                         pathParameters(
                                 parameterWithName("userCouponId").description("회원 쿠폰 아이디")
                         )));
@@ -478,17 +546,32 @@ class UserCouponRestControllerTest {
 
     @Test
     @DisplayName("회원 쿠폰 돌려줌 - 사용하지 않은 쿠폰")
-    void givenNotUsedUserCouponId_whenUseUserCoupon_thenModifyUserCoupon() throws Exception {
+    void givenNotUsedUserCouponId_whenGiveBackUserCoupon_thenModifyUserCoupon() throws Exception {
         doThrow(new UserCouponNotUsedException(1L)).when(userCouponService).giveBackUserCoupon(anyLong());
 
         mockMvc.perform(RestDocumentationRequestBuilders.put("/api/user-coupon/return/{userCouponId}", 1L))
                 .andExpect(status().isNotFound())
-                .andDo(document("user_coupon-use-fail-notUsedCoupon",
+                .andDo(document("user_coupon-giveBack-fail-notUsedCoupon",
                         pathParameters(
                                 parameterWithName("userCouponId").description("회원 쿠폰 아이디")
                         )));
 
         verify(userCouponService, times(1)).giveBackUserCoupon(anyLong());
+    }
+
+    @Test
+    @DisplayName("회원 쿠폰 사용 - 존재하지 않는 회원 쿠폰")
+    void givenNotExistsUserCouponId_whenGiveBackUserCoupon_thenModifyUserCoupon() throws Exception {
+        doThrow(new UserCouponNotExistsException(1L)).when(userCouponService).useUserCoupon(anyLong());
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/user-coupon/use/{userCouponId}", 1L))
+                .andExpect(status().isNotFound())
+                .andDo(document("user_coupon-giveBack-fail-notExistsUserCoupon",
+                        pathParameters(
+                                parameterWithName("userCouponId").description("회원 쿠폰 아이디")
+                        )));
+
+        verify(userCouponService, times(1)).useUserCoupon(anyLong());
     }
 
     @Test

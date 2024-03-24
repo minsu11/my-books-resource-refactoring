@@ -1,0 +1,250 @@
+= User Coupon
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectnums:
+:sectlinks:
+:sectanchors:
+
+== 회원 쿠폰 API
+
+회원쿠폰 생성, 사용, 조회를 할 수 있습니다.
+
+=== 회원 쿠폰 생성(나눠주기)
+
+요청
+
+include::{snippets}/user-coupon-create/http-request.adoc[]
+
+요청 파라미터
+
+include::{snippets}/user-coupon-create/request-fields.adoc[]
+
+응답
+
+include::{snippets}/user-coupon-create/http-response.adoc[]
+
+예외
+
+==== 회원 아이디가 null 인 경우
+
+요청
+
+include::{snippets}/user_coupon-create-fail-validation-couponIdNull/http-request.adoc[]
+
+응답
+
+include::{snippets}/user_coupon-create-fail-validation-couponIdNull/http-response.adoc[]
+
+==== 회원 아이디가 1보다 작은 경우
+
+요청
+
+include::{snippets}/user_coupon-create-fail-validation-userIdNegative/http-request.adoc[]
+
+응답
+
+include::{snippets}/user_coupon-create-fail-validation-userIdNegative/http-response.adoc[]
+
+==== 쿠폰 아이디가 null 인 경우
+
+요청
+
+include::{snippets}/user_coupon-create-fail-validation-couponIdNull/http-request.adoc[]
+
+응답
+
+include::{snippets}/user_coupon-create-fail-validation-couponIdNull/http-response.adoc[]
+
+==== 쿠폰 아이디가 1 보다 작은 경우
+
+요청
+
+include::{snippets}/user_coupon-create-fail-validation-couponIdNegative/http-request.adoc[]
+
+응답
+
+include::{snippets}/user_coupon-create-fail-validation-couponIdNegative/http-response.adoc[]
+
+==== 쿠폰이 존재하지 않는 경우
+
+요청
+
+include::{snippets}/user_coupon-create-fail-validation-couponNotExists/http-request.adoc[]
+
+응답
+
+include::{snippets}/user_coupon-create-fail-validation-couponNotExists/http-response.adoc[]
+
+==== 회원이 존재하지 않는 경우
+
+요청
+
+include::{snippets}/user_coupon-create-fail-validation-userNotExists/http-request.adoc[]
+
+응답
+
+include::{snippets}/user_coupon-create-fail-validation-userNotExists/http-response.adoc[]
+
+=== 회원 쿠폰 사용
+
+요청
+
+include::{snippets}/user-coupon-use/http-request.adoc[]
+
+요청 파라미터
+
+include::{snippets}/user-coupon-use/path-parameters.adoc[]
+
+응답
+
+include::{snippets}/user-coupon-use/http-response.adoc[]
+
+예외
+
+==== 이미 사용한 쿠폰인 경우
+
+요청
+
+include::{snippets}/user_coupon-use-fail-alreadyUsedCoupon/http-request.adoc[]
+
+응답
+
+include::{snippets}/user_coupon-use-fail-alreadyUsedCoupon/http-response.adoc[]
+
+==== 회원 쿠폰이 없는 경우
+
+요청
+
+include::{snippets}/user_coupon-use-fail-notExistsUserCoupon/http-request.adoc[]
+
+응답
+
+include::{snippets}/user_coupon-use-fail-notExistsUserCoupon/http-response.adoc[]
+
+=== 회원 쿠폰 돌려줌
+
+요청
+
+include::{snippets}/user-coupon-giveBack/http-request.adoc[]
+
+응답
+
+include::{snippets}/user-coupon-giveBack/http-response.adoc[]
+
+예외
+
+==== 사용하지 않은 쿠폰
+
+요청
+
+include::{snippets}/user_coupon-giveBack-fail-notUsedCoupon/http-request.adoc[]
+
+응답
+
+include::{snippets}/user_coupon-giveBack-fail-notUsedCoupon/http-response.adoc[]
+
+==== 존재하지 않는 회원 쿠폰
+
+요청
+
+include::{snippets}/user_coupon-giveBack-fail-notExistsUserCoupon/http-request.adoc[]
+
+응답
+
+include::{snippets}/user_coupon-giveBack-fail-notExistsUserCoupon/http-response.adoc[]
+
+=== 회원 쿠폰 페이지 조회
+
+요청
+
+include::{snippets}/user-coupon-page/http-request.adoc[]
+
+요청 파라미터
+
+include::{snippets}/user-coupon-page/request-headers.adoc[]
+include::{snippets}/user-coupon-page/request-parameters.adoc[]
+
+응답
+
+include::{snippets}/user-coupon-page/http-response.adoc[]
+
+응답 파라미터
+
+include::{snippets}/user-coupon-page/response-fields.adoc[]
+
+=== 회원 쿠폰 조회
+
+요청
+
+include::{snippets}/user-coupon-get/http-request.adoc[]
+
+요청 파라미터
+
+include::{snippets}/user-coupon-get/path-parameters.adoc[]
+
+응답
+
+include::{snippets}/user-coupon-get/http-response.adoc[]
+
+응답 파라미터
+
+include::{snippets}/user-coupon-get/response-fields.adoc[]
+
+예외
+
+==== 없는 회원쿠폰 아이디인 경우
+
+요쳥
+
+include::{snippets}/user-coupon-get-exception/http-request.adoc[]
+
+응답
+
+include::{snippets}/user-coupon-get-exception/http-response.adoc[]
+
+=== 적용 가능한 도서, 카테고리 회원 쿠폰 조회
+
+요청
+
+include::{snippets}/user_coupon-usable-bookCategoryCoupon/http-request.adoc[]
+
+요청 파라미터
+
+include::{snippets}/user_coupon-usable-bookCategoryCoupon/request-headers.adoc[]
+include::{snippets}/user_coupon-usable-bookCategoryCoupon/path-parameters.adoc[]
+
+응답
+
+include::{snippets}/user_coupon-usable-bookCategoryCoupon/http-response.adoc[]
+
+응답 파라미터
+
+include::{snippets}/user_coupon-usable-bookCategoryCoupon/response-fields.adoc[]
+
+=== 적용 가능한 전체 회원 쿠폰 조회
+
+요청
+
+include::{snippets}/user_coupon-usable-totalUserCoupon/http-request.adoc[]
+
+요청 파라미터
+
+include::{snippets}/user_coupon-usable-totalUserCoupon/request-headers.adoc[]
+
+응답
+
+include::{snippets}/user_coupon-usable-totalUserCoupon/http-response.adoc[]
+
+응답 파라미터
+
+include::{snippets}/user_coupon-usable-totalUserCoupon/response-fields.adoc[]
+
+
+
+
+
+
+

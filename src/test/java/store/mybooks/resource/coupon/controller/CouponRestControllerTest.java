@@ -9,11 +9,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -46,7 +49,10 @@ import org.springframework.web.context.WebApplicationContext;
 import store.mybooks.resource.coupon.dto.request.CouponCreateRequest;
 import store.mybooks.resource.coupon.dto.response.CouponGetResponse;
 import store.mybooks.resource.coupon.exception.CouponCannotDeleteException;
+import store.mybooks.resource.coupon.exception.CouponDateIncorrectException;
+import store.mybooks.resource.coupon.exception.CouponInCompatibleType;
 import store.mybooks.resource.coupon.exception.CouponNotExistsException;
+import store.mybooks.resource.coupon.exception.OrderMinLessThanDiscountCostException;
 import store.mybooks.resource.coupon.service.CouponService;
 import store.mybooks.resource.utils.TimeUtils;
 
@@ -77,7 +83,10 @@ class CouponRestControllerTest {
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .apply(documentationConfiguration(restDocumentation))
+                .apply(documentationConfiguration(restDocumentation)
+                        .operationPreprocessors()
+                        .withRequestDefaults(modifyUris(), prettyPrint())
+                        .withResponseDefaults(prettyPrint()))
                 .build();
 
         couponCreateRequest = new CouponCreateRequest();
@@ -158,23 +167,17 @@ class CouponRestControllerTest {
                 new PageImpl<>(couponList.subList(offset, offset + pageable.getPageSize()), pageable,
                         couponList.size());
         when(couponService.getCoupons(any())).thenReturn(couponPage);
-        String content = objectMapper.writeValueAsString(pageable);
 
-        mockMvc.perform(get("/api/coupons/page")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content))
+        mockMvc.perform(get("/api/coupons/page?page=" + pageable.getPageNumber()
+                        + "&size=" + pageable.getPageSize()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()").value(pageable.getPageSize()))
                 .andExpect(jsonPath("$.content[0].id").value(thirdCoupon.getId()))
                 .andExpect(jsonPath("$.content[1].id").value(fourthCoupon.getId()))
                 .andDo(document("coupon-get-page",
-                        requestFields(
-                                fieldWithPath("pageNumber").description("페이지"),
-                                fieldWithPath("pageSize").description("사이즈"),
-                                fieldWithPath("sort.*").ignored(),
-                                fieldWithPath("offset").ignored(),
-                                fieldWithPath("paged").ignored(),
-                                fieldWithPath("unpaged").ignored()
+                        requestParameters(
+                                parameterWithName("page").description("요청 페이지 번호(0부터 시작, default = 0)"),
+                                parameterWithName("size").description("페이지 사이즈(default = 10)")
                         ),
                         responseFields(
                                 fieldWithPath("content").description("리스트"),
@@ -362,7 +365,7 @@ class CouponRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(discountRateZero))
                 .andExpect(status().isBadRequest())
-                .andDo(document("coupon-create-fail-validation-maxDiscountCostZero"));
+                .andDo(document("coupon-create-fail-validation-discountRate"));
     }
 
     @Test
@@ -405,6 +408,78 @@ class CouponRestControllerTest {
                         .content(endDateNull))
                 .andExpect(status().isBadRequest())
                 .andDo(document("coupon-create-fail-validation-endDateNull"));
+    }
+
+    @Test
+    @DisplayName("쿠폰 생성 실패 - CouponUtilsValidation 쿠폰 시작일이 종료일보다 나중인 경우")
+    void givenStartDateIsLaterThanEndDateCoupon_whenCreateCoupon_thenThrowCouponDateIncorrectException()
+            throws Exception {
+        ReflectionTestUtils.setField(couponCreateRequest, "startDate", TimeUtils.nowDate().plusDays(10));
+        ReflectionTestUtils.setField(couponCreateRequest, "endDate", TimeUtils.nowDate().plusDays(7));
+        String startDateLaterThanEndDate = objectMapper.writeValueAsString(couponCreateRequest);
+
+        doThrow(new CouponDateIncorrectException(couponCreateRequest.getStartDate(), couponCreateRequest.getEndDate()))
+                .when(couponService).createCoupon(any());
+
+        mockMvc.perform(post("/api/coupons")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(startDateLaterThanEndDate))
+                .andExpect(status().isBadRequest())
+                .andDo(document("coupon-create-fail-couponUtils-validation-fail-startDateLaterThanEndDate"));
+    }
+
+    @Test
+    @DisplayName("쿠폰 생성 실패 - CouponUtilsValidation 도서 아이디, 카테고리 아이디 둘 다 설정된 경우")
+    void givenBothBookIdAndCategoryIdIsSelectedCoupon_whenCreateCoupon_thenThrowCouponInCompatibleType()
+            throws Exception {
+        ReflectionTestUtils.setField(couponCreateRequest, "bookId", 1L);
+        ReflectionTestUtils.setField(couponCreateRequest, "categoryId", 1);
+        String invalidTypeCoupon = objectMapper.writeValueAsString(couponCreateRequest);
+
+        doThrow(new CouponInCompatibleType()).when(couponService).createCoupon(any());
+
+        mockMvc.perform(post("/api/coupons")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidTypeCoupon))
+                .andExpect(status().isBadRequest())
+                .andDo(document("coupon-create-fail-couponUtils-validation-fail-bookIdAndCategoryIdSelected"));
+    }
+
+    @Test
+    @DisplayName("쿠폰 생성 실패 - CouponUtilsValidation 쿠폰 대상이 전체, 도서, 카테고리 둘 다 아닌 경우")
+    void givenBothDiscountCostAndDiscountRateIsSelected_whenCreateCoupon_thenThrowCouponInCompatibleType()
+            throws Exception {
+        ReflectionTestUtils.setField(couponCreateRequest, "discountCost", 10000);
+        ReflectionTestUtils.setField(couponCreateRequest, "discountRate", 20);
+        String invalidTypeCoupon = objectMapper.writeValueAsString(couponCreateRequest);
+
+        doThrow(new CouponInCompatibleType()).when(couponService).createCoupon(any());
+
+        mockMvc.perform(post("/api/coupons")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidTypeCoupon))
+                .andExpect(status().isBadRequest())
+                .andDo(document("coupon-create-fail-couponUtils-validation-fail-discountCostAndDiscountRateSelected"));
+    }
+
+    @Test
+    @DisplayName("쿠폰 생성 실패 - CouponUtilsValidation 최소 주문 금액이 할인 금액보다 작은 경우")
+    void givenOrderMinSmallerThanDiscountCost_whenCreateCoupon_thenThrowCouponInCompatibleType()
+            throws Exception {
+        ReflectionTestUtils.setField(couponCreateRequest, "discountRate", null);
+        ReflectionTestUtils.setField(couponCreateRequest, "discountCost", 10000);
+        ReflectionTestUtils.setField(couponCreateRequest, "orderMin", 5000);
+        String invalidTypeCoupon = objectMapper.writeValueAsString(couponCreateRequest);
+
+        doThrow(new OrderMinLessThanDiscountCostException(
+                couponCreateRequest.getOrderMin(), couponCreateRequest.getDiscountCost()))
+                .when(couponService).createCoupon(any());
+
+        mockMvc.perform(post("/api/coupons")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidTypeCoupon))
+                .andExpect(status().isBadRequest())
+                .andDo(document("coupon-create-fail-couponUtils-validation-fail-orderMinSmallerThanDiscountCost"));
     }
 
     @Test
