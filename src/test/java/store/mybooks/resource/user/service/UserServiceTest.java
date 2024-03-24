@@ -26,11 +26,15 @@ import store.mybooks.resource.user.dto.request.UserEmailRequest;
 import store.mybooks.resource.user.dto.request.UserGradeModifyRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
 import store.mybooks.resource.user.dto.request.UserOauthCreateRequest;
+import store.mybooks.resource.user.dto.request.UserOauthLoginRequest;
+import store.mybooks.resource.user.dto.request.UserOauthRequest;
 import store.mybooks.resource.user.dto.request.UserPasswordModifyRequest;
 import store.mybooks.resource.user.dto.request.UserStatusModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
+import store.mybooks.resource.user.dto.response.UserModifyResponse;
+import store.mybooks.resource.user.dto.response.UserOauthCreateResponse;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user.exception.UserAlreadyExistException;
 import store.mybooks.resource.user.exception.UserAlreadyResignException;
@@ -76,6 +80,7 @@ class UserServiceTest {
 
     @Mock
     UserMapper userMapper;
+
 
     @Test
     @DisplayName("이미 사용중인 email 을 담고있는 UserCreateRequest 를 이용해 CreateUser 실행시 UserAlreadyExistException")
@@ -160,6 +165,38 @@ class UserServiceTest {
     void givenNotExistUserId_whenCallModifyUser_thenThrowUserNotExistException(@Mock UserModifyRequest modifyRequest) {
 
         assertThrows(UserNotExistException.class, () -> userService.modifyUser(1L, modifyRequest));
+    }
+
+    @Test
+    @DisplayName("ModifyUser 실행시 동작테스트")
+    void givenUserModifyRequest_whenCallModifyUser_thenReturnUserModifyResponse(@Mock UserModifyRequest modifyRequest, @Mock User user, @Mock
+                                                                                UserModifyResponse userModifyResponse) {
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
+        when(modifyRequest.getName()).thenReturn("modify name");
+        when(modifyRequest.getPhoneNumber()).thenReturn("modify phone");
+        when(userMapper.toUserModifyResponse(user)).thenReturn(userModifyResponse);
+
+        userService.modifyUser(1L,modifyRequest);
+
+        verify(userRepository, times(1)).findById(anyLong());
+        verify(modifyRequest, times(1)).getName();
+        verify(modifyRequest, times(1)).getPhoneNumber();
+        verify(user,times(1)).modifyUser(anyString(),anyString());
+
+    }
+
+    @Test
+    @DisplayName("회원가입시 유저 이메일 확인")
+    void givenUserEmailRequest_whenCallVerifyUserEmail_thenReturnUserEmailCheckResponse(@Mock UserEmailRequest request) {
+
+        when(request.getEmail()).thenReturn("email@test.com");
+        when(userRepository.existsByEmail(anyString())).thenReturn(true);
+        userService.verifyUserEmail(request);
+
+        verify(request, times(1)).getEmail();
+        verify(userRepository, times(1)).existsByEmail(anyString());
+
     }
 
     @Test
@@ -354,7 +391,7 @@ class UserServiceTest {
 
         verify(userRepository, times(1)).findByEmail(anyString());
         verify(user, times(1)).modifyLatestLogin();
-        verify(pointHistoryService,times(1)).saveLoginPoint(user.getId());
+        verify(pointHistoryService, times(1)).saveLoginPoint(user.getId());
     }
 
     @Test
@@ -475,5 +512,100 @@ class UserServiceTest {
         assertThrows(UserStatusNotExistException.class,
                 () -> userService.verifyLockUser(anyLong(), userPasswordModifyRequest));
     }
+
+    @Test
+    @DisplayName("oauth 유저가 정보제공 동의 한 경우 회원가입 실행")
+    void givenCreateOauthUser_whenCallCreateOauthUser_thenReturnUserOauthCreateResponse(@Mock
+                                                                                        UserOauthCreateRequest createRequest,
+                                                                                        @Mock UserStatus userStatus,
+                                                                                        @Mock UserGrade userGrade,
+                                                                                        @Mock User mockUser) {
+
+
+        when(userStatusRepository.findById(anyString())).thenReturn(Optional.ofNullable(userStatus));
+        when(userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(anyString())).thenReturn(
+                Optional.ofNullable(userGrade));
+
+        when(createRequest.getEmail()).thenReturn("email@test.com");
+        when(createRequest.getBirthMonthDay()).thenReturn("12-17");
+        when(createRequest.getPhoneNumber()).thenReturn("01012345678");
+        when(createRequest.getName()).thenReturn("name");
+        when(createRequest.getOauthId()).thenReturn("oauthId");
+        when(userRepository.save(any(User.class))).thenReturn(mockUser);
+        when(userMapper.toUserOauthCreateResponse(any(User.class))).thenReturn(any(UserOauthCreateResponse.class));
+        userService.createOauthUser(createRequest);
+
+
+        verify(createRequest, times(1)).getEmail();
+        verify(createRequest, times(1)).getBirthMonthDay();
+        verify(createRequest, times(1)).getPhoneNumber();
+        verify(createRequest, times(1)).getName();
+        verify(createRequest, times(1)).getOauthId();
+        verify(userStatusRepository, times(1)).findById(anyString());
+        verify(userGradeRepository, times(1)).findByUserGradeNameIdAndIsAvailableIsTrue(anyString());
+        verify(userRepository, times(1)).save(any(User.class));
+        verify(userMapper, times(1)).toUserOauthCreateResponse(any(User.class));
+
+    }
+
+    @Test
+    @DisplayName("oauth 유저가 정보제공 비동의 한 경우 회원가입 실행")
+    void givenUserRequest_whenCallCreateOauthUser_thenReturnUserOauthCreateResponse(@Mock
+                                                                                    UserOauthRequest oauthRequest,
+                                                                                    @Mock UserStatus userStatus,
+                                                                                    @Mock UserGrade userGrade,
+                                                                                    @Mock User mockUser) {
+
+        when(userStatusRepository.findById(anyString())).thenReturn(Optional.ofNullable(userStatus));
+        when(userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(anyString())).thenReturn(
+                Optional.ofNullable(userGrade));
+
+        when(oauthRequest.getEmail()).thenReturn("email@test.com");
+        when(oauthRequest.getBirth()).thenReturn(LocalDate.now());
+        when(oauthRequest.getPhoneNumber()).thenReturn("01012345678");
+        when(oauthRequest.getName()).thenReturn("name");
+        when(oauthRequest.getOauthId()).thenReturn("oauthId");
+        when(userRepository.save(any(User.class))).thenReturn(mockUser);
+        when(userRepository.existsByEmail(anyString())).thenReturn(false);
+        when(userMapper.toUserOauthCreateResponse(any(User.class))).thenReturn(any(UserOauthCreateResponse.class));
+        userService.createOauthUser(oauthRequest);
+
+        verify(oauthRequest, times(2)).getEmail();
+        verify(oauthRequest, times(1)).getBirth();
+        verify(oauthRequest, times(1)).getPhoneNumber();
+        verify(oauthRequest, times(1)).getName();
+        verify(oauthRequest, times(1)).getOauthId();
+        verify(userStatusRepository, times(1)).findById(anyString());
+        verify(userGradeRepository, times(1)).findByUserGradeNameIdAndIsAvailableIsTrue(anyString());
+        verify(userRepository, times(1)).save(any(User.class));
+        verify(userMapper, times(1)).toUserOauthCreateResponse(any(User.class));
+
+    }
+
+    @Test
+    @DisplayName("oauth 유저 로그인 실행 (이미 회원가입한 회원인 경우)")
+    void givenUserOauthLoginRequest_whenCallLoginOauthUser_thenReturnUserLoginResponse(@Mock
+                                                                                       UserOauthLoginRequest loginRequest,
+                                                                                    @Mock User user,@Mock UserStatus userStatus) {
+
+
+        when(loginRequest.getOauthId()).thenReturn("oauthID");
+        when(userRepository.findByOauthId(anyString())).thenReturn(Optional.ofNullable(user));
+        when(user.getIsAdmin()).thenReturn(false);
+        when(user.getUserStatus()).thenReturn(userStatus);
+        when(userStatus.getId()).thenReturn("활성");
+        doNothing().when(user).modifyLatestLogin();;
+        when(pointHistoryService.saveLoginPoint(anyLong())).thenReturn(true);
+        userService.loginOauthUser(loginRequest);
+        verify(loginRequest, times(1)).getOauthId();
+        verify(user, times(1)).getIsAdmin();
+        verify(user, times(1)).getUserStatus();
+        verify(userStatus, times(1)).getId();
+        verify(user, times(1)).modifyLatestLogin();
+        verify(pointHistoryService, times(1)).saveLoginPoint(anyLong());
+        verify(userRepository, times(1)).findByOauthId(anyString());
+
+    }
+
 
 }
