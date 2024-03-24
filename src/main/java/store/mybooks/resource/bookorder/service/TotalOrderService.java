@@ -2,6 +2,7 @@ package store.mybooks.resource.bookorder.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.book.dto.response.BookStockResponse;
@@ -44,6 +45,7 @@ import store.mybooks.resource.usercoupon.service.UserCouponService;
  * -----------------------------------------------------------<br>
  * 3/16/24        minsu11       최초 생성<br>
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TotalOrderService {
@@ -104,6 +106,10 @@ public class TotalOrderService {
         earnPoint(bookOrderInfo, userId);
 
         bookOrderService.updateBookOrderStatus(bookOrderInfo.getNumber(), BookOrderStatusName.ORDER_COMPLETED);
+        log.debug("결제 완");
+        log.debug("value : {}", response.getPayId());
+        log.debug("value : {}", response.getTotalAmount());
+        log.debug("value : {}", response.getPaymentKey());
         return response;
     }
 
@@ -221,6 +227,7 @@ public class TotalOrderService {
      */
     @Transactional
     public void cancelOrderProcess(PayCancelRequest request, Long userId) {
+        System.out.println("함수 들어왔는지");
         // 주문의 상태 값 변경
         BookOrderInfoPayResponse bookOrderInfo = bookOrderService.getBookInfo(request.getOrderNumber());
         bookOrderService.updateBookOrderStatus(bookOrderInfo.getNumber(), BookOrderStatusName.ORDER_CANCEL);

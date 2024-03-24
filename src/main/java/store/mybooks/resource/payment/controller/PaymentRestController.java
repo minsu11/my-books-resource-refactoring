@@ -80,6 +80,9 @@ public class PaymentRestController {
     @PostMapping("/cancel")
     public ResponseEntity<Void> cancelProcessing(@RequestBody PayCancelRequest request,
                                                  @RequestHeader(name = HeaderProperties.USER_ID) Long userId) {
+        log.debug("취소 된 후 들어오는지: {}", request.getOrderNumber());
+        log.debug("취소 된 후 들어오는지: {}", request.getRequestedAt());
+        log.debug("취소 된 후 들어오는지: {}", request.getOrderNumber());
         totalOrderService.cancelOrderProcess(request, userId);
         return ResponseEntity.status(HttpStatus.OK)
                 .build();
