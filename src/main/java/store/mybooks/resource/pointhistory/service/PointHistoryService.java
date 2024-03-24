@@ -73,7 +73,7 @@ public class PointHistoryService {
      * <br> *
      *
      * @param pageable 페이징
-     * @param userId
+     * @param userId   회원 아이디
      * @return page
      */
     @Transactional(readOnly = true)
@@ -143,6 +143,13 @@ public class PointHistoryService {
         return true;
     }
 
+    /**
+     * methodName : saveOauthLoginPoint <br>
+     * author : damho-lee <br>
+     * description : OAuth 로 로그인하는 회원의 로그인 포인트 적립.<br>
+     *
+     * @param userId 회원 아이디
+     */
     public void saveOauthLoginPoint(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
 
