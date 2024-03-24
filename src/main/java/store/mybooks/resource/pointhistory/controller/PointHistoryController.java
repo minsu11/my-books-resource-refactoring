@@ -1,7 +1,6 @@
 package store.mybooks.resource.pointhistory.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -15,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.config.HeaderProperties;
 import store.mybooks.resource.pointhistory.dto.request.PointHistoryCreateRequest;
 import store.mybooks.resource.pointhistory.dto.response.PointHistoryCreateResponse;
-import store.mybooks.resource.pointhistory.dto.response.PointHistoryResponse;
 import store.mybooks.resource.pointhistory.dto.response.PointResponse;
+import store.mybooks.resource.pointhistory.dto.response.PointResponseForUser;
 import store.mybooks.resource.pointhistory.service.PointHistoryService;
 
 /**
@@ -62,7 +61,7 @@ public class PointHistoryController {
      * @return response entity
      */
     @GetMapping("/history")
-    public ResponseEntity<Page<PointHistoryResponse>> getPointHistory(
+    public ResponseEntity<PointResponseForUser> getPointHistory(
             @RequestHeader(name = HeaderProperties.USER_ID) Long userId,
             @PageableDefault Pageable pageable) {
         return ResponseEntity
