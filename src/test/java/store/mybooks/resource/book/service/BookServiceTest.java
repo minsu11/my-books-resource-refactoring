@@ -1,5 +1,6 @@
 package store.mybooks.resource.book.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -14,6 +15,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
@@ -23,12 +25,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
+import store.mybooks.resource.author.dto.response.AuthorGetResponse;
 import store.mybooks.resource.book.dto.request.BookCreateRequest;
 import store.mybooks.resource.book.dto.request.BookModifyRequest;
+import store.mybooks.resource.book.dto.response.BookBriefResponse;
 import store.mybooks.resource.book.dto.response.BookCreateResponse;
+import store.mybooks.resource.book.dto.response.BookDetailResponse;
 import store.mybooks.resource.book.dto.response.BookModifyResponse;
+import store.mybooks.resource.book.dto.response.BookPublicationDateResponse;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.exception.IsbnAlreadyExistsException;
@@ -38,20 +48,26 @@ import store.mybooks.resource.bookauthor.dto.request.BookAuthorCreateRequest;
 import store.mybooks.resource.bookauthor.service.BookAuthorService;
 import store.mybooks.resource.bookcategory.dto.request.BookCategoryCreateRequest;
 import store.mybooks.resource.bookcategory.service.BookCategoryService;
+import store.mybooks.resource.booklike.repository.BookLikeRepository;
 import store.mybooks.resource.bookstatus.entity.BookStatus;
 import store.mybooks.resource.bookstatus.exception.BookStatusNotExistException;
 import store.mybooks.resource.bookstatus.respository.BookStatusRepository;
 import store.mybooks.resource.booktag.dto.request.BookTagCreateRequest;
 import store.mybooks.resource.booktag.service.BookTagService;
+import store.mybooks.resource.category.dto.response.CategoryIdNameGetResponse;
+import store.mybooks.resource.category.service.CategoryService;
 import store.mybooks.resource.image.dto.response.ImageRegisterResponse;
 import store.mybooks.resource.image.service.ImageService;
 import store.mybooks.resource.image_status.entity.ImageStatus;
 import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
 import store.mybooks.resource.image_status.exception.ImageStatusNotExistException;
 import store.mybooks.resource.image_status.repository.ImageStatusRepository;
+import store.mybooks.resource.publisher.dto.response.PublisherGetResponse;
 import store.mybooks.resource.publisher.entity.Publisher;
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
 import store.mybooks.resource.publisher.repository.PublisherRepository;
+import store.mybooks.resource.tag.dto.response.TagGetResponseForBookDetail;
+import store.mybooks.resource.utils.TimeUtils;
 
 /**
  * packageName    : store.mybooks.resource.book.service <br/>
@@ -80,6 +96,12 @@ class BookServiceTest {
 
     @Mock
     public ImageStatusRepository imageStatusRepository;
+
+    @Mock
+    public BookLikeRepository bookLikeRepository;
+
+    @Mock
+    public CategoryService categoryService;
 
     @Mock
     public BookAuthorService bookAuthorService;
@@ -474,53 +496,99 @@ class BookServiceTest {
         verify(bookRepository, times(1)).existsByIsbn(anyString());
         verify(bookMapper, times(0)).modifyResponse(any(Book.class));
     }
-//
-//    @Test
-//    @DisplayName("도서 수정(존재하지 않는 도서ID)")
-//    void givenNotExistBookId_whenModifyBook_thenThrowBookNotExistException() {
-//        Long bookId = 1L;
-//        BookModifyRequest request = new BookModifyRequest();
-//        ReflectionTestUtils.setField(request, "saleCost", 1);
-//        ReflectionTestUtils.setField(request, "bookStatusId", "판매종료");
-//        ReflectionTestUtils.setField(request, "stock", 0);
-//        ReflectionTestUtils.setField(request, "isPacking", true);
-//        ReflectionTestUtils.setField(request, "categoryList", new ArrayList<>(List.of(1)));
-//        ReflectionTestUtils.setField(request, "tagList", null);
-//
-//        given(bookRepository.findById(bookId)).willReturn(Optional.empty());
-//
-//        assertThrows(BookNotExistException.class, () -> bookService.modifyBook(bookId, request));
-//
-//        verify(bookRepository, times(1)).findById(bookId);
-//        verify(bookStatusRepository, times(0)).findById(anyString());
-//        verify(bookMapper, times(0)).modifyResponse(any(Book.class));
-//    }
-//
-//    @Test
-//    @DisplayName("도서 수정(존재하지 않는 도서상태)")
-//    void givenNotExistBookStatus_whenModifyBook_thenThrowBookStatusNotExistException() {
-//        Long bookId = 1L;
-//        BookModifyRequest request = new BookModifyRequest();
-//        ReflectionTestUtils.setField(request, "saleCost", 1);
-//        ReflectionTestUtils.setField(request, "bookStatusId", "판매종료");
-//        ReflectionTestUtils.setField(request, "stock", 0);
-//        ReflectionTestUtils.setField(request, "isPacking", true);
-//        ReflectionTestUtils.setField(request, "categoryList", new ArrayList<>(List.of(1)));
-//        ReflectionTestUtils.setField(request, "tagList", null);
-//
-//        Book book =
-//                new Book(bookId, new BookStatus("판매중"), new Publisher(1, "출판사1", LocalDate.now()), "도서1",
-//                        "1234567898764",
-//                        LocalDate.of(2024, 1, 1), 100, "인덱스1",
-//                        "내용1", 20000, 16000, 20, 5, 0, true, LocalDate.now());
-//        given(bookRepository.findById(bookId)).willReturn(Optional.of(book));
-//
-//        given(bookStatusRepository.findById(anyString())).willReturn(Optional.empty());
-//
-//        assertThrows(BookStatusNotExistException.class, () -> bookService.modifyBook(bookId, request));
-//
-//        verify(bookRepository, times(1)).findById(bookId);
-//        verify(bookStatusRepository, times(1)).findById(anyString());
-//        verify(bookMapper, times(0)).modifyResponse(any(Book.class));
-//    }
+
+    @Test
+    @DisplayName("출판일로 정렬된 도서 리스트")
+    void whenGetBookPublicationDateList_thenReturnBookPublicationDateResponseList() {
+        List<BookPublicationDateResponse> responses = List.of(
+                new BookPublicationDateResponse(1L, "image", "name", 0L, 1000, 1000, 0.0, TimeUtils.nowDate()),
+                new BookPublicationDateResponse(2L, "image1", "name2", 1L, 2000, 2000, 1.0, TimeUtils.nowDate())
+        );
+
+        when(bookRepository.getBookPublicationDate()).thenReturn(responses);
+
+        List<BookPublicationDateResponse> result = bookService.getBookPublicationDateList();
+
+        assertThat(result).isEqualTo(responses);
+        verify(bookRepository, times(1)).getBookPublicationDate();
+    }
+
+    @Test
+    @DisplayName("페이징된 도서 미리보기")
+    void givenPageable_whenGetBookBriefInfo_thenReturnPagedBookBriefResponse() {
+        int page = 0, size = 2;
+        Pageable pageable = PageRequest.of(page, size);
+
+        BookBriefResponse response1 = new BookBriefResponse(1L, "imageUrl1", "name1", 1.0, 1L, 10000, 9000);
+        BookBriefResponse response2 = new BookBriefResponse(2L, "imageUrl2", "name2", 2.0, 2L, 20000, 19000);
+
+        Page<BookBriefResponse> expectedResponse = new PageImpl<>(Arrays.asList(response1, response2), pageable, 2);
+
+        when(bookRepository.getBookBriefInfo(pageable)).thenReturn(expectedResponse);
+
+        Page<BookBriefResponse> result = bookService.getBookBriefInfo(pageable);
+
+        assertThat(result.getContent()).hasSize(2);
+        assertThat(result.getContent()).extracting("id").containsExactly(1L, 2L);
+        assertThat(result.getContent()).extracting("name").containsExactly("name1", "name2");
+
+        verify(bookRepository, times(1)).getBookBriefInfo(any(Pageable.class));
+    }
+
+    @Test
+    @DisplayName("도서 상세 정보(존재하지 않는 도서 ID)")
+    void givenNotExistsBookId_whenGetBookDetailInfo_thenThrowBookNotExistException() {
+        Long bookId = 1L;
+        when(bookRepository.existsById(bookId)).thenReturn(false);
+        assertThrows(BookNotExistException.class, () -> bookService.getBookDetailInfo(bookId));
+
+        verify(bookRepository, times(1)).existsById(bookId);
+    }
+
+    @Test
+    @DisplayName("도서 상세 정보")
+    void givenBookId_whenGetBookDetailInfo_thenReturnBookDetailResponse() {
+        Long bookId = 1L;
+        BookDetailResponse response = BookDetailResponse.builder()
+                .id(bookId)
+                .thumbNailImage("thumbnailImagePath")
+                .name("Book Name")
+                .bookStatus("판매중")
+                .authorList(List.of(new AuthorGetResponse(1, "Author Name", "Author Content")))
+                .publisher(new PublisherGetResponse(1, "Publisher Name"))
+                .publishDate(LocalDate.of(2024, 1, 1))
+                .saleCost(15000)
+                .originalCost(20000)
+                .disCountRate(25)
+                .rate(4.5)
+                .reviewCount(100L)
+                .isPacking(true)
+                .page(300)
+                .isbn("1234567890123")
+                .tagList(List.of(new TagGetResponseForBookDetail(1, "TagName")))
+                .stock(50)
+                .index("Book Index")
+                .explanation("Book Explanation")
+                .contentImageList(List.of("imagePath1", "imagePath2"))
+                .build();
+
+        response.setLikeCount(10);
+        response.setCategoryList(List.of(new CategoryIdNameGetResponse(1, "Category Name")));
+        when(bookRepository.existsById(bookId)).thenReturn(true);
+        when(bookRepository.getBookDetailInfo(bookId)).thenReturn(response);
+        when(bookLikeRepository.countBookLikeByPk_BookId(bookId)).thenReturn(response.getLikeCount());
+        when(categoryService.getCategoryNameForBookView(bookId)).thenReturn(response.getCategoryList());
+
+        BookDetailResponse actualResponse = bookService.getBookDetailInfo(bookId);
+
+        assertThat(actualResponse.getName()).isEqualTo(response.getName());
+        assertThat(actualResponse.getLikeCount()).isEqualTo(response.getLikeCount());
+        assertThat(actualResponse.getCategoryList()).usingRecursiveFieldByFieldElementComparator()
+                .containsAll(response.getCategoryList());
+
+        verify(bookRepository, times(1)).existsById(bookId);
+        verify(bookRepository, times(1)).getBookDetailInfo(bookId);
+        verify(bookLikeRepository, times(1)).countBookLikeByPk_BookId(bookId);
+    }
+
 }
