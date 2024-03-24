@@ -200,7 +200,7 @@ include::{snippets}/user-verifyEmail/http-request.adoc[]
 
 ==== 요청 파라미터
 
-include::{snippets}/user-verifyEmail/request-body.adoc[]
+include::{snippets}/user-verifyEmail/path-parameters.adoc[]
 
 ==== 응답
 
@@ -318,6 +318,7 @@ include::{snippets}/user_address-delete/http-request.adoc[]
 
 include::{snippets}/user_address-delete/request-body.adoc[]
 include::{snippets}/user_address-delete/request-headers.adoc[]
+include::{snippets}/user_address-delete/path-parameters.adoc[]
 
 ==== 응답
 
@@ -364,6 +365,7 @@ include::{snippets}/user_address-modify/http-request.adoc[]
 include::{snippets}/user_address-modify/request-body.adoc[]
 include::{snippets}/user_address-modify/request-fields.adoc[]
 include::{snippets}/user_address-modify/request-headers.adoc[]
+include::{snippets}/user_address-modify/path-parameters.adoc[]
 
 ==== 응답
 
@@ -397,7 +399,6 @@ include::{snippets}/user_grade-create/http-response.adoc[]
 ===== 응답 파라미터
 
 include::{snippets}/user_grade-create/response-body.adoc[]
-include::{snippets}/user_grade-create/response-fields.adoc[]
 
 
 === 유저 등급 전체조회 (활성+비활성)
@@ -490,4 +491,49 @@ include::{snippets}/user_status-modify/http-response.adoc[]
 include::{snippets}/user_status-modify/response-body.adoc[]
 include::{snippets}/user_status-modify/response-fields.adoc[]
 
-== 회원-쿠폰 API
+
+=== 유저 휴면계정 해제
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user_status-verifyDormancy/http-request.adoc[]
+
+==== 요청 파라미터
+include::{snippets}/user_status-verifyDormancy/request-body.adoc[]
+include::{snippets}/user_status-verifyDormancy/request-headers.adoc[]
+
+==== 응답
+
+include::{snippets}/user_status-verifyDormancy/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user_status-verifyDormancy/response-body.adoc[]
+include::{snippets}/user_status-verifyDormancy/response-fields.adoc[]
+
+=== 유저 잠금계정 해제
+
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user_status-verifyLock/http-request.adoc[]
+
+==== 요청 파라미터
+include::{snippets}/user_status-verifyLock/request-body.adoc[]
+include::{snippets}/user_status-verifyLock/request-headers.adoc[]
+include::{snippets}/user_status-verifyLock/response-fields.adoc[]
+
+
+==== 응답
+
+include::{snippets}/user_status-verifyLock/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user_status-verifyLock/response-body.adoc[]
+include::{snippets}/user_status-verifyLock/response-fields.adoc[]
+
