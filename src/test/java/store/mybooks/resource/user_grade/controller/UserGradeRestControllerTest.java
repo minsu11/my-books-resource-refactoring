@@ -122,6 +122,27 @@ class UserGradeRestControllerTest {
     }
 
 
+    @Test
+    @DisplayName("findAllUserGrade 실행시 모든 UserGrade 를 List 로 조회")
+    void givenNothing_whenCallFindAllAvailableUserGrade_thenReturnUserGradeGetResponseList() throws Exception {
+
+        List<UserGradeGetResponse> userGradeList = new ArrayList<>();
+        userGradeList.add(userGradeGetResponse1);
+        userGradeList.add(userGradeGetResponse2);
+
+        when(userGradeService.findAllAvailableUserGrade()).thenReturn(userGradeList);
+
+        mockMvc.perform(get("/api/users-grades")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpectAll(jsonPath("$.[*].minCost").exists())
+                .andExpectAll(jsonPath("$.[*].maxCost").exists())
+                .andExpectAll(jsonPath("$.[*].rate").exists())
+                .andExpectAll(jsonPath("$.[*].createdDate").exists())
+                .andExpectAll(jsonPath("$.[*].userGradeNameId").exists());
+    }
+
+
     @BeforeEach
     void setUp() {
 

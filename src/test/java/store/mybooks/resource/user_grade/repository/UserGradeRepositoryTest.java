@@ -51,7 +51,7 @@ class UserGradeRepositoryTest {
         userGradeNameRepository.save(userGradeName2);
 
         UserGrade userGrade1 = new UserGrade(1, userGradeName1, 1, 1000, 3, localDate, true);
-        UserGrade userGrade2 = new UserGrade(2, userGradeName1, 1, 1000, 3, localDate, false);
+        UserGrade userGrade2 = new UserGrade(2, userGradeName1, 10, 10000, 5, localDate, false);
         UserGrade userGrade3 = new UserGrade(3, userGradeName2, 1, 1000, 3, localDate, true);
 
         userGradeId = userGradeRepository.save(userGrade1).getId();
@@ -68,6 +68,11 @@ class UserGradeRepositoryTest {
 
         UserGrade userGrade = userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue("일반").get();
 
+        assertEquals(userGrade.getMinCost(),1);
+        assertEquals(userGrade.getMaxCost(),1000);
+        assertEquals(userGrade.getRate(),3);
+        assertEquals(userGrade.getCreatedDate(),localDate);
+        assertEquals(userGrade.getIsAvailable(),true);
         assertEquals("일반", userGrade.getUserGradeName().getId());
         assertEquals(true, userGrade.getIsAvailable());
     }
