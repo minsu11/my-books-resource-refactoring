@@ -143,6 +143,8 @@ class PointHistoryServiceTest {
 
     String signupSave = "회원가입 적립";
 
+    String email = "test@naver.com";
+
     @BeforeEach
     void setup() {
         pointRuleName = new PointRuleName(pointSave);
@@ -234,10 +236,23 @@ class PointHistoryServiceTest {
     @DisplayName("getRemainingPoint 테스트")
     void givenUserId_whenGetRemainingPoint_thenReturnPointResponse() {
         PointResponse pointResponse = new PointResponse(1000);
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         when(pointHistoryRepository.getRemainingPoint(anyLong())).thenReturn(pointResponse);
 
         PointResponse actual = pointHistoryService.getRemainingPoint(1L);
         assertThat(actual.getRemainingPoint()).isEqualTo(pointResponse.getRemainingPoint());
+        verify(userRepository, times(1)).existsById(1L);
+        verify(pointHistoryRepository, times(1)).getRemainingPoint(1L);
+    }
+
+    @Test
+    @DisplayName("getRemainingPoint 테스트 - 없는 회원인 경우")
+    void givenNotExistsUserId_whenGetRemainingPoint_thenThrowUserNotExistException() {
+        PointResponse pointResponse = new PointResponse(1000);
+        when(userRepository.existsById(anyLong())).thenReturn(false);
+
+        assertThrows(UserNotExistException.class, () -> pointHistoryService.getRemainingPoint(1L));
+        verify(userRepository, times(1)).existsById(1L);
     }
 
     @Test
@@ -250,6 +265,7 @@ class PointHistoryServiceTest {
                 pointHistory.getPointStatusCost(),
                 TimeUtils.nowDate());
         Page<PointHistoryResponse> expect = new PageImpl<>(List.of(response), pageable, total);
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         when(pointHistoryRepository.getPointHistoryByUserId(any(), anyLong())).thenReturn(expect);
 
         Page<PointHistoryResponse> actual = pointHistoryService.getPointHistory(pageable, 1L);
@@ -259,6 +275,18 @@ class PointHistoryServiceTest {
         assertThat(actualList.get(0).getPointRuleName()).isEqualTo(response.getPointRuleName());
         assertThat(actualList.get(0).getStatusCost()).isEqualTo(response.getStatusCost());
         assertThat(actualList.get(0).getCreatedDate()).isEqualTo(response.getCreatedDate());
+        verify(userRepository, times(1)).existsById(1L);
+        verify(pointHistoryRepository, times(1)).getPointHistoryByUserId(any(), anyLong());
+    }
+
+    @Test
+    @DisplayName("getPointHistory - 없는 회원인 경우")
+    void givenPageableAndNotExistsUserId_whenGetPointHistory_thenReturnPointHistoryResponsePage() {
+        when(userRepository.existsById(anyLong())).thenReturn(false);
+
+        assertThrows(UserNotExistException.class, () -> pointHistoryService.getRemainingPoint(1L));
+        verify(userRepository, times(1)).existsById(1L);
+        verify(pointHistoryRepository, times(0)).getPointHistoryByUserId(any(), anyLong());
     }
 
     @Test
@@ -361,8 +389,9 @@ class PointHistoryServiceTest {
     @DisplayName("saveLoginPoint 테스트 - 유저가 존재하지 않는 경우")
     void givenNotExistsUserId_whenSaveLoginPoint_thenThrowUserNotExistException() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+        long id = user.getId();
 
-        assertThrows(UserNotExistException.class, () -> pointHistoryService.saveLoginPoint(user.getId()));
+        assertThrows(UserNotExistException.class, () -> pointHistoryService.saveLoginPoint(id));
     }
 
     @Test
@@ -428,7 +457,7 @@ class PointHistoryServiceTest {
     void givenNotExistsEmail_whenSaveSignUpPoint_thenThrowUserNotExistException() {
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
 
-        assertThrows(UserNotExistException.class, () -> pointHistoryService.saveSignUpPoint(user.getEmail()));
+        assertThrows(UserNotExistException.class, () -> pointHistoryService.saveSignUpPoint(email));
 
         verify(userRepository, times(1)).findByEmail(user.getEmail());
         verify(pointHistoryRepository, times(0)).isAlreadyReceivedSignUpPoint(user.getEmail());
@@ -441,7 +470,7 @@ class PointHistoryServiceTest {
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
         when(pointHistoryRepository.isAlreadyReceivedSignUpPoint(user.getEmail())).thenReturn(true);
 
-        assertThrows(AlreadyReceivedSignUpPoint.class, () -> pointHistoryService.saveSignUpPoint(user.getEmail()));
+        assertThrows(AlreadyReceivedSignUpPoint.class, () -> pointHistoryService.saveSignUpPoint(email));
 
         verify(userRepository, times(1)).findByEmail(user.getEmail());
         verify(pointHistoryRepository, times(1)).isAlreadyReceivedSignUpPoint(user.getEmail());
@@ -455,7 +484,7 @@ class PointHistoryServiceTest {
         when(pointHistoryRepository.isAlreadyReceivedSignUpPoint(user.getEmail())).thenReturn(false);
         when(pointRuleRepository.findPointRuleByPointRuleName(anyString())).thenReturn(Optional.empty());
 
-        assertThrows(PointRuleNotExistException.class, () -> pointHistoryService.saveSignUpPoint(user.getEmail()));
+        assertThrows(PointRuleNotExistException.class, () -> pointHistoryService.saveSignUpPoint(email));
 
         verify(userRepository, times(1)).findByEmail(user.getEmail());
         verify(pointHistoryRepository, times(1)).isAlreadyReceivedSignUpPoint(user.getEmail());

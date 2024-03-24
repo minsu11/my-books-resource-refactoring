@@ -60,6 +60,9 @@ public class PointHistoryService {
      */
     @Transactional(readOnly = true)
     public PointResponse getRemainingPoint(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotExistException(userId);
+        }
         return pointHistoryRepository.getRemainingPoint(userId);
     }
 
@@ -75,6 +78,9 @@ public class PointHistoryService {
      */
     @Transactional(readOnly = true)
     public Page<PointHistoryResponse> getPointHistory(Pageable pageable, Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotExistException(userId);
+        }
         return pointHistoryRepository.getPointHistoryByUserId(pageable, userId);
     }
 
@@ -89,7 +95,6 @@ public class PointHistoryService {
      * @return the point history create response
      */
     public PointHistoryCreateResponse createPointHistory(PointHistoryCreateRequest request, Long userId) {
-        System.out.println(request.getPointName());
         PointRuleName pointRulename = pointRuleNameRepository.findById(request.getPointName())
                 .orElseThrow(PointRuleNotExistException::new);
 
@@ -118,7 +123,7 @@ public class PointHistoryService {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
 
 
-        if(Objects.nonNull(user.getLatestLogin())){
+        if (Objects.nonNull(user.getLatestLogin())) {
             LocalDate latestLoginDate = user.getLatestLogin().toLocalDate();
 
             if (!latestLoginDate.isBefore(LocalDate.now())) {
@@ -165,7 +170,7 @@ public class PointHistoryService {
         if (pointHistoryRepository.isAlreadyReceivedSignUpPoint(email)) {
             throw new AlreadyReceivedSignUpPoint();
         }
-        
+
         PointRule pointRule = pointRuleRepository.findPointRuleByPointRuleName("회원가입 적립")
                 .orElseThrow(PointRuleNotExistException::new);
 
