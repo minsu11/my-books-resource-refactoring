@@ -80,6 +80,11 @@ public class PaymentRestController {
     @PostMapping("/cancel")
     public ResponseEntity<Void> cancelProcessing(@RequestBody PayCancelRequest request,
                                                  @RequestHeader(name = HeaderProperties.USER_ID) Long userId) {
+        log.debug("request body value: {}", request.getStatus());
+        log.debug("request body value: {}", request.getRequestedAt());
+        log.debug("request body value: {}", request.getOrderNumber());
+        log.debug("request body value: {}", request.getPaymentKey());
+        log.debug("request body value: {}", request.getStatus());
         totalOrderService.cancelOrderProcess(request, userId);
         return ResponseEntity.status(HttpStatus.OK)
                 .build();

@@ -50,4 +50,6 @@ public interface PointHistoryRepositoryCustom {
      * @return boolean
      */
     boolean isAlreadyReceivedSignUpPoint(String email);
+
+    Integer getOrderUsedPoint(String orderNumber);
 }

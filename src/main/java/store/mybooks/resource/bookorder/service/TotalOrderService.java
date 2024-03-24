@@ -230,10 +230,12 @@ public class TotalOrderService {
 
         // 포인트를 사용한 주문에 대한 포인트 다시 적립
 
+        int usedPoint = pointHistoryService.getUsedPointOrder(request.getOrderNumber());
+        int total = request.getTotalAmount();
+        int result = total - usedPoint;
         // 결제 상태 변경
-        
 
         // 총합 포인트 처리
-        pointProcessing(request.getOrderNumber(), request.getTotalAmount(), userId, PointRuleNameEnum.RETURN_POINT);
+        pointProcessing(request.getOrderNumber(), result, userId, PointRuleNameEnum.RETURN_POINT);
     }
 }

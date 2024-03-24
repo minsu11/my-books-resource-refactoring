@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class PayCancelRequest {
+    private String paymentKey;
     private String orderNumber;
     private String status;
     private Integer totalAmount;
