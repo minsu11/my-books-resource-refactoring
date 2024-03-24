@@ -128,7 +128,9 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .fetch();
-        long count = bookOrderAdminResponseList.size();
+        long count = from(bookOrder)
+                .where(bookOrder.orderStatus.id.eq(OrdersStatusEnum.WAIT.toString()))
+                .fetchCount();
 
         return new PageImpl<>(bookOrderAdminResponseList, pageable, count);
     }
