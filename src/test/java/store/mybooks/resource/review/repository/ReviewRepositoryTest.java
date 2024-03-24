@@ -62,8 +62,16 @@ class ReviewRepositoryTest {
 
     LocalDate localDate;
 
-    static Long id = 1L;
-    static Long id2 = 2L;
+    static Long id;
+    static Long id2;
+
+    static Long userId;
+
+    static Long bookId;
+
+    static Long reviewId;
+
+    static Long reviewId2;
 
     @BeforeEach
     void setUp() {
@@ -77,7 +85,7 @@ class ReviewRepositoryTest {
         testEntityManager.persist(userGrade);
         User user = new User("test@test.com", localDate, "password@123", "01012345678", false, "name", userStatus,
                 userGrade, "oauthId");
-        testEntityManager.persist(user);
+        userId=testEntityManager.persist(user).getId();
         OrdersStatus ordersStatus = new OrdersStatus("order_status");
         testEntityManager.persist(ordersStatus);
         DeliveryRuleName deliveryRuleName = new DeliveryRuleName("test");
@@ -91,7 +99,9 @@ class ReviewRepositoryTest {
         Book book = new Book();
         book.setModifyRequest(bookStatus, publisher, "name", "isbn", localDate, 1, "index", "explantation", 1000, 500,
                 500, 500, true);
-        testEntityManager.persist(book);
+        bookId=testEntityManager.persist(book).getId();
+
+
         Category category = new Category(null, "test");
         testEntityManager.persist(category);
         Coupon coupon = new Coupon("test", book, category, 1, 10, 1, 1, localDate, localDate, true, true);
@@ -103,12 +113,13 @@ class ReviewRepositoryTest {
                 new BookOrder(id, localDate, localDate, localDate, "test", "testName", "testAddress", "testPohne",
                         "testMesage", 10000, 100, 100, true, "number", "password", user, ordersStatus, deliveryRule,
                         userCoupon);
-        testEntityManager.merge(bookOrder);
+        testEntityManager.persist(bookOrder);
         BookOrder bookOrder2 =
                 new BookOrder(id2, localDate, localDate, localDate, "test", "testName", "testAddress", "testPohne",
                         "testMesage", 10000, 100, 100, false, "number", "password", user, ordersStatus, deliveryRule,
                         null);
-        testEntityManager.merge(bookOrder2);
+        testEntityManager.persist(bookOrder2);
+
 
 
         OrderDetailStatus orderDetailStatus = new OrderDetailStatus("test");
@@ -119,17 +130,16 @@ class ReviewRepositoryTest {
 
         orderDetail =
                 new OrderDetail(id, 10000, 1, true, bookOrder, book, orderDetailStatus, userCoupon, null, localDate);
-        testEntityManager.merge(orderDetail);
+        testEntityManager.persist(orderDetail);
         orderDetail2 =
                 new OrderDetail(id2, 50000, 1, false, bookOrder2, book, orderDetailStatus, null, null, localDate);
-        testEntityManager.merge(orderDetail2);
+        testEntityManager.persist(orderDetail2);
 
         review = new Review(user, orderDetail, 5, "review_title", "review_content");
-        testEntityManager.persist(review);
+        reviewId=testEntityManager.persist(review).getId();
         review2 = new Review(user, orderDetail2, 3, "review_title_2", "review_content_2");
-        testEntityManager.persist(review2);
-        id++;
-        id2++;
+        reviewId2=testEntityManager.persist(review2).getId();
+
     }
 
 
@@ -137,22 +147,25 @@ class ReviewRepositoryTest {
     @DisplayName("review repositoryImpl Test")
     void test_reviewRepositoryImpl() {
 
-        Page<ReviewGetResponse> page = reviewRepository.getReviewByUserId(1L, PageRequest.of(0, 2));
+        reviewRepository.save(review);
+        reviewRepository.save(review2);
+
+        Page<ReviewGetResponse> page = reviewRepository.getReviewByUserId(userId, PageRequest.of(0, 2));
 
         assertThat(page).isNotNull();
         List<ReviewGetResponse> list = page.getContent();
 
 
-        assertThat(list.get(0).getReviewId()).isEqualTo(1L);
+        assertThat(list.get(0).getReviewId()).isEqualTo(reviewId);
         assertThat(list.get(0).getRate()).isEqualTo(5);
-        assertThat(list.get(0).getBookId()).isEqualTo(1L);
+        assertThat(list.get(0).getBookId()).isEqualTo(bookId);
         assertThat(list.get(0).getBookName()).isEqualTo("name");
         assertThat(list.get(0).getTitle()).isEqualTo("review_title");
         assertThat(list.get(0).getUserName()).isEqualTo("name");
         assertThat(list.get(0).getReviewImage()).isEqualTo(null);
-        assertThat(list.get(1).getReviewId()).isEqualTo(2L);
+        assertThat(list.get(1).getReviewId()).isEqualTo(reviewId2);
         assertThat(list.get(1).getRate()).isEqualTo(3);
-        assertThat(list.get(1).getBookId()).isEqualTo(1L);
+        assertThat(list.get(1).getBookId()).isEqualTo(bookId);
         assertThat(list.get(1).getBookName()).isEqualTo("name");
         assertThat(list.get(1).getTitle()).isEqualTo("review_title_2");
         assertThat(list.get(1).getUserName()).isEqualTo("name");
@@ -163,27 +176,27 @@ class ReviewRepositoryTest {
         assertTrue(response.isPresent());
 
         ReviewGetResponse reviewGetResponse = response.get();
-        assertThat(reviewGetResponse.getBookId()).isEqualTo(1L);
+        assertThat(reviewGetResponse.getBookId()).isEqualTo(bookId);
         assertThat(reviewGetResponse.getBookName()).isEqualTo("name");
-        assertThat(reviewGetResponse.getReviewId()).isEqualTo(1L);
+        assertThat(reviewGetResponse.getReviewId()).isEqualTo(reviewId);
         assertThat(reviewGetResponse.getUserName()).isEqualTo("name");
         assertThat(reviewGetResponse.getRate()).isEqualTo(5);
         assertThat(reviewGetResponse.getTitle()).isEqualTo("review_title");
         assertThat(reviewGetResponse.getContent()).isEqualTo("review_content");
         assertThat(reviewGetResponse.getReviewImage()).isEqualTo(null);
 
-        Page<ReviewDetailGetResponse> page2 = reviewRepository.getReviewByBookId(1L, PageRequest.of(0, 2));
+        Page<ReviewDetailGetResponse> page2 = reviewRepository.getReviewByBookId(bookId, PageRequest.of(0, 2));
         assertThat(page2).isNotNull();
         List<ReviewDetailGetResponse> list2 = page2.getContent();
 
-        assertThat(list2.get(0).getReviewId()).isEqualTo(1L);
+        assertThat(list2.get(0).getReviewId()).isEqualTo(reviewId);
         assertThat(list2.get(0).getRate()).isEqualTo(5);
         assertThat(list2.get(0).getUserName()).isEqualTo("name");
         assertThat(list2.get(0).getTitle()).isEqualTo("review_title");
         assertThat(list2.get(0).getContent()).isEqualTo("review_content");
         assertThat(list2.get(0).getReviewImage()).isEqualTo(null);
 
-        assertThat(list2.get(1).getReviewId()).isEqualTo(2L);
+        assertThat(list2.get(1).getReviewId()).isEqualTo(reviewId2);
         assertThat(list2.get(1).getRate()).isEqualTo(3);
         assertThat(list2.get(1).getUserName()).isEqualTo("name");
         assertThat(list2.get(1).getTitle()).isEqualTo("review_title_2");
@@ -191,7 +204,7 @@ class ReviewRepositoryTest {
         assertThat(list2.get(1).getReviewImage()).isEqualTo(null);
 
 
-        ReviewRateResponse response2 = reviewRepository.getReviewRate(1L);
+        ReviewRateResponse response2 = reviewRepository.getReviewRate(bookId);
 
         assertThat(response2.getTotalCount()).isEqualTo(2);
         assertThat(response2.getAverageRate()).isEqualTo(4.0);
