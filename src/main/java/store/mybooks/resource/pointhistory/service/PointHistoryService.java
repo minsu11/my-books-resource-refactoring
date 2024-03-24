@@ -27,6 +27,7 @@ import store.mybooks.resource.pointrulename.repository.PointRuleNameRepository;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user.exception.UserNotExistException;
 import store.mybooks.resource.user.repository.UserRepository;
+import store.mybooks.resource.utils.TimeUtils;
 
 /**
  * packageName    : store.mybooks.resource.point_history.service<br>
@@ -130,7 +131,7 @@ public class PointHistoryService {
         if (Objects.nonNull(user.getLatestLogin())) {
             LocalDate latestLoginDate = user.getLatestLogin().toLocalDate();
 
-            if (!latestLoginDate.isBefore(LocalDate.now())) {
+            if (!latestLoginDate.isBefore(TimeUtils.nowDate())) {
                 return false;
             }
         }
