@@ -3,6 +3,13 @@ package store.mybooks.resource.user_grade.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -21,8 +28,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import store.mybooks.resource.error.RequestValidationFailedException;
 import store.mybooks.resource.user_grade.dto.request.UserGradeCreateRequest;
 import store.mybooks.resource.user_grade.dto.response.UserGradeCreateResponse;
@@ -43,7 +54,7 @@ import store.mybooks.resource.user_grade.service.UserGradeService;
 
 
 @WebMvcTest(value = UserGradeRestController.class)
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 class UserGradeRestControllerTest {
 
     @Autowired
@@ -59,11 +70,23 @@ class UserGradeRestControllerTest {
     UserGradeGetResponse userGradeGetResponse2;
 
 
+    @BeforeEach
+    void setUp(WebApplicationContext webApplicationContext,
+               RestDocumentationContextProvider restDocumentation) {
+
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                .apply(documentationConfiguration(restDocumentation)
+                        .operationPreprocessors()
+                        .withRequestDefaults(modifyUris(), prettyPrint())
+                        .withResponseDefaults(prettyPrint()))
+                .build();
+    }
+
     @Test
     @DisplayName("유저 UserGradeCreateRequest - Validation 실패")
     void givenUserGradeCreateRequest_whenValidationFailure_thenReturnBadRequest() throws Exception {
 
-        UserGradeCreateRequest request = new UserGradeCreateRequest(100,"");
+        UserGradeCreateRequest request = new UserGradeCreateRequest(100, "");
 
         String content = objectMapper.writeValueAsString(request);
 
@@ -94,11 +117,21 @@ class UserGradeRestControllerTest {
                 .andExpect(jsonPath("$.minCost").exists())
                 .andExpect(jsonPath("$.maxCost").exists())
                 .andExpect(jsonPath("$.rate").exists())
-                .andExpect(jsonPath("$.createdDate").exists());
+                .andExpect(jsonPath("$.createdDate").exists())
+                .andDo(document("user_grade-create",
+                        requestFields(
+                                fieldWithPath("rate").description("포인트 적립률"),
+                                fieldWithPath("userGradeNameId").description("유저등급 이름 아이디")
+                        ),
+                        responseFields(
+                                fieldWithPath("name").description("별명"),
+                                fieldWithPath("minCost").description("순수 최소금액"),
+                                fieldWithPath("maxCost").description("순수 최대금액"),
+                                fieldWithPath("rate").description("포인트 적립률"),
+                                fieldWithPath("createdDate").description("생성일")
+                        )
+                ));
     }
-
-
-
 
 
     @Test
@@ -114,16 +147,27 @@ class UserGradeRestControllerTest {
         mockMvc.perform(get("/api/users-grades/all")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andExpectAll(jsonPath("$.[*].id").exists())
                 .andExpectAll(jsonPath("$.[*].minCost").exists())
                 .andExpectAll(jsonPath("$.[*].maxCost").exists())
                 .andExpectAll(jsonPath("$.[*].rate").exists())
                 .andExpectAll(jsonPath("$.[*].createdDate").exists())
-                .andExpectAll(jsonPath("$.[*].userGradeNameId").exists());
+                .andExpectAll(jsonPath("$.[*].userGradeNameId").exists())
+                .andDo(document("user_grade-findAllList",
+                        responseFields(
+                                fieldWithPath("[].id").description("유저등급 아이디"),
+                                fieldWithPath("[].userGradeNameId").description("유저등급 이름아이디"),
+                                fieldWithPath("[].minCost").description("순수 최소금액"),
+                                fieldWithPath("[].maxCost").description("순수 최대금액"),
+                                fieldWithPath("[].rate").description("유저등급 비율"),
+                                fieldWithPath("[].createdDate").description("생성일")
+                        ))
+                );
     }
 
 
     @Test
-    @DisplayName("findAllUserGrade 실행시 모든 UserGrade 를 List 로 조회")
+    @DisplayName("findAllAvailableUserGrade 실행시 모든 활성 UserGrade 를 List 로 조회")
     void givenNothing_whenCallFindAllAvailableUserGrade_thenReturnUserGradeGetResponseList() throws Exception {
 
         List<UserGradeGetResponse> userGradeList = new ArrayList<>();
@@ -135,11 +179,22 @@ class UserGradeRestControllerTest {
         mockMvc.perform(get("/api/users-grades")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andExpectAll(jsonPath("$.[*].id").exists())
                 .andExpectAll(jsonPath("$.[*].minCost").exists())
                 .andExpectAll(jsonPath("$.[*].maxCost").exists())
                 .andExpectAll(jsonPath("$.[*].rate").exists())
                 .andExpectAll(jsonPath("$.[*].createdDate").exists())
-                .andExpectAll(jsonPath("$.[*].userGradeNameId").exists());
+                .andExpectAll(jsonPath("$.[*].userGradeNameId").exists())
+                .andDo(document("user_grade-findAvailableList",
+                        responseFields(
+                                fieldWithPath("[].id").description("유저등급 아이디"),
+                                fieldWithPath("[].userGradeNameId").description("유저등급 이름아이디"),
+                                fieldWithPath("[].minCost").description("순수 최소금액"),
+                                fieldWithPath("[].maxCost").description("순수 최대금액"),
+                                fieldWithPath("[].rate").description("유저등급 비율"),
+                                fieldWithPath("[].createdDate").description("생성일")
+                        ))
+                );
     }
 
 
