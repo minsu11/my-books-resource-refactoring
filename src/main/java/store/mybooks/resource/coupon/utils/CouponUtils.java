@@ -68,7 +68,7 @@ public class CouponUtils {
      * description : 쿠폰 타입이 유효한지 검사.<br>
      *
      * @param request CouponCreateRequest
-     * @throw CouponInCompatibleType BookId 와 CategoryId 둘 다 설정 되어 있는 경우.
+     * @throw CouponInCompatibleType 정률할인, 정액할인쿠폰 둘 다 아닌 경우.
      */
     private static void validateCouponType(CouponCreateRequest request) {
         if (!isPercentageCoupon(request) && !isFlatCoupon(request)) {

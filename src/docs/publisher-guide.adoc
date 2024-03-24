@@ -9,3 +9,101 @@
 :sectanchors:
 
 == 출판사 API
+
+=== 전체 출판사 리스트 조회
+
+==== HTTP Request
+
+include::{snippets}/publishers-list/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/publishers-list/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/publishers-list/response-fields.adoc[]
+
+=== 페이징된 전체 출판사
+
+==== HTTP Request
+
+include::{snippets}/publishers-paged-list/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/publishers-paged-list/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/publishers-paged-list/response-fields.adoc[]
+
+=== 출판사 추가
+
+==== RequestFields
+
+include::{snippets}/publisher-create/request-fields.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/publisher-create/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/publisher-create/http-response.adoc[]
+
+==== ResponseFields
+
+include::{snippets}/publisher-create/response-fields.adoc[]
+
+=== 출판사 추가(검증 실패)
+
+==== HTTP Request
+
+include::{snippets}/publisher-create-error/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/publisher-create-error/http-response.adoc[]
+
+=== 출판사 수정
+
+==== PathParameters
+
+include::{snippets}/publisher-modify/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/publisher-modify/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/publisher-modify/http-response.adoc[]
+
+==== ResponseFields
+
+include::{snippets}/publisher-modify/response-fields.adoc[]
+
+=== 출판사 수증(검증 실패)
+
+==== HTTP Request
+
+include::{snippets}/publisher-modify-error/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/publisher-modify-error/http-response.adoc[]
+
+=== 출판사 삭제
+
+==== PathParameters
+
+include::{snippets}/publisher-delete/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/publisher-delete/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/publisher-delete/http-response.adoc[]

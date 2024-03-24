@@ -17,7 +17,7 @@ import store.mybooks.resource.book.dto.response.BookPublicationDateResponse;
 import store.mybooks.resource.book.dto.response.BookRatingResponse;
 import store.mybooks.resource.book.dto.response.BookResponseForOrder;
 import store.mybooks.resource.book.dto.response.BookReviewResponse;
-import store.mybooks.resource.book.dto.response.*;
+import store.mybooks.resource.book.dto.response.BookStockResponse;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.entity.QBook;
 import store.mybooks.resource.bookauthor.entity.QBookAuthor;
@@ -25,7 +25,6 @@ import store.mybooks.resource.booklike.entity.QBookLike;
 import store.mybooks.resource.bookstatus.entity.QBookStatus;
 import store.mybooks.resource.bookstatus.enumeration.BookStatusEnum;
 import store.mybooks.resource.booktag.entity.QBookTag;
-import store.mybooks.resource.image.dto.response.ImageResponse;
 import store.mybooks.resource.image.entity.QImage;
 import store.mybooks.resource.image_status.entity.QImageStatus;
 import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
@@ -105,22 +104,22 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .where(book.id.eq(id))
                 .fetchOne();
 
-        ImageResponse thumbNailImage = from(image)
+        String thumbNailImage = from(image)
                 .join(image.book, book)
                 .join(image.imageStatus, imageStatus)
                 .where(image.book.id.eq(id))
                 .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
-                .select(Projections.constructor(ImageResponse.class, image.path, image.fileName, image.extension))
+                .select(image.path.concat(image.fileName).concat(".").concat(image.extension))
                 .fetchOne();
 
-        List<ImageResponse> contentImageList = from(image)
+        List<String> contentImageList = from(image)
                 .join(image.book, book)
                 .join(image.imageStatus, imageStatus)
                 .where(image.book.id.eq(id))
                 .where(imageStatus.id.eq(ImageStatusEnum.CONTENT.getName()))
-                .select(Projections.constructor(ImageResponse.class, image.path, image.fileName, image.extension))
+                .select(image.path.concat(image.fileName).concat(".").concat(image.extension))
                 .fetch();
-
+        
         List<AuthorGetResponse> authorList = from(bookAuthor)
                 .join(bookAuthor.author, author)
                 .where(bookAuthor.book.id.eq(id))

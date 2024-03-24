@@ -14,6 +14,7 @@ import store.mybooks.resource.category.exception.CannotDeleteParentCategoryExcep
 import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
 import store.mybooks.resource.coupon.exception.CouponCannotDeleteException;
+import store.mybooks.resource.coupon.exception.CouponInCompatibleType;
 import store.mybooks.resource.coupon.exception.CouponNotExistsException;
 import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotExistsException;
 import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameAlreadyExistsException;
@@ -101,7 +102,8 @@ public class GlobalControllerAdvice {
      * @param exception ValidationException.
      * @return ResponseEntity
      */
-    @ExceptionHandler({ValidationException.class, RequestValidationFailedException.class, BookStockException.class})
+    @ExceptionHandler({ValidationException.class, RequestValidationFailedException.class, BookStockException.class,
+            CouponInCompatibleType.class})
     public ResponseEntity<String> validationException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
