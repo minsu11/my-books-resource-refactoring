@@ -1,0 +1,361 @@
+= Book
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectnums:
+:sectlinks:
+:sectanchors:
+
+== 도서 API
+
+=== 도서 등록
+
+==== Request Parts
+
+include::{snippets}/book-create/request-parts.adoc[]
+
+==== Request PartFields
+
+include::{snippets}/book-create/request-part-request-fields.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/book-create/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-create/http-response.adoc[]
+
+==== ResponseFields
+
+include::{snippets}/book-create/response-fields.adoc[]
+
+=== 도서 등록(검증 실패)
+
+==== HTTP Request
+
+include::{snippets}/book-create-error/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-create-error/http-response.adoc[]
+
+=== 도서 수정
+
+==== Request Parts
+
+include::{snippets}/book-modify/request-parts.adoc[]
+
+==== Request PartFields
+
+include::{snippets}/book-modify/request-part-request-fields.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/book-modify/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-modify/http-response.adoc[]
+
+==== ResponseFields
+
+include::{snippets}/book-modify/response-fields.adoc[]
+
+=== 도서 수정(검증 실패)
+
+==== HTTP Request
+
+include::{snippets}/book-modify-error/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-modify-error/http-response.adoc[]
+
+=== 도서 상세 정보 조회
+
+==== Path Parameters
+
+include::{snippets}/book-detail/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/book-detail/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-detail/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-detail/response-fields.adoc[]
+
+=== 페이징된 전체 도서 미리보기
+
+==== Request Parameters
+
+include::{snippets}/book-getBookBrief/request-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/book-getBookBrief/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-getBookBrief/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-getBookBrief/response-fields.adoc[]
+
+=== 출판일순으로 정렬된 도서 리스트
+
+==== HTTP Request
+
+include::{snippets}/book-getBookPublicationDate/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-getBookPublicationDate/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-getBookPublicationDate/response-fields.adoc[]
+
+=== 평점순으로 정렬된 도서 리스트
+
+==== HTTP Request
+
+include::{snippets}/book-getBookRating/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-getBookRating/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-getBookRating/response-fields.adoc[]
+
+=== 리뷰수로 정렬된 도서 리스트
+
+==== HTTP Request
+
+include::{snippets}/book-getBookReview/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-getBookReview/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-getBookReview/response-fields.adoc[]
+
+=== 좋아요수로 정렬된 도서 리스트
+
+==== HTTP Request
+
+include::{snippets}/book-getBookLike/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-getBookLike/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-getBookLike/response-fields.adoc[]
+
+=== 조수로 정렬된 도서 리스트
+
+==== HTTP Request
+
+include::{snippets}/book-getBookPopularity/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-getBookPopularity/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-getBookPopularity/response-fields.adoc[]
+
+=== 쿠폰 등록시 사용할 도서 리스
+
+==== HTTP Request
+
+include::{snippets}/book-getBookForCoupon/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-getBookForCoupon/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-getBookForCoupon/response-fields.adoc[]
+
+=== 주문시 사용할 도서 정보
+
+==== Path Parameters
+
+include::{snippets}/book-getBookForOrder/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/book-getBookForOrder/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-getBookForOrder/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-getBookForOrder/response-fields.adoc[]
+
+=== 장바구니내 도서의 정보 조
+
+==== Path Parameters
+
+include::{snippets}/book-getBookInCart/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/book-getBookInCart/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-getBookInCart/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-getBookInCart/response-fields.adoc[]
+
+=== 도서 재고 조회
+
+==== Path Parameters
+
+include::{snippets}/book-getBookStock/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/book-getBookStock/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/book-getBookStock/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/book-getBookStock/response-fields.adoc[]
+
+== 도서-상태 API
+
+=== 도서 상태 목록
+
+==== HTTP Request
+
+include::{snippets}/bookStatus/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/bookStatus/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/bookStatus/response-fields.adoc[]
+
+== 도서-좋아요 API
+
+=== 도서 좋아요 요청
+
+==== Request Headers
+
+include::{snippets}/bookLike-update/request-headers.adoc[]
+
+==== Path Parameters
+
+include::{snippets}/bookLike-update/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/bookLike-update/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/bookLike-update/http-response.adoc[]
+
+=== 도서 좋아요 취소요청
+
+==== Request Headers
+
+include::{snippets}/bookLike-updateCancel/request-headers.adoc[]
+
+==== Path Parameters
+
+include::{snippets}/bookLike-updateCancel/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/bookLike-updateCancel/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/bookLike-updateCancel/http-response.adoc[]
+
+=== 사용자가 해당 도서를 좋아요 했는지 조회시 좋아요 경우
+
+==== Request Headers
+
+include::{snippets}/bookLike-isLike/request-headers.adoc[]
+
+==== Path Parameters
+
+include::{snippets}/bookLike-isLike/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/bookLike-isLike/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/bookLike-isLike/http-response.adoc[]
+
+=== 사용자가 해당 도서를 좋아요 했는지 조회시 좋아요 아닌 경우
+
+==== Request Headers
+
+include::{snippets}/bookLike-isNotLike/request-headers.adoc[]
+
+==== Path Parameters
+
+include::{snippets}/bookLike-isNotLike/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/bookLike-isNotLike/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/bookLike-isNotLike/http-response.adoc[]
+
+=== 사용자가 좋아요한 도서 목록 조회
+
+==== Request Headers
+
+include::{snippets}/bookLike-getBookListByUserId/request-headers.adoc[]
+
+==== Request Parameters
+
+include::{snippets}/bookLike-getBookListByUserId/request-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/bookLike-getBookListByUserId/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/bookLike-getBookListByUserId/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/bookLike-getBookListByUserId/response-fields.adoc[]

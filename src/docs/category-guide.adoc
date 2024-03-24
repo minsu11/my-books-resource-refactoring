@@ -1,0 +1,313 @@
+= Category
+
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectnums:
+:sectlinks:
+:sectanchors:
+
+== 카테고리 API
+
+카테고리 등록, 수정, 조회, 삭제를 할 수 있습니다.
+
+=== 카테고리 생성
+
+요청
+
+include::{snippets}/category-create/http-request.adoc[]
+
+요청 파라미터
+
+include::{snippets}/category-create/request-fields.adoc[]
+
+응답
+
+include::{snippets}/category-create/http-response.adoc[]
+
+예외
+
+카테고리 이름이 없는 경우
+
+* 요청
+
+include::{snippets}/category-create-fail-validation-blank/http-request.adoc[]
+
+* 응답
+
+include::{snippets}/category-create-fail-validation-blank/http-response.adoc[]
+
+카테고리 이름 길이가 초과하는 경우
+
+* 요청
+
+include::{snippets}/category-create-fail-validation-tooLong/http-request.adoc[]
+
+* 응답
+
+include::{snippets}/category-create-fail-validation-tooLong/http-response.adoc[]
+
+카테고리 이름이 이미 존재하는 경우
+
+* 요청
+
+include::{snippets}/category-create-fail-alreadyExistsCategoryName/http-request.adoc[]
+
+* 응답
+
+include::{snippets}/category-create-fail-alreadyExistsCategoryName/http-response.adoc[]
+
+=== 카테고리 수정
+
+요청
+
+include::{snippets}/category-modify/http-request.adoc[]
+
+요청 파라미터
+
+include::{snippets}/category-modify/path-parameters.adoc[]
+
+include::{snippets}/category-modify/request-fields.adoc[]
+
+응답
+
+include::{snippets}/category-modify/http-response.adoc[]
+
+응답 파라미터
+
+include::{snippets}/category-modify/response-fields.adoc[]
+
+예외
+
+카테고리 이름이 없는 경우
+
+* 요청
+
+include::{snippets}/category-modify-fail-validation-categoryNameBlank/http-request.adoc[]
+
+* 응답
+
+include::{snippets}/category-modify-fail-validation-categoryNameBlank/http-response.adoc[]
+
+카테고리 이름 길이가 초과하는 경우
+
+* 요청
+
+include::{snippets}/category-modify-fail-validation-categoryNameTooLong/http-request.adoc[]
+
+* 응답
+
+include::{snippets}/category-modify-fail-validation-categoryNameTooLong/http-response.adoc[]
+
+카테고리 이름이 이미 존재하는 경우
+
+* 요청
+
+include::{snippets}/category-modify-fail-alreadyExistsCategoryName/http-request.adoc[]
+
+* 응답
+
+include::{snippets}/category-modify-fail-alreadyExistsCategoryName/http-response.adoc[]
+
+=== 카테고리 삭제
+
+요청
+
+include::{snippets}/category-delete/http-request.adoc[]
+
+요청 파라미터
+
+include::{snippets}/category-delete/path-parameters.adoc[]
+
+응답
+
+include::{snippets}/category-delete/http-response.adoc[]
+
+예외
+
+카테고리가 존재하지 않는 경우
+
+* 요청
+
+include::{snippets}/category-delete-fail-notExistsCategoryId/http-request.adoc[]
+
+* 응답
+
+include::{snippets}/category-delete-fail-notExistsCategoryId/http-response.adoc[]
+
+자식 카테고리가 있는 경우
+
+* 요청
+
+include::{snippets}/category-delete-fail-hasChildCategory/http-request.adoc[]
+
+* 응답
+
+include::{snippets}/category-delete-fail-hasChildCategory/http-response.adoc[]
+
+=== 카테고리 조회
+
+==== 단건 조회
+
+요청
+
+include::{snippets}/get-category/http-request.adoc[]
+
+응답
+
+include::{snippets}/get-category/http-response.adoc[]
+
+응답 파라미터
+
+include::{snippets}/get-category/response-fields.adoc[]
+
+==== 자식 카테고리 조회
+
+요청
+
+include::{snippets}/get-category-list-using-ParentCategoryId/http-request.adoc[]
+
+요청 파라미터
+
+include::{snippets}/get-category-list-using-ParentCategoryId/path-parameters.adoc[]
+
+응답
+
+include::{snippets}/get-category-list-using-ParentCategoryId/response-body.adoc[]
+
+응답 파라미터
+
+include::{snippets}/get-category-list-using-ParentCategoryId/response-fields.adoc[]
+
+예외
+
+include::{snippets}/category-getCategoriesByParentCategoryId-fail-notExistsCategoryId/response-body.adoc[]
+
+==== 최상위 카테고리 리스트 조회
+
+요청
+
+include::{snippets}/category-get-highest-categories/http-request.adoc[]
+
+응답
+
+include::{snippets}/category-get-highest-categories/http-response.adoc[]
+
+응답 파라미터
+
+include::{snippets}/category-get-highest-categories/response-fields.adoc[]
+
+==== 도서 생성할 때 사용할 카테고리 리스트 조회
+
+요청
+
+include::{snippets}/category-get-category-list/http-request.adoc[]
+
+응답
+
+include::{snippets}/category-get-category-list/response-body.adoc[]
+
+응답 파라미터
+
+include::{snippets}/category-get-category-list/response-fields.adoc[]
+
+==== 도서에 해당하는 카테고리 아이디, 이름 리스트 조회
+
+요청
+
+include::{snippets}/category-getCategoryNameForBookView/http-request.adoc[]
+
+요청 파라미터
+
+include::{snippets}/category-getCategoryNameForBookView/path-parameters.adoc[]
+
+응답
+
+include::{snippets}/category-getCategoryNameForBookView/http-response.adoc[]
+
+응답 파라미터
+
+include::{snippets}/category-getCategoryNameForBookView/response-fields.adoc[]
+
+==== 홈페이지 메인에서 보여줄 카테고리들 조회
+
+요청
+
+include::{snippets}/category-getCategoriesForMainView/http-request.adoc[]
+
+응답
+
+include::{snippets}/category-getCategoriesForMainView/http-response.adoc[]
+
+응답 파라미터
+
+include::{snippets}/category-getCategoriesForMainView/response-fields.adoc[]
+
+==== 카테고리 선택시 보여줄 카테고리들 조회
+
+요청
+
+include::{snippets}/category-getCategoriesForCategoryView/http-request.adoc[]
+
+요청 파라미터
+
+include::{snippets}/category-getCategoriesForCategoryView/path-parameters.adoc[]
+
+응답
+
+include::{snippets}/category-getCategoriesForCategoryView/http-response.adoc[]
+
+응답 파라미터
+
+include::{snippets}/category-getCategoriesForCategoryView/response-fields.adoc[]
+
+==== 카테고리 페이지 조회
+
+요청
+
+include::{snippets}/category-get-page/http-request.adoc[]
+
+요청 파라미터
+
+include::{snippets}/category-get-page/request-parameters.adoc[]
+
+응답
+
+include::{snippets}/category-get-page/response-body.adoc[]
+
+응답 파라미터
+
+include::{snippets}/category-get-page/response-fields.adoc[]
+
+==== 카테고리 선택 시 사용할 도서 조회
+
+요청
+
+include::{snippets}/category-getBooksForCategoryView/http-request.adoc[]
+
+요청 파라미터
+
+include::{snippets}/category-getBooksForCategoryView/path-parameters.adoc[]
+include::{snippets}/category-getBooksForCategoryView/request-parameters.adoc[]
+
+응답
+
+include::{snippets}/category-getBooksForCategoryView/http-response.adoc[]
+
+응답 파라미터
+
+include::{snippets}/category-getBooksForCategoryView/response-fields.adoc[]
+
+
+
+
+
+
+
+
+
+
+
+
