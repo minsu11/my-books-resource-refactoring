@@ -4,10 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -16,8 +18,11 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,6 +34,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.author.dto.response.AuthorGetResponse;
@@ -99,6 +106,9 @@ class BookServiceTest {
 
     @Mock
     public BookLikeRepository bookLikeRepository;
+
+    @Mock
+    public RedisTemplate redisTemplate;
 
     @Mock
     public CategoryService categoryService;
@@ -591,4 +601,38 @@ class BookServiceTest {
         verify(bookLikeRepository, times(1)).countBookLikeByPk_BookId(bookId);
     }
 
+    @Test
+    @DisplayName("도서 조회수 업데이트(존재하지 않는 도서)")
+    void givenNotExistsBookId_whenUpdateBookViewCount_thenThrowBookNotExistException() {
+        String key = "viewCount:1";
+        Set<String> keys = new HashSet<>(Collections.singletonList(key));
+        Long bookId = 1L;
+
+        when(redisTemplate.keys("viewCount:*")).thenReturn(keys);
+        when(bookRepository.existsById(bookId)).thenReturn(false);
+
+        assertThrows(BookNotExistException.class, () -> bookService.updateBookViewCount());
+        verify(redisTemplate, times(0)).delete(key);
+        verify(bookRepository, times(0)).updateBookViewCount(anyLong(), anyInt());
+    }
+
+    @Test
+    @DisplayName("도서 조회수 업데이트")
+    void whenUpdateBookViewCount_thenThrowBookNotExistException() {
+        String key = "viewCount:1";
+        Set<String> keys = new HashSet<>(Collections.singletonList(key));
+        Long bookId = 1L;
+        Integer viewCount = 5;
+
+        when(redisTemplate.keys("viewCount:*")).thenReturn(keys);
+        ValueOperations<String, Integer> valueOperationsMock = mock(ValueOperations.class);
+        when(redisTemplate.opsForValue()).thenReturn(valueOperationsMock);
+        when(valueOperationsMock.get(key)).thenReturn(viewCount);
+        when(bookRepository.existsById(bookId)).thenReturn(true);
+
+        bookService.updateBookViewCount();
+
+        verify(redisTemplate, times(1)).delete(key);
+        verify(bookRepository, times(1)).updateBookViewCount(anyLong(), anyInt());
+    }
 }
