@@ -26,8 +26,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.book.dto.request.BookCreateRequest;
+import store.mybooks.resource.book.dto.request.BookModifyRequest;
 import store.mybooks.resource.book.dto.response.BookCreateResponse;
+import store.mybooks.resource.book.dto.response.BookModifyResponse;
 import store.mybooks.resource.book.entity.Book;
+import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.exception.IsbnAlreadyExistsException;
 import store.mybooks.resource.book.mapper.BookMapper;
 import store.mybooks.resource.book.repotisory.BookRepository;
@@ -307,40 +310,170 @@ class BookServiceTest {
         verify(imageStatusRepository, times(2)).findById(anyString());
         verify(bookMapper, times(0)).createResponse(any(Book.class));
     }
-//    @Test
-//    @DisplayName("도서 수정")
-//    void givenBookIdAndBookModifyRequest_whenModifyBook_thenModifyBookAndReturnBookModifyResponse() {
-//        BookModifyRequest request = new BookModifyRequest();
-//        ReflectionTestUtils.setField(request, "saleCost", 1);
-//        ReflectionTestUtils.setField(request, "bookStatusId", "판매종료");
-//        ReflectionTestUtils.setField(request, "stock", 0);
-//        ReflectionTestUtils.setField(request, "isPacking", true);
-//        ReflectionTestUtils.setField(request, "categoryList", new ArrayList<>(List.of(1)));
-//        ReflectionTestUtils.setField(request, "tagList", null);
-//        Long bookId = 1L;
-//        Book book =
-//                new Book(bookId, new BookStatus("판매중"), new Publisher(1, "출판사1", LocalDate.now()), "도서1",
-//                        "1234567898764",
-//                        LocalDate.of(2024, 1, 1), 100, "인덱스1",
-//                        "내용1", 20000, 16000, 20, 5, 0, true, LocalDate.now());
-//        given(bookRepository.findById(bookId)).willReturn(Optional.of(book));
-//
-//        BookModifyResponse response = new BookModifyResponse();
-//        response.setName(book.getName());
-//
-//        BookStatus bookStatus = new BookStatus("판매종료");
-//        given(bookStatusRepository.findById(anyString())).willReturn(Optional.of(bookStatus));
-//
-//        when(bookMapper.modifyResponse(any(Book.class))).thenReturn(response);
-//
-//        bookService.modifyBook(bookId, request);
-//
-//        Assertions.assertThat(response.getName()).isEqualTo(book.getName());
-//
-//        verify(bookRepository, times(1)).findById(bookId);
-//        verify(bookStatusRepository, times(1)).findById(anyString());
-//        verify(bookMapper, times(1)).modifyResponse(any(Book.class));
-//    }
+
+    @Test
+    @DisplayName("도서 수정")
+    void givenBookIdAndBookModifyRequest_whenModifyBook_thenModifyBookAndReturnBookModifyResponse() throws IOException {
+        BookModifyRequest request =
+                new BookModifyRequest("판매중", 1, "도서1", "1234567898764", LocalDate.of(2024, 1, 1), 100, "인덱스1", "내용1",
+                        20000, 16000, 5, true, new ArrayList<Integer>(List.of(1)), new ArrayList<Integer>(List.of(1)),
+                        new ArrayList<Integer>(List.of(1)));
+        Long bookId = 2L;
+
+        Book book =
+                new Book(bookId, new BookStatus("판매중"), new Publisher(1, "출판사1", LocalDate.now()), "도서1",
+                        "1234567898763",
+                        LocalDate.of(2024, 1, 1), 100, "인덱스1",
+                        "내용1", 20000, 16000, 20, 5, 0, true, LocalDate.now());
+        given(bookRepository.findById(bookId)).willReturn(Optional.of(book));
+
+        BookModifyResponse response = new BookModifyResponse();
+        response.setName(book.getName());
+
+        BookStatus bookStatus = new BookStatus("판매종료");
+        given(bookStatusRepository.findById(anyString())).willReturn(Optional.of(bookStatus));
+
+        Publisher publisher = new Publisher(1, "출판사1", LocalDate.now());
+        given(publisherRepository.findById(anyInt())).willReturn(Optional.of(publisher));
+
+        given(bookRepository.existsByIsbn(anyString())).willReturn(false);
+
+        doNothing().when(bookAuthorService).deleteBookAuthor(bookId);
+        doNothing().when(bookAuthorService).createBookAuthor(any(BookAuthorCreateRequest.class));
+        doNothing().when(bookCategoryService).deleteBookCategory(bookId);
+        doNothing().when(bookCategoryService).createBookCategory(any(BookCategoryCreateRequest.class));
+        doNothing().when(bookTagService).deleteBookTag(bookId);
+        doNothing().when(bookTagService).createBookTag(any(BookTagCreateRequest.class));
+        doNothing().when(imageService).updateImage(any(Book.class), eq(null), eq(null));
+
+        when(bookMapper.modifyResponse(any(Book.class))).thenReturn(response);
+
+        bookService.modifyBook(bookId, request, null, null);
+
+        Assertions.assertThat(response.getName()).isEqualTo(book.getName());
+
+        verify(bookRepository, times(1)).findById(bookId);
+        verify(bookStatusRepository, times(1)).findById(anyString());
+        verify(publisherRepository, times(1)).findById(anyInt());
+        verify(bookRepository, times(1)).existsByIsbn(anyString());
+        verify(bookMapper, times(1)).modifyResponse(any(Book.class));
+    }
+
+    @Test
+    @DisplayName("도서 수정(존재하지 않는 도서)")
+    void givenNotExistsBookId_whenModifyBook_thenThrowBookNotExistException() throws IOException {
+        BookModifyRequest request =
+                new BookModifyRequest("판매중", 1, "도서1", "1234567898764", LocalDate.of(2024, 1, 1), 100, "인덱스1", "내용1",
+                        20000, 16000, 5, true, new ArrayList<Integer>(List.of(1)), new ArrayList<Integer>(List.of(1)),
+                        new ArrayList<Integer>(List.of(1)));
+        Long bookId = 2L;
+
+        given(bookRepository.findById(bookId)).willReturn(Optional.empty());
+
+        assertThrows(BookNotExistException.class, () -> bookService.modifyBook(bookId, request, null, null));
+
+        verify(bookRepository, times(1)).findById(bookId);
+        verify(bookStatusRepository, times(0)).findById(anyString());
+        verify(publisherRepository, times(0)).findById(anyInt());
+        verify(bookRepository, times(0)).existsByIsbn(anyString());
+        verify(bookMapper, times(0)).modifyResponse(any(Book.class));
+    }
+
+    @Test
+    @DisplayName("도서 수정(존재하지 않는 도서상태)")
+    void givenNotExistBookStatus_whenModifyBook_thenThrowBookStatusNotExistException() throws IOException {
+        BookModifyRequest request =
+                new BookModifyRequest("판매중", 1, "도서1", "1234567898764", LocalDate.of(2024, 1, 1), 100, "인덱스1", "내용1",
+                        20000, 16000, 5, true, new ArrayList<Integer>(List.of(1)), new ArrayList<Integer>(List.of(1)),
+                        new ArrayList<Integer>(List.of(1)));
+        Long bookId = 2L;
+
+        Book book =
+                new Book(bookId, new BookStatus("판매중"), new Publisher(1, "출판사1", LocalDate.now()), "도서1",
+                        "1234567898763",
+                        LocalDate.of(2024, 1, 1), 100, "인덱스1",
+                        "내용1", 20000, 16000, 20, 5, 0, true, LocalDate.now());
+        given(bookRepository.findById(bookId)).willReturn(Optional.of(book));
+
+        given(bookStatusRepository.findById(anyString())).willReturn(Optional.empty());
+
+        assertThrows(BookStatusNotExistException.class, () -> bookService.modifyBook(bookId, request, null, null));
+
+        verify(bookRepository, times(1)).findById(bookId);
+        verify(bookStatusRepository, times(1)).findById(anyString());
+        verify(publisherRepository, times(0)).findById(anyInt());
+        verify(bookRepository, times(0)).existsByIsbn(anyString());
+        verify(bookMapper, times(0)).modifyResponse(any(Book.class));
+    }
+
+    @Test
+    @DisplayName("도서 수정(존재하지 않는 출판사)")
+    void givenNotExistPublisher_whenModifyBook_thenThrowPublisherNotExistException() throws IOException {
+        BookModifyRequest request =
+                new BookModifyRequest("판매중", 1, "도서1", "1234567898764", LocalDate.of(2024, 1, 1), 100, "인덱스1", "내용1",
+                        20000, 16000, 5, true, new ArrayList<Integer>(List.of(1)), new ArrayList<Integer>(List.of(1)),
+                        new ArrayList<Integer>(List.of(1)));
+        Long bookId = 2L;
+
+        Book book =
+                new Book(bookId, new BookStatus("판매중"), new Publisher(1, "출판사1", LocalDate.now()), "도서1",
+                        "1234567898763",
+                        LocalDate.of(2024, 1, 1), 100, "인덱스1",
+                        "내용1", 20000, 16000, 20, 5, 0, true, LocalDate.now());
+        given(bookRepository.findById(bookId)).willReturn(Optional.of(book));
+
+        BookModifyResponse response = new BookModifyResponse();
+        response.setName(book.getName());
+
+        BookStatus bookStatus = new BookStatus("판매종료");
+        given(bookStatusRepository.findById(anyString())).willReturn(Optional.of(bookStatus));
+
+        given(publisherRepository.findById(anyInt())).willReturn(Optional.empty());
+
+        assertThrows(PublisherNotExistException.class, () -> bookService.modifyBook(bookId, request, null, null));
+
+        verify(bookRepository, times(1)).findById(bookId);
+        verify(bookStatusRepository, times(1)).findById(anyString());
+        verify(publisherRepository, times(1)).findById(anyInt());
+        verify(bookRepository, times(0)).existsByIsbn(anyString());
+        verify(bookMapper, times(0)).modifyResponse(any(Book.class));
+    }
+
+    @Test
+    @DisplayName("도서 수정(이미 존재하는 ISBN 으로 수정)")
+    void givenAlreadyExistsIsbn_whenModifyBook_thenThrowIsbnAlreadyExistsException() throws IOException {
+        BookModifyRequest request =
+                new BookModifyRequest("판매중", 1, "도서1", "1234567898764", LocalDate.of(2024, 1, 1), 100, "인덱스1", "내용1",
+                        20000, 16000, 5, true, new ArrayList<Integer>(List.of(1)), new ArrayList<Integer>(List.of(1)),
+                        new ArrayList<Integer>(List.of(1)));
+        Long bookId = 2L;
+
+        Book book =
+                new Book(bookId, new BookStatus("판매중"), new Publisher(1, "출판사1", LocalDate.now()), "도서1",
+                        "1234567898763",
+                        LocalDate.of(2024, 1, 1), 100, "인덱스1",
+                        "내용1", 20000, 16000, 20, 5, 0, true, LocalDate.now());
+        given(bookRepository.findById(bookId)).willReturn(Optional.of(book));
+
+        BookModifyResponse response = new BookModifyResponse();
+        response.setName(book.getName());
+
+        BookStatus bookStatus = new BookStatus("판매종료");
+        given(bookStatusRepository.findById(anyString())).willReturn(Optional.of(bookStatus));
+
+        Publisher publisher = new Publisher(1, "출판사1", LocalDate.now());
+        given(publisherRepository.findById(anyInt())).willReturn(Optional.of(publisher));
+
+        given(bookRepository.existsByIsbn(anyString())).willReturn(true);
+
+        assertThrows(IsbnAlreadyExistsException.class, () -> bookService.modifyBook(bookId, request, null, null));
+
+        verify(bookRepository, times(1)).findById(bookId);
+        verify(bookStatusRepository, times(1)).findById(anyString());
+        verify(publisherRepository, times(1)).findById(anyInt());
+        verify(bookRepository, times(1)).existsByIsbn(anyString());
+        verify(bookMapper, times(0)).modifyResponse(any(Book.class));
+    }
 //
 //    @Test
 //    @DisplayName("도서 수정(존재하지 않는 도서ID)")
