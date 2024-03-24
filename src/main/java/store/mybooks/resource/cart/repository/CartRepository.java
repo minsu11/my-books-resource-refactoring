@@ -17,10 +17,12 @@ import store.mybooks.resource.cart.entity.Cart;
  */
 public interface CartRepository extends JpaRepository<Cart, Long> {
     /**
-     * Find cart by user id optional.
+     * methodName : findCartByUserId<br>
+     * author : Fiat_lux<br>
+     * description : cart read by UserId
      *
      * @param userId the user id
-     * @return the optional
+     * @return the optional Cart
      */
     Optional<Cart> findCartByUserId(Long userId);
 }
