@@ -10,13 +10,31 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.book.dto.request.BookCreateRequest;
 import store.mybooks.resource.book.dto.request.BookModifyRequest;
-import store.mybooks.resource.book.dto.response.*;
+import store.mybooks.resource.book.dto.response.BookBriefResponse;
+import store.mybooks.resource.book.dto.response.BookCartResponse;
+import store.mybooks.resource.book.dto.response.BookCreateResponse;
+import store.mybooks.resource.book.dto.response.BookDetailResponse;
+import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
+import store.mybooks.resource.book.dto.response.BookLikeResponse;
+import store.mybooks.resource.book.dto.response.BookModifyResponse;
+import store.mybooks.resource.book.dto.response.BookPopularityResponse;
+import store.mybooks.resource.book.dto.response.BookPublicationDateResponse;
+import store.mybooks.resource.book.dto.response.BookRatingResponse;
+import store.mybooks.resource.book.dto.response.BookResponseForOrder;
+import store.mybooks.resource.book.dto.response.BookReviewResponse;
+import store.mybooks.resource.book.dto.response.BookStockResponse;
 import store.mybooks.resource.book.service.BookService;
-import store.mybooks.resource.error.RequestValidationFailedException;
+import store.mybooks.resource.error.Utils;
 
 /**
  * packageName    : store.mybooks.resource.book.controller <br/>
@@ -48,21 +66,6 @@ public class BookRestController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookService.getBookBriefInfo(pageable));
-    }
-
-    /**
-     * methodName : getActiveBookBrief
-     * author : newjaehun
-     * description : 활성상태인 간략한 도서 리스트 반환.
-     *
-     * @param pageable pageable
-     * @return response entity
-     */
-    @GetMapping("/active")
-    public ResponseEntity<Page<BookBriefResponse>> getActiveBookBrief(Pageable pageable) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(bookService.getActiveBookBriefInfo(pageable));
     }
 
     /**
@@ -161,9 +164,7 @@ public class BookRestController {
                                                          @RequestPart("content") List<MultipartFile> content,
                                                          BindingResult bindingResult)
             throws IOException {
-        if (bindingResult.hasErrors()) {
-            throw new RequestValidationFailedException(bindingResult);
-        }
+        Utils.validateRequest(bindingResult);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(bookService.createBook(createRequest, thumbnail, content));
@@ -187,9 +188,7 @@ public class BookRestController {
                                                          @RequestPart(value = "content", required = false)
                                                          List<MultipartFile> content,
                                                          BindingResult bindingResult) throws IOException {
-        if (bindingResult.hasErrors()) {
-            throw new RequestValidationFailedException(bindingResult);
-        }
+        Utils.validateRequest(bindingResult);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookService.modifyBook(bookId, modifyRequest, thumbnail, content));
@@ -212,7 +211,6 @@ public class BookRestController {
      */
     @GetMapping("/{id}/order/stock")
     public ResponseEntity<BookStockResponse> getBookStock(@PathVariable("id") Long bookId) {
-
         return ResponseEntity.status(HttpStatus.OK)
                 .body(bookService.getBookStockResponse(bookId));
     }
