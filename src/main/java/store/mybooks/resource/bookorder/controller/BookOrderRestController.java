@@ -47,7 +47,7 @@ public class BookOrderRestController {
      * description : 회원 본인의 주문 내역.
      * <br> *
      *
-     * @param id
+     * @param id       조회할 아이디
      * @param pageable 페이징
      * @return response entity
      */
@@ -68,7 +68,7 @@ public class BookOrderRestController {
      * description : 관리자가 보는 주문 내역.
      * <br> *
      *
-     * @param pageable
+     * @param pageable 페이징
      * @return response entity
      */
     @GetMapping("/admin")
@@ -153,7 +153,10 @@ public class BookOrderRestController {
     }
 
     /**
-     * 주문 요청이 들어오면 주문 생성.
+     * methodName : createResponseResponseEntity<br>
+     * author : minsu11<br>
+     * description : 주문 요청이 들어오면 주문 생성.
+     * <br>
      *
      * @param request the request
      * @param id      the id
@@ -171,7 +174,12 @@ public class BookOrderRestController {
     }
 
     /**
-     * @param request the request
+     * methodName : createNonUserOrderResponseResponseEntity<br>
+     * author : minsu11<br>
+     * description : 비회원 주문 생성.
+     * <br>
+     *
+     * @param request 생성할 주문
      * @return the response entity
      */
     @PostMapping("/non/user")
@@ -217,10 +225,20 @@ public class BookOrderRestController {
                 .body(bookOrderService.getOrderInfoPayment(orderNumber));
     }
 
+    /**
+     * methodName : getBookOrderUserPage<br>
+     * author : minsu11<br>
+     * description : 회원의 주문 내역 페이징 조회.
+     * <br> *
+     *
+     * @param pageable 페이징
+     * @param userId   회원 아이디
+     * @return the book order user page
+     */
     @GetMapping("/page")
-    public ResponseEntity<Page<BookOrderUserResponse>> getBookOrderUserPage(Pageable pageable,
-                                                                            @RequestHeader(name = HeaderProperties.USER_ID)
-                                                                            Long userId) {
+    public ResponseEntity<Page<BookOrderUserResponse>> getBookOrderUserPage(
+            Pageable pageable,
+            @RequestHeader(name = HeaderProperties.USER_ID) Long userId) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookOrderService.getUserBookOrderInfo(pageable, userId));
