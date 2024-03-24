@@ -1,7 +1,15 @@
 package store.mybooks.resource.book.entity;
 
 import java.time.LocalDate;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -85,21 +93,40 @@ public class Book {
      * author : newjaehun
      * description : 도서 객체를 수정하는 메서드.
      *
-     * @param bookStatus   bookstatus
-     * @param saleCost     saleCost
-     * @param discountRate discountRate
-     * @param stock        stock
-     * @param isPackaging  isPackaging
+     * @param bookStatus   BookStatus
+     * @param publisher    Publisher
+     * @param name         String
+     * @param isbn         Integer
+     * @param publishDate  LocalDate
+     * @param page         Integer
+     * @param index        String
+     * @param explanation  String
+     * @param originalCost Integer
+     * @param saleCost     Integer
+     * @param discountRate Integer
+     * @param stock        Integer
+     * @param isPackaging  Boolean
      */
-    public void setModifyRequest(BookStatus bookStatus, Integer saleCost, Integer discountRate, Integer stock,
+    public void setModifyRequest(BookStatus bookStatus, Publisher publisher, String name, String isbn,
+                                 LocalDate publishDate, Integer page, String index, String explanation,
+                                 Integer originalCost, Integer saleCost,
+                                 Integer discountRate, Integer stock,
                                  Boolean isPackaging) {
         this.bookStatus = bookStatus;
+        this.publisher = publisher;
+        this.name = name;
+        this.isbn = isbn;
+        this.publishDate = publishDate;
+        this.page = page;
+        this.index = index;
+        this.explanation = explanation;
+        this.originalCost = originalCost;
         this.saleCost = saleCost;
         this.discountRate = discountRate;
         this.stock = stock;
         this.isPackaging = isPackaging;
-
     }
+
 
     public void modifyStock(Integer stock) {
         this.stock = stock;

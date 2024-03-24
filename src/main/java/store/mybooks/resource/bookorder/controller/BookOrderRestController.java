@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,14 +44,16 @@ public class BookOrderRestController {
      * <br> *
      *
      * @param id
-     * @param pageable
+     * @param pageable 페이징
      * @return response entity
      */
 
-    @GetMapping("/users/{id}")
-    public ResponseEntity<Page<BookOrderUserResponse>> getBookOrderPageById(@PathVariable Long id, Pageable pageable
-    ) {
+    @GetMapping("/users")
+
+    public ResponseEntity<Page<BookOrderUserResponse>> getBookOrderPageById(
+            Pageable pageable, @RequestHeader(name = HeaderProperties.USER_ID) Long id) {
         Page<BookOrderUserResponse> bookOrderResponses = bookOrderService.getBookOrderResponseList(id, pageable);
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookOrderResponses);
@@ -83,7 +86,8 @@ public class BookOrderRestController {
      * @return response entity
      */
     @PutMapping("/admin/statuses")
-    public ResponseEntity<BookOrderAdminModifyResponse> modifyOrderStatus(@RequestBody BookOrderAdminModifyRequest request) {
+    public ResponseEntity<BookOrderAdminModifyResponse> modifyOrderStatus(
+            @RequestBody BookOrderAdminModifyRequest request) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookOrderService.modifyBookOrderAdminStatus(request));
@@ -99,7 +103,8 @@ public class BookOrderRestController {
      * @return response entity
      */
     @PutMapping("/admin/invoiceNumbers")
-    public ResponseEntity<BookOrderRegisterInvoiceResponse> registerInvoiceNumber(@RequestBody BookOrderRegisterInvoiceRequest request) {
+    public ResponseEntity<BookOrderRegisterInvoiceResponse> registerInvoiceNumber(
+            @RequestBody BookOrderRegisterInvoiceRequest request) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookOrderService.registerBookOrderInvoiceNumber(request));
@@ -149,10 +154,23 @@ public class BookOrderRestController {
     public ResponseEntity<BookOrderCreateResponse> createResponseResponseEntity(
             @RequestBody BookOrderCreateRequest request,
             @RequestHeader(name = HeaderProperties.USER_ID) Long id) {
-
+        log.debug("주문 생성 :{}", request.getOrderInfo());
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(orderService.createOrder(request, id));
+    }
+
+    /**
+     * @param request the request
+     * @return the response entity
+     */
+    @PostMapping("/non/user")
+    public ResponseEntity<BookOrderCreateResponse> createNonUserOrderResponseResponseEntity(
+            @RequestBody BookOrderCreateRequest request) {
+        log.debug("주문 생성 :{}", request.getOrderInfo());
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(orderService.createOrder(request, 0L));
     }
 
     /**
@@ -192,7 +210,8 @@ public class BookOrderRestController {
 
     @GetMapping("/page")
     public ResponseEntity<Page<BookOrderUserResponse>> getBookOrderUserPage(Pageable pageable,
-                                                                            @RequestHeader(name = HeaderProperties.USER_ID) Long userId) {
+                                                                            @RequestHeader(name = HeaderProperties.USER_ID)
+                                                                            Long userId) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookOrderService.getUserBookOrderInfo(pageable, userId));

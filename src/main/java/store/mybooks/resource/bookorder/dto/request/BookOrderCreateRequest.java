@@ -21,6 +21,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 public class BookOrderCreateRequest {
+    private String name;
+    private String email;
+    private String phone;
 
     @NotNull
     private List<BookInfoRequest> bookInfoList;

@@ -3,6 +3,7 @@ package store.mybooks.resource.usercoupon.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -48,7 +49,12 @@ import org.springframework.web.context.WebApplicationContext;
 import store.mybooks.resource.usercoupon.dto.request.UserCouponCreateRequest;
 import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForMyPage;
 import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForOrder;
+import store.mybooks.resource.usercoupon.dto.response.UserCouponGetResponseForOrderQuerydsl;
+import store.mybooks.resource.usercoupon.exception.UserCouponAlreadyUsedException;
+import store.mybooks.resource.usercoupon.exception.UserCouponNotExistsException;
+import store.mybooks.resource.usercoupon.exception.UserCouponNotUsedException;
 import store.mybooks.resource.usercoupon.service.UserCouponService;
+import store.mybooks.resource.utils.TimeUtils;
 
 /**
  * packageName    : store.mybooks.resource.user_coupon.controller
@@ -172,21 +178,33 @@ class UserCouponRestControllerTest {
                                 fieldWithPath("content[].target").description("쿠폰 적용 대상"),
                                 fieldWithPath("content[].orderMin").description("최소 주문 금액"),
                                 fieldWithPath("content[].discountRateOrCost").description("할인율 / 할인금액"),
-                                fieldWithPath("content[].maxDiscountCost").description("최대 할인 금액 (정액할인쿠폰인 경우 할인 금액과 같음)"),
+                                fieldWithPath("content[].maxDiscountCost")
+                                        .description("최대 할인 금액 (정액할인쿠폰인 경우 할인 금액과 같음)"),
                                 fieldWithPath("content[].isRate").description("정률할인쿠폰인지 여부"),
                                 fieldWithPath("content[].startDate").description("쿠폰 사용기간(시작일)"),
                                 fieldWithPath("content[].endDate").description("쿠폰 사용기간(종료일)"),
-                                fieldWithPath("pageable.sort.*").ignored(),
-                                fieldWithPath("pageable.*").ignored(),
-                                fieldWithPath("totalElements").ignored(),
-                                fieldWithPath("totalPages").ignored(),
-                                fieldWithPath("last").ignored(),
-                                fieldWithPath("numberOfElements").ignored(),
-                                fieldWithPath("size").ignored(),
-                                fieldWithPath("number").ignored(),
-                                fieldWithPath("first").ignored(),
-                                fieldWithPath("sort.*").ignored(),
-                                fieldWithPath("empty").ignored()
+                                fieldWithPath("pageable").description("페이지정보"),
+                                fieldWithPath("pageable.sort").description("페이지 정렬 정보"),
+                                fieldWithPath("pageable.sort.sorted").description("페이지 정렬되었는지 여부(true: 정렬 됨)"),
+                                fieldWithPath("pageable.sort.unsorted").description("페이지 정렬되지 않았는지 여부(true: 정렬 안 됨)"),
+                                fieldWithPath("pageable.sort.empty").description("페이지 정렬 정보가 비어 있는지 여부(true: 비어있음)"),
+                                fieldWithPath("pageable.pageSize").description("전체 페이지 수"),
+                                fieldWithPath("pageable.pageNumber").description("현재 페이지 번호(0부터 시작)"),
+                                fieldWithPath("pageable.offset").description("현재 페이지의 시작 오프셋(0부터 시작)"),
+                                fieldWithPath("pageable.paged").description("페이지네이션을 사용하는지 여부(true: 사용함)"),
+                                fieldWithPath("pageable.unpaged").description("페이지네이션을 사용하는지 여부(true: 사용 안 함)"),
+                                fieldWithPath("totalPages").description("전체 페이지 수"),
+                                fieldWithPath("totalElements").description("전체 요소(항목) 수"),
+                                fieldWithPath("last").description("마지막 페이지 여부(true: 마지막 페이지)"),
+                                fieldWithPath("numberOfElements").description("혀재 페이지의 요소(항목) 수"),
+                                fieldWithPath("size").description("페이지 당 요소(항목) 수"),
+                                fieldWithPath("sort").description("결과 정렬 정보를 담은 객체"),
+                                fieldWithPath("sort.sorted").description("결과가 정렬되었는지 여부(true: 정렬 됨)"),
+                                fieldWithPath("sort.unsorted").description("결과가 정렬되지 않았는지 여부(true: 정렬 안 됨)"),
+                                fieldWithPath("sort.empty").description("결과 정렬 정보가 비어 있는지 여부(true: 비어있음)"),
+                                fieldWithPath("number").description("현재 페이지 번호(0부터 시작)"),
+                                fieldWithPath("first").description("첫 페이지 여부(true: 첫 페이지)"),
+                                fieldWithPath("empty").description("결과가 비어 있는지 여부(true: 비어있음)")
                         )));
 
         verify(userCouponService, times(1)).getUserCoupons(anyLong(), any());
@@ -364,20 +382,53 @@ class UserCouponRestControllerTest {
     }
 
     @Test
-    @DisplayName("회원 쿠폰 생성 - Validation 실패")
+    @DisplayName("회원 쿠폰 생성 - Validation 실패(userId)")
     void givenWrongUserCouponCreateRequest_whenCreateUserCoupon_thenThrowRequestValidationFailedException()
             throws Exception {
         UserCouponCreateRequest userCouponCreateRequest = new UserCouponCreateRequest();
         ReflectionTestUtils.setField(userCouponCreateRequest, "userId", -1L);
         ReflectionTestUtils.setField(userCouponCreateRequest, "couponId", 1L);
-        String content = objectMapper.writeValueAsString(userCouponCreateRequest);
+        String userIdNegative = objectMapper.writeValueAsString(userCouponCreateRequest);
+
+        ReflectionTestUtils.setField(userCouponCreateRequest, "userId", null);
+        String userIdNull = objectMapper.writeValueAsString(userCouponCreateRequest);
 
         mockMvc.perform(post("/api/user-coupon")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(content))
-                .andExpect(status().isBadRequest());
+                        .content(userIdNegative))
+                .andExpect(status().isBadRequest())
+                .andDo(document("user_coupon-create-fail-validation-userIdNegative"));
+
+        mockMvc.perform(post("/api/user-coupon")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userIdNull))
+                .andExpect(status().isBadRequest())
+                .andDo(document("user_coupon-create-fail-validation-userIdNull"));
 
         verify(userCouponService, times(0)).createUserCoupon(any());
+    }
+
+    @Test
+    @DisplayName("회원 쿠폰 생성 실패 - Validation 실패(couponId)")
+    void givenInvalidUserId_whenCreateUserCoupon_thenThrowValidationException() throws Exception {
+        UserCouponCreateRequest userCouponCreateRequest = new UserCouponCreateRequest();
+        ReflectionTestUtils.setField(userCouponCreateRequest, "userId", 1L);
+        ReflectionTestUtils.setField(userCouponCreateRequest, "couponId", -1L);
+        String couponIdNegative = objectMapper.writeValueAsString(userCouponCreateRequest);
+        ReflectionTestUtils.setField(userCouponCreateRequest, "couponId", null);
+        String couponIdNull = objectMapper.writeValueAsString(userCouponCreateRequest);
+
+        mockMvc.perform(post("/api/user-coupon")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(couponIdNegative))
+                .andExpect(status().isBadRequest())
+                .andDo(document("user_coupon-create-fail-validation-couponIdNegative"));
+
+        mockMvc.perform(post("/api/user-coupon")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(couponIdNull))
+                .andExpect(status().isBadRequest())
+                .andDo(document("user_coupon-create-fail-validation-couponIdNull"));
     }
 
     @Test
@@ -388,6 +439,21 @@ class UserCouponRestControllerTest {
         mockMvc.perform(RestDocumentationRequestBuilders.put("/api/user-coupon/use/{userCouponId}", 1L))
                 .andExpect(status().isOk())
                 .andDo(document("user-coupon-use",
+                        pathParameters(
+                                parameterWithName("userCouponId").description("회원 쿠폰 아이디")
+                        )));
+
+        verify(userCouponService, times(1)).useUserCoupon(anyLong());
+    }
+
+    @Test
+    @DisplayName("회원 쿠폰 사용 - 이미 사용한 쿠폰")
+    void givenAlreadyUsedUserCouponId_whenUseUserCoupon_thenModifyUserCoupon() throws Exception {
+        doThrow(new UserCouponAlreadyUsedException(1L)).when(userCouponService).useUserCoupon(anyLong());
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/user-coupon/use/{userCouponId}", 1L))
+                .andExpect(status().isNotFound())
+                .andDo(document("user_coupon-use-fail-alreadyUsedCoupon",
                         pathParameters(
                                 parameterWithName("userCouponId").description("회원 쿠폰 아이디")
                         )));
@@ -408,5 +474,78 @@ class UserCouponRestControllerTest {
                         )));
 
         verify(userCouponService, times(1)).giveBackUserCoupon(anyLong());
+    }
+
+    @Test
+    @DisplayName("회원 쿠폰 돌려줌 - 사용하지 않은 쿠폰")
+    void givenNotUsedUserCouponId_whenUseUserCoupon_thenModifyUserCoupon() throws Exception {
+        doThrow(new UserCouponNotUsedException(1L)).when(userCouponService).giveBackUserCoupon(anyLong());
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/user-coupon/return/{userCouponId}", 1L))
+                .andExpect(status().isNotFound())
+                .andDo(document("user_coupon-use-fail-notUsedCoupon",
+                        pathParameters(
+                                parameterWithName("userCouponId").description("회원 쿠폰 아이디")
+                        )));
+
+        verify(userCouponService, times(1)).giveBackUserCoupon(anyLong());
+    }
+
+    @Test
+    @DisplayName("회원 쿠폰 조회")
+    void givenUserCouponId_whenGetUserCoupon_thenReturnUserCouponGetResponseForOrderQuerydsl() throws Exception {
+        UserCouponGetResponseForOrderQuerydsl expect =
+                new UserCouponGetResponseForOrderQuerydsl(
+                        1L,
+                        "userCoupon",
+                        0,
+                        null,
+                        3000,
+                        50,
+                        true,
+                        TimeUtils.nowDate().minusDays(3),
+                        TimeUtils.nowDate().plusDays(3)
+                );
+        when(userCouponService.getUserCoupon(anyLong())).thenReturn(expect);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/user-coupon/{userCouponId}", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userCouponId").value(expect.getUserCouponId()))
+                .andExpect(jsonPath("$.name").value(expect.getName()))
+                .andExpect(jsonPath("$.orderMin").value(expect.getOrderMin()))
+                .andExpect(jsonPath("$.discountCost").value(expect.getDiscountCost()))
+                .andExpect(jsonPath("$.maxDiscountCost").value(expect.getMaxDiscountCost()))
+                .andExpect(jsonPath("$.discountRate").value(expect.getDiscountRate()))
+                .andExpect(jsonPath("$.rate").value(expect.isRate()))
+                .andExpect(jsonPath("$.startDate").value(expect.getStartDate().toString()))
+                .andExpect(jsonPath("$.endDate").value(expect.getEndDate().toString()))
+                .andDo(document("user-coupon-get",
+                        pathParameters(
+                                parameterWithName("userCouponId").description("회원 쿠폰 아이디")
+                        ),
+                        responseFields(
+                                fieldWithPath("userCouponId").description("회원 쿠폰 아이디"),
+                                fieldWithPath("name").description("쿠폰 이름"),
+                                fieldWithPath("orderMin").description("최소 주문 금액"),
+                                fieldWithPath("discountCost").description("할인 금액"),
+                                fieldWithPath("maxDiscountCost").description("최대 할인 금액"),
+                                fieldWithPath("discountRate").description("할인율"),
+                                fieldWithPath("rate").description("정률 할인 쿠폰인지 여부"),
+                                fieldWithPath("startDate").description("쿠폰 사용 시작일"),
+                                fieldWithPath("endDate").description("쿠폰 사용 종료일")
+                        )));
+    }
+
+    @Test
+    @DisplayName("회원 쿠폰 조회 - 없는 아이디인 경우")
+    void givenNotExistsUserCouponId_whenGetUserCoupon_thenThrowUserCouponNotExistsException() throws Exception {
+        when(userCouponService.getUserCoupon(anyLong())).thenThrow(UserCouponNotExistsException.class);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/user-coupon/{userCouponId}", 1))
+                .andExpect(status().isNotFound())
+                .andDo(document("user-coupon-get-exception",
+                        pathParameters(
+                                parameterWithName("userCouponId").description("회원 쿠폰 아이디")
+                        )));
     }
 }

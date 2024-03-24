@@ -75,13 +75,14 @@ class BookOrderRestControllerTest {
                 .andExpect(jsonPath("$.content[0].couponCost").value(100))
                 .andExpect(jsonPath("$.content[0].number").value("123123123"))
                 .andExpect(jsonPath("$.content[0].findPassword").value(""));
-
     }
 
     private static BookOrderUserResponse getBookOrderUserResponse() {
         BookOrderUserResponse bookOrderUserResponse = new BookOrderUserResponse("주문 대기", "test", 1,
                 LocalDate.of(1212, 12, 12), "test", "testName", "testAddress", "010-0000-0000", "testMessage", 1000, 100, 100,
-                "123123123", "");
+
+                "123123123",1L);
+
         return bookOrderUserResponse;
     }
 

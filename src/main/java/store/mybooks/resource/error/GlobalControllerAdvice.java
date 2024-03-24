@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.exception.IsbnAlreadyExistsException;
 import store.mybooks.resource.bookorder.exception.BookOrderInfoNotMatchException;
 import store.mybooks.resource.bookorder.exception.BookOrderNotExistException;
@@ -13,6 +14,7 @@ import store.mybooks.resource.category.exception.CannotDeleteParentCategoryExcep
 import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
 import store.mybooks.resource.coupon.exception.CouponCannotDeleteException;
+import store.mybooks.resource.coupon.exception.CouponNotExistsException;
 import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotExistsException;
 import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameAlreadyExistsException;
 import store.mybooks.resource.delivery_rule_name.exception.DeliveryRuleNameNotExistsException;
@@ -34,6 +36,9 @@ import store.mybooks.resource.user_address.exception.UserAddressNotExistExceptio
 import store.mybooks.resource.user_grade.exception.UserGradeIdNotExistException;
 import store.mybooks.resource.user_grade_name.exception.UserGradeNameNotExistException;
 import store.mybooks.resource.user_status.exception.UserStatusNotExistException;
+import store.mybooks.resource.usercoupon.exception.UserCouponAlreadyUsedException;
+import store.mybooks.resource.usercoupon.exception.UserCouponNotExistsException;
+import store.mybooks.resource.usercoupon.exception.UserCouponNotUsedException;
 
 /**
  * packageName    : store.mybooks.resource.error
@@ -60,7 +65,8 @@ public class GlobalControllerAdvice {
             DeliveryRuleNameNotExistsException.class, DeliveryRuleNotExistsException.class,
             UserNotExistException.class, UserAddressNotExistException.class, UserGradeIdNotExistException.class,
             UserGradeNameNotExistException.class, UserStatusNotExistException.class,
-            BookOrderNotExistException.class, OrderDetailStatusNotFoundException.class})
+            BookOrderNotExistException.class, OrderDetailStatusNotFoundException.class,
+            UserCouponNotExistsException.class, BookNotExistException.class, CouponNotExistsException.class})
     public ResponseEntity<String> xxxNotExistsException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -79,7 +85,7 @@ public class GlobalControllerAdvice {
             PublisherAlreadyExistException.class, DeliveryRuleNameAlreadyExistsException.class,
             IsbnAlreadyExistsException.class, UserAlreadyExistException.class, UserAddressAlreadyExistException.class,
             PaymentAlreadyExistException.class, OrderDetailStatusAlreadyExistException.class,
-            AlreadyReceivedSignUpPoint.class})
+            AlreadyReceivedSignUpPoint.class, UserCouponAlreadyUsedException.class, UserCouponNotUsedException.class})
     public ResponseEntity<String> xxxAlreadyExistsException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)

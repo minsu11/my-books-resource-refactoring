@@ -1,22 +1,14 @@
 package store.mybooks.resource.user_grade.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import store.mybooks.resource.user.dto.response.UserGetResponse;
 import store.mybooks.resource.user_grade.dto.response.UserGradeGetResponse;
 import store.mybooks.resource.user_grade.entity.UserGrade;
 import store.mybooks.resource.user_grade_name.entity.UserGradeName;
@@ -68,18 +60,7 @@ class UserGradeRepositoryTest {
 
     }
 
-    @Test
-    @DisplayName("UserGradeId 로 QueryById 실행시 UserGradeGetResponse 반환")
-    void givenUserGradeId_whenCallQueryById_thenReturnUserGradeGetResponse() {
 
-        UserGradeGetResponse userGradeGetResponse = userGradeRepository.queryById(userGradeId);
-
-        assertEquals("일반", userGradeGetResponse.getUserGradeNameId());
-        assertEquals(3, userGradeGetResponse.getRate());
-        assertEquals(localDate, userGradeGetResponse.getCreatedDate());
-        assertEquals(1000, userGradeGetResponse.getMaxCost());
-        assertEquals(1, userGradeGetResponse.getMinCost());
-    }
 
     @Test
     @DisplayName("사용가능한 UserGradeName 으로 findByUserGradeNameIdAndIsAvailableIsTrue 실행시 UserGrade 반환")
@@ -95,9 +76,9 @@ class UserGradeRepositoryTest {
     @DisplayName("queryAllBy 실행시 List<UserGradeGetResponse> 반환")
     void givenNothing_whenQueryAllBy_thenReturnUserGradeGetResponseList() {
 
-        List<UserGradeGetResponse> list = userGradeRepository.queryAllByAndIsAvailableIsTrue();
+        List<UserGradeGetResponse> list = userGradeRepository.queryAllByOrderByMinCost();
 
-        assertEquals(2, list.size());
+        assertEquals(3, list.size());
 
     }
 

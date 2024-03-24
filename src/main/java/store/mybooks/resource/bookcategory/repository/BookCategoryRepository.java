@@ -15,7 +15,22 @@ import store.mybooks.resource.bookcategory.entity.BookCategory;
  * 2/22/24          damho-lee          최초 생성
  */
 public interface BookCategoryRepository extends JpaRepository<BookCategory, BookCategory.Pk> {
+    /**
+     * methodName : existsByPk_BookId <br>
+     * author : damho-lee <br>
+     * description : 도서 아이디로 있는지 조회.<br>
+     *
+     * @param bookId Long
+     * @return boolean
+     */
     boolean existsByPk_BookId(Long bookId);
 
+    /**
+     * methodName : deleteByPk_BookId <br>
+     * author : damho-lee <br>
+     * description : 도서 아이디로 삭제.<br>
+     *
+     * @param bookId Long
+     */
     void deleteByPk_BookId(Long bookId);
 }

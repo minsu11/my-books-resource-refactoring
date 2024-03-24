@@ -126,7 +126,7 @@ public class UserCouponService {
     /**
      * methodName : getUserCoupon <br>
      * author : minsu11 <br>
-     * description : id로 쿠폰 조회<br>
+     * description : id로 쿠폰 조회.<br>
      *
      * @param userCouponId the coupon user id
      * @return the user coupon
@@ -163,7 +163,6 @@ public class UserCouponService {
      *
      * @param id Long
      */
-    @Transactional
     public void useUserCoupon(Long id) {
         UserCoupon userCoupon =
                 userCouponRepository.findById(id).orElseThrow(() -> new UserCouponNotExistsException(id));
@@ -178,7 +177,6 @@ public class UserCouponService {
      * @param id Long
      */
     public void giveBackUserCoupon(Long id) {
-
         UserCoupon userCoupon =
                 userCouponRepository.findById(id).orElseThrow(() -> new UserCouponNotExistsException(id));
         userCoupon.giveBack();

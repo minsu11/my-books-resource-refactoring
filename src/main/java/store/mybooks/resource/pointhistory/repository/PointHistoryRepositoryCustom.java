@@ -46,8 +46,8 @@ public interface PointHistoryRepositoryCustom {
      * author : damho-lee <br>
      * description : 회원가입 포인트를 받은 적이 있는지 조회.<br>
      *
-     * @param userId 회원가입 포인트를 받았는지 조회할 회원의 {@code id}
+     * @param email 회원가입 포인트를 받았는지 조회할 회원의 {@code 이메일}
      * @return boolean
      */
-    boolean isAlreadyReceivedSignUpPoint(Long userId);
+    boolean isAlreadyReceivedSignUpPoint(String email);
 }

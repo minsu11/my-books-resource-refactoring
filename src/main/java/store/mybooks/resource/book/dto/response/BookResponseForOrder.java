@@ -17,10 +17,12 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class BookResponseForOrder {
+    private Long id;
     private String name;
-    //    private String bookImage;
+    private String bookImage;
     private Integer saleCost;
     private Integer originalCost;
     private Integer disCountRate;
     private Boolean isPacking;
+    private Integer stock;
 }
