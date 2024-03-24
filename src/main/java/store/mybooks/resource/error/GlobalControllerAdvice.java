@@ -23,6 +23,8 @@ import store.mybooks.resource.orderdetailstatus.exception.OrderDetailStatusAlrea
 import store.mybooks.resource.orderdetailstatus.exception.OrderDetailStatusNotFoundException;
 import store.mybooks.resource.payment.exception.PaymentAlreadyExistException;
 import store.mybooks.resource.pointhistory.exception.AlreadyReceivedSignUpPoint;
+import store.mybooks.resource.pointrule.exception.PointRuleNotExistException;
+import store.mybooks.resource.pointrulename.exception.PointRuleNameNotExistException;
 import store.mybooks.resource.publisher.exception.PublisherAlreadyExistException;
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
 import store.mybooks.resource.tag.exception.TagNameAlreadyExistsException;
@@ -31,7 +33,6 @@ import store.mybooks.resource.user.exception.UserAlreadyExistException;
 import store.mybooks.resource.user.exception.UserAlreadyResignException;
 import store.mybooks.resource.user.exception.UserLoginFailException;
 import store.mybooks.resource.user.exception.UserNotExistException;
-import store.mybooks.resource.user_address.exception.UserAddressAlreadyExistException;
 import store.mybooks.resource.user_address.exception.UserAddressFullException;
 import store.mybooks.resource.user_address.exception.UserAddressNotExistException;
 import store.mybooks.resource.user_grade.exception.UserGradeIdNotExistException;
@@ -67,12 +68,14 @@ public class GlobalControllerAdvice {
             UserNotExistException.class, UserAddressNotExistException.class, UserGradeIdNotExistException.class,
             UserGradeNameNotExistException.class, UserStatusNotExistException.class,
             BookOrderNotExistException.class, OrderDetailStatusNotFoundException.class,
-            UserCouponNotExistsException.class, BookNotExistException.class, CouponNotExistsException.class})
+            UserCouponNotExistsException.class, BookNotExistException.class, CouponNotExistsException.class,
+            PointRuleNameNotExistException.class, PointRuleNotExistException.class})
     public ResponseEntity<String> xxxNotExistsException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(exception.getMessage());
     }
+
 
     /**
      * methodName : xxxAlreadyExistsException
@@ -84,7 +87,7 @@ public class GlobalControllerAdvice {
      */
     @ExceptionHandler({CategoryNameAlreadyExistsException.class, TagNameAlreadyExistsException.class,
             PublisherAlreadyExistException.class, DeliveryRuleNameAlreadyExistsException.class,
-            IsbnAlreadyExistsException.class, UserAlreadyExistException.class, UserAddressAlreadyExistException.class,
+            IsbnAlreadyExistsException.class, UserAlreadyExistException.class,
             PaymentAlreadyExistException.class, OrderDetailStatusAlreadyExistException.class,
             AlreadyReceivedSignUpPoint.class, UserCouponAlreadyUsedException.class, UserCouponNotUsedException.class})
     public ResponseEntity<String> xxxAlreadyExistsException(Exception exception) {
@@ -125,9 +128,17 @@ public class GlobalControllerAdvice {
                 .body(exception.getMessage());
     }
 
+    /**
+     * methodName : userException <br>
+     * author : damho-lee <br>
+     * description : 회원 관련 예외 처리.<br>
+     *
+     * @param exception Exception
+     * @return ResponseEntity
+     */
     @ExceptionHandler({UserAlreadyResignException.class, UserLoginFailException.class, UserAddressFullException.class,
             BookOrderInfoNotMatchException.class})
-    public ResponseEntity<String> UserException(Exception exception) {
+    public ResponseEntity<String> userException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());

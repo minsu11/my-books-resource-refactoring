@@ -1,24 +1,23 @@
-package store.mybooks.resource.user_grade.dto.response;
+package store.mybooks.resource.user.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * packageName    : store.mybooks.resource.user_grade.dto.response<br>
- * fileName       : UserGradeDeleteResponse<br>
+ * packageName    : store.mybooks.resource.user.dto.response<br>
+ * fileName       : UserEamilVerficatioResponse<br>
  * author         : masiljangajji<br>
- * date           : 2/19/24<br>
+ * date           : 3/24/24<br>
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 2/19/24        masiljangajji       최초 생성
+ * 3/24/24        masiljangajji       최초 생성
  */
 
 @Getter
 @AllArgsConstructor
-public class UserGradeDeleteResponse {
+public class UserEmailCheckResponse {
 
-    private String message;
-
+    Boolean isAvailable;
 }

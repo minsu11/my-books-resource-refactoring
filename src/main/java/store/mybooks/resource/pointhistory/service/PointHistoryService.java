@@ -60,6 +60,9 @@ public class PointHistoryService {
      */
     @Transactional(readOnly = true)
     public PointResponse getRemainingPoint(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotExistException(userId);
+        }
         return pointHistoryRepository.getRemainingPoint(userId);
     }
 
@@ -70,11 +73,14 @@ public class PointHistoryService {
      * <br> *
      *
      * @param pageable 페이징
-     * @param userId
+     * @param userId   회원 아이디
      * @return page
      */
     @Transactional(readOnly = true)
     public Page<PointHistoryResponse> getPointHistory(Pageable pageable, Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotExistException(userId);
+        }
         return pointHistoryRepository.getPointHistoryByUserId(pageable, userId);
     }
 
@@ -89,7 +95,6 @@ public class PointHistoryService {
      * @return the point history create response
      */
     public PointHistoryCreateResponse createPointHistory(PointHistoryCreateRequest request, Long userId) {
-        System.out.println(request.getPointName());
         PointRuleName pointRulename = pointRuleNameRepository.findById(request.getPointName())
                 .orElseThrow(PointRuleNotExistException::new);
 
@@ -118,7 +123,7 @@ public class PointHistoryService {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
 
 
-        if(Objects.nonNull(user.getLatestLogin())){
+        if (Objects.nonNull(user.getLatestLogin())) {
             LocalDate latestLoginDate = user.getLatestLogin().toLocalDate();
 
             if (!latestLoginDate.isBefore(LocalDate.now())) {
@@ -138,6 +143,13 @@ public class PointHistoryService {
         return true;
     }
 
+    /**
+     * methodName : saveOauthLoginPoint <br>
+     * author : damho-lee <br>
+     * description : OAuth 로 로그인하는 회원의 로그인 포인트 적립.<br>
+     *
+     * @param userId 회원 아이디
+     */
     public void saveOauthLoginPoint(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
 
@@ -165,7 +177,7 @@ public class PointHistoryService {
         if (pointHistoryRepository.isAlreadyReceivedSignUpPoint(email)) {
             throw new AlreadyReceivedSignUpPoint();
         }
-        
+
         PointRule pointRule = pointRuleRepository.findPointRuleByPointRuleName("회원가입 적립")
                 .orElseThrow(PointRuleNotExistException::new);
 

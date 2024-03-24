@@ -20,6 +20,7 @@ import store.mybooks.resource.user_grade.dto.request.UserGradeCreateRequest;
 import store.mybooks.resource.user_grade.dto.response.UserGradeCreateResponse;
 import store.mybooks.resource.user_grade.dto.response.UserGradeGetResponse;
 import store.mybooks.resource.user_grade.entity.UserGrade;
+import store.mybooks.resource.user_grade.exception.UserGradeIdNotExistException;
 import store.mybooks.resource.user_grade.repository.UserGradeRepository;
 import store.mybooks.resource.user_grade_name.entity.UserGradeName;
 import store.mybooks.resource.user_grade_name.exception.UserGradeNameNotExistException;
@@ -84,19 +85,38 @@ class UserGradeServiceTest {
             @Mock UserGradeCreateRequest userGradeCreateRequest) {
 
         when(userGradeCreateRequest.getUserGradeNameId()).thenReturn("test");
-
         assertThrows(UserGradeNameNotExistException.class,
                 () -> userGradeService.createUserGrade(userGradeCreateRequest));
     }
 
     @Test
+    @DisplayName("UserGradeCreateRequest 로 createUserGrade 메서드 실행시 활성상태인 UserGrade 이 없는 경우 UserGradeIdNotExistException")
+    void givenUserGradeName_whenCallCreateUserGradeWithOutAvailableUserGrade_thenThrowUserGradeIdNotExistException(
+            @Mock UserGradeCreateRequest userGradeCreateRequest,@Mock UserGradeName userGradeName) {
+
+        when(userGradeCreateRequest.getUserGradeNameId()).thenReturn("test");
+        when(userGradeNameRepository.findById(anyString())).thenReturn(Optional.ofNullable(userGradeName));
+        when(userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue(userGradeCreateRequest.getUserGradeNameId())).thenReturn(Optional.empty());
+        assertThrows(UserGradeIdNotExistException.class,
+                () -> userGradeService.createUserGrade(userGradeCreateRequest));
+    }
+
+
+    @Test
+    @DisplayName("findAllAvailableUserGrade 메서드 실행시 동작 테스트")
+    void whenCallFindAllAvailableUserGrade_thenReturnUserGradeGetList(@Mock List<UserGradeGetResponse> list) {
+
+        when(userGradeRepository.queryAllByIsAvailableIsTrueOrderByMinCost()).thenReturn(list);
+        userGradeService.findAllAvailableUserGrade();
+        verify(userGradeRepository, times(1)).queryAllByIsAvailableIsTrueOrderByMinCost();
+    }
+
+    @Test
     @DisplayName("findAllUserGrade 메서드 실행시 동작 테스트")
-    void givenPageable_whenCallFindAllUserGrade_thenReturnUserGradeGetResponsePage(@Mock List<UserGradeGetResponse> list) {
+    void whenCallFindAllUserGrade_thenReturnUserGradeGetList(@Mock List<UserGradeGetResponse> list) {
 
         when(userGradeRepository.queryAllByOrderByMinCost()).thenReturn(list);
-
         userGradeService.findAllUserGrade();
-
         verify(userGradeRepository, times(1)).queryAllByOrderByMinCost();
     }
 }

@@ -3,6 +3,8 @@ package store.mybooks.resource.user.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -38,16 +40,21 @@ import store.mybooks.resource.user.dto.request.UserEmailRequest;
 import store.mybooks.resource.user.dto.request.UserGradeModifyRequest;
 import store.mybooks.resource.user.dto.request.UserModifyRequest;
 import store.mybooks.resource.user.dto.request.UserOauthCreateRequest;
+import store.mybooks.resource.user.dto.request.UserOauthLoginRequest;
+import store.mybooks.resource.user.dto.request.UserOauthRequest;
 import store.mybooks.resource.user.dto.request.UserPasswordModifyRequest;
 import store.mybooks.resource.user.dto.request.UserStatusModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
+import store.mybooks.resource.user.dto.response.UserEmailCheckResponse;
 import store.mybooks.resource.user.dto.response.UserEncryptedPasswordResponse;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
 import store.mybooks.resource.user.dto.response.UserGradeModifyResponse;
 import store.mybooks.resource.user.dto.response.UserInactiveVerificationResponse;
 import store.mybooks.resource.user.dto.response.UserLoginResponse;
 import store.mybooks.resource.user.dto.response.UserModifyResponse;
+import store.mybooks.resource.user.dto.response.UserOauthCreateResponse;
+import store.mybooks.resource.user.dto.response.UserPasswordModifyResponse;
 import store.mybooks.resource.user.dto.response.UserStatusModifyResponse;
 import store.mybooks.resource.user.service.UserService;
 
@@ -105,7 +112,7 @@ class UserRestControllerTest {
     @DisplayName("유저 Oauth UserOauthCreateRequest - Validation 실패")
     void givenUserOauthLoginRequest_whenValidationFailure_thenReturnBadRequest() throws Exception {
 
-        UserOauthCreateRequest request = new UserOauthCreateRequest("test", "test", "dddd", null,"");
+        UserOauthCreateRequest request = new UserOauthCreateRequest("test", "test", "dddd", null, "");
 
         String content = objectMapper.writeValueAsString(request);
 
@@ -123,7 +130,7 @@ class UserRestControllerTest {
     void givenUserOauthCreateRequest_whenValidationFailure_thenReturnBadRequest() throws Exception {
 
 
-        UserOauthCreateRequest request = new UserOauthCreateRequest("test", "test", "dddd@test.com", null,"oauth");
+        UserOauthCreateRequest request = new UserOauthCreateRequest("test", "test", "dddd@test.com", null, "oauth");
 
         String content = objectMapper.writeValueAsString(request);
 
@@ -362,7 +369,7 @@ class UserRestControllerTest {
 
         mockMvc.perform(get("/api/users/page")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(HeaderProperties.USER_ID,1))
+                        .header(HeaderProperties.USER_ID, 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").exists())
                 .andExpect(jsonPath("$.totalElements").exists())
@@ -436,6 +443,119 @@ class UserRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userStatus").exists());
     }
+
+
+    @Test
+    @DisplayName("회원가입 시 사용가능한 email 인지 검증")
+    void givenUserEmail_whenCallVerifyUserEmail_thenReturnUserEmailCheckResponse() throws Exception {
+
+        UserEmailCheckResponse userEmailCheckResponse = new UserEmailCheckResponse(true);
+        when(userService.verifyUserEmail(any(UserEmailRequest.class))).thenReturn(userEmailCheckResponse);
+
+        mockMvc.perform(get("/api/users/email/verify/{email}", "test@test.com")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isAvailable").exists());
+    }
+
+
+    @Test
+    @DisplayName("유저 비밀번호 변경 ")
+    void givenUserPasswordModifyRequest_whenCallModifyUserPassword_thenReturnUserPasswordModifyResponse()
+            throws Exception {
+
+        UserPasswordModifyResponse userEmailCheckResponse = new UserPasswordModifyResponse(true);
+        UserPasswordModifyRequest userPasswordModifyRequest = new UserPasswordModifyRequest("changedPassword");
+        when(userService.modifyUserPassword(anyLong(), any(UserPasswordModifyRequest.class))).thenReturn(
+                userEmailCheckResponse);
+
+        mockMvc.perform(put("/api/users/password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userPasswordModifyRequest))
+                        .header(HeaderProperties.USER_ID, 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isChangePassword").exists());
+    }
+
+    @Test
+    @DisplayName("Oauth Login 로그인 실행")
+    void givenUserOauthLoginRequest_whenCallLoginOauthUser_thenReturnUserLoginResponse()
+            throws Exception {
+
+
+        UserOauthLoginRequest userOauthLoginRequest = new UserOauthLoginRequest("oauthId");
+        UserLoginResponse userLoginResponse = new UserLoginResponse(true, false, 1L, "활성");
+
+        when(userService.loginOauthUser(any(UserOauthLoginRequest.class))).thenReturn(userLoginResponse);
+
+        mockMvc.perform(post("/api/users/oauth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userOauthLoginRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isValidUser").exists())
+                .andExpect(jsonPath("$.isAdmin").exists())
+                .andExpect(jsonPath("$.userId").exists())
+                .andExpect(jsonPath("$.status").exists());
+    }
+
+    @Test
+    @DisplayName("Oauth 유저 최초 로그인시 회원가입 및 로그인 진행")
+    void givenUserOauthCreateRequest_whenCallCreateOauthUser_thenReturnUserOauthCreateResponse()
+            throws Exception {
+
+
+        UserOauthCreateRequest userOauthCreateRequest =
+                new UserOauthCreateRequest("test", "01012345678", "test@test.com", "12-17", "oauthID");
+        UserOauthCreateResponse userOauthCreateResponse =
+                new UserOauthCreateResponse("name", "email@email.com", 1L, 1999, "12-17", "status", "grade");
+
+        when(userService.createOauthUser(any(UserOauthCreateRequest.class))).thenReturn(userOauthCreateResponse);
+
+        doNothing().when(pointHistoryService).saveSignUpPoint(anyString());
+        doNothing().when(pointHistoryService).saveOauthLoginPoint(anyLong());
+
+        mockMvc.perform(post("/api/users/oauth")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userOauthCreateRequest)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").exists())
+                .andExpect(jsonPath("$.email").exists())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.birthYear").exists())
+                .andExpect(jsonPath("$.birthMonthDay").exists())
+                .andExpect(jsonPath("$.userStatusName").exists())
+                .andExpect(jsonPath("$.userGradeName").exists());
+    }
+
+    @Test
+    @DisplayName("정보제공 동의 안한 Oauth 유저 최초 로그인시 회원가입 및 로그인 진행")
+    void givenUserOauthCreateRequestWithOutInfo_whenCallCreateOauthUser_thenReturnUserOauthCreateResponse()
+            throws Exception {
+
+
+        UserOauthRequest userOauthRequest =
+                new UserOauthRequest("name", "test@test.com", "01012345678", LocalDate.now(), "oauthID");
+        UserOauthCreateResponse userOauthCreateResponse =
+                new UserOauthCreateResponse("name", "email@email.com", 1L, 1999, "12-17", "status", "grade");
+
+        when(userService.createOauthUser(any(UserOauthRequest.class))).thenReturn(userOauthCreateResponse);
+
+        doNothing().when(pointHistoryService).saveSignUpPoint(anyString());
+        doNothing().when(pointHistoryService).saveOauthLoginPoint(anyLong());
+
+        mockMvc.perform(post("/api/users/oauth/no-info")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userOauthRequest)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").exists())
+                .andExpect(jsonPath("$.email").exists())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.birthYear").exists())
+                .andExpect(jsonPath("$.birthMonthDay").exists())
+                .andExpect(jsonPath("$.userStatusName").exists())
+                .andExpect(jsonPath("$.userGradeName").exists());
+    }
+
 
     @BeforeEach
     void setUp() {

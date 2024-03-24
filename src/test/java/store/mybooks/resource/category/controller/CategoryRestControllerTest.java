@@ -68,8 +68,8 @@ import store.mybooks.resource.category.dto.response.CategoryModifyResponse;
 import store.mybooks.resource.category.exception.CannotDeleteParentCategoryException;
 import store.mybooks.resource.category.exception.CategoryNameAlreadyExistsException;
 import store.mybooks.resource.category.exception.CategoryNotExistsException;
-import store.mybooks.resource.category.exception.CategoryValidationException;
 import store.mybooks.resource.category.service.CategoryService;
+import store.mybooks.resource.error.RequestValidationFailedException;
 
 /**
  * packageName    : store.mybooks.resource.category.controller
@@ -601,8 +601,8 @@ class CategoryRestControllerTest {
                 .andDo(document("category-create-fail-validation-tooLong"))
                 .andReturn();
 
-        assertThat(nameBlankResult.getResolvedException()).isInstanceOfAny(CategoryValidationException.class);
-        assertThat(nameTooLongResult.getResolvedException()).isInstanceOfAny(CategoryValidationException.class);
+        assertThat(nameBlankResult.getResolvedException()).isInstanceOfAny(RequestValidationFailedException.class);
+        assertThat(nameTooLongResult.getResolvedException()).isInstanceOfAny(RequestValidationFailedException.class);
     }
 
     @Test
@@ -691,8 +691,10 @@ class CategoryRestControllerTest {
                                 )))
                         .andReturn();
 
-        assertThat(categoryNameBlankResult.getResolvedException()).isInstanceOfAny(CategoryValidationException.class);
-        assertThat(categoryNameTooLongResult.getResolvedException()).isInstanceOfAny(CategoryValidationException.class);
+        assertThat(categoryNameBlankResult.getResolvedException()).isInstanceOfAny(
+                RequestValidationFailedException.class);
+        assertThat(categoryNameTooLongResult.getResolvedException()).isInstanceOfAny(
+                RequestValidationFailedException.class);
     }
 
     @Test

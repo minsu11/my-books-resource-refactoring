@@ -19,6 +19,7 @@ import store.mybooks.resource.user.dto.request.UserPasswordModifyRequest;
 import store.mybooks.resource.user.dto.request.UserStatusModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
+import store.mybooks.resource.user.dto.response.UserEmailCheckResponse;
 import store.mybooks.resource.user.dto.response.UserEncryptedPasswordResponse;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
 import store.mybooks.resource.user.dto.response.UserGradeModifyResponse;
@@ -152,8 +153,6 @@ public class UserService {
 
 
     public UserLoginResponse loginOauthUser(UserOauthLoginRequest loginRequest) {
-
-
 
         Optional<User> user = userRepository.findByOauthId(loginRequest.getOauthId());
 
@@ -367,6 +366,9 @@ public class UserService {
         return new UserInactiveVerificationResponse(userStatus.getId());
     }
 
+    public UserEmailCheckResponse verifyUserEmail(UserEmailRequest request){
+        return new UserEmailCheckResponse(!userRepository.existsByEmail(request.getEmail()));
+    }
 
 }
 
