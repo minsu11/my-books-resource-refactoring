@@ -149,6 +149,40 @@ class DeliveryRuleServiceTest {
     }
 
     @Test
+    @DisplayName("DeliveryRuleNameId 로 DeliveryRule 조회하는 테스트")
+    void givenDeliveryRuleNameId_whenGetDeliveryRuleByName_thenReturnDeliveryRuleResponse() {
+        DeliveryRuleResponse expected =
+                new DeliveryRuleResponse(1, "test", "test", 2000, 2000, deliveryRule.getCreatedDate(),
+                        deliveryRule.getIsAvailable());
+
+        when(deliveryRuleRepository.getDeliveryRuleByName(any(String.class))).thenReturn(Optional.of(expected));
+        DeliveryRuleResponse result =
+                deliveryRuleService.getDeliveryRuleByName(expected.getDeliveryRuleNameId());
+
+        assertNotNull(result);
+        assertNotNull(result);
+        assertEquals(expected.getId(), result.getId());
+        assertEquals(expected.getDeliveryRuleNameId(), result.getDeliveryRuleNameId());
+        assertEquals(expected.getCompanyName(), result.getCompanyName());
+        assertEquals(expected.getCost(), result.getCost());
+        assertEquals(expected.getRuleCost(), result.getRuleCost());
+        assertEquals(expected.getCreatedDate(), result.getCreatedDate());
+        assertEquals(expected.getIsAvailable(), result.getIsAvailable());
+
+        verify(deliveryRuleRepository, times(1)).getDeliveryRuleByName(expected.getDeliveryRuleNameId());
+    }
+
+    @Test
+    @DisplayName("DeliveryRuleId로 DeliveryRule 이 없을 경우 예외 테스트")
+    void givenNotDeliveryRuleNameID_whenGetDeliveryRuleByName_thenThrowDeliveryRuleNotExistsException() {
+        when(deliveryRuleRepository.getDeliveryRuleByName(any(String.class))).thenReturn(Optional.empty());
+        assertThrows(DeliveryRuleNotExistsException.class,
+                () -> deliveryRuleService.getDeliveryRuleByName("hi"));
+
+        verify(deliveryRuleRepository, times(1)).getDeliveryRuleByName("hi");
+    }
+
+    @Test
     @DisplayName("DeliveryRule 가 없을 경우 예외 테스트")
     void givenNotDeliveryRuleId_whenGetDeliveryRule_thenThrowDeliveryRuleNotFoundException() {
 
