@@ -9,3 +9,134 @@
 :sectanchors:
 
 == 리뷰 API
+
+=== 리뷰 생성
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/review-create/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/review-create/request-body.adoc[]
+include::{snippets}/review-create/request-headers.adoc[]
+include::{snippets}/review-create/request-part-request-fields.adoc[]
+include::{snippets}/review-create/request-parts.adoc[]
+
+==== 응답
+
+include::{snippets}/review-create/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/review-create/response-body.adoc[]
+include::{snippets}/review-create/response-fields.adoc[]
+
+
+=== 리뷰 평균 별점 및 개수 조회
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/review-create/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/review-findRate/request-body.adoc[]
+include::{snippets}/review-findRate/path-parameters.adoc[]
+
+
+==== 응답
+
+include::{snippets}/review-findRate/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/review-findRate/response-body.adoc[]
+include::{snippets}/review-findRate/response-fields.adoc[]
+
+
+=== 유저의 특정 리뷰 조회
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/review-findUser/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/review-findUser/request-body.adoc[]
+include::{snippets}/review-findUser/request-headers.adoc[]
+include::{snippets}/review-findUser/path-parameters.adoc[]
+
+
+==== 응답
+
+include::{snippets}/review-findUser/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/review-findUser/response-body.adoc[]
+include::{snippets}/review-findUser/response-fields.adoc[]
+include::{snippets}/review-findUserAll/request-parameters.adoc[]
+
+=== 유저의 모든 리뷰 조회
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/review-findUserAll/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/review-findUserAll/request-body.adoc[]
+include::{snippets}/review-findUserAll/request-headers.adoc[]
+include::{snippets}/review-findUserAll/path-parameters.adoc[]
+include::{snippets}/review-findUserAll/request-parameters.adoc[]
+
+
+==== 응답
+
+include::{snippets}/review-findUserAll/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/review-findUserAll/response-body.adoc[]
+include::{snippets}/review-findUserAll/response-fields.adoc[]
+
+=== 리뷰 수정
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/review-findUserAll/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/review-modify/request-body.adoc[]
+include::{snippets}/review-modify/request-headers.adoc[]
+include::{snippets}/review-modify/request-parts.adoc[]
+include::{snippets}/review-modify/request-part-request-fields.adoc[]
+
+
+==== 응답
+
+include::{snippets}/review-modify/http-response.adoc[]
+include::{snippets}/review-create/request-part-request-fields.adoc[]
+include::{snippets}/review-create/request-parts.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/review-modify/response-body.adoc[]
+include::{snippets}/review-modify/response-fields.adoc[]
+
+
+
+
+
