@@ -37,6 +37,13 @@ public class DeliveryRuleNameController {
 
     private final DeliveryRuleNameService deliveryNameRuleService;
 
+    /**
+     * methodName : getDeliveryNameRuleList<br>
+     * author : Fiat_lux<br>
+     * description : get 요청으로 조회 데이터 list 응답<br>
+     *
+     * @return deliveryRuleNameResponse list<br>
+     */
     @GetMapping
     public ResponseEntity<List<DeliveryRuleNameResponse>> getDeliveryNameRuleList() {
         List<DeliveryRuleNameResponse> deliveryNameRuleList = deliveryNameRuleService.getDeliveryNameRuleList();

@@ -6,7 +6,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.delivery_rule.dto.request.DeliveryRuleModifyRequest;
 import store.mybooks.resource.delivery_rule.dto.request.DeliveryRuleRegisterRequest;
 import store.mybooks.resource.delivery_rule.dto.response.DeliveryRuleResponse;
@@ -48,7 +55,9 @@ public class DeliveryRuleController {
 
 
     /**
-     * Gets delivery rule list.
+     * methodName :getDeliveryRuleList<br>
+     * author : Fiat_lux<br>
+     * description : get 요청으로 들어온 DeliveryRule 의 모든 데이터 조회 응답<br>
      *
      * @return the delivery rule list
      */

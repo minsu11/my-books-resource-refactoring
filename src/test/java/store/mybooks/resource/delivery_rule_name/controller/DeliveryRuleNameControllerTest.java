@@ -5,10 +5,18 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -16,14 +24,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import store.mybooks.resource.delivery_rule_name.dto.request.DeliveryRuleNameRegisterRequest;
 import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameDto;
 import store.mybooks.resource.delivery_rule_name.dto.response.DeliveryRuleNameResponse;
@@ -42,6 +57,7 @@ import store.mybooks.resource.delivery_rule_name.service.DeliveryRuleNameService
  */
 
 @WebMvcTest(value = DeliveryRuleNameController.class)
+@ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 class DeliveryRuleNameControllerTest {
 
     @Autowired
@@ -49,6 +65,18 @@ class DeliveryRuleNameControllerTest {
 
     @MockBean
     private DeliveryRuleNameService deliveryRuleNameService;
+
+    @BeforeEach
+    void setUp(WebApplicationContext webApplicationContext,
+               RestDocumentationContextProvider restDocumentation) {
+
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                .apply(documentationConfiguration(restDocumentation)
+                        .operationPreprocessors()
+                        .withRequestDefaults(modifyUris(), prettyPrint())
+                        .withResponseDefaults(prettyPrint()))
+                .build();
+    }
 
     @Test
     @DisplayName("배송 규칙 이름 list 조회")
@@ -61,7 +89,13 @@ class DeliveryRuleNameControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].id").value(deliveryRuleNameResponseList.get(0).getId()))
-                .andExpect(jsonPath("$[0].createdDate").value(deliveryRuleNameResponseList.get(0).getCreatedDate().toString()));
+                .andExpect(jsonPath("$[0].createdDate").value(
+                        deliveryRuleNameResponseList.get(0).getCreatedDate().toString()))
+                .andDo(document("delivery-rule-name-get-list",
+                        responseFields(
+                                fieldWithPath("[].id").description("배송 규정 이름 아이디"),
+                                fieldWithPath("[].createdDate").description("생성일")
+                        )));
     }
 
     @Test
@@ -79,13 +113,19 @@ class DeliveryRuleNameControllerTest {
             }
         };
 
-        when(deliveryRuleNameService.getDeliveryNameRule(any())).thenReturn(deliveryNameRuleDto);
+        when(deliveryRuleNameService.getDeliveryNameRule(any(String.class))).thenReturn(deliveryNameRuleDto);
 
         mockMvc.perform(get("/api/delivery-name-rules/{id}", "test"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(deliveryNameRuleDto.getId()))
-                .andExpect(jsonPath("$.createdDate").value(deliveryNameRuleDto.getCreatedDate().toString()));
+                .andExpect(jsonPath("$.createdDate").value(deliveryNameRuleDto.getCreatedDate().toString()))
+                .andDo(document("delivery-rule-name-get",
+                        pathParameters(parameterWithName("id").description("조회할 배송 규칙 이름 ID")),
+                        responseFields(
+                                fieldWithPath("id").description("배송 규정 이름 아이디"),
+                                fieldWithPath("createdDate").description("생성일")
+                        )));
 
         verify(deliveryRuleNameService, times(1)).getDeliveryNameRule(any());
     }
@@ -106,7 +146,15 @@ class DeliveryRuleNameControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(deliveryRuleNameResponse.getId()))
-                .andExpect(jsonPath("$.createdDate").value(deliveryRuleNameResponse.getCreatedDate().toString()));
+                .andExpect(jsonPath("$.createdDate").value(deliveryRuleNameResponse.getCreatedDate().toString()))
+                .andDo(document("delivery-rule-name-create",
+                        requestFields(
+                                fieldWithPath("id").description("배송 규칙 이름")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").description("배송 규칙 이름 아이디"),
+                                fieldWithPath("createdDate").description("생성일")
+                        )));
         verify(deliveryRuleNameService, times(1)).registerDeliveryNameRule(any());
     }
 
@@ -119,8 +167,8 @@ class DeliveryRuleNameControllerTest {
                                 new ObjectMapper().writeValueAsString(deliveryRuleNameRegisterRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(print());
-        verify(deliveryRuleNameService, never()).registerDeliveryNameRule(any());
+                .andDo(document("delivery-rule-name-create-error-notBlank"));
+        verify(deliveryRuleNameService, never()).registerDeliveryNameRule(any(DeliveryRuleNameRegisterRequest.class));
     }
 
     @Test
@@ -133,8 +181,8 @@ class DeliveryRuleNameControllerTest {
                                 new ObjectMapper().writeValueAsString(deliveryRuleNameRegisterRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(print());
-        verify(deliveryRuleNameService, never()).registerDeliveryNameRule(any());
+                .andDo(document("delivery-rule-name-create-error-maxSize50"));
+        verify(deliveryRuleNameService, never()).registerDeliveryNameRule(any(DeliveryRuleNameRegisterRequest.class));
     }
 
     @Test
@@ -142,8 +190,12 @@ class DeliveryRuleNameControllerTest {
     void givenDeliveryNameRuleId_whenDeleteDeliveryNameRule_thenDeleteDeliveryNameRuleAndReturnNoting()
             throws Exception {
         mockMvc.perform(delete("/api/delivery-name-rules/{id}", "test"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(document("delivery-rule-name-delete",
+                        pathParameters(
+                                parameterWithName("id").description("배송 규칙 이름 ID")
+                        )));
 
-        verify(deliveryRuleNameService, times(1)).deleteDeliveryNameRule(any());
+        verify(deliveryRuleNameService, times(1)).deleteDeliveryNameRule(any(String.class));
     }
 }
