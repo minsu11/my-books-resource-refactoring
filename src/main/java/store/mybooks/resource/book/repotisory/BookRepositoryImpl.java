@@ -109,7 +109,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .join(image.imageStatus, imageStatus)
                 .where(image.book.id.eq(id))
                 .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
-                .select(image.path.concat(image.fileName).concat(".").concat(image.extension))
+                .select(image.path.concat(image.fileName).concat(image.extension))
                 .fetchOne();
 
         List<String> contentImageList = from(image)
@@ -117,9 +117,9 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 .join(image.imageStatus, imageStatus)
                 .where(image.book.id.eq(id))
                 .where(imageStatus.id.eq(ImageStatusEnum.CONTENT.getName()))
-                .select(image.path.concat(image.fileName).concat(".").concat(image.extension))
+                .select(image.path.concat(image.fileName).concat(image.extension))
                 .fetch();
-        
+
         List<AuthorGetResponse> authorList = from(bookAuthor)
                 .join(bookAuthor.author, author)
                 .where(bookAuthor.book.id.eq(id))

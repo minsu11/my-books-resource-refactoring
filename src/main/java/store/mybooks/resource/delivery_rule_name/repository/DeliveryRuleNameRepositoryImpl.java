@@ -26,6 +26,13 @@ public class DeliveryRuleNameRepositoryImpl extends QuerydslRepositorySupport
         super(DeliveryRuleName.class);
     }
 
+    /**
+     * methodName : getDeliveryRuleNameList<br>
+     * author : Fiat_lux<br>
+     * description : deliveryRuleName list read
+     *
+     * @return deliveryRuleNameResponse list
+     */
     @Override
     public List<DeliveryRuleNameResponse> getDeliveryRuleNameList() {
         QDeliveryRuleName deliveryRuleName = QDeliveryRuleName.deliveryRuleName;

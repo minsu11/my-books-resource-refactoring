@@ -53,6 +53,13 @@ public class DeliveryRuleNameService {
         return deliveryRuleNameMapper.mapToResponse(saveDeliveryNameRule);
     }
 
+    /**
+     * methodName : getDeliveryNameRuleList<br>
+     * author : Fiat_lux<br>
+     * description : 모든 배송 규칙 이름 조회<br>
+     *
+     * @return deliveryRuleName Response dto list
+     */
     public List<DeliveryRuleNameResponse> getDeliveryNameRuleList() {
         return deliveryRuleNameRepository.getDeliveryRuleNameList();
     }
@@ -83,8 +90,7 @@ public class DeliveryRuleNameService {
      * <br>
      *
      * @param id the id
-     * @return void
-     * @thorws DeliveryRuleNameNotFoundException {@code id}의 데이터 조회 할 수 없는 경우
+     * @throws DeliveryRuleNameNotExistsException {@code id}의 데이터 조회 할 수 없는 경우
      */
     @Transactional
     public void deleteDeliveryNameRule(String id) {

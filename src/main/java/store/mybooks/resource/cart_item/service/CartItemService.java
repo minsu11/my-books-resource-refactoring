@@ -98,7 +98,7 @@ public class CartItemService {
         return cartDetailList;
     }
 
-    public String getExpiredKey(String cartKey) {
+    private String getExpiredKey(String cartKey) {
         return EXPIRED_KEY + " " + cartKey;
     }
 }
