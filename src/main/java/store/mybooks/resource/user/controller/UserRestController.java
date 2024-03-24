@@ -30,6 +30,7 @@ import store.mybooks.resource.user.dto.request.UserPasswordModifyRequest;
 import store.mybooks.resource.user.dto.request.UserStatusModifyRequest;
 import store.mybooks.resource.user.dto.response.UserCreateResponse;
 import store.mybooks.resource.user.dto.response.UserDeleteResponse;
+import store.mybooks.resource.user.dto.response.UserEmailCheckResponse;
 import store.mybooks.resource.user.dto.response.UserEncryptedPasswordResponse;
 import store.mybooks.resource.user.dto.response.UserGetResponse;
 import store.mybooks.resource.user.dto.response.UserGradeModifyResponse;
@@ -248,6 +249,11 @@ public class UserRestController {
         return new ResponseEntity<>(paginationUsr, HttpStatus.OK);
     }
 
+    @GetMapping("/email/verify/{email}")
+    public ResponseEntity<UserEmailCheckResponse> verifyUserEmail(@PathVariable(name="email")String email){
+        return new ResponseEntity<>(userService.verifyUserEmail(new UserEmailRequest(email)),HttpStatus.OK);
+    }
+
     /**
      * methodName : loginUser
      * author : masiljangajji
@@ -292,6 +298,8 @@ public class UserRestController {
         UserInactiveVerificationResponse response = userService.verifyLockUser(id, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
 
 
 

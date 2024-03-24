@@ -13,6 +13,6 @@ package store.mybooks.resource.user.exception;
  */
 public class UserLoginFailException extends RuntimeException{
     public UserLoginFailException() {
-        super("로그인 실패");
+        super("이메일을 확인해 주세요");
     }
 }
