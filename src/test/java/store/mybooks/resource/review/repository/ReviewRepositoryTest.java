@@ -1,9 +1,11 @@
 package store.mybooks.resource.review.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +25,9 @@ import store.mybooks.resource.orderdetail.entity.OrderDetail;
 import store.mybooks.resource.orderdetailstatus.entity.OrderDetailStatus;
 import store.mybooks.resource.ordersstatus.entity.OrdersStatus;
 import store.mybooks.resource.publisher.entity.Publisher;
+import store.mybooks.resource.review.dto.response.ReviewDetailGetResponse;
 import store.mybooks.resource.review.dto.response.ReviewGetResponse;
+import store.mybooks.resource.review.dto.response.ReviewRateResponse;
 import store.mybooks.resource.review.entity.Review;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user_grade.entity.UserGrade;
@@ -161,61 +165,60 @@ class ReviewRepositoryTest {
         assertThat(list.get(1).getReviewImage()).isEqualTo(null);
     }
 
-//    @Test
-//    @DisplayName(("리뷰 아이디로 리뷰 조회"))
-//    void givenReviewId_whenCallGetReview_thenReturnReviewGetResponse() {
-//
-//        Optional<ReviewGetResponse> response = reviewRepository.getReview(review.getId());
-//
-//        assertTrue(response.isPresent());
-//
-//        ReviewGetResponse reviewGetResponse = response.get();
-//        assertThat(reviewGetResponse.getBookId()).isEqualTo(1L);
-//        assertThat(reviewGetResponse.getBookName()).isEqualTo("name");
-//        assertThat(reviewGetResponse.getReviewId()).isEqualTo(1L);
-//        assertThat(reviewGetResponse.getUserName()).isEqualTo("name");
-//        assertThat(reviewGetResponse.getRate()).isEqualTo(5);
-//        assertThat(reviewGetResponse.getDate()).isEqualTo(localDate);
-//        assertThat(reviewGetResponse.getTitle()).isEqualTo("review_title");
-//        assertThat(reviewGetResponse.getContent()).isEqualTo("review_content");
-//        assertThat(reviewGetResponse.getReviewImage()).isEqualTo(null);
-//    }
-//
-//    @Test
-//    @DisplayName(("책 아이디로 리뷰 조회"))
-//    void givenBookId_whenCallGetReviewByBookId_thenReturnReviewDetailGetResponsePage() {
-//
-//
-//        Page<ReviewDetailGetResponse> page = reviewRepository.getReviewByBookId(1L, PageRequest.of(0, 2));
-//        assertThat(page).isNotNull();
-//        List<ReviewDetailGetResponse> list = page.getContent();
-//
-//        assertThat(list.get(0).getReviewId()).isEqualTo(1L);
-//        assertThat(list.get(0).getDate()).isEqualTo(localDate);
-//        assertThat(list.get(0).getRate()).isEqualTo(5);
-//        assertThat(list.get(0).getUserName()).isEqualTo("name");
-//        assertThat(list.get(0).getTitle()).isEqualTo("review_title");
-//        assertThat(list.get(0).getContent()).isEqualTo("review_content");
-//        assertThat(list.get(0).getReviewImage()).isEqualTo(null);
-//
-//        assertThat(list.get(1).getReviewId()).isEqualTo(2L);
-//        assertThat(list.get(1).getDate()).isEqualTo(localDate);
-//        assertThat(list.get(1).getRate()).isEqualTo(3);
-//        assertThat(list.get(1).getUserName()).isEqualTo("name");
-//        assertThat(list.get(1).getTitle()).isEqualTo("review_title_2");
-//        assertThat(list.get(1).getContent()).isEqualTo("review_content_2");
-//        assertThat(list.get(1).getReviewImage()).isEqualTo(null);
-//    }
-//
-//    @Test
-//    @DisplayName("책 아이디로 전체 리뷰 평점평균 및 개수 조회")
-//    void givenBookId_whenCallGetReviewRate_thenReturnReviewRateResponse() {
-//
-//        ReviewRateResponse response = reviewRepository.getReviewRate(1L);
-//
-//        assertThat(response.getTotalCount()).isEqualTo(2);
-//        assertThat(response.getAverageRate()).isEqualTo(4.0);
-//    }
+    @Test
+    @DisplayName(("리뷰 아이디로 리뷰 조회"))
+    void givenReviewId_whenCallGetReview_thenReturnReviewGetResponse() {
+
+        Optional<ReviewGetResponse> response = reviewRepository.getReview(review.getId());
+
+        assertTrue(response.isPresent());
+
+        ReviewGetResponse reviewGetResponse = response.get();
+        assertThat(reviewGetResponse.getBookId()).isEqualTo(1L);
+        assertThat(reviewGetResponse.getBookName()).isEqualTo("name");
+        assertThat(reviewGetResponse.getReviewId()).isEqualTo(1L);
+        assertThat(reviewGetResponse.getUserName()).isEqualTo("name");
+        assertThat(reviewGetResponse.getRate()).isEqualTo(5);
+        assertThat(reviewGetResponse.getDate()).isEqualTo(localDate);
+        assertThat(reviewGetResponse.getTitle()).isEqualTo("review_title");
+        assertThat(reviewGetResponse.getContent()).isEqualTo("review_content");
+        assertThat(reviewGetResponse.getReviewImage()).isEqualTo(null);
+    }
+
+    @Test
+    @DisplayName(("책 아이디로 리뷰 조회"))
+    void givenBookId_whenCallGetReviewByBookId_thenReturnReviewDetailGetResponsePage() {
+
+
+        Page<ReviewDetailGetResponse> page = reviewRepository.getReviewByBookId(1L, PageRequest.of(0, 2));
+        assertThat(page).isNotNull();
+        List<ReviewDetailGetResponse> list = page.getContent();
+
+        assertThat(list.get(0).getReviewId()).isEqualTo(1L);
+        assertThat(list.get(0).getDate()).isEqualTo(localDate);
+        assertThat(list.get(0).getRate()).isEqualTo(5);
+        assertThat(list.get(0).getUserName()).isEqualTo("name");
+        assertThat(list.get(0).getTitle()).isEqualTo("review_title");
+        assertThat(list.get(0).getContent()).isEqualTo("review_content");
+        assertThat(list.get(0).getReviewImage()).isEqualTo(null);
+
+        assertThat(list.get(1).getReviewId()).isEqualTo(2L);
+        assertThat(list.get(1).getDate()).isEqualTo(localDate);
+        assertThat(list.get(1).getRate()).isEqualTo(3);
+        assertThat(list.get(1).getUserName()).isEqualTo("name");
+        assertThat(list.get(1).getTitle()).isEqualTo("review_title_2");
+        assertThat(list.get(1).getContent()).isEqualTo("review_content_2");
+        assertThat(list.get(1).getReviewImage()).isEqualTo(null);
+    }
+    @Test
+    @DisplayName("책 아이디로 전체 리뷰 평점평균 및 개수 조회")
+    void givenBookId_whenCallGetReviewRate_thenReturnReviewRateResponse() {
+
+        ReviewRateResponse response = reviewRepository.getReviewRate(1L);
+
+        assertThat(response.getTotalCount()).isEqualTo(2);
+        assertThat(response.getAverageRate()).isEqualTo(4.0);
+    }
 
 
 }
