@@ -248,7 +248,6 @@ class PointHistoryServiceTest {
     @Test
     @DisplayName("getRemainingPoint 테스트 - 없는 회원인 경우")
     void givenNotExistsUserId_whenGetRemainingPoint_thenThrowUserNotExistException() {
-        PointResponse pointResponse = new PointResponse(1000);
         when(userRepository.existsById(anyLong())).thenReturn(false);
 
         assertThrows(UserNotExistException.class, () -> pointHistoryService.getRemainingPoint(1L));

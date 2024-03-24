@@ -128,9 +128,17 @@ public class GlobalControllerAdvice {
                 .body(exception.getMessage());
     }
 
+    /**
+     * methodName : userException <br>
+     * author : damho-lee <br>
+     * description : 회원 관련 예외 처리.<br>
+     *
+     * @param exception Exception
+     * @return ResponseEntity
+     */
     @ExceptionHandler({UserAlreadyResignException.class, UserLoginFailException.class, UserAddressFullException.class,
             BookOrderInfoNotMatchException.class})
-    public ResponseEntity<String> UserException(Exception exception) {
+    public ResponseEntity<String> userException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());
