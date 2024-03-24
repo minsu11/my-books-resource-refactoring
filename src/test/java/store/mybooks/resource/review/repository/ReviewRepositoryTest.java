@@ -144,8 +144,8 @@ class ReviewRepositoryTest {
 
 
     @Test
-    @DisplayName("review repositoryImpl Test")
-    void test_reviewRepositoryImpl() {
+    @DisplayName("유저 아이디로 리뷰 조회")
+    void givenUserId_whenCallGetReviewByUserId_thenReturnReviewGetResponsePage() {
 
         reviewRepository.save(review);
         reviewRepository.save(review2);
@@ -170,10 +170,6 @@ class ReviewRepositoryTest {
         assertThat(list.get(1).getTitle()).isEqualTo("review_title_2");
         assertThat(list.get(1).getUserName()).isEqualTo("name");
         assertThat(list.get(1).getReviewImage()).isEqualTo(null);
-
-
-
-
 
 
     }
