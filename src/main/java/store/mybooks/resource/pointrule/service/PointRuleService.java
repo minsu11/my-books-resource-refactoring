@@ -39,7 +39,6 @@ public class PointRuleService {
     private final PointRuleNameRepository pointRuleNameRepository;
     private final PointRuleMapper pointRuleMapper;
 
-
     @Transactional(readOnly = true)
     public PointRuleResponse getPointRuleResponseByName(String ruleName) {
         return pointRuleRepository.getPointRuleByName(ruleName)
@@ -152,5 +151,6 @@ public class PointRuleService {
         PointRule pointRule = pointRuleRepository.findById(id).orElseThrow(PointRuleNotExistException::new);
         pointRule.modifyPointRuleIsAvailable(false);
     }
+
 
 }

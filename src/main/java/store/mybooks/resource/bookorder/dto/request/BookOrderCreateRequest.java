@@ -59,5 +59,6 @@ public class BookOrderCreateRequest {
     @PositiveOrZero
     private Integer wrapCost;
 
-
+    @Size(max = 6)
+    private String orderCode;
 }

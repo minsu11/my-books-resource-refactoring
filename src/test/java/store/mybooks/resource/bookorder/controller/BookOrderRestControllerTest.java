@@ -1930,4 +1930,52 @@ class BookOrderRestControllerTest {
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
     }
+
+    @Test
+    @DisplayName("주문 번호가 있는지 확인")
+    void givenOrderNumber_whenCheckBookOrderNumberExists_thenReturnBoolean() throws Exception {
+        when(bookOrderService.checkBookOrderNumberExists(anyString())).thenReturn(true);
+
+        mockMvc.perform(get(url + "/orderNumber/{orderNumber}", "test"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string("true"))
+                .andDo(document("book-order-number-check",
+                        pathParameters(
+                                parameterWithName("orderNumber").description("조회할 주문 번호")
+                        )));
+        verify(bookOrderService, times(1)).checkBookOrderNumberExists(anyString());
+    }
+
+    @Test
+    @DisplayName("비회원 주문 시 주문지 생성")
+    void givenBookOrderCreateRequestNonUser_whenCreateOrder_thenReturnBookOrderCreateResponse() throws Exception {
+        BookOrderCreateRequest request = new BookOrderCreateRequest();
+        ReflectionTestUtils.setField(request, "name", "test");
+        ReflectionTestUtils.setField(request, "email", "test@test.com");
+        ReflectionTestUtils.setField(request, "phone", "010-1234-1234");
+        ReflectionTestUtils.setField(request, "bookInfoList", new ArrayList<BookInfoRequest>());
+        ReflectionTestUtils.setField(request, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(request, "orderNumber", "test");
+        ReflectionTestUtils.setField(request, "pointCost", 0);
+        ReflectionTestUtils.setField(request, "couponCost", 0);
+        ReflectionTestUtils.setField(request, "totalCost", 1000);
+        ReflectionTestUtils.setField(request, "wrapCost", 500);
+
+        BookOrderCreateResponse response =
+                new BookOrderCreateResponse("주문 대기", "test",
+                        1000, false);
+        when(orderService.createOrder(any(), anyLong())).thenReturn(response);
+        mockMvc.perform(post(url + "/non/user")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andDo(document("book-order-non-user",
+                        requestFields(
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화번호")
+                        )));
+    }
 }

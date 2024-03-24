@@ -5,6 +5,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -76,7 +77,7 @@ public class PointRuleController {
      * @return response entity
      */
     @GetMapping("/page")
-    public ResponseEntity<Page<PointRuleResponse>> getPointRuleResponsePage(Pageable pageable) {
+    public ResponseEntity<Page<PointRuleResponse>> getPointRuleResponsePage(@PageableDefault Pageable pageable) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(pointRuleService.getPointRuleResponsePage(pageable));

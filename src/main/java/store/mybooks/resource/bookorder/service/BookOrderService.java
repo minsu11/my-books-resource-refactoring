@@ -169,6 +169,7 @@ public class BookOrderService {
                 .userCoupon(null)
                 .isCouponUsed(false)
                 .pointCost(request.getPointCost())
+                .findPassword(request.getOrderCode())
                 .build();
 
         bookOrderRepository.save(bookOrder);

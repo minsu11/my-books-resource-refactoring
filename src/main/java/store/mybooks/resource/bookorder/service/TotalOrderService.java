@@ -28,6 +28,9 @@ import store.mybooks.resource.pointrule.service.PointRuleService;
 import store.mybooks.resource.pointrulename.dto.response.PointRuleNameResponse;
 import store.mybooks.resource.pointrulename.enumulation.PointRuleNameEnum;
 import store.mybooks.resource.pointrulename.service.PointRuleNameService;
+import store.mybooks.resource.user.entity.User;
+import store.mybooks.resource.user.exception.UserNotExistException;
+import store.mybooks.resource.user.repository.UserRepository;
 import store.mybooks.resource.usercoupon.service.UserCouponService;
 
 /**
@@ -54,6 +57,7 @@ public class TotalOrderService {
     private final PointRuleNameService pointRuleNameService;
     private final PointRuleService pointRuleService;
     private final UserCouponService userCouponService;
+    private final UserRepository userRepository;
 
     /**
      * methodName : createOrder<br>
@@ -98,6 +102,7 @@ public class TotalOrderService {
         useCouponProcessing(bookOrderInfo);
         pointProcessing(bookOrderInfo.getNumber(), bookOrderInfo.getPointCost(), userId, PointRuleNameEnum.USE_POINT);
         earnPoint(bookOrderInfo, userId);
+
         bookOrderService.updateBookOrderStatus(bookOrderInfo.getNumber(), BookOrderStatusName.ORDER_COMPLETED);
         return response;
     }
@@ -132,9 +137,14 @@ public class TotalOrderService {
         if (userId == 0L) {
             return;
         }
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
+        int userGradeRate = user.getUserGrade().getRate();
+
         PointRuleResponse pointRule = pointRuleService
                 .getPointRuleResponseByName(PointRuleNameEnum.BOOK_POINT.getValue());
-        int earnPoint = (bookOrder.getTotalCost() * pointRule.getRate()) / 100;
+        int earnPoint = ((bookOrder.getTotalCost() * pointRule.getRate()) / 100)
+                + ((bookOrder.getTotalCost() * userGradeRate) / 100);
         PointHistoryCreateRequest point =
                 new PointHistoryCreateRequest(bookOrder.getNumber(), pointRule.getPointRuleName(), earnPoint);
         pointHistoryService.createPointHistory(point, userId);

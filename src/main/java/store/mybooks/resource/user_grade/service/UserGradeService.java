@@ -75,10 +75,6 @@ public class UserGradeService {
     }
 
 
-
-
-
-
     /**
      * methodName : findAllUserGrade
      * author : masiljangajji
@@ -93,6 +89,4 @@ public class UserGradeService {
     public List<UserGradeGetResponse> findAllUserGrade() {
         return userGradeRepository.queryAllByOrderByMinCost();
     }
-
-
 }
