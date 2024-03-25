@@ -17,5 +17,10 @@ import store.mybooks.resource.cart_item.entity.CartItem;
  */
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     void deleteAllByCart_Id(Long cartId);
+
     List<CartItem> findCartItemsByCart_Id(Long cartId);
+
+    boolean existsCartItemByCart_IdAndBook_Id(Long cartId, Long BookId);
+
+    void deleteCartItemByCart_IdAndBook_Id(Long cartId, Long BookId);
 }
