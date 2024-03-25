@@ -193,4 +193,16 @@ public class PointHistoryService {
                 null
         ));
     }
+
+    /**
+     * methodName : getUsedPointOrder <br>
+     * author : minsu11 <br>
+     * description : 주문에서 사용한 포인트.<br>
+     *
+     * @param orderNumber 주문 번호
+     * @return the used point order
+     */
+    public Integer getUsedPointOrder(String orderNumber) {
+        return pointHistoryRepository.getOrderUsedPoint(orderNumber);
+    }
 }

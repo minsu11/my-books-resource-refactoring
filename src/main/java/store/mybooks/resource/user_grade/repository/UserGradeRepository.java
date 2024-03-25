@@ -20,11 +20,10 @@ import store.mybooks.resource.user_grade.entity.UserGrade;
 public interface UserGradeRepository extends JpaRepository<UserGrade, Integer> {
 
 
-
     Optional<UserGrade> findByUserGradeNameIdAndIsAvailableIsTrue(String userGradeName);
 
     List<UserGradeGetResponse> queryAllByIsAvailableIsTrueOrderByMinCost();
-    List<UserGradeGetResponse> queryAllByOrderByMinCost();
 
+    List<UserGradeGetResponse> queryAllByOrderByMinCost();
 
 }

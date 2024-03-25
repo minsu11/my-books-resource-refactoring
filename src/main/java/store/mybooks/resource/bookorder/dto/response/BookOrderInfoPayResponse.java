@@ -28,7 +28,8 @@ public class BookOrderInfoPayResponse {
     private Integer pointCost;
     private List<OrderDetailInfoResponse> orderDetails;
 
-    public BookOrderInfoPayResponse(String orderStatus, String number, Integer totalCost, Boolean isCouponUsed, Integer pointCost) {
+    public BookOrderInfoPayResponse(String orderStatus, String number, Integer totalCost,
+                                    Boolean isCouponUsed, Integer pointCost) {
         this.orderStatus = orderStatus;
         this.number = number;
         this.totalCost = totalCost;
