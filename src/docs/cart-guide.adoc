@@ -10,4 +10,20 @@
 
 == 장바구니 API
 
-== 장바구니-상세 API
+=== 장바구니 mysql 조회 및 mysql -> redis 데이터 이동
+
+==== RequestFields
+
+include::{snippets}/move-cartData-mysql-to-redis/request-fields.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/move-cartData-mysql-to-redis/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/move-cartData-mysql-to-redis/http-response.adoc[]
+
+==== ResponseFields
+
+include::{snippets}/move-cartData-mysql-to-redis/response-fields.adoc[]

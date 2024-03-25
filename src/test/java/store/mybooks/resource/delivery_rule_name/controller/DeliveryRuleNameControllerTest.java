@@ -80,6 +80,7 @@ class DeliveryRuleNameControllerTest {
 
     @Test
     @DisplayName("배송 규칙 이름 list 조회")
+
     void given_whenGetDeliveryNameRuleList_thenReturnDeliveryRuleNameResponseList() throws Exception {
         List<DeliveryRuleNameResponse> deliveryRuleNameResponseList =
                 List.of(new DeliveryRuleNameResponse("test", LocalDate.of(2023, 12, 31)));
