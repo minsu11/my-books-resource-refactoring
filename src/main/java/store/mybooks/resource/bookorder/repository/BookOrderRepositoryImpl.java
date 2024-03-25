@@ -188,6 +188,9 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
         log.info("bookOrderInfo:{}", bookOrderInfo.getIsCouponUsed());
         log.info("bookOrderInfo:{}", bookOrderInfo.getOrderStatus());
         bookOrderInfo.updateOrderDetails(orderDetailInfoResponses);
+        log.info("bookOrderInfo:{}", bookOrderInfo.getOrderDetails());
+        log.info("bookOrderInfo:{}", bookOrderInfo.getOrderDetails().get(0).getId());
+        log.info("bookOrderInfo:{}", bookOrderInfo.getOrderDetails().get(0).getCouponId());
 
         return Optional.ofNullable(bookOrderInfo);
     }
