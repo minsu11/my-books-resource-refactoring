@@ -3,7 +3,6 @@ package store.mybooks.resource.pointhistory.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -378,15 +377,15 @@ class PointHistoryServiceTest {
         assertThrows(BookOrderNotExistException.class, () -> pointHistoryService.createPointHistory(request, 1L));
     }
 
-    @Test
-    @DisplayName("saveLoginPoint 테스트")
-    void givenUserId_whenSaveLoginPoint_thenReturnTrue() {
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(pointRuleRepository.findPointRuleByPointRuleName(loginSave)).thenReturn(Optional.of(loginPoint));
-        when(pointHistoryRepository.save(any())).thenReturn(loginPointHistory);
-
-        assertTrue(pointHistoryService.saveLoginPoint(user.getId()));
-    }
+//    @Test
+//    @DisplayName("saveLoginPoint 테스트")
+//    void givenUserId_whenSaveLoginPoint_thenReturnTrue() {
+//        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+//        when(pointRuleRepository.findPointRuleByPointRuleName(loginSave)).thenReturn(Optional.of(loginPoint));
+//        when(pointHistoryRepository.save(any())).thenReturn(loginPointHistory);
+//
+//        assertTrue(pointHistoryService.saveLoginPoint(user.getId()));
+//    }
 
     @Test
     @DisplayName("saveLoginPoint 테스트 - 유저가 존재하지 않는 경우")

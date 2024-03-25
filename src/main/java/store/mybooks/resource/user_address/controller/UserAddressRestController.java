@@ -3,8 +3,6 @@ package store.mybooks.resource.user_address.controller;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -109,42 +107,6 @@ public class UserAddressRestController {
                 userAddressService.deleteUserAddress(userId, addressId);
 
         return new ResponseEntity<>(deleteResponse, HttpStatus.OK);
-    }
-
-
-    /**
-     * methodName : findUserAddressByAddressId
-     * author : masiljangajji
-     * description : 유저의 특정 주소를 찾음
-     *
-     * @param userId    id
-     * @param addressId id
-     * @return response entity
-     */
-    @GetMapping("/{addressId}")
-    public ResponseEntity<UserAddressGetResponse> findUserAddressByAddressId(
-            @RequestHeader(name = HeaderProperties.USER_ID) Long userId,
-            @PathVariable(name = "addressId") Long addressId) {
-
-        UserAddressGetResponse getResponse =
-                userAddressService.findByAddressId(userId, addressId);
-        return new ResponseEntity<>(getResponse, HttpStatus.OK);
-    }
-
-
-    /**
-     * methodName : findAllUserAddress
-     * author : masiljangajji
-     * description : 모든 유저의 주소를 Pagination 처리
-     *
-     * @param pageable pageable
-     * @return response entity
-     */
-    @GetMapping("/all")
-    public ResponseEntity<Page<UserAddressGetResponse>> findAllUserAddress(Pageable pageable) {
-
-        Page<UserAddressGetResponse> paginationUserAddress = userAddressService.findByAllUserAddress(pageable);
-        return new ResponseEntity<>(paginationUserAddress, HttpStatus.OK);
     }
 
     /**

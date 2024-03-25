@@ -10,12 +10,530 @@
 
 == 회원 API
 
+=== 회원 추가
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user-create/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user-create/request-body.adoc[]
+include::{snippets}/user-create/request-fields.adoc[]
+
+==== 응답
+
+include::{snippets}/user-create/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user-create/response-body.adoc[]
+include::{snippets}/user-create/response-fields.adoc[]
+
+=== 회원 탈퇴
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user-delete/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user-delete/request-headers.adoc[]
+
+==== 응답
+
+include::{snippets}/user-delete/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user-delete/response-body.adoc[]
+include::{snippets}/user-delete/response-fields.adoc[]
+
+
+=== 유저 조회
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user-find/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user-find/request-headers.adoc[]
+
+==== 응답
+
+include::{snippets}/user-find/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user-find/response-body.adoc[]
+include::{snippets}/user-find/response-fields.adoc[]
+
+
+=== 유저 전체 조회
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user-findAll/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user-findAll/request-body.adoc[]
+
+==== 응답
+
+include::{snippets}/user-findAll/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user-findAll/response-body.adoc[]
+include::{snippets}/user-findAll/response-fields.adoc[]
+
+=== 유저 정보 수정
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user-modify/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user-modify/request-body.adoc[]
+include::{snippets}/user-modify/request-fields.adoc[]
+include::{snippets}/user-modify/request-headers.adoc[]
+
+==== 응답
+
+include::{snippets}/user-modify/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user-modify/response-body.adoc[]
+include::{snippets}/user-modify/response-fields.adoc[]
+
+
+=== 유저 비밀번호 수정
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user-passwordModify/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user-passwordModify/request-body.adoc[]
+include::{snippets}/user-passwordModify/request-fields.adoc[]
+include::{snippets}/user-passwordModify/request-headers.adoc[]
+
+==== 응답
+
+include::{snippets}/user-passwordModify/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user-passwordModify/response-body.adoc[]
+include::{snippets}/user-passwordModify/response-fields.adoc[]
+
+
+=== 유저 이메일 로그인 요청
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user-verification/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user-verification/request-body.adoc[]
+include::{snippets}/user-verification/request-fields.adoc[]
+
+==== 응답
+
+include::{snippets}/user-verification/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user-verification/response-body.adoc[]
+include::{snippets}/user-verification/response-fields.adoc[]
+
+=== 유저 로그인 완료
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user-verificationComplete/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user-verificationComplete/request-body.adoc[]
+include::{snippets}/user-verificationComplete/request-fields.adoc[]
+
+==== 응답
+
+include::{snippets}/user-verificationComplete/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user-verificationComplete/response-body.adoc[]
+include::{snippets}/user-verificationComplete/response-fields.adoc[]
+
+
+=== 유저 이메일 인증
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user-verifyEmail/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user-verifyEmail/path-parameters.adoc[]
+
+==== 응답
+
+include::{snippets}/user-verifyEmail/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user-verifyEmail/response-body.adoc[]
+include::{snippets}/user-verifyEmail/response-fields.adoc[]
+
+
+
+=== oauth 회원 추가 (정보제공 동의)
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user_oauth-create-consent/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user_oauth-create-consent/request-body.adoc[]
+include::{snippets}/user_oauth-create-consent/request-fields.adoc[]
+
+==== 응답
+
+include::{snippets}/user_oauth-create-consent/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user_oauth-create-consent/response-body.adoc[]
+include::{snippets}/user_oauth-create-consent/response-fields.adoc[]
+
+=== oauth 회원 추가 (정보제공 비동의)
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user_oauth-create-nonConsent/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user_oauth-create-nonConsent/request-body.adoc[]
+include::{snippets}/user_oauth-create-nonConsent/request-fields.adoc[]
+
+==== 응답
+
+include::{snippets}/user_oauth-create-nonConsent/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user_oauth-create-nonConsent/response-body.adoc[]
+include::{snippets}/user_oauth-create-nonConsent/response-fields.adoc[]
+
+
+=== 유저 oauth 로그인
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user_oauth-login/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user_oauth-login/request-body.adoc[]
+include::{snippets}/user_oauth-login/request-fields.adoc[]
+
+==== 응답
+
+include::{snippets}/user_oauth-login/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user_oauth-login/response-body.adoc[]
+include::{snippets}/user_oauth-login/response-fields.adoc[]
+
+
 == 주소 API
+
+=== 유저 주소 등록
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user_address-create/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user_address-create/request-body.adoc[]
+include::{snippets}/user_address-create/request-fields.adoc[]
+include::{snippets}/user_address-create/request-headers.adoc[]
+
+==== 응답
+
+include::{snippets}/user_address-create/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user_address-create/response-body.adoc[]
+include::{snippets}/user_address-create/response-fields.adoc[]
+
+=== 유저 주소 삭제
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user_address-delete/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user_address-delete/request-body.adoc[]
+include::{snippets}/user_address-delete/request-headers.adoc[]
+include::{snippets}/user_address-delete/path-parameters.adoc[]
+
+==== 응답
+
+include::{snippets}/user_address-delete/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user_address-delete/response-body.adoc[]
+include::{snippets}/user_address-delete/response-fields.adoc[]
+
+=== 유저 주소 전체조회
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user_address-findAll/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user_address-findAll/request-body.adoc[]
+include::{snippets}/user_address-findAll/request-headers.adoc[]
+
+==== 응답
+
+include::{snippets}/user_address-findAll/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user_address-findAll/response-body.adoc[]
+include::{snippets}/user_address-findAll/response-fields.adoc[]
+
+
+=== 유저 주소 수정
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user_address-modify/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user_address-modify/request-body.adoc[]
+include::{snippets}/user_address-modify/request-fields.adoc[]
+include::{snippets}/user_address-modify/request-headers.adoc[]
+include::{snippets}/user_address-modify/path-parameters.adoc[]
+
+==== 응답
+
+include::{snippets}/user_address-modify/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user_address-modify/response-body.adoc[]
+include::{snippets}/user_address-modify/response-fields.adoc[]
+
 
 == 회원-등급 API
 
-== 회원-등급명 API
+=== 유저 등급 생성
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user_grade-create/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user_grade-create/request-body.adoc[]
+include::{snippets}/user_grade-create/request-fields.adoc[]
+
+==== 응답
+
+include::{snippets}/user_grade-create/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user_grade-create/response-body.adoc[]
+
+
+=== 유저 등급 전체조회 (활성+비활성)
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user_grade-findAllList/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user_grade-findAllList/request-body.adoc[]
+
+==== 응답
+
+include::{snippets}/user_grade-findAllList/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user_grade-findAllList/response-body.adoc[]
+include::{snippets}/user_grade-findAllList/response-fields.adoc[]
+
+=== 유저 등급 조회 (활성)
+
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user_grade-findAvailableList/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user_grade-findAvailableList/request-body.adoc[]
+
+==== 응답
+
+include::{snippets}/user_grade-findAvailableList/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user_grade-findAvailableList/response-body.adoc[]
+include::{snippets}/user_grade-findAvailableList/response-fields.adoc[]
 
 == 회원-상태  API
 
-== 회원-쿠폰 API
+=== 유저 상태 전체조회
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user_status-findAll/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user_status-findAll/request-body.adoc[]
+
+==== 응답
+
+include::{snippets}/user_status-findAll/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user_status-findAll/response-body.adoc[]
+include::{snippets}/user_status-findAll/response-fields.adoc[]
+
+
+=== 유저 상태 변경
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user_status-modify/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user_status-modify/path-parameters.adoc[]
+include::{snippets}/user_status-modify/request-body.adoc[]
+include::{snippets}/user_status-modify/request-fields.adoc[]
+
+==== 응답
+
+include::{snippets}/user_status-modify/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user_status-modify/response-body.adoc[]
+include::{snippets}/user_status-modify/response-fields.adoc[]
+
+
+=== 유저 휴면계정 해제
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user_status-verifyDormancy/http-request.adoc[]
+
+==== 요청 파라미터
+include::{snippets}/user_status-verifyDormancy/request-body.adoc[]
+include::{snippets}/user_status-verifyDormancy/request-headers.adoc[]
+
+==== 응답
+
+include::{snippets}/user_status-verifyDormancy/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user_status-verifyDormancy/response-body.adoc[]
+include::{snippets}/user_status-verifyDormancy/response-fields.adoc[]
+
+=== 유저 잠금계정 해제
+
+
+==== 성공
+
+===== 요청
+
+include::{snippets}/user_status-verifyLock/http-request.adoc[]
+
+==== 요청 파라미터
+include::{snippets}/user_status-verifyLock/request-body.adoc[]
+include::{snippets}/user_status-verifyLock/request-headers.adoc[]
+include::{snippets}/user_status-verifyLock/response-fields.adoc[]
+
+
+==== 응답
+
+include::{snippets}/user_status-verifyLock/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/user_status-verifyLock/response-body.adoc[]
+include::{snippets}/user_status-verifyLock/response-fields.adoc[]
+

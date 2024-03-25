@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.user_status.dto.response.UserStatusGetResponse;
-import store.mybooks.resource.user_status.exception.UserStatusNotExistException;
 import store.mybooks.resource.user_status.repository.UserStatusRepository;
 
 /**
@@ -27,22 +26,7 @@ public class UserStatusService {
     private final UserStatusRepository userStatusRepository;
 
 
-    /**
-     * methodName : findUserStatusById
-     * author : masiljangajji
-     * description : 유저상태의 정보를 찾음
-     *
-     * @param id id
-     * @return user status get response
-     * @throws UserStatusNotExistException 유저상태가 존재하지 않는 경우
-     */
-    public UserStatusGetResponse findUserStatusById(String id) {
 
-        if (!userStatusRepository.existsById(id)) {
-            throw new UserStatusNotExistException(id);
-        }
-        return userStatusRepository.queryById(id);
-    }
 
     /**
      * methodName : findAllUserStatus

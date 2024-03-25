@@ -6,6 +6,18 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -16,7 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,10 +39,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import store.mybooks.resource.config.HeaderProperties;
 import store.mybooks.resource.error.RequestValidationFailedException;
 import store.mybooks.resource.pointhistory.service.PointHistoryService;
@@ -72,7 +89,7 @@ import store.mybooks.resource.user.service.UserService;
 
 
 @WebMvcTest(value = UserRestController.class)
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 class UserRestControllerTest {
 
     @Autowired
@@ -90,6 +107,18 @@ class UserRestControllerTest {
     UserGetResponse userGetResponse1;
     UserGetResponse userGetResponse2;
 
+
+    @BeforeEach
+    void setUp(WebApplicationContext webApplicationContext,
+               RestDocumentationContextProvider restDocumentation) {
+
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                .apply(documentationConfiguration(restDocumentation)
+                        .operationPreprocessors()
+                        .withRequestDefaults(modifyUris(), prettyPrint())
+                        .withResponseDefaults(prettyPrint()))
+                .build();
+    }
 
     @Test
     @DisplayName("유저 UserCreateRequest - Validation 실패")
@@ -254,7 +283,25 @@ class UserRestControllerTest {
                 .andExpect(jsonPath("$.birthYear").exists())
                 .andExpect(jsonPath("$.birthMonthDay").exists())
                 .andExpect(jsonPath("$.userStatusName").exists())
-                .andExpect(jsonPath("$.userGradeName").exists());
+                .andExpect(jsonPath("$.userGradeName").exists())
+                .andDo(document("user-create",
+                        requestFields(
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("password").description("비밀번호"),
+                                fieldWithPath("phoneNumber").description("핸드폰"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("birth").description("생일"),
+                                fieldWithPath("isAdmin").description("관리자 유무")
+                        ),
+                        responseFields(
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("birthYear").description("생년"),
+                                fieldWithPath("birthMonthDay").description("월일"),
+                                fieldWithPath("userStatusName").description("유저상태 이름"),
+                                fieldWithPath("userGradeName").description("유저등급 이름")
+                        )
+                ));
     }
 
     @Test
@@ -269,13 +316,26 @@ class UserRestControllerTest {
 
         when(userService.modifyUser(anyLong(), any(UserModifyRequest.class))).thenReturn(userModifyResponse);
 
-        mockMvc.perform(put("/api/users")
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userModifyRequest))
                         .header(HeaderProperties.USER_ID, "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").exists())
-                .andExpect(jsonPath("$.phoneNumber").exists());
+                .andExpect(jsonPath("$.phoneNumber").exists())
+                .andDo(document("user-modify",
+                        requestHeaders(
+                                headerWithName("X-User-Id").description("회원 아이디")
+                        ),
+                        requestFields(
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("phoneNumber").description("핸드폰")
+                        ),
+                        responseFields(
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("phoneNumber").description("핸드폰")
+                        )
+                ));
     }
 
     @Test
@@ -288,11 +348,23 @@ class UserRestControllerTest {
 
         when(userService.modifyUserGrade(anyLong(), any(UserGradeModifyRequest.class))).thenReturn(userModifyResponse);
 
-        mockMvc.perform(put("/api/users/{userId}/grade", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/users/{id}/grade", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userModifyRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userGradeName").exists());
+                .andExpect(jsonPath("$.userGradeName").exists())
+                .andDo(document("user_status-modify",
+                        pathParameters(
+                                parameterWithName("id").description("유저 아이디")
+                        ),
+                        requestFields(
+                                fieldWithPath("userGradeName").description("유저 등급이름")
+                        ),
+                        responseFields(
+                                fieldWithPath("userGradeName").description("유저 등급이름")
+                        )
+                ));
+
     }
 
     @Test
@@ -305,12 +377,24 @@ class UserRestControllerTest {
         when(userService.modifyUserStatus(anyLong(), any(UserStatusModifyRequest.class))).thenReturn(
                 userModifyResponse);
 
-        mockMvc.perform(put("/api/users/{userId}/status", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/users/{id}/status", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userModifyRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userStatusName").exists())
-                .andExpect(jsonPath("$.gradeChangedDate").exists());
+                .andExpect(jsonPath("$.gradeChangedDate").exists())
+                .andDo(document("user_status-modify",
+                        pathParameters(
+                                parameterWithName("id").description("유저 아이디")
+                        ),
+                        requestFields(
+                                fieldWithPath("userStatusName").description("유저 상태이름")
+                        ),
+                        responseFields(
+                                fieldWithPath("userStatusName").description("유저 상태이름"),
+                                fieldWithPath("gradeChangedDate").description("등급변경일")
+                        )
+                ));
     }
 
 
@@ -318,7 +402,7 @@ class UserRestControllerTest {
     @DisplayName("UserId 로 deleteUser 실행시 UserDeleteResponse 반환")
     void givenUserId_whenCallDeleteUser_thenReturnUserDeleteResponse() throws Exception {
 
-        UserDeleteResponse userDeleteResponse = new UserDeleteResponse("test");
+        UserDeleteResponse userDeleteResponse = new UserDeleteResponse("[test@test.com] 유저 삭제완료");
 
         when(userService.deleteUser(anyLong())).thenReturn(userDeleteResponse);
 
@@ -327,7 +411,15 @@ class UserRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HeaderProperties.USER_ID, "1")) // 헤더 추가
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").exists());
+                .andExpect(jsonPath("$.message").exists())
+                .andDo(document("user-delete",
+                        requestHeaders(
+                                headerWithName("X-User-Id").description("회원 아이디")
+                        ),
+                        responseFields(
+                                fieldWithPath("message").description("유저삭제 메시지")
+                        )
+                ));
 
     }
 
@@ -351,7 +443,24 @@ class UserRestControllerTest {
                 .andExpect(jsonPath("$.email").exists())
                 .andExpect(jsonPath("$.birthYear").exists())
                 .andExpect(jsonPath("$.birthMonthDay").exists())
-                .andExpect(jsonPath("$.userGradeUserGradeNameId").exists());
+                .andExpect(jsonPath("$.userGradeUserGradeNameId").exists())
+                .andDo(document("user-find",
+                        requestHeaders(
+                                headerWithName("X-User-Id").description("회원 아이디")
+                        ),
+                        responseFields(
+                                fieldWithPath("userGradeUserGradeNameId").description("유저등급 이름아이디"),
+                                fieldWithPath("userStatusId").description("유저상태 아이디"),
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("phoneNumber").description("핸드폰"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("birthYear").description("생년"),
+                                fieldWithPath("birthMonthDay").description("월일"),
+                                fieldWithPath("createdAt").description("생성일"),
+                                fieldWithPath("latestLogin").description("마지막 로그인"),
+                                fieldWithPath("gradeChangedDate").description("최근 등급변경 일")
+                        )
+                ));
 
     }
 
@@ -359,22 +468,63 @@ class UserRestControllerTest {
     @DisplayName("UserId 로 findAllUser 실행시 Page<UserGetResponse> 반환")
     void givenUserId_whenCallFindAllUser_thenReturnUserGetResponsePage() throws Exception {
 
+        Pageable pageable = PageRequest.of(0, 2);
+        List<UserGetResponse> userGetResponseList = List.of(userGetResponse1, userGetResponse2);
 
-        List<UserGetResponse> userGetResponseList = new ArrayList<>();
-        userGetResponseList.add(userGetResponse1);
-        userGetResponseList.add(userGetResponse2);
-        Page<UserGetResponse> userGetResponsePage = new PageImpl<>(userGetResponseList);
+
+        Page<UserGetResponse> userGetResponsePage = new PageImpl<>(userGetResponseList, pageable, 120);
 
         when(userService.findAllUser(any(Pageable.class))).thenReturn(userGetResponsePage);
 
-        mockMvc.perform(get("/api/users/page")
+        mockMvc.perform(get("/api/users/page?page=" + pageable.getPageNumber() + "&size=" + pageable.getPageSize())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HeaderProperties.USER_ID, 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").exists())
                 .andExpect(jsonPath("$.totalElements").exists())
                 .andExpect(jsonPath("$.number").exists())
-                .andExpect(jsonPath("$.totalPages").exists());
+                .andExpect(jsonPath("$.totalPages").exists())
+                .andDo(document("user-findAll",
+                        requestParameters(
+                                parameterWithName("page").description("요청 페이지 번호(0부터 시작, default = 0)"),
+                                parameterWithName("size").description("페이지 사이즈(default = 10)")
+                        ),
+                        responseFields(
+                                fieldWithPath("content").description("리스트"),
+                                fieldWithPath("content[].userGradeUserGradeNameId").description("유저등급 이름아이디"),
+                                fieldWithPath("content[].userStatusId").description("유저상태 아이디"),
+                                fieldWithPath("content[].name").description("이름"),
+                                fieldWithPath("content[].phoneNumber").description("핸드폰"),
+                                fieldWithPath("content[].email").description("이메일"),
+                                fieldWithPath("content[].birthYear").description("생년"),
+                                fieldWithPath("content[].birthMonthDay").description("월일"),
+                                fieldWithPath("content[].createdAt").description("생성일"),
+                                fieldWithPath("content[].latestLogin").description("마지막 로그인"),
+                                fieldWithPath("content[].gradeChangedDate").description("최근 등급변경 일"),
+                                fieldWithPath("pageable").description("페이지정보"),
+                                fieldWithPath("pageable.sort").description("페이지 정렬 정보"),
+                                fieldWithPath("pageable.sort.sorted").description("페이지 정렬되었는지 여부(true: 정렬 됨)"),
+                                fieldWithPath("pageable.sort.unsorted").description("페이지 정렬되지 않았는지 여부(true: 정렬 안 됨)"),
+                                fieldWithPath("pageable.sort.empty").description("페이지 정렬 정보가 비어 있는지 여부(true: 비어있음)"),
+                                fieldWithPath("pageable.pageSize").description("전체 페이지 수"),
+                                fieldWithPath("pageable.pageNumber").description("현재 페이지 번호(0부터 시작)"),
+                                fieldWithPath("pageable.offset").description("현재 페이지의 시작 오프셋(0부터 시작)"),
+                                fieldWithPath("pageable.paged").description("페이지네이션을 사용하는지 여부(true: 사용함)"),
+                                fieldWithPath("pageable.unpaged").description("페이지네이션을 사용하는지 여부(true: 사용 안 함)"),
+                                fieldWithPath("totalPages").description("전체 페이지 수"),
+                                fieldWithPath("totalElements").description("전체 요소(항목) 수"),
+                                fieldWithPath("last").description("마지막 페이지 여부(true: 마지막 페이지)"),
+                                fieldWithPath("numberOfElements").description("혀재 페이지의 요소(항목) 수"),
+                                fieldWithPath("size").description("페이지 당 요소(항목) 수"),
+                                fieldWithPath("sort").description("결과 정렬 정보를 담은 객체"),
+                                fieldWithPath("sort.sorted").description("결과가 정렬되었는지 여부(true: 정렬 됨)"),
+                                fieldWithPath("sort.unsorted").description("결과가 정렬되지 않았는지 여부(true: 정렬 안 됨)"),
+                                fieldWithPath("sort.empty").description("결과 정렬 정보가 비어 있는지 여부(true: 비어있음)"),
+                                fieldWithPath("number").description("현재 페이지 번호(0부터 시작)"),
+                                fieldWithPath("first").description("첫 페이지 여부(true: 첫 페이지)"),
+                                fieldWithPath("empty").description("결과가 비어 있는지 여부(true: 비어있음)")
+                        )));
+
 
     }
 
@@ -391,7 +541,15 @@ class UserRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.encryptedPassword").exists());
+                .andExpect(jsonPath("$.encryptedPassword").exists())
+                .andDo(document("user-verification",
+                        requestFields(
+                                fieldWithPath("email").description("이메일")
+                        ),
+                        responseFields(
+                                fieldWithPath("encryptedPassword").description("암호화된 비밀번호")
+                        )
+                ));
 
     }
 
@@ -410,7 +568,18 @@ class UserRestControllerTest {
                 .andExpect(jsonPath("$.isValidUser").exists())
                 .andExpect(jsonPath("$.isAdmin").exists())
                 .andExpect(jsonPath("$.userId").exists())
-                .andExpect(jsonPath("$.status").exists());
+                .andExpect(jsonPath("$.status").exists())
+                .andDo(document("user-verificationComplete",
+                        requestFields(
+                                fieldWithPath("email").description("이메일")
+                        ),
+                        responseFields(
+                                fieldWithPath("isValidUser").description("유효성 유무"),
+                                fieldWithPath("isAdmin").description("관리자 유무"),
+                                fieldWithPath("userId").description("유저 아이디"),
+                                fieldWithPath("status").description("유저 상태")
+                        )
+                ));
 
     }
 
@@ -425,7 +594,15 @@ class UserRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HeaderProperties.USER_ID, 1))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userStatus").exists());
+                .andExpect(jsonPath("$.userStatus").exists())
+                .andDo(document("user_status-verifyDormancy",
+                        requestHeaders(
+                                headerWithName("X-User-Id").description("회원 아이디")
+                        ),
+                        responseFields(
+                                fieldWithPath("userStatus").description("유저 상태")
+                        )
+                ));
     }
 
     @Test
@@ -441,7 +618,18 @@ class UserRestControllerTest {
                         .content(objectMapper.writeValueAsString(request))
                         .header(HeaderProperties.USER_ID, 1))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userStatus").exists());
+                .andExpect(jsonPath("$.userStatus").exists())
+                .andDo(document("user_status-verifyLock",
+                        requestHeaders(
+                                headerWithName("X-User-Id").description("회원 아이디")
+                        ),
+                        requestFields(
+                                fieldWithPath("password").description("비밀번호")
+                        ),
+                        responseFields(
+                                fieldWithPath("userStatus").description("유저 상태")
+                        )
+                ));
     }
 
 
@@ -452,10 +640,18 @@ class UserRestControllerTest {
         UserEmailCheckResponse userEmailCheckResponse = new UserEmailCheckResponse(true);
         when(userService.verifyUserEmail(any(UserEmailRequest.class))).thenReturn(userEmailCheckResponse);
 
-        mockMvc.perform(get("/api/users/email/verify/{email}", "test@test.com")
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/users/email/verify/{email}", "test@test.com")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.isAvailable").exists());
+                .andExpect(jsonPath("$.isAvailable").exists())
+                .andDo(document("user-verifyEmail",
+                        pathParameters(
+                                parameterWithName("email").description("이메일")
+                        ),
+                        responseFields(
+                                fieldWithPath("isAvailable").description("사용 가능 유무")
+                        )
+                ));
     }
 
 
@@ -474,7 +670,18 @@ class UserRestControllerTest {
                         .content(objectMapper.writeValueAsString(userPasswordModifyRequest))
                         .header(HeaderProperties.USER_ID, 1))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.isChangePassword").exists());
+                .andExpect(jsonPath("$.isChangePassword").exists())
+                .andDo(document("user-passwordModify",
+                        requestHeaders(
+                                headerWithName("X-User-Id").description("회원 아이디")
+                        ),
+                        requestFields(
+                                fieldWithPath("password").description("비밀번호")
+                        ),
+                        responseFields(
+                                fieldWithPath("isChangePassword").description("변경 유무")
+                        )
+                ));
     }
 
     @Test
@@ -495,7 +702,18 @@ class UserRestControllerTest {
                 .andExpect(jsonPath("$.isValidUser").exists())
                 .andExpect(jsonPath("$.isAdmin").exists())
                 .andExpect(jsonPath("$.userId").exists())
-                .andExpect(jsonPath("$.status").exists());
+                .andExpect(jsonPath("$.status").exists())
+                .andDo(document("user_oauth-login",
+                        requestFields(
+                                fieldWithPath("oauthId").description("소셜 아이디")
+                        ),
+                        responseFields(
+                                fieldWithPath("isValidUser").description("유효성 유무"),
+                                fieldWithPath("isAdmin").description("관리자 유무"),
+                                fieldWithPath("userId").description("유저 아이디"),
+                                fieldWithPath("status").description("유저 상태")
+                        )
+                ));
     }
 
     @Test
@@ -505,9 +723,9 @@ class UserRestControllerTest {
 
 
         UserOauthCreateRequest userOauthCreateRequest =
-                new UserOauthCreateRequest("test", "01012345678", "test@test.com", "12-17", "oauthID");
+                new UserOauthCreateRequest("name", "01012345678", "test@test.com", "12-17", "oauthId");
         UserOauthCreateResponse userOauthCreateResponse =
-                new UserOauthCreateResponse("name", "email@email.com", 1L, 1999, "12-17", "status", "grade");
+                new UserOauthCreateResponse("name", "email@email.com", 1L, 1999, "12-17", "statusName", "gradeName");
 
         when(userService.createOauthUser(any(UserOauthCreateRequest.class))).thenReturn(userOauthCreateResponse);
 
@@ -524,7 +742,25 @@ class UserRestControllerTest {
                 .andExpect(jsonPath("$.birthYear").exists())
                 .andExpect(jsonPath("$.birthMonthDay").exists())
                 .andExpect(jsonPath("$.userStatusName").exists())
-                .andExpect(jsonPath("$.userGradeName").exists());
+                .andExpect(jsonPath("$.userGradeName").exists())
+                .andDo(document("user_oauth-create-consent",
+                        requestFields(
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("phoneNumber").description("핸드폰"),
+                                fieldWithPath("birthMonthDay").description("월일"),
+                                fieldWithPath("oauthId").description("소셜 아이디")
+                        ),
+                        responseFields(
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("id").description("유저 아이디"),
+                                fieldWithPath("birthYear").description("생년"),
+                                fieldWithPath("birthMonthDay").description("월일"),
+                                fieldWithPath("userStatusName").description("유저상태 이름"),
+                                fieldWithPath("userGradeName").description("유저등급 이름")
+                        )
+                ));
     }
 
     @Test
@@ -553,7 +789,25 @@ class UserRestControllerTest {
                 .andExpect(jsonPath("$.birthYear").exists())
                 .andExpect(jsonPath("$.birthMonthDay").exists())
                 .andExpect(jsonPath("$.userStatusName").exists())
-                .andExpect(jsonPath("$.userGradeName").exists());
+                .andExpect(jsonPath("$.userGradeName").exists())
+                .andDo(document("user_oauth-create-nonConsent",
+                        requestFields(
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("phoneNumber").description("핸드폰"),
+                                fieldWithPath("birth").description("생년월일"),
+                                fieldWithPath("oauthId").description("소셜 아이디")
+                        ),
+                        responseFields(
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("id").description("유저 아이디"),
+                                fieldWithPath("birthYear").description("생년"),
+                                fieldWithPath("birthMonthDay").description("월일"),
+                                fieldWithPath("userStatusName").description("유저상태 이름"),
+                                fieldWithPath("userGradeName").description("유저등급 이름")
+                        )
+                ));
     }
 
 

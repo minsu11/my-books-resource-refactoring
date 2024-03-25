@@ -3,6 +3,7 @@ package store.mybooks.resource.review.dto.reqeust;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
  * 3/17/24        masiljangajji       최초 생성
  */
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 public class ReviewModifyRequest {
 
