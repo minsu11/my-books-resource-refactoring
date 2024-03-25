@@ -2,6 +2,7 @@ package store.mybooks.resource.bookorder.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.book.dto.response.BookStockResponse;
@@ -44,6 +45,7 @@ import store.mybooks.resource.usercoupon.service.UserCouponService;
  * -----------------------------------------------------------<br>
  * 3/16/24        minsu11       최초 생성<br>
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TotalOrderService {
@@ -221,21 +223,21 @@ public class TotalOrderService {
      */
     @Transactional
     public void cancelOrderProcess(PayCancelRequest request, Long userId) {
-        // 주문의 상태 값 변경
         BookOrderInfoPayResponse bookOrderInfo = bookOrderService.getBookInfo(request.getOrderNumber());
         bookOrderService.updateBookOrderStatus(bookOrderInfo.getNumber(), BookOrderStatusName.ORDER_CANCEL);
 
-        // 재고 플러스 처리
         calculateBookStock(bookOrderInfo.getOrderDetails(), BookOrderStatusName.ORDER_CANCEL);
 
-        // 포인트를 사용한 주문에 대한 포인트 다시 적립
 
         int usedPoint = pointHistoryService.getUsedPointOrder(request.getOrderNumber());
         int total = request.getTotalAmount();
         int result = total - usedPoint;
         // 결제 상태 변경
-
+        paymentService.modifyStatus(request.getOrderNumber(), request.getStatus());
         // 총합 포인트 처리
         pointProcessing(request.getOrderNumber(), result, userId, PointRuleNameEnum.RETURN_POINT);
     }
+
+
+
 }
