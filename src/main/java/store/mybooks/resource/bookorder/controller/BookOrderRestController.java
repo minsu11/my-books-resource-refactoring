@@ -202,7 +202,7 @@ public class BookOrderRestController {
     @GetMapping("/info/pay/{orderNumber}")
     public ResponseEntity<BookOrderInfoPayResponse> getBookOrderInfo(
             @PathVariable String orderNumber) {
-
+        log.info("주문 번호: {}", orderNumber);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(bookOrderService.getBookInfo(orderNumber));

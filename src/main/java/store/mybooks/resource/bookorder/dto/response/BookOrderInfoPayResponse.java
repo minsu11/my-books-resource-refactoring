@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
 
 /**
@@ -17,6 +18,7 @@ import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
  * -----------------------------------------------------------<br>
  * 3/17/24        minsu11       최초 생성<br>
  */
+@Slf4j
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,6 +40,7 @@ public class BookOrderInfoPayResponse {
     }
 
     public void updateOrderDetails(List<OrderDetailInfoResponse> orderDetails) {
+        log.debug("value : {}", orderDetails.get(0).getBookName());
         this.orderDetails = orderDetails;
     }
 

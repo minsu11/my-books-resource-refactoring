@@ -4,6 +4,7 @@ import com.querydsl.core.types.Projections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,7 @@ import store.mybooks.resource.ordersstatus.enumulation.OrdersStatusEnum;
  * -----------------------------------------------------------<br>
  * 3/2/24        minsu11       최초 생성<br>
  */
+@Slf4j
 public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implements BookOrderRepositoryCustom {
     private static final QBookOrder bookOrder = QBookOrder.bookOrder;
     private static final QImage image = QImage.image;
@@ -168,6 +170,8 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                         )
                         .where(orderDetail.bookOrder.number.eq(orderNumber))
                         .fetch();
+        log.info("레포지토리 함수 안: {}", orderDetailInfoResponses.get(0).getBookName());
+
         BookOrderInfoPayResponse bookOrderInfo =
                 from(bookOrder)
                         .select(Projections.constructor(BookOrderInfoPayResponse.class,
@@ -178,6 +182,11 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                                 bookOrder.pointCost))
                         .where(bookOrder.number.eq(orderNumber))
                         .fetchOne();
+        log.info("bookOrderInfo:{}", bookOrderInfo.getOrderStatus());
+        log.info("bookOrderInfo:{}", bookOrderInfo.getOrderDetails());
+        log.info("bookOrderInfo:{}", bookOrderInfo.getTotalCost());
+        log.info("bookOrderInfo:{}", bookOrderInfo.getIsCouponUsed());
+        log.info("bookOrderInfo:{}", bookOrderInfo.getOrderStatus());
         bookOrderInfo.updateOrderDetails(orderDetailInfoResponses);
 
         return Optional.ofNullable(bookOrderInfo);
