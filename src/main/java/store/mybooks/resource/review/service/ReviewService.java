@@ -29,16 +29,13 @@ import store.mybooks.resource.orderdetailstatus.exception.OrderDetailStatusNotFo
 import store.mybooks.resource.orderdetailstatus.repository.OrderDetailStatusRepository;
 import store.mybooks.resource.pointhistory.entity.PointHistory;
 import store.mybooks.resource.pointhistory.repository.PointHistoryRepository;
-import store.mybooks.resource.pointhistory.service.PointHistoryService;
 import store.mybooks.resource.pointrule.entity.PointRule;
 import store.mybooks.resource.pointrule.exception.PointRuleNotExistException;
 import store.mybooks.resource.pointrule.repository.PointRuleRepository;
-import store.mybooks.resource.pointrule.service.PointRuleService;
 import store.mybooks.resource.pointrulename.entity.PointRuleName;
 import store.mybooks.resource.pointrulename.enumulation.PointRuleNameEnum;
 import store.mybooks.resource.pointrulename.exception.PointRuleNameNotExistException;
 import store.mybooks.resource.pointrulename.repository.PointRuleNameRepository;
-import store.mybooks.resource.pointrulename.service.PointRuleNameService;
 import store.mybooks.resource.review.dto.mapper.ReviewMapper;
 import store.mybooks.resource.review.dto.reqeust.ReviewCreateRequest;
 import store.mybooks.resource.review.dto.reqeust.ReviewModifyRequest;
@@ -95,11 +92,6 @@ public class ReviewService {
     private final BookOrderRepository bookOrderRepository;
 
     private final PointRuleRepository pointRuleRepository;
-    private final PointHistoryService pointHistoryService;
-
-    private final PointRuleService pointRuleService;
-
-    private final PointRuleNameService pointRuleNameService;
 
     @Transactional
     public ReviewCreateResponse createReview(ReviewCreateRequest createRequest, Long userId,

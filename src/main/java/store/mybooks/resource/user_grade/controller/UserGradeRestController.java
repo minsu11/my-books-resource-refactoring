@@ -39,8 +39,10 @@ public class UserGradeRestController {
      * methodName : createUserGrade
      * author : masiljangajji
      * description : 유저등급을 생성
-     *
-     * @param createRequest request
+     * 유저등급의 이름 및 금액 구간은 정해져있으며 포인트 적립률이 변경될 수 있음
+     * 유저등급 추가시 기존의 유저등급을 자동으로 대체함 (기존의 것은 비활성상태로 변경)
+     * @param createRequest  request
+     * @param bindingResult result
      * @return response entity
      */
     @PostMapping
@@ -59,22 +61,29 @@ public class UserGradeRestController {
     /**
      * methodName : findAllUserGrade
      * author : masiljangajji
-     * description : 모든 유저등급을 list 형태로 으로 찾음
-     *
+     * description : 사용중인 모든 유저등급을 list 형태로 으로 찾음
      * @return response entity
      */
     @GetMapping
     public ResponseEntity<List<UserGradeGetResponse>> findAllAvailableUserGrade() {
 
-        List<UserGradeGetResponse> paginationUserGrade = userGradeService.findAllAvailableUserGrade();
-        return new ResponseEntity<>(paginationUserGrade, HttpStatus.OK);
+        List<UserGradeGetResponse> list = userGradeService.findAllAvailableUserGrade();
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
+
+    /**
+     * methodName : findAllUserGrade
+     * author : masiljangajji
+     * description : 모든 유저 등급을 List 형태로 찾음 (활성상태 + 비활성상태)
+     *
+     * @return response entity
+     */
     @GetMapping("/all")
     public ResponseEntity<List<UserGradeGetResponse>> findAllUserGrade() {
 
-        List<UserGradeGetResponse> paginationUserGrade = userGradeService.findAllUserGrade();
-        return new ResponseEntity<>(paginationUserGrade, HttpStatus.OK);
+        List<UserGradeGetResponse> list = userGradeService.findAllUserGrade();
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
 }
