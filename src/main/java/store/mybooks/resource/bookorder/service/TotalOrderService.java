@@ -98,14 +98,18 @@ public class TotalOrderService {
         checkBookStock(bookOrderInfo.getOrderDetails());
 
         PayCreateResponse response = paymentService.createPayment(request);
-
+        log.info("결제 정보 저장 후");
         calculateBookStock(bookOrderInfo.getOrderDetails(), BookOrderStatusName.ORDER_COMPLETED);
-
+        log.info("재고 계산 후");
         useCouponProcessing(bookOrderInfo);
+        log.info("쿠폰 계산 후");
         pointProcessing(bookOrderInfo.getNumber(), bookOrderInfo.getPointCost(), userId, PointRuleNameEnum.USE_POINT);
+        log.info("포인트 처리 후");
         earnPoint(bookOrderInfo, userId);
+        log.info("포인트 적립 후");
 
         bookOrderService.updateBookOrderStatus(bookOrderInfo.getNumber(), BookOrderStatusName.ORDER_COMPLETED);
+        log.info("주문 상태 변경 후");
         return response;
     }
 
@@ -141,12 +145,13 @@ public class TotalOrderService {
         }
 
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
-        int userGradeRate = user.getUserGrade().getRate();
+
+//        int userGradeRate = user.getUserGrade().getRate();
 
         PointRuleResponse pointRule = pointRuleService
                 .getPointRuleResponseByName(PointRuleNameEnum.BOOK_POINT.getValue());
         int earnPoint = ((bookOrder.getTotalCost() * pointRule.getRate()) / 100)
-                + ((bookOrder.getTotalCost() * userGradeRate) / 100);
+                + (bookOrder.getTotalCost() * 1 / 100);
         PointHistoryCreateRequest point =
                 new PointHistoryCreateRequest(bookOrder.getNumber(), pointRule.getPointRuleName(), earnPoint);
         pointHistoryService.createPointHistory(point, userId);
@@ -237,7 +242,6 @@ public class TotalOrderService {
         // 총합 포인트 처리
         pointProcessing(request.getOrderNumber(), result, userId, PointRuleNameEnum.RETURN_POINT);
     }
-
 
 
 }
