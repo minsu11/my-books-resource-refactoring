@@ -1,5 +1,6 @@
 package store.mybooks.resource.review.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -15,6 +16,7 @@ import lombok.Getter;
  */
 
 @Getter
+@AllArgsConstructor
 public class ReviewCreateResponse {
 
     private String title;

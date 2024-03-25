@@ -456,20 +456,20 @@ class UserCouponServiceTest {
         verify(couponRepository, times(1)).findById(anyLong());
     }
 
-    @Test
-    @DisplayName("쿠폰 사용")
-    void givenUserCouponId_whenUseUserCoupon_thenUseUserCoupon() {
-        User user = new User();
-        ReflectionTestUtils.setField(user, "id", 2L);
-        Coupon coupon = new Coupon();
-        ReflectionTestUtils.setField(coupon, "id", 3L);
-        UserCoupon userCoupon = new UserCoupon(user, coupon);
-        ReflectionTestUtils.setField(userCoupon, "id", 1L);
-        when(userCouponRepository.findById(userCoupon.getId())).thenReturn(Optional.of(userCoupon));
-        userCouponService.useUserCoupon(1L);
-        assertThat(userCoupon.getDate()).isEqualTo(LocalDate.now());
-        assertThat(userCoupon.getIsUsed()).isTrue();
-    }
+   @Test
+   @DisplayName("쿠폰 사용")
+   void givenUserCouponId_whenUseUserCoupon_thenUseUserCoupon() {
+       User user = new User();
+       ReflectionTestUtils.setField(user, "id", 2L);
+       Coupon coupon = new Coupon();
+       ReflectionTestUtils.setField(coupon, "id", 3L);
+       UserCoupon userCoupon = new UserCoupon(user, coupon);
+       ReflectionTestUtils.setField(userCoupon, "id", 1L);
+       when(userCouponRepository.findById(userCoupon.getId())).thenReturn(Optional.of(userCoupon));
+       userCouponService.useUserCoupon(1L);
+       assertThat(userCoupon.getDate()).isEqualTo(LocalDate.now());
+       assertThat(userCoupon.getIsUsed()).isTrue();
+   }
 
     @Test
     @DisplayName("쿠폰 사용 실패 - 존재하지 않는 회원 쿠폰 아이디")

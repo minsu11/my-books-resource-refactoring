@@ -45,31 +45,7 @@ class UserStatusServiceTest {
     @Mock
     UserStatusGetResponse userStatusGetResponse;
 
-    @Test
-    @DisplayName("UserStatus 로 findUserStatusById 메서드 실행시 동작이 올바른지 테스트")
-    void givenUserStatusId_whenCallFindUserStatusById_thenReturnUserStatusGetResponse() {
 
-
-        when(userStatusRepository.existsById(anyString())).thenReturn(true);
-        when(userStatusRepository.queryById(anyString())).thenReturn(userStatusGetResponse);
-        when(userStatusGetResponse.getId()).thenReturn("test");
-
-
-        assertEquals("test", userStatusService.findUserStatusById("test").getId());
-
-
-        verify(userStatusRepository, times(1)).existsById(anyString());
-        verify(userStatusRepository, times(1)).queryById(anyString());
-    }
-
-    @Test
-    @DisplayName("findUserStatusById 메서드를 실패하는 경우(존재하지 않는 id로 find) UserStatusNotExistException 발생")
-    void givenWrongUserStatusId_whenCallFindUserStatusById_thenThrowUserStatusNotExistException() {
-
-
-        assertThrows(UserStatusNotExistException.class, () -> userStatusService.findUserStatusById("wrong_id"));
-        verify(userStatusRepository, times(1)).existsById(anyString());
-    }
 
     @Test
     @DisplayName("findAllUserStatus 메서드를 실행시 Empty List 를 반환")

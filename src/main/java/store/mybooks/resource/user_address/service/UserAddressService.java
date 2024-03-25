@@ -2,8 +2,6 @@ package store.mybooks.resource.user_address.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.user.entity.User;
@@ -124,35 +122,6 @@ public class UserAddressService {
     }
 
     /**
-     * methodName : findByAddressId
-     * author : masiljangajji
-     * description : 유저 주소를 찾음
-     *
-     * @param userId    id
-     * @param addressId id
-     * @return user address get response
-     * @throws UserAddressNotExistException 유저주소가 존재하지 않는 경우
-     */
-    public UserAddressGetResponse findByAddressId(Long userId, Long addressId) {
-
-        return userAddressRepository.queryByIdAndUserId(addressId, userId)
-                .orElseThrow(() -> new UserAddressNotExistException(addressId));
-    }
-
-    /**
-     * methodName : findByAllUserAddress
-     * author : masiljangajji
-     * description : 모든 유저 주소를 Pagination 해서 찾음
-     *
-     * @param pageable pageable
-     * @return page
-     */
-    public Page<UserAddressGetResponse> findByAllUserAddress(Pageable pageable) {
-
-        return userAddressRepository.queryAllBy(pageable);
-    }
-
-    /**
      * methodName : findAllAddressByUserId
      * author : masiljangajji
      * description : 유저의 모든 주소를 List 로 반환
@@ -164,8 +133,6 @@ public class UserAddressService {
     public List<UserAddressGetResponse> findAllAddressByUserId(Long userId) {
 
         IsExistUser(userId);
-
-
         return userAddressRepository.queryAllByUserId(userId);
 
     }

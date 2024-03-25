@@ -1,34 +1,31 @@
 package store.mybooks.resource.user_status.controller;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.mockito.Mockito.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.convert.DataSizeUnit;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.ResponseEntity;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import store.mybooks.resource.user_status.dto.response.UserStatusGetResponse;
-import store.mybooks.resource.user_status.entity.UserStatus;
-import store.mybooks.resource.user_status.repository.UserStatusRepository;
 import store.mybooks.resource.user_status.service.UserStatusService;
 
 /**
@@ -45,7 +42,7 @@ import store.mybooks.resource.user_status.service.UserStatusService;
 
 
 @WebMvcTest(value = UserStatusRestController.class)
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 class UserStatusRestControllerTest {
 
     @Autowired
@@ -54,26 +51,17 @@ class UserStatusRestControllerTest {
     @MockBean
     UserStatusService userStatusService;
 
-    @Test
-    @DisplayName("UserId 로 getUSerStatus 실행시 UserStatus 를 조회")
-    void givenUserStatusId_whenCallGetUserStatus_thenReturnUserStatusGetResponse() throws Exception {
+    @BeforeEach
+    void setUp(WebApplicationContext webApplicationContext,
+               RestDocumentationContextProvider restDocumentation) {
 
-        UserStatusGetResponse userStatusGetResponse = new UserStatusGetResponse() {
-            @Override
-            public String getId() {
-                return "test";
-            }
-        };
-
-        Mockito.when(userStatusService.findUserStatusById(anyString())).thenReturn(userStatusGetResponse);
-
-        mockMvc.perform(get("/api/users-statuses/{userStatusId}", "test"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").exists());
-
-        verify(userStatusService, times(1)).findUserStatusById(anyString());
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                .apply(documentationConfiguration(restDocumentation)
+                        .operationPreprocessors()
+                        .withRequestDefaults(modifyUris(), prettyPrint())
+                        .withResponseDefaults(prettyPrint()))
+                .build();
     }
-
 
     @Test
     @DisplayName("getAllUserStatus 실행시 모든 UserStatus 를 Pagination 해서 조회")
@@ -99,7 +87,12 @@ class UserStatusRestControllerTest {
 
         mockMvc.perform(get("/api/users-statuses"))
                 .andExpect(status().isOk())
-                .andExpectAll(jsonPath("$.[*].id").exists());
+                .andExpectAll(jsonPath("$.[*].id").exists())
+                .andDo(document("user_status-findAll",
+                        responseFields(
+                                fieldWithPath("[].id").description("유저상태 아이디")
+                        )
+                ));
     }
 
 
