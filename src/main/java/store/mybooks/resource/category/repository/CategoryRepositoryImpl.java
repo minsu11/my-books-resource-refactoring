@@ -112,12 +112,17 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
                         .distinct()
                         .fetch();
 
-        List<BookBriefResponseIncludePublishDate> bookBriefResponseList =
+        List<Long> bookIds =
                 from(category1)
                         .leftJoin(bookCategory)
                         .on(category1.id.eq(bookCategory.category.id))
-                        .leftJoin(book)
-                        .on(book.id.eq(bookCategory.book.id))
+                        .where(bookCategory.category.id.in(childCategoryIds))
+                        .select(bookCategory.book.id)
+                        .distinct()
+                        .fetch();
+
+        List<BookBriefResponseIncludePublishDate> bookBriefResponseList =
+                from(book)
                         .leftJoin(image)
                         .on(book.id.eq(image.book.id))
                         .leftJoin(orderDetail)
@@ -126,7 +131,7 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
                         .on(orderDetail.id.eq(review.orderDetail.id))
                         .where(book.bookStatus.id.in("판매중", "재고없음"))
                         .where(image.imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
-                        .where(bookCategory.category.id.in(childCategoryIds))
+                        .where(book.id.in(bookIds))
                         .groupBy(book.id, book.name, book.originalCost, book.saleCost, book.publishDate,
                                 image.path.concat(image.fileName).concat(image.extension))
                         .orderBy(book.publishDate.desc())
@@ -151,7 +156,7 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
                 .on(book.id.eq(image.book.id))
                 .where(book.bookStatus.id.in("판매중", "재고없음"))
                 .where(image.imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
-                .where(bookCategory.category.id.in(childCategoryIds))
+                .where(bookCategory.book.id.in(bookIds))
                 .fetchCount();
 
         return new PageImpl<>(bookBriefResponseList, pageable, total);
