@@ -237,4 +237,6 @@ public class TotalOrderService {
         // 총합 포인트 처리
         pointProcessing(request.getOrderNumber(), result, userId, PointRuleNameEnum.RETURN_POINT);
     }
+
+
 }
