@@ -59,8 +59,11 @@ public class PaymentRestController {
     public ResponseEntity<PayCreateResponse> pay(@Valid @RequestBody PayCreateRequest request,
                                                  @RequestHeader(name = HeaderProperties.USER_ID) Long userId) {
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(totalOrderService.payUser(request, userId));
+        PayCreateResponse response = totalOrderService.payUser(request, userId);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     /**
@@ -80,9 +83,7 @@ public class PaymentRestController {
     @PostMapping("/cancel")
     public ResponseEntity<Void> cancelProcessing(@RequestBody PayCancelRequest request,
                                                  @RequestHeader(name = HeaderProperties.USER_ID) Long userId) {
-        log.debug("취소 된 후 들어오는지: {}", request.getOrderNumber());
-        log.debug("취소 된 후 들어오는지: {}", request.getRequestedAt());
-        log.debug("취소 된 후 들어오는지: {}", request.getOrderNumber());
+
         totalOrderService.cancelOrderProcess(request, userId);
         return ResponseEntity.status(HttpStatus.OK)
                 .build();

@@ -106,10 +106,6 @@ public class TotalOrderService {
         earnPoint(bookOrderInfo, userId);
 
         bookOrderService.updateBookOrderStatus(bookOrderInfo.getNumber(), BookOrderStatusName.ORDER_COMPLETED);
-        log.debug("결제 완");
-        log.debug("value : {}", response.getPayId());
-        log.debug("value : {}", response.getTotalAmount());
-        log.debug("value : {}", response.getPaymentKey());
         return response;
     }
 
@@ -227,21 +223,17 @@ public class TotalOrderService {
      */
     @Transactional
     public void cancelOrderProcess(PayCancelRequest request, Long userId) {
-        System.out.println("함수 들어왔는지");
-        // 주문의 상태 값 변경
         BookOrderInfoPayResponse bookOrderInfo = bookOrderService.getBookInfo(request.getOrderNumber());
         bookOrderService.updateBookOrderStatus(bookOrderInfo.getNumber(), BookOrderStatusName.ORDER_CANCEL);
 
-        // 재고 플러스 처리
         calculateBookStock(bookOrderInfo.getOrderDetails(), BookOrderStatusName.ORDER_CANCEL);
 
-        // 포인트를 사용한 주문에 대한 포인트 다시 적립
 
         int usedPoint = pointHistoryService.getUsedPointOrder(request.getOrderNumber());
         int total = request.getTotalAmount();
         int result = total - usedPoint;
         // 결제 상태 변경
-
+        paymentService.modifyStatus(request.getOrderNumber(), request.getStatus());
         // 총합 포인트 처리
         pointProcessing(request.getOrderNumber(), result, userId, PointRuleNameEnum.RETURN_POINT);
     }
