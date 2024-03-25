@@ -98,6 +98,29 @@ public class CartItemService {
         return cartDetailList;
     }
 
+    public void deleteItem(Long userId, Long itemId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotExistException(userId));
+        Optional<Cart> optionalCart = cartRepository.findCartByUserId(user.getId());
+        if (optionalCart.isEmpty()) {
+            return;
+        }
+        Cart cart = optionalCart.get();
+        if (!cartItemRepository.existsCartItemByCart_IdAndBook_Id(cart.getId(), itemId)) {
+            return;
+        }
+        cartItemRepository.deleteCartItemByCart_IdAndBook_Id(cart.getId(), itemId);
+
+    }
+
+    public void deleteAllItem(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotExistException("해당하는 이메일의 유저가 없습니다."));
+        Cart userCart =
+                cartRepository.findCartByUserId(user.getId()).orElseGet(() -> cartRepository.save(new Cart(user)));
+        cartItemRepository.deleteAllByCart_Id(userCart.getId());
+    }
+
     private String getExpiredKey(String cartKey) {
         return EXPIRED_KEY + " " + cartKey;
     }

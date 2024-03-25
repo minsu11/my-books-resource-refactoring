@@ -195,40 +195,6 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
         return new PageImpl<>(lists, pageable, total);
     }
 
-
-    @Override
-    public Page<BookBriefResponse> getActiveBookBriefInfo(Pageable pageable) {
-        List<BookBriefResponse> lists =
-                from(book)
-                        .join(book.bookStatus, bookStatus)
-                        .join(image)
-                        .on(image.book.eq(book))
-                        .leftJoin(orderDetail).on(book.eq(orderDetail.book))
-                        .leftJoin(review).on(orderDetail.eq(review.orderDetail))
-                        .join(image.imageStatus, imageStatus)
-                        .select(Projections.constructor(BookBriefResponse.class,
-                                book.id,
-                                image.path.concat(image.fileName).concat(image.extension),
-                                book.name,
-                                review.rate.avg().coalesce(0.0), // 평균 평점
-                                review.count(), // 리뷰의 수
-                                book.originalCost,
-                                book.saleCost))
-                        .groupBy(book.id, image)
-                        .where(bookStatus.id.in("판매중", "재고없음"))
-                        .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
-                        .offset(pageable.getOffset())
-                        .limit(pageable.getPageSize())
-                        .fetch();
-
-        long total = from(book)
-                .join(book.bookStatus, bookStatus)
-                .where(bookStatus.id.in("판매중", "재고없음"))
-                .fetchCount();
-
-        return new PageImpl<>(lists, pageable, total);
-    }
-
     @Override
     public List<BookGetResponseForCoupon> getBookForCoupon() {
         return from(book)
