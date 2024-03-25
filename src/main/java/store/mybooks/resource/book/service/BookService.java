@@ -1,7 +1,6 @@
 package store.mybooks.resource.book.service;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -16,7 +15,19 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import store.mybooks.resource.book.dto.request.BookCreateRequest;
 import store.mybooks.resource.book.dto.request.BookModifyRequest;
-import store.mybooks.resource.book.dto.response.*;
+import store.mybooks.resource.book.dto.response.BookBriefResponse;
+import store.mybooks.resource.book.dto.response.BookCartResponse;
+import store.mybooks.resource.book.dto.response.BookCreateResponse;
+import store.mybooks.resource.book.dto.response.BookDetailResponse;
+import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
+import store.mybooks.resource.book.dto.response.BookLikeResponse;
+import store.mybooks.resource.book.dto.response.BookModifyResponse;
+import store.mybooks.resource.book.dto.response.BookPopularityResponse;
+import store.mybooks.resource.book.dto.response.BookPublicationDateResponse;
+import store.mybooks.resource.book.dto.response.BookRatingResponse;
+import store.mybooks.resource.book.dto.response.BookResponseForOrder;
+import store.mybooks.resource.book.dto.response.BookReviewResponse;
+import store.mybooks.resource.book.dto.response.BookStockResponse;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.exception.IsbnAlreadyExistsException;
@@ -46,6 +57,7 @@ import store.mybooks.resource.image_status.repository.ImageStatusRepository;
 import store.mybooks.resource.publisher.entity.Publisher;
 import store.mybooks.resource.publisher.exception.PublisherNotExistException;
 import store.mybooks.resource.publisher.repository.PublisherRepository;
+import store.mybooks.resource.utils.TimeUtils;
 
 /**
  * packageName    : store.mybooks.resource.book.service <br/>
@@ -87,20 +99,6 @@ public class BookService {
     public Page<BookBriefResponse> getBookBriefInfo(Pageable pageable) {
         return bookRepository.getBookBriefInfo(pageable);
     }
-
-    /**
-     * methodName : getActiveBookBriefInfo
-     * author : newjaehun
-     * description : 활성화된 간단 도서 정보 찾기.
-     *
-     * @param pageable pageable
-     * @return page
-     */
-    @Transactional
-    public Page<BookBriefResponse> getActiveBookBriefInfo(Pageable pageable) {
-        return bookRepository.getActiveBookBriefInfo(pageable);
-    }
-
 
     /**
      * methodName : getBookDetailInfo
@@ -202,7 +200,7 @@ public class BookService {
                 .stock(createRequest.getStock())
                 .viewCount(0)
                 .isPackaging(createRequest.getIsPacking())
-                .createdDate(LocalDate.now())
+                .createdDate(TimeUtils.nowDate())
                 .build();
 
         Book newBook = bookRepository.save(book);
