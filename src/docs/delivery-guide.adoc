@@ -8,6 +8,212 @@
 :sectlinks:
 :sectanchors:
 
-== 배송규정 API
+== 배송 규정 API
 
-== 배송규정명 API
+=== 배송 규정 추가
+
+==== RequestFields
+
+include::{snippets}/delivery-rule-create/request-fields.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/delivery-rule-create/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/delivery-rule-create/http-response.adoc[]
+
+==== ResponseFields
+
+include::{snippets}/delivery-rule-create/response-fields.adoc[]
+
+=== 배송 규정 추가(검증 실패)
+
+==== HTTP Request
+
+include::{snippets}/delivery-rule-create-error-deliveryCost-min0/http-request.adoc[]
+include::{snippets}/delivery-rule-create-error-deliveryNameRuleId-maxSize50/http-request.adoc[]
+include::{snippets}/delivery-rule-create-error-deliveryNameRuleId-notBlank/http-request.adoc[]
+include::{snippets}/delivery-rule-create-error-deliveryRuleCompanyName-notBlank/http-request.adoc[]
+include::{snippets}/delivery-rule-create-error-deliveryRuleCompanyName-maxSize20/http-request.adoc[]
+include::{snippets}/delivery-rule-create-error-deliveryRuleCost-min0/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/delivery-rule-create-error-deliveryCost-min0/http-response.adoc[]
+include::{snippets}/delivery-rule-create-error-deliveryNameRuleId-maxSize50/http-response.adoc[]
+include::{snippets}/delivery-rule-create-error-deliveryNameRuleId-notBlank/http-response.adoc[]
+include::{snippets}/delivery-rule-create-error-deliveryRuleCompanyName-notBlank/http-request.adoc[]
+include::{snippets}/delivery-rule-create-error-deliveryRuleCompanyName-maxSize20/http-request.adoc[]
+include::{snippets}/delivery-rule-create-error-deliveryRuleCost-min0/http-request.adoc[]
+
+=== 배송 규정 조회 list
+
+==== HTTP Request
+
+include::{snippets}/delivery-rule-get-list/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/delivery-rule-get-list/http-response.adoc[]
+
+==== ResponseFields
+
+include::{snippets}/delivery-rule-get-list/response-fields.adoc[]
+
+=== 배송 규정 id로 조회
+
+==== PathFields
+
+include::{snippets}/delivery-rule-get-byId/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/delivery-rule-get-byId/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/delivery-rule-get-byId/http-response.adoc[]
+
+==== ResponseFields
+
+include::{snippets}/delivery-rule-get-byId/response-fields.adoc[]
+
+=== 배송 규정 name 으로 조회
+
+==== PathFields
+
+include::{snippets}/delivery-rule-get-byName/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/delivery-rule-get-byName/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/delivery-rule-get-byName/http-response.adoc[]
+
+==== ResponseFields
+
+include::{snippets}/delivery-rule-get-byName/response-fields.adoc[]
+
+=== 배송 규정 수정
+
+==== HTTP Request
+
+include::{snippets}/delivery-rule-modify/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/delivery-rule-modify/http-response.adoc[]
+
+==== ResponseFields
+
+include::{snippets}/delivery-rule-modify/response-fields.adoc[]
+
+=== 배송 규정 수정(검증 실패)
+
+==== HTTP Request
+
+include::{snippets}/delivery-rule-modify-error-deliveryRuleCompanyName-maxSize20/http-request.adoc[]
+include::{snippets}/delivery-rule-modify-error-deliveryRuleCompanyName-notBlank/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/delivery-rule-modify-error-deliveryRuleCompanyName-maxSize20/http-response.adoc[]
+include::{snippets}/delivery-rule-modify-error-deliveryRuleCompanyName-notBlank/http-response.adoc[]
+
+=== 배송 규정 약삭제
+
+==== PathParameters
+
+include::{snippets}/delivery-rule-delete/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/delivery-rule-delete/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/delivery-rule-delete/http-response.adoc[]
+
+== 배송 규정명 API
+
+=== 배송 규정명 추가
+
+==== RequestFields
+
+include::{snippets}/delivery-rule-name-create/request-fields.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/delivery-rule-name-create/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/delivery-rule-name-create/http-response.adoc[]
+
+==== ResponseFields
+
+include::{snippets}/delivery-rule-name-create/response-fields.adoc[]
+
+=== 배송 규정명 추가(검증 실패)
+
+==== HTTP Request
+
+include::{snippets}/delivery-rule-name-create-error-maxSize50/http-request.adoc[]
+
+include::{snippets}/delivery-rule-name-create-error-notBlank/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/delivery-rule-name-create-error-maxSize50/http-response.adoc[]
+
+include::{snippets}/delivery-rule-name-create-error-notBlank/http-response.adoc[]
+
+=== 배송 규정명 조회 리스트
+
+==== HTTP Request
+
+include::{snippets}/delivery-rule-name-get-list/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/delivery-rule-name-get-list/http-response.adoc[]
+
+==== ResponseFields
+
+include::{snippets}/delivery-rule-name-get-list/response-fields.adoc[]
+
+=== 배송 규정명 조회
+
+==== PathParameters
+
+include::{snippets}/delivery-rule-name-get/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/delivery-rule-name-get/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/delivery-rule-name-get/http-response.adoc[]
+
+==== ResponseFields
+
+include::{snippets}/delivery-rule-name-get/response-fields.adoc[]
+
+=== 배송 규정명 삭제
+
+==== PathParameters
+
+include::{snippets}/delivery-rule-name-delete/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/delivery-rule-name-delete/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/delivery-rule-name-delete/http-response.adoc[]

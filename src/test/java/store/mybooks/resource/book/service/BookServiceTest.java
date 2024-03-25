@@ -1,6 +1,7 @@
 package store.mybooks.resource.book.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -44,8 +45,12 @@ import store.mybooks.resource.book.dto.request.BookModifyRequest;
 import store.mybooks.resource.book.dto.response.BookBriefResponse;
 import store.mybooks.resource.book.dto.response.BookCreateResponse;
 import store.mybooks.resource.book.dto.response.BookDetailResponse;
+import store.mybooks.resource.book.dto.response.BookLikeResponse;
 import store.mybooks.resource.book.dto.response.BookModifyResponse;
+import store.mybooks.resource.book.dto.response.BookPopularityResponse;
 import store.mybooks.resource.book.dto.response.BookPublicationDateResponse;
+import store.mybooks.resource.book.dto.response.BookRatingResponse;
+import store.mybooks.resource.book.dto.response.BookReviewResponse;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.book.exception.BookNotExistException;
 import store.mybooks.resource.book.exception.IsbnAlreadyExistsException;
@@ -634,5 +639,107 @@ class BookServiceTest {
 
         verify(redisTemplate, times(1)).delete(key);
         verify(bookRepository, times(1)).updateBookViewCount(anyLong(), anyInt());
+    }
+
+    @Test
+    @DisplayName("책 조회수 별로 정렬한 책 리스트")
+    void getBookPopularityListTest() {
+        BookPopularityResponse bookPopularityResponse =
+                new BookPopularityResponse(1L, "image", "name", 1L, 123, 123, 1.1, 1);
+        List<BookPopularityResponse> expected = List.of(bookPopularityResponse);
+        when(bookRepository.getBookPopularity()).thenReturn(expected);
+
+        List<BookPopularityResponse> result = bookService.getBookPopularityList();
+
+        assertEquals(result.get(0).getId(), expected.get(0).getId());
+        assertEquals(result.get(0).getImage(), expected.get(0).getImage());
+        assertEquals(result.get(0).getName(), expected.get(0).getName());
+        assertEquals(result.get(0).getReviewCount(), expected.get(0).getReviewCount());
+        assertEquals(result.get(0).getCost(), expected.get(0).getCost());
+        assertEquals(result.get(0).getSaleCost(), expected.get(0).getSaleCost());
+        assertEquals(result.get(0).getRate(), expected.get(0).getRate());
+        assertEquals(result.get(0).getViewCount(), expected.get(0).getViewCount());
+    }
+
+    @Test
+    @DisplayName("좋아요 수 별로 정렬한 책 리스트")
+    void getBookLikeListTest() {
+        BookLikeResponse bookLikeResponse =
+                new BookLikeResponse(1L, "image", "name", 1L, 123, 123, 1.1, 1L);
+        List<BookLikeResponse> expected = List.of(bookLikeResponse);
+
+        when(bookRepository.getBookLike()).thenReturn(expected);
+
+        List<BookLikeResponse> result = bookService.getBookLikeList();
+
+        assertEquals(result.get(0).getId(), expected.get(0).getId());
+        assertEquals(result.get(0).getImage(), expected.get(0).getImage());
+        assertEquals(result.get(0).getName(), expected.get(0).getName());
+        assertEquals(result.get(0).getReviewCount(), expected.get(0).getReviewCount());
+        assertEquals(result.get(0).getCost(), expected.get(0).getCost());
+        assertEquals(result.get(0).getSaleCost(), expected.get(0).getSaleCost());
+        assertEquals(result.get(0).getRate(), expected.get(0).getRate());
+        assertEquals(result.get(0).getLikeCount(), expected.get(0).getLikeCount());
+
+    }
+
+    @Test
+    @DisplayName("책 리뷰수로 정렬한 책 리스트")
+    void getBookReviewListTest() {
+        BookReviewResponse bookReviewResponse =
+                new BookReviewResponse(1L, "image", "name", 1L, 123, 123, 1.1);
+        List<BookReviewResponse> expected = List.of(bookReviewResponse);
+        when(bookRepository.getBookReview()).thenReturn(expected);
+        List<BookReviewResponse> result = bookService.getBookReviewList();
+
+        assertEquals(result.get(0).getId(), expected.get(0).getId());
+        assertEquals(result.get(0).getImage(), expected.get(0).getImage());
+        assertEquals(result.get(0).getName(), expected.get(0).getName());
+        assertEquals(result.get(0).getReviewCount(), expected.get(0).getReviewCount());
+        assertEquals(result.get(0).getCost(), expected.get(0).getCost());
+        assertEquals(result.get(0).getSaleCost(), expected.get(0).getSaleCost());
+        assertEquals(result.get(0).getRate(), expected.get(0).getRate());
+    }
+
+    @Test
+    @DisplayName("책 평점 별로 정렬한 리스트")
+    void getBookRatingListTest() {
+        BookRatingResponse bookRatingResponse =
+                new BookRatingResponse(1L, "image", "name", 1L, 123, 123, 1.1);
+        List<BookRatingResponse> expected = List.of(bookRatingResponse);
+        when(bookRepository.getBookRating()).thenReturn(expected);
+
+        List<BookRatingResponse> result = bookService.getBookRatingList();
+
+        assertEquals(result.get(0).getId(), expected.get(0).getId());
+        assertEquals(result.get(0).getImage(), expected.get(0).getImage());
+        assertEquals(result.get(0).getName(), expected.get(0).getName());
+        assertEquals(result.get(0).getReviewCount(), expected.get(0).getReviewCount());
+        assertEquals(result.get(0).getCost(), expected.get(0).getCost());
+        assertEquals(result.get(0).getSaleCost(), expected.get(0).getSaleCost());
+        assertEquals(result.get(0).getRate(), expected.get(0).getRate());
+    }
+
+    @Test
+    @DisplayName("출판 일자 별로 정렬한 책 리스트")
+    void getBookPublicationDateListTest() {
+        BookPublicationDateResponse bookPublicationDateResponse
+                = new BookPublicationDateResponse(1L, "image", "name", 1L, 123, 123, 1.1, LocalDate.of(23, 12, 23));
+
+
+        List<BookPublicationDateResponse> result = List.of(bookPublicationDateResponse);
+
+        when(bookRepository.getBookPublicationDate()).thenReturn(result);
+
+        List<BookPublicationDateResponse> expected = bookService.getBookPublicationDateList();
+
+        assertEquals(result.get(0).getId(), expected.get(0).getId());
+        assertEquals(result.get(0).getImage(), expected.get(0).getImage());
+        assertEquals(result.get(0).getName(), expected.get(0).getName());
+        assertEquals(result.get(0).getReviewCount(), expected.get(0).getReviewCount());
+        assertEquals(result.get(0).getCost(), expected.get(0).getCost());
+        assertEquals(result.get(0).getSaleCost(), expected.get(0).getSaleCost());
+        assertEquals(result.get(0).getRate(), expected.get(0).getRate());
+        assertEquals(result.get(0).getPublicationDate(), expected.get(0).getPublicationDate());
     }
 }
