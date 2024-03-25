@@ -79,8 +79,8 @@ class UserCouponServiceTest {
                         null,
                         null,
                         false,
-                        LocalDate.now().minusDays(2),
-                        LocalDate.now().plusDays(2),
+                        LocalDate.of(2024, 3, 1),
+                        LocalDate.of(2300, 3, 1),
                         null,
                         null
                 );
@@ -93,8 +93,8 @@ class UserCouponServiceTest {
                         null,
                         null,
                         false,
-                        LocalDate.now().minusDays(2),
-                        LocalDate.now().plusDays(2),
+                        LocalDate.of(2024, 3, 1),
+                        LocalDate.of(2300, 3, 1),
                         null,
                         null
                 );
@@ -107,8 +107,8 @@ class UserCouponServiceTest {
                         null,
                         null,
                         false,
-                        LocalDate.now().minusDays(2),
-                        LocalDate.now().plusDays(2),
+                        LocalDate.of(2024, 3, 1),
+                        LocalDate.of(2300, 3, 1),
                         null,
                         null
                 );
@@ -121,8 +121,8 @@ class UserCouponServiceTest {
                         null,
                         null,
                         false,
-                        LocalDate.now().minusDays(2),
-                        LocalDate.now().plusDays(2),
+                        LocalDate.of(2024, 3, 1),
+                        LocalDate.of(2300, 3, 1),
                         "이순신",
                         null
                 );
@@ -135,8 +135,8 @@ class UserCouponServiceTest {
                         5000,
                         50,
                         true,
-                        LocalDate.now().minusDays(2),
-                        LocalDate.now().plusDays(2),
+                        LocalDate.of(2024, 3, 1),
+                        LocalDate.of(2300, 3, 1),
                         null,
                         "위인전"
                 );
@@ -149,8 +149,8 @@ class UserCouponServiceTest {
                         null,
                         null,
                         false,
-                        LocalDate.now().minusDays(2),
-                        LocalDate.now().plusDays(2),
+                        LocalDate.of(2024, 3, 1),
+                        LocalDate.of(2300, 3, 1),
                         null,
                         null
                 );
@@ -206,8 +206,8 @@ class UserCouponServiceTest {
                         10000,
                         50,
                         true,
-                        LocalDate.now().plusDays(1),
-                        LocalDate.now().plusDays(2)
+                        LocalDate.of(2300, 2, 20),
+                        LocalDate.of(2300, 3, 1)
                 );
         UserCouponGetResponseForOrderQuerydsl secondCategoryCoupon =
                 new UserCouponGetResponseForOrderQuerydsl(
@@ -218,8 +218,8 @@ class UserCouponServiceTest {
                         null,
                         null,
                         false,
-                        LocalDate.now().plusDays(1),
-                        LocalDate.now().plusDays(2)
+                        LocalDate.of(2300, 2, 20),
+                        LocalDate.of(2300, 3, 1)
                 );
         categoryCouponList.add(firstCategoryCoupon);
         categoryCouponList.add(secondCategoryCoupon);
@@ -233,8 +233,8 @@ class UserCouponServiceTest {
                         10000,
                         50,
                         true,
-                        LocalDate.now().plusDays(1),
-                        LocalDate.now().plusDays(2)
+                        LocalDate.of(2300, 2, 20),
+                        LocalDate.of(2300, 3, 1)
                 );
         UserCouponGetResponseForOrderQuerydsl secondBookCoupon =
                 new UserCouponGetResponseForOrderQuerydsl(
@@ -245,8 +245,8 @@ class UserCouponServiceTest {
                         null,
                         null,
                         false,
-                        LocalDate.now().plusDays(1),
-                        LocalDate.now().plusDays(2)
+                        LocalDate.of(2300, 2, 20),
+                        LocalDate.of(2300, 3, 1)
                 );
         bookCouponList.add(firstBookCoupon);
         bookCouponList.add(secondBookCoupon);
@@ -293,8 +293,8 @@ class UserCouponServiceTest {
                         10000,
                         50,
                         true,
-                        LocalDate.now().plusDays(1),
-                        LocalDate.now().plusDays(2)
+                        LocalDate.of(2300, 2, 20),
+                        LocalDate.of(2300, 3, 1)
                 );
         UserCouponGetResponseForOrderQuerydsl secondTotalCoupon =
                 new UserCouponGetResponseForOrderQuerydsl(
@@ -305,8 +305,8 @@ class UserCouponServiceTest {
                         null,
                         null,
                         false,
-                        LocalDate.now().plusDays(1),
-                        LocalDate.now().plusDays(2)
+                        LocalDate.of(2300, 2, 20),
+                        LocalDate.of(2300, 3, 1)
                 );
         totalCouponList.add(firstTotalCoupon);
         totalCouponList.add(secondTotalCoupon);
@@ -368,7 +368,7 @@ class UserCouponServiceTest {
                 10000,
                 20000,
                 1,
-                LocalDate.now(),
+                LocalDate.of(2023, 3, 1),
                 true);
         User user = new User(
                 "test@naver.com",
@@ -389,8 +389,8 @@ class UserCouponServiceTest {
                 10000,
                 null,
                 null,
-                LocalDate.now().plusDays(3),
-                LocalDate.now().plusDays(5),
+                LocalDate.of(2300, 2, 20),
+                LocalDate.of(2300, 3, 1),
                 false,
                 true
         );
@@ -431,7 +431,7 @@ class UserCouponServiceTest {
                 10000,
                 20000,
                 1,
-                LocalDate.now(),
+                LocalDate.of(2024, 3, 1),
                 true);
         User user = new User(
                 "test@naver.com",
@@ -485,11 +485,11 @@ class UserCouponServiceTest {
         ReflectionTestUtils.setField(coupon, "id", 3L);
         UserCoupon userCoupon = new UserCoupon(user, coupon);
         ReflectionTestUtils.setField(userCoupon, "id", 1L);
-        ReflectionTestUtils.setField(userCoupon, "date", LocalDate.now());
+        ReflectionTestUtils.setField(userCoupon, "date", LocalDate.of(2024, 3, 1));
         ReflectionTestUtils.setField(userCoupon, "isUsed", true);
         when(userCouponRepository.findById(userCoupon.getId())).thenReturn(Optional.of(userCoupon));
         userCouponService.giveBackUserCoupon(userCoupon.getId());
-        assertThat(userCoupon.getCreatedDate()).isEqualTo(LocalDate.now());
+        assertThat(userCoupon.getCreatedDate()).isEqualTo(TimeUtils.nowDate());
         assertThat(userCoupon.getIsUsed()).isFalse();
     }
 

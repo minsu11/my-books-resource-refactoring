@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import store.mybooks.resource.author.dto.request.AuthorModifyRequest;
+import store.mybooks.resource.utils.TimeUtils;
 
 /**
  * packageName    : store.mybooks.resource.author.entity
@@ -52,7 +53,7 @@ public class Author {
     public Author(String name, String content) {
         this.name = name;
         this.content = content;
-        this. createdDate = LocalDate.now();
+        this.createdDate = TimeUtils.nowDate();
     }
 
     public void setByModifyRequest(AuthorModifyRequest modifyRequest) {

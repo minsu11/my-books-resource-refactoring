@@ -48,6 +48,7 @@ import store.mybooks.resource.pointhistory.dto.request.PointHistoryCreateRequest
 import store.mybooks.resource.pointhistory.dto.response.PointHistoryCreateResponse;
 import store.mybooks.resource.pointhistory.dto.response.PointHistoryResponse;
 import store.mybooks.resource.pointhistory.dto.response.PointResponse;
+import store.mybooks.resource.pointhistory.dto.response.PointResponseForUser;
 import store.mybooks.resource.pointhistory.service.PointHistoryService;
 import store.mybooks.resource.pointrule.exception.PointRuleNotExistException;
 import store.mybooks.resource.pointrulename.exception.PointRuleNameNotExistException;
@@ -132,7 +133,9 @@ class PointHistoryControllerTest {
         PointHistoryResponse login = new PointHistoryResponse("로그인 적립", 200, LocalDate.of(2024, 3, 1));
         List<PointHistoryResponse> expectList = List.of(signup, login);
         long total = 120;
-        Page<PointHistoryResponse> expect = new PageImpl<>(expectList, pageable, total);
+        Page<PointHistoryResponse> expectPage = new PageImpl<>(expectList, pageable, total);
+        PointResponseForUser expect =
+                new PointResponseForUser(signup.getStatusCost() + login.getStatusCost(), expectPage);
 
         when(pointHistoryService.getPointHistory(any(), anyLong())).thenReturn(expect);
 
@@ -140,13 +143,17 @@ class PointHistoryControllerTest {
                         + "&size=" + pageable.getPageSize())
                         .header("X-USER-ID", 1L))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content.size()").value(expectList.size()))
-                .andExpect(jsonPath("$.content[0].pointRuleName").value(signup.getPointRuleName()))
-                .andExpect(jsonPath("$.content[0].statusCost").value(signup.getStatusCost()))
-                .andExpect(jsonPath("$.content[0].createdDate").value(signup.getCreatedDate().toString()))
-                .andExpect(jsonPath("$.content[1].pointRuleName").value(login.getPointRuleName()))
-                .andExpect(jsonPath("$.content[1].statusCost").value(login.getStatusCost()))
-                .andExpect(jsonPath("$.content[1].createdDate").value(login.getCreatedDate().toString()))
+                .andExpect(jsonPath("$.pointHistoryResponsePage.content.size()").value(expectList.size()))
+                .andExpect(jsonPath("$.pointHistoryResponsePage.content[0].pointRuleName").value(
+                        signup.getPointRuleName()))
+                .andExpect(jsonPath("$.pointHistoryResponsePage.content[0].statusCost").value(signup.getStatusCost()))
+                .andExpect(jsonPath("$.pointHistoryResponsePage.content[0].createdDate").value(
+                        signup.getCreatedDate().toString()))
+                .andExpect(
+                        jsonPath("$.pointHistoryResponsePage.content[1].pointRuleName").value(login.getPointRuleName()))
+                .andExpect(jsonPath("$.pointHistoryResponsePage.content[1].statusCost").value(login.getStatusCost()))
+                .andExpect(jsonPath("$.pointHistoryResponsePage.content[1].createdDate").value(
+                        login.getCreatedDate().toString()))
                 .andDo(document("point_history-getPointHistory",
                         requestHeaders(
                                 headerWithName("X-USER-ID").description("회원 아이디")
@@ -156,32 +163,44 @@ class PointHistoryControllerTest {
                                 parameterWithName("size").description("페이지 사이즈(default = 10)")
                         ),
                         responseFields(
-                                fieldWithPath("content").description("리스트"),
-                                fieldWithPath("content[].pointRuleName").description("사유"),
-                                fieldWithPath("content[].statusCost").description("적립/사용 포인트"),
-                                fieldWithPath("content[].createdDate").description("적립/사용일"),
-                                fieldWithPath("pageable").description("페이지정보"),
-                                fieldWithPath("pageable.sort").description("페이지 정렬 정보"),
-                                fieldWithPath("pageable.sort.sorted").description("페이지 정렬되었는지 여부(true: 정렬 됨)"),
-                                fieldWithPath("pageable.sort.unsorted").description("페이지 정렬되지 않았는지 여부(true: 정렬 안 됨)"),
-                                fieldWithPath("pageable.sort.empty").description("페이지 정렬 정보가 비어 있는지 여부(true: 비어있음)"),
-                                fieldWithPath("pageable.pageSize").description("전체 페이지 수"),
-                                fieldWithPath("pageable.pageNumber").description("현재 페이지 번호(0부터 시작)"),
-                                fieldWithPath("pageable.offset").description("현재 페이지의 시작 오프셋(0부터 시작)"),
-                                fieldWithPath("pageable.paged").description("페이지네이션을 사용하는지 여부(true: 사용함)"),
-                                fieldWithPath("pageable.unpaged").description("페이지네이션을 사용하는지 여부(true: 사용 안 함)"),
-                                fieldWithPath("totalPages").description("전체 페이지 수"),
-                                fieldWithPath("totalElements").description("전체 요소(항목) 수"),
-                                fieldWithPath("last").description("마지막 페이지 여부(true: 마지막 페이지)"),
-                                fieldWithPath("numberOfElements").description("혀재 페이지의 요소(항목) 수"),
-                                fieldWithPath("size").description("페이지 당 요소(항목) 수"),
-                                fieldWithPath("sort").description("결과 정렬 정보를 담은 객체"),
-                                fieldWithPath("sort.sorted").description("결과가 정렬되었는지 여부(true: 정렬 됨)"),
-                                fieldWithPath("sort.unsorted").description("결과가 정렬되지 않았는지 여부(true: 정렬 안 됨)"),
-                                fieldWithPath("sort.empty").description("결과 정렬 정보가 비어 있는지 여부(true: 비어있음)"),
-                                fieldWithPath("number").description("현재 페이지 번호(0부터 시작)"),
-                                fieldWithPath("first").description("첫 페이지 여부(true: 첫 페이지)"),
-                                fieldWithPath("empty").description("결과가 비어 있는지 여부(true: 비어있음)")
+                                fieldWithPath("remainPoint").description("보유 포인트"),
+                                fieldWithPath("pointHistoryResponsePage.content").description("리스트"),
+                                fieldWithPath("pointHistoryResponsePage.content[].pointRuleName").description("사유"),
+                                fieldWithPath("pointHistoryResponsePage.content[].statusCost").description("적립/사용 포인트"),
+                                fieldWithPath("pointHistoryResponsePage.content[].createdDate").description("적립/사용일"),
+                                fieldWithPath("pointHistoryResponsePage.pageable").description("페이지정보"),
+                                fieldWithPath("pointHistoryResponsePage.pageable.sort").description("페이지 정렬 정보"),
+                                fieldWithPath("pointHistoryResponsePage.pageable.sort.sorted").description(
+                                        "페이지 정렬되었는지 여부(true: 정렬 됨)"),
+                                fieldWithPath("pointHistoryResponsePage.pageable.sort.unsorted").description(
+                                        "페이지 정렬되지 않았는지 여부(true: 정렬 안 됨)"),
+                                fieldWithPath("pointHistoryResponsePage.pageable.sort.empty").description(
+                                        "페이지 정렬 정보가 비어 있는지 여부(true: 비어있음)"),
+                                fieldWithPath("pointHistoryResponsePage.pageable.pageSize").description("전체 페이지 수"),
+                                fieldWithPath("pointHistoryResponsePage.pageable.pageNumber").description(
+                                        "현재 페이지 번호(0부터 시작)"),
+                                fieldWithPath("pointHistoryResponsePage.pageable.offset").description(
+                                        "현재 페이지의 시작 오프셋(0부터 시작)"),
+                                fieldWithPath("pointHistoryResponsePage.pageable.paged").description(
+                                        "페이지네이션을 사용하는지 여부(true: 사용함)"),
+                                fieldWithPath("pointHistoryResponsePage.pageable.unpaged").description(
+                                        "페이지네이션을 사용하는지 여부(true: 사용 안 함)"),
+                                fieldWithPath("pointHistoryResponsePage.totalPages").description("전체 페이지 수"),
+                                fieldWithPath("pointHistoryResponsePage.totalElements").description("전체 요소(항목) 수"),
+                                fieldWithPath("pointHistoryResponsePage.last").description("마지막 페이지 여부(true: 마지막 페이지)"),
+                                fieldWithPath("pointHistoryResponsePage.numberOfElements").description(
+                                        "혀재 페이지의 요소(항목) 수"),
+                                fieldWithPath("pointHistoryResponsePage.size").description("페이지 당 요소(항목) 수"),
+                                fieldWithPath("pointHistoryResponsePage.sort").description("결과 정렬 정보를 담은 객체"),
+                                fieldWithPath("pointHistoryResponsePage.sort.sorted").description(
+                                        "결과가 정렬되었는지 여부(true: 정렬 됨)"),
+                                fieldWithPath("pointHistoryResponsePage.sort.unsorted").description(
+                                        "결과가 정렬되지 않았는지 여부(true: 정렬 안 됨)"),
+                                fieldWithPath("pointHistoryResponsePage.sort.empty").description(
+                                        "결과 정렬 정보가 비어 있는지 여부(true: 비어있음)"),
+                                fieldWithPath("pointHistoryResponsePage.number").description("현재 페이지 번호(0부터 시작)"),
+                                fieldWithPath("pointHistoryResponsePage.first").description("첫 페이지 여부(true: 첫 페이지)"),
+                                fieldWithPath("pointHistoryResponsePage.empty").description("결과가 비어 있는지 여부(true: 비어있음)")
                         )));
 
         verify(pointHistoryService, times(1)).getPointHistory(any(), anyLong());

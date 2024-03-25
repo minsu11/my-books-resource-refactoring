@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import store.mybooks.resource.publisher.dto.request.PublisherModifyRequest;
+import store.mybooks.resource.utils.TimeUtils;
 
 /**
  * packageName    : store.mybooks.resource.publisher.entity
@@ -43,7 +44,7 @@ public class Publisher {
 
     public Publisher(String name) {
         this.name = name;
-        this.createdDate = LocalDate.now();
+        this.createdDate = TimeUtils.nowDate();
     }
 
     public void setByModifyRequest(PublisherModifyRequest modifyRequest) {

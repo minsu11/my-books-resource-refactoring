@@ -62,7 +62,7 @@ class PublisherServiceTest {
 
     @BeforeEach
     void setUp() {
-        publisher = new Publisher(id, name, LocalDate.now());
+        publisher = new Publisher(id, name, LocalDate.of(2024, 1, 1));
     }
 
     @Test
