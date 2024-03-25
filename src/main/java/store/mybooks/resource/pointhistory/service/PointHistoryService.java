@@ -15,6 +15,7 @@ import store.mybooks.resource.pointhistory.dto.request.PointHistoryCreateRequest
 import store.mybooks.resource.pointhistory.dto.response.PointHistoryCreateResponse;
 import store.mybooks.resource.pointhistory.dto.response.PointHistoryResponse;
 import store.mybooks.resource.pointhistory.dto.response.PointResponse;
+import store.mybooks.resource.pointhistory.dto.response.PointResponseForUser;
 import store.mybooks.resource.pointhistory.entity.PointHistory;
 import store.mybooks.resource.pointhistory.exception.AlreadyReceivedSignUpPoint;
 import store.mybooks.resource.pointhistory.repository.PointHistoryRepository;
@@ -26,6 +27,7 @@ import store.mybooks.resource.pointrulename.repository.PointRuleNameRepository;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user.exception.UserNotExistException;
 import store.mybooks.resource.user.repository.UserRepository;
+import store.mybooks.resource.utils.TimeUtils;
 
 /**
  * packageName    : store.mybooks.resource.point_history.service<br>
@@ -77,11 +79,14 @@ public class PointHistoryService {
      * @return page
      */
     @Transactional(readOnly = true)
-    public Page<PointHistoryResponse> getPointHistory(Pageable pageable, Long userId) {
+    public PointResponseForUser getPointHistory(Pageable pageable, Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotExistException(userId);
         }
-        return pointHistoryRepository.getPointHistoryByUserId(pageable, userId);
+        PointResponse pointResponse = pointHistoryRepository.getRemainingPoint(userId);
+        Page<PointHistoryResponse> pointHistoryResponsePage =
+                pointHistoryRepository.getPointHistoryByUserId(pageable, userId);
+        return new PointResponseForUser(pointResponse.getRemainingPoint(), pointHistoryResponsePage);
     }
 
     /**
@@ -126,7 +131,7 @@ public class PointHistoryService {
         if (Objects.nonNull(user.getLatestLogin())) {
             LocalDate latestLoginDate = user.getLatestLogin().toLocalDate();
 
-            if (!latestLoginDate.isBefore(LocalDate.now())) {
+            if (!latestLoginDate.isBefore(TimeUtils.nowDate())) {
                 return false;
             }
         }
