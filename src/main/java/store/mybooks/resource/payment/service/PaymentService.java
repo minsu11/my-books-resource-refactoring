@@ -11,11 +11,11 @@ import store.mybooks.resource.bookorder.exception.BookOrderNotExistException;
 import store.mybooks.resource.bookorder.repository.BookOrderRepository;
 import store.mybooks.resource.payment.dto.mapper.PaymentMapper;
 import store.mybooks.resource.payment.dto.request.PayCreateRequest;
-import store.mybooks.resource.payment.dto.request.PayModifyRequest;
 import store.mybooks.resource.payment.dto.response.PayCreateResponse;
 import store.mybooks.resource.payment.dto.response.PayModifyResponse;
 import store.mybooks.resource.payment.dto.response.PaymentResponse;
 import store.mybooks.resource.payment.entity.Payment;
+import store.mybooks.resource.payment.enumulation.PaymentStatusEnum;
 import store.mybooks.resource.payment.exception.PaymentAlreadyExistException;
 import store.mybooks.resource.payment.exception.PaymentNotExistException;
 import store.mybooks.resource.payment.repository.PaymentRepository;
@@ -81,16 +81,19 @@ public class PaymentService {
      * description : 결제 결과에 대한 상태 값 변경.
      * <br>
      *
-     * @param request the request
+     * @param orderNumber the request
+     * @param status      상태
      * @return the pay modify response
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public PayModifyResponse modifyStatus(PayModifyRequest request) {
-        // check, uncheck
-        Payment payment = paymentRepository.findByOrderNumber(request.getOrderNumber()).orElse(null);
-        System.out.println("결제 내용 : " + payment.getStatus());
-        assert payment != null;
-        payment.update(request.getStatus());
+    public PayModifyResponse modifyStatus(String orderNumber, String status) {
+        if (!PaymentStatusEnum.DONE.getEngPaymentStatus().equals(status) &&
+                !PaymentStatusEnum.CANCEL.getEngPaymentStatus().equals(status)) {
+            throw new PaymentAlreadyExistException();
+        }
+        Payment payment = paymentRepository.findByOrderNumber(orderNumber)
+                .orElseThrow(PaymentNotExistException::new);
+        payment.update(status);
 
         return paymentMapper.mapToPayModifyResponse(payment);
     }

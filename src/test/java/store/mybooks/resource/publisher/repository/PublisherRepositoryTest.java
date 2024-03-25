@@ -37,8 +37,8 @@ class PublisherRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        publisher1 = new Publisher(1, "publisherName1", LocalDate.now());
-        publisher2 = new Publisher(2, "publisherName2", LocalDate.now());
+        publisher1 = new Publisher(1, "publisherName1", LocalDate.of(2024, 1, 1));
+        publisher2 = new Publisher(2, "publisherName2", LocalDate.of(2024, 1, 1));
         publisherRepository.save(publisher1);
         publisherRepository.save(publisher2);
     }
@@ -69,7 +69,7 @@ class PublisherRepositoryTest {
     @Test
     @DisplayName("출판사명 중복일 경우")
     void givenExistPublisherName_whenExistsByName_thenReturnTrue() {
-        Publisher publisher = new Publisher(1, "publisherName1", LocalDate.now());
+        Publisher publisher = new Publisher(1, "publisherName1", LocalDate.of(2024, 1, 1));
         publisherRepository.save(publisher);
 
         Assertions.assertTrue(publisherRepository.existsByName(publisher.getName()));

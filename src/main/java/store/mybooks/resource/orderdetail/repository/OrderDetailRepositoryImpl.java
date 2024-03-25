@@ -3,9 +3,13 @@ package store.mybooks.resource.orderdetail.repository;
 import com.querydsl.core.types.Projections;
 import java.util.List;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import store.mybooks.resource.image.entity.QImage;
+import store.mybooks.resource.image_status.entity.QImageStatus;
+import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
 import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
 import store.mybooks.resource.orderdetail.entity.OrderDetail;
 import store.mybooks.resource.orderdetail.entity.QOrderDetail;
+import store.mybooks.resource.orderdetailstatus.entity.QOrderDetailStatus;
 
 /**
  * packageName    : store.mybooks.resource.order_detail.repository<br>
@@ -20,6 +24,9 @@ import store.mybooks.resource.orderdetail.entity.QOrderDetail;
  */
 public class OrderDetailRepositoryImpl extends QuerydslRepositorySupport implements OrderDetailRepositoryCustom {
     private QOrderDetail orderDetail = QOrderDetail.orderDetail;
+    private QImage image = QImage.image;
+    private QOrderDetailStatus orderDetailStatus = QOrderDetailStatus.orderDetailStatus;
+    private QImageStatus imageStatus = QImageStatus.imageStatus;
 
 
     public OrderDetailRepositoryImpl() {
@@ -44,7 +51,12 @@ public class OrderDetailRepositoryImpl extends QuerydslRepositorySupport impleme
 
     @Override
     public List<OrderDetailInfoResponse> getOrderDetailListByOrderNumber(String orderNumber) {
+        
         return from(orderDetail)
+                .join(image).on(image.book.eq(orderDetail.book))
+                .join(image.imageStatus, imageStatus)
+                .join(orderDetail.detailStatus, orderDetailStatus)
+                .where(imageStatus.id.eq(ImageStatusEnum.THUMBNAIL.getName()))
                 .select(Projections.constructor(
                         OrderDetailInfoResponse.class,
                         orderDetail.book.id,
@@ -52,7 +64,10 @@ public class OrderDetailRepositoryImpl extends QuerydslRepositorySupport impleme
                         orderDetail.userCoupon.id,
                         orderDetail.bookCost,
                         orderDetail.amount,
-                        orderDetail.isCouponUsed
+                        orderDetail.isCouponUsed,
+                        image.path.concat(image.fileName).concat(image.extension),
+                        orderDetail.detailStatus.id,
+                        orderDetail.id
                 ))
                 .where(orderDetail.bookOrder.number.eq(orderNumber))
                 .fetch();

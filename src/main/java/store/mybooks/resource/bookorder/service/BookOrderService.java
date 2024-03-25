@@ -21,7 +21,6 @@ import store.mybooks.resource.bookorder.eumulation.BookOrderStatusName;
 import store.mybooks.resource.bookorder.exception.BookOrderInfoNotMatchException;
 import store.mybooks.resource.bookorder.exception.BookOrderNotExistException;
 import store.mybooks.resource.bookorder.repository.BookOrderRepository;
-import store.mybooks.resource.bookstatus.respository.BookStatusRepository;
 import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
 import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotExistsException;
 import store.mybooks.resource.delivery_rule.repository.DeliveryRuleRepository;
@@ -55,7 +54,6 @@ import store.mybooks.resource.utils.TimeUtils;
 @RequiredArgsConstructor
 public class BookOrderService {
     private final BookOrderRepository bookOrderRepository;
-    private final BookStatusRepository bookStatusRepository;
     private final OrdersStatusRepository ordersStatusRepository;
     private final OrderDetailRepository orderDetailRepository;
     private final BookOrderMapper bookOrderMapper;
@@ -152,7 +150,8 @@ public class BookOrderService {
                 .orElseThrow(() -> new DeliveryRuleNotExistsException("배송 규정 없음"));
         OrdersStatus ordersStatus = ordersStatusRepository.findById(BookOrderStatusName.ORDER_WAIT.toString())
                 .orElseThrow(OrdersStatusNotExistException::new);
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(userId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotExistException(userId));
         BookOrder bookOrder = BookOrder.builder()
                 .user(user)
                 .deliveryRule(deliveryRule)
@@ -169,41 +168,12 @@ public class BookOrderService {
                 .userCoupon(null)
                 .isCouponUsed(false)
                 .pointCost(request.getPointCost())
+                .findPassword(request.getOrderCode())
                 .build();
 
         bookOrderRepository.save(bookOrder);
         return bookOrderMapper.mapToBookOrderCreateResponse(bookOrder);
     }
-
-    public BookOrderCreateResponse createBookOrderNonUser(BookOrderCreateRequest request) {
-        BookOrderInfoRequest orderInfo = request.getOrderInfo();
-        DeliveryRule deliveryRule = deliveryRuleRepository.findById(orderInfo.getDeliveryId())
-                .orElseThrow(() -> new DeliveryRuleNotExistsException("배송 규정 없음"));
-        OrdersStatus ordersStatus = ordersStatusRepository.findById(BookOrderStatusName.ORDER_WAIT.toString())
-                .orElseThrow(OrdersStatusNotExistException::new);
-        User user = userRepository.findById(0L).orElseThrow(() -> new UserNotExistException(0L));
-        BookOrder bookOrder = BookOrder.builder()
-                .user(user)
-                .deliveryRule(deliveryRule)
-                .receiverName(orderInfo.getRecipientName())
-                .receiverAddress(orderInfo.getRecipientAddress())
-                .receiverMessage(orderInfo.getReceiverMessage())
-                .receiverPhoneNumber(orderInfo.getRecipientPhoneNumber())
-                .orderStatus(ordersStatus)
-                .deliveryDate(orderInfo.getDeliveryDate())
-                .date(TimeUtils.nowDate())
-                .number(request.getOrderNumber())
-                .totalCost(request.getTotalCost())
-                .couponCost(request.getCouponCost())
-                .userCoupon(null)
-                .isCouponUsed(false)
-                .pointCost(request.getPointCost())
-                .build();
-
-        bookOrderRepository.save(bookOrder);
-        return bookOrderMapper.mapToBookOrderCreateResponse(bookOrder);
-    }
-
 
     /**
      * methodName : checkBookOrderNumberExists<br>

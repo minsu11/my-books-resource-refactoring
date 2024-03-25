@@ -97,7 +97,9 @@ public class PointRuleRepositoryImpl extends QuerydslRepositorySupport implement
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .fetch();
-        long total = from(pointRule).fetchCount();
+        long total = from(pointRule)
+                .where(pointRule.isAvailable.eq(true))
+                .fetchCount();
         return new PageImpl<>(pointRuleResponseList, pageable, total);
     }
 }

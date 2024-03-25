@@ -39,6 +39,7 @@ import store.mybooks.resource.pointhistory.dto.request.PointHistoryCreateRequest
 import store.mybooks.resource.pointhistory.dto.response.PointHistoryCreateResponse;
 import store.mybooks.resource.pointhistory.dto.response.PointHistoryResponse;
 import store.mybooks.resource.pointhistory.dto.response.PointResponse;
+import store.mybooks.resource.pointhistory.dto.response.PointResponseForUser;
 import store.mybooks.resource.pointhistory.entity.PointHistory;
 import store.mybooks.resource.pointhistory.exception.AlreadyReceivedSignUpPoint;
 import store.mybooks.resource.pointhistory.repository.PointHistoryRepository;
@@ -262,13 +263,15 @@ class PointHistoryServiceTest {
                 pointRuleName.getId(),
                 pointHistory.getPointStatusCost(),
                 TimeUtils.nowDate());
+        PointResponse pointResponse = new PointResponse(pointHistory.getPointStatusCost());
         Page<PointHistoryResponse> expect = new PageImpl<>(List.of(response), pageable, total);
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(pointHistoryRepository.getPointHistoryByUserId(any(), anyLong())).thenReturn(expect);
+        when(pointHistoryRepository.getRemainingPoint(anyLong())).thenReturn(pointResponse);
 
-        Page<PointHistoryResponse> actual = pointHistoryService.getPointHistory(pageable, 1L);
-        List<PointHistoryResponse> actualList = actual.getContent();
-        assertThat(actual).isNotNull().hasSize(1);
+        PointResponseForUser actual = pointHistoryService.getPointHistory(pageable, 1L);
+        List<PointHistoryResponse> actualList = actual.getPointHistoryResponsePage().getContent();
+        assertThat(actual).isNotNull();
         assertThat(actualList).isNotNull().hasSize(1);
         assertThat(actualList.get(0).getPointRuleName()).isEqualTo(response.getPointRuleName());
         assertThat(actualList.get(0).getStatusCost()).isEqualTo(response.getStatusCost());
@@ -280,15 +283,16 @@ class PointHistoryServiceTest {
     @Test
     @DisplayName("getPointHistory - 없는 회원인 경우")
     void givenPageableAndNotExistsUserId_whenGetPointHistory_thenReturnPointHistoryResponsePage() {
+        Pageable pageable = PageRequest.of(0, 1);
         when(userRepository.existsById(anyLong())).thenReturn(false);
 
-        assertThrows(UserNotExistException.class, () -> pointHistoryService.getRemainingPoint(1L));
+        assertThrows(UserNotExistException.class, () -> pointHistoryService.getPointHistory(pageable, 1L));
         verify(userRepository, times(1)).existsById(1L);
         verify(pointHistoryRepository, times(0)).getPointHistoryByUserId(any(), anyLong());
     }
 
     @Test
-    @DisplayName("getPointHistory 테스트")
+    @DisplayName("createPointHistory 테스트")
     void givenPointHistoryCreateRequest_whenCreatePointHistory_thenReturnPointHistoryCreateResponse() {
         when(pointRuleNameRepository.findById(anyString())).thenReturn(Optional.of(pointRuleName));
         when(pointRuleRepository.findPointRuleByPointRuleName(anyString())).thenReturn(Optional.of(pointRule));
@@ -316,7 +320,7 @@ class PointHistoryServiceTest {
     }
 
     @Test
-    @DisplayName("getPointHistory 테스트 - 포인트 규정명이 존재하지 않는 경우")
+    @DisplayName("createPointHistory 테스트 - 포인트 규정명이 존재하지 않는 경우")
     void givenNotExistsPointRuleNamePointHistoryCreateRequest_whenCreatePointHistory_thenReturnPointHistoryCreateResponse() {
         PointHistoryCreateRequest request = pointHistoryCreateRequest = new PointHistoryCreateRequest(
                 bookOrder.getNumber(),
@@ -329,7 +333,7 @@ class PointHistoryServiceTest {
     }
 
     @Test
-    @DisplayName("getPointHistory 테스트 - 포인트 규정명은 있으나 포인트 규정이 존재하지 않는 경우")
+    @DisplayName("createPointHistory 테스트 - 포인트 규정명은 있으나 포인트 규정이 존재하지 않는 경우")
     void givenNotExistsPointRulePointHistoryCreateRequest_whenCreatePointHistory_thenReturnPointHistoryCreateResponse() {
         PointHistoryCreateRequest request = pointHistoryCreateRequest = new PointHistoryCreateRequest(
                 bookOrder.getNumber(),
@@ -343,7 +347,7 @@ class PointHistoryServiceTest {
     }
 
     @Test
-    @DisplayName("getPointHistory 테스트 - 유저가 존재하지 않는 경우")
+    @DisplayName("createPointHistory 테스트 - 유저가 존재하지 않는 경우")
     void givenNotExistsUserIdPointHistoryCreateRequest_whenCreatePointHistory_thenReturnPointHistoryCreateResponse() {
         PointHistoryCreateRequest request = pointHistoryCreateRequest = new PointHistoryCreateRequest(
                 bookOrder.getNumber(),
@@ -358,7 +362,7 @@ class PointHistoryServiceTest {
     }
 
     @Test
-    @DisplayName("getPointHistory 테스트 - 유저가 존재하지 않는 경우")
+    @DisplayName("createPointHistory 테스트 - 유저가 존재하지 않는 경우")
     void givenNotExistsBookOrderNumberPointHistoryCreateRequest_whenCreatePointHistory_thenReturnPointHistoryCreateResponse() {
         PointHistoryCreateRequest request = pointHistoryCreateRequest = new PointHistoryCreateRequest(
                 "존재하지 않는 주문번호",

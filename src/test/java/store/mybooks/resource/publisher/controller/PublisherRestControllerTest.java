@@ -81,7 +81,7 @@ class PublisherRestControllerTest {
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,
                RestDocumentationContextProvider restDocumentation) {
-        publisher = new Publisher(1, name, LocalDate.now());
+        publisher = new Publisher(1, name, LocalDate.of(2024, 1, 1));
 
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .apply(documentationConfiguration(restDocumentation))

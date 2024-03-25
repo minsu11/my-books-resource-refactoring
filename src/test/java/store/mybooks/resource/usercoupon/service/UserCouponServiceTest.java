@@ -81,8 +81,8 @@ class UserCouponServiceTest {
                         null,
                         null,
                         false,
-                        LocalDate.now().minusDays(2),
-                        LocalDate.now().plusDays(2),
+                        LocalDate.of(2024, 3, 1),
+                        LocalDate.of(2300, 3, 1),
                         null,
                         null
                 );
@@ -95,8 +95,8 @@ class UserCouponServiceTest {
                         null,
                         null,
                         false,
-                        LocalDate.now().minusDays(2),
-                        LocalDate.now().plusDays(2),
+                        LocalDate.of(2024, 3, 1),
+                        LocalDate.of(2300, 3, 1),
                         null,
                         null
                 );
@@ -109,8 +109,8 @@ class UserCouponServiceTest {
                         null,
                         null,
                         false,
-                        LocalDate.now().minusDays(2),
-                        LocalDate.now().plusDays(2),
+                        LocalDate.of(2024, 3, 1),
+                        LocalDate.of(2300, 3, 1),
                         null,
                         null
                 );
@@ -123,8 +123,8 @@ class UserCouponServiceTest {
                         null,
                         null,
                         false,
-                        LocalDate.now().minusDays(2),
-                        LocalDate.now().plusDays(2),
+                        LocalDate.of(2024, 3, 1),
+                        LocalDate.of(2300, 3, 1),
                         "이순신",
                         null
                 );
@@ -137,8 +137,8 @@ class UserCouponServiceTest {
                         5000,
                         50,
                         true,
-                        LocalDate.now().minusDays(2),
-                        LocalDate.now().plusDays(2),
+                        LocalDate.of(2024, 3, 1),
+                        LocalDate.of(2300, 3, 1),
                         null,
                         "위인전"
                 );
@@ -151,8 +151,8 @@ class UserCouponServiceTest {
                         null,
                         null,
                         false,
-                        LocalDate.now().minusDays(2),
-                        LocalDate.now().plusDays(2),
+                        LocalDate.of(2024, 3, 1),
+                        LocalDate.of(2300, 3, 1),
                         null,
                         null
                 );
@@ -208,8 +208,8 @@ class UserCouponServiceTest {
                         10000,
                         50,
                         true,
-                        LocalDate.now().plusDays(1),
-                        LocalDate.now().plusDays(2)
+                        LocalDate.of(2300, 2, 20),
+                        LocalDate.of(2300, 3, 1)
                 );
         UserCouponGetResponseForOrderQuerydsl secondCategoryCoupon =
                 new UserCouponGetResponseForOrderQuerydsl(
@@ -220,8 +220,8 @@ class UserCouponServiceTest {
                         null,
                         null,
                         false,
-                        LocalDate.now().plusDays(1),
-                        LocalDate.now().plusDays(2)
+                        LocalDate.of(2300, 2, 20),
+                        LocalDate.of(2300, 3, 1)
                 );
         categoryCouponList.add(firstCategoryCoupon);
         categoryCouponList.add(secondCategoryCoupon);
@@ -235,8 +235,8 @@ class UserCouponServiceTest {
                         10000,
                         50,
                         true,
-                        LocalDate.now().plusDays(1),
-                        LocalDate.now().plusDays(2)
+                        LocalDate.of(2300, 2, 20),
+                        LocalDate.of(2300, 3, 1)
                 );
         UserCouponGetResponseForOrderQuerydsl secondBookCoupon =
                 new UserCouponGetResponseForOrderQuerydsl(
@@ -247,8 +247,8 @@ class UserCouponServiceTest {
                         null,
                         null,
                         false,
-                        LocalDate.now().plusDays(1),
-                        LocalDate.now().plusDays(2)
+                        LocalDate.of(2300, 2, 20),
+                        LocalDate.of(2300, 3, 1)
                 );
         bookCouponList.add(firstBookCoupon);
         bookCouponList.add(secondBookCoupon);
@@ -295,8 +295,8 @@ class UserCouponServiceTest {
                         10000,
                         50,
                         true,
-                        LocalDate.now().plusDays(1),
-                        LocalDate.now().plusDays(2)
+                        LocalDate.of(2300, 2, 20),
+                        LocalDate.of(2300, 3, 1)
                 );
         UserCouponGetResponseForOrderQuerydsl secondTotalCoupon =
                 new UserCouponGetResponseForOrderQuerydsl(
@@ -307,8 +307,8 @@ class UserCouponServiceTest {
                         null,
                         null,
                         false,
-                        LocalDate.now().plusDays(1),
-                        LocalDate.now().plusDays(2)
+                        LocalDate.of(2300, 2, 20),
+                        LocalDate.of(2300, 3, 1)
                 );
         totalCouponList.add(firstTotalCoupon);
         totalCouponList.add(secondTotalCoupon);
@@ -370,7 +370,7 @@ class UserCouponServiceTest {
                 10000,
                 20000,
                 1,
-                LocalDate.now(),
+                LocalDate.of(2023, 3, 1),
                 true);
         User user = new User(
                 "test@naver.com",
@@ -380,7 +380,7 @@ class UserCouponServiceTest {
                 false,
                 "test",
                 userSTatus,
-                userGrade,null
+                userGrade, null
         );
         ReflectionTestUtils.setField(user, "id", 1L);
         Coupon coupon = new Coupon(
@@ -391,8 +391,8 @@ class UserCouponServiceTest {
                 10000,
                 null,
                 null,
-                LocalDate.now().plusDays(3),
-                LocalDate.now().plusDays(5),
+                LocalDate.of(2300, 2, 20),
+                LocalDate.of(2300, 3, 1),
                 false,
                 true
         );
@@ -433,7 +433,7 @@ class UserCouponServiceTest {
                 10000,
                 20000,
                 1,
-                LocalDate.now(),
+                LocalDate.of(2024, 3, 1),
                 true);
         User user = new User(
                 "test@naver.com",
@@ -443,7 +443,7 @@ class UserCouponServiceTest {
                 false,
                 "test",
                 userSTatus,
-                userGrade,null
+                userGrade, null
         );
         ReflectionTestUtils.setField(user, "id", 1L);
         UserCouponCreateRequest userCouponCreateRequest = new UserCouponCreateRequest();
@@ -456,20 +456,20 @@ class UserCouponServiceTest {
         verify(couponRepository, times(1)).findById(anyLong());
     }
 
-//    @Test
-//    @DisplayName("쿠폰 사용")
-//    void givenUserCouponId_whenUseUserCoupon_thenUseUserCoupon() {
-//        User user = new User();
-//        ReflectionTestUtils.setField(user, "id", 2L);
-//        Coupon coupon = new Coupon();
-//        ReflectionTestUtils.setField(coupon, "id", 3L);
-//        UserCoupon userCoupon = new UserCoupon(user, coupon);
-//        ReflectionTestUtils.setField(userCoupon, "id", 1L);
-//        when(userCouponRepository.findById(userCoupon.getId())).thenReturn(Optional.of(userCoupon));
-//        userCouponService.useUserCoupon(1L);
-//        assertThat(userCoupon.getDate()).isEqualTo(LocalDate.now());
-//        assertThat(userCoupon.getIsUsed()).isTrue();
-//    }
+   @Test
+   @DisplayName("쿠폰 사용")
+   void givenUserCouponId_whenUseUserCoupon_thenUseUserCoupon() {
+       User user = new User();
+       ReflectionTestUtils.setField(user, "id", 2L);
+       Coupon coupon = new Coupon();
+       ReflectionTestUtils.setField(coupon, "id", 3L);
+       UserCoupon userCoupon = new UserCoupon(user, coupon);
+       ReflectionTestUtils.setField(userCoupon, "id", 1L);
+       when(userCouponRepository.findById(userCoupon.getId())).thenReturn(Optional.of(userCoupon));
+       userCouponService.useUserCoupon(1L);
+       assertThat(userCoupon.getDate()).isEqualTo(LocalDate.now());
+       assertThat(userCoupon.getIsUsed()).isTrue();
+   }
 
     @Test
     @DisplayName("쿠폰 사용 실패 - 존재하지 않는 회원 쿠폰 아이디")
@@ -478,22 +478,22 @@ class UserCouponServiceTest {
         assertThrows(UserCouponNotExistsException.class, () -> userCouponService.useUserCoupon(1L));
     }
 
-//    @Test
-//    @DisplayName("쿠폰 되돌려주기")
-//    void givenUserCouponId_whenGiveBackUserCoupon_thenGiveBackUserCoupon() {
-//        User user = new User();
-//        ReflectionTestUtils.setField(user, "id", 2L);
-//        Coupon coupon = new Coupon();
-//        ReflectionTestUtils.setField(coupon, "id", 3L);
-//        UserCoupon userCoupon = new UserCoupon(user, coupon);
-//        ReflectionTestUtils.setField(userCoupon, "id", 1L);
-//        ReflectionTestUtils.setField(userCoupon, "date", LocalDate.now());
-//        ReflectionTestUtils.setField(userCoupon, "isUsed", true);
-//        when(userCouponRepository.findById(userCoupon.getId())).thenReturn(Optional.of(userCoupon));
-//        userCouponService.giveBackUserCoupon(userCoupon.getId());
-//        assertThat(userCoupon.getCreatedDate()).isEqualTo(LocalDate.now());
-//        assertThat(userCoupon.getIsUsed()).isFalse();
-//    }
+    @Test
+    @DisplayName("쿠폰 되돌려주기")
+    void givenUserCouponId_whenGiveBackUserCoupon_thenGiveBackUserCoupon() {
+        User user = new User();
+        ReflectionTestUtils.setField(user, "id", 2L);
+        Coupon coupon = new Coupon();
+        ReflectionTestUtils.setField(coupon, "id", 3L);
+        UserCoupon userCoupon = new UserCoupon(user, coupon);
+        ReflectionTestUtils.setField(userCoupon, "id", 1L);
+        ReflectionTestUtils.setField(userCoupon, "date", LocalDate.of(2024, 3, 1));
+        ReflectionTestUtils.setField(userCoupon, "isUsed", true);
+        when(userCouponRepository.findById(userCoupon.getId())).thenReturn(Optional.of(userCoupon));
+        userCouponService.giveBackUserCoupon(userCoupon.getId());
+        assertThat(userCoupon.getCreatedDate()).isEqualTo(TimeUtils.nowDate());
+        assertThat(userCoupon.getIsUsed()).isFalse();
+    }
 
     @Test
     @DisplayName("쿠폰 되돌려주기 실패 - 존재하지 않는 회원 쿠폰 아이디")

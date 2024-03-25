@@ -2,7 +2,6 @@ package store.mybooks.resource.pointhistory.repository;
 
 import com.querydsl.core.types.Projections;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -81,5 +80,15 @@ public class PointHistoryRepositoryImpl extends QuerydslRepositorySupport implem
                 .fetch();
 
         return !pointHistoryIdList.isEmpty();
+    }
+
+    @Override
+    public Integer getOrderUsedPoint(String orderNumber) {
+        return from(pointHistory)
+                .select(
+                        pointHistory.pointStatusCost.sum()
+                )
+                .where(pointHistory.bookOrder.number.eq(orderNumber))
+                .fetchOne();
     }
 }

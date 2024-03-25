@@ -3,6 +3,8 @@ package store.mybooks.resource.bookorder.dto.response.admin;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 /**
@@ -17,6 +19,8 @@ import lombok.Getter;
  * 3/2/24        minsu11       최초 생성<br>
  */
 @Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class BookOrderAdminModifyResponse {
     private Long id;
