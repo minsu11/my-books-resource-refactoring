@@ -12,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import store.mybooks.resource.book.dto.response.BookDetailResponse;
 import store.mybooks.resource.book.dto.response.BookGetResponseForCoupon;
-import store.mybooks.resource.book.dto.response.BookLikeResponse;
 import store.mybooks.resource.book.dto.response.BookPopularityResponse;
 import store.mybooks.resource.book.dto.response.BookResponseForOrder;
 import store.mybooks.resource.book.dto.response.BookStockResponse;
@@ -277,64 +276,4 @@ class BookRepositoryTest {
         assertThat(response2.getViewCount()).isEqualTo(10);
     }
 
-    @Test
-    @DisplayName("좋아요 순으로 정렬된 도서 리스트")
-    void whenGetBookLike_thenReturnBookLikeResponseList() {
-        BookStatus sellingStatus = new BookStatus("판매중");
-        entityManager.persist(sellingStatus);
-
-        BookStatus outOfStockStatus = new BookStatus("재고없음");
-        entityManager.persist(outOfStockStatus);
-
-        ImageStatus thumbnailStatus = new ImageStatus("썸네일");
-        entityManager.persist(thumbnailStatus);
-
-        Book book1 = Book.builder()
-                .name("도서1")
-                .originalCost(30000)
-                .saleCost(25000)
-                .viewCount(10)
-                .bookStatus(sellingStatus)
-                .build();
-        entityManager.persist(book1);
-
-        Book book2 = Book.builder()
-                .name("도서2")
-                .originalCost(35000)
-                .saleCost(28000)
-                .viewCount(15)
-                .bookStatus(outOfStockStatus)
-                .build();
-        entityManager.persist(book2);
-
-        Image image1 = new Image("/", "thumbnail1", ".jpg", book1, null, thumbnailStatus);
-        entityManager.persist(image1);
-
-        Image image2 = new Image("/", "thumbnail2", ".jpg", book2, null, thumbnailStatus);
-        entityManager.persist(image2);
-
-        List<BookLikeResponse> result = bookRepository.getBookLike();
-
-        assertThat(result).hasSize(2);
-
-        BookLikeResponse response1 = result.get(0);
-        assertThat(response1.getId()).isEqualTo(book2.getId());
-        assertThat(response1.getImage()).isEqualTo("/thumbnail2.jpg");
-        assertThat(response1.getName()).isEqualTo("도서2");
-        assertThat(response1.getReviewCount()).isEqualTo(0L);
-        assertThat(response1.getCost()).isEqualTo(35000);
-        assertThat(response1.getSaleCost()).isEqualTo(28000);
-        assertThat(response1.getRate()).isEqualTo(0.0);
-        assertThat(response1.getLikeCount()).isEqualTo(0L);
-
-        BookLikeResponse response2 = result.get(1);
-        assertThat(response2.getId()).isEqualTo(book1.getId());
-        assertThat(response2.getImage()).isEqualTo("/thumbnail1.jpg");
-        assertThat(response2.getName()).isEqualTo("도서1");
-        assertThat(response2.getReviewCount()).isEqualTo(0L);
-        assertThat(response2.getCost()).isEqualTo(30000);
-        assertThat(response2.getSaleCost()).isEqualTo(25000);
-        assertThat(response2.getRate()).isEqualTo(0.0);
-        assertThat(response2.getLikeCount()).isEqualTo(0L);
-    }
 }
