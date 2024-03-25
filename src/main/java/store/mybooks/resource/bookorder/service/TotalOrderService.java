@@ -150,10 +150,10 @@ public class TotalOrderService {
 
         PointRuleResponse pointRule = pointRuleService
                 .getPointRuleResponseByName(PointRuleNameEnum.BOOK_POINT.getValue());
-        int earnPoint = ((bookOrder.getTotalCost() * pointRule.getRate()) / 100)
+        int earnPoint = ((bookOrder.getTotalCost() * 1) / 100)
                 + (bookOrder.getTotalCost() * 1 / 100);
         PointHistoryCreateRequest point =
-                new PointHistoryCreateRequest(bookOrder.getNumber(), pointRule.getPointRuleName(), earnPoint);
+                new PointHistoryCreateRequest(bookOrder.getNumber(), PointRuleNameEnum.BOOK_POINT.getValue(), earnPoint);
         pointHistoryService.createPointHistory(point, userId);
     }
 
