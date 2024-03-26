@@ -38,7 +38,7 @@ import store.mybooks.resource.ordersstatus.enumulation.OrdersStatusEnum;
 public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implements BookOrderRepositoryCustom {
     private static final QBookOrder bookOrder = QBookOrder.bookOrder;
     private static final QImage image = QImage.image;
-    private QOrderDetail orderDetail = QOrderDetail.orderDetail;
+    private static final QOrderDetail orderDetail = QOrderDetail.orderDetail;
 
 
     private static final QOrderDetailStatus orderDetailStatus = QOrderDetailStatus.orderDetailStatus;
@@ -192,12 +192,11 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
         log.info("bookOrderInfo:{}", bookOrderInfo.getOrderDetails().get(0).getId());
         log.info("bookOrderInfo:{}", bookOrderInfo.getOrderDetails().get(0).getCouponId());
 
-        return Optional.ofNullable(bookOrderInfo);
+        return Optional.of(bookOrderInfo);
     }
 
     @Override
     public Optional<BookOrderPaymentInfoRespones> findOrderPayInfo(String orderNumber) {
-        QOrderDetail orderDetail = QOrderDetail.orderDetail;
         BookOrderPaymentInfoRespones bookOrderInfoPayResponse = from(bookOrder)
                 .select(Projections.constructor(
                         BookOrderPaymentInfoRespones.class,
@@ -240,7 +239,6 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
 
     @Override
     public List<BookOrderUserResponse> getUserBookOrderInfos(Long userId) {
-        QOrderDetail orderDetail = QOrderDetail.orderDetail;
         return from(orderDetail)
                 .join(image)
                 .on(image.book.eq(orderDetail.book))

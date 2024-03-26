@@ -203,9 +203,11 @@ public class BookOrderRestController {
     public ResponseEntity<BookOrderInfoPayResponse> getBookOrderInfo(
             @PathVariable String orderNumber) {
         log.info("주문 번호: {}", orderNumber);
+        BookOrderInfoPayResponse response = bookOrderService.getBookInfo(orderNumber);
+        log.debug("결제 처리하고 나오는 결과값: {}", response);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(bookOrderService.getBookInfo(orderNumber));
+                .body(response);
     }
 
     /**
