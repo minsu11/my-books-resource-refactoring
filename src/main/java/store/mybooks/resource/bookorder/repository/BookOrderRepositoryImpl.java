@@ -15,6 +15,7 @@ import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminResponse;
 import store.mybooks.resource.bookorder.entity.BookOrder;
 import store.mybooks.resource.bookorder.entity.QBookOrder;
+import store.mybooks.resource.bookorder.eumulation.BookOrderStatusName;
 import store.mybooks.resource.image.entity.QImage;
 import store.mybooks.resource.image_status.entity.QImageStatus;
 import store.mybooks.resource.image_status.enumeration.ImageStatusEnum;
@@ -38,7 +39,8 @@ import store.mybooks.resource.ordersstatus.enumulation.OrdersStatusEnum;
 public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implements BookOrderRepositoryCustom {
     private static final QBookOrder bookOrder = QBookOrder.bookOrder;
     private static final QImage image = QImage.image;
-    private QOrderDetail orderDetail = QOrderDetail.orderDetail;
+    private static final QOrderDetail orderDetail = QOrderDetail.orderDetail;
+    private static final QImageStatus imageStatus = QImageStatus.imageStatus;
 
 
     private static final QOrderDetailStatus orderDetailStatus = QOrderDetailStatus.orderDetailStatus;
@@ -50,8 +52,6 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
 
     @Override
     public Page<BookOrderUserResponse> getBookOrderPageByUserId(Long userId, Pageable pageable) {
-        QImageStatus imageStatus = QImageStatus.imageStatus;
-        QOrderDetail orderDetail = QOrderDetail.orderDetail;
 
 
         List<BookOrderUserResponse> bookOrderResponseList =
@@ -72,12 +72,12 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
 
                                 bookOrder.number,
                                 bookOrder.id
-
                         ))
-                        .where(bookOrder.user.id.eq(userId))
+                        .where(bookOrder.user.id.eq(userId)
+                                .and(bookOrder.orderStatus.id.eq(BookOrderStatusName.ORDER_WAIT.toString()).not()))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
-                        .orderBy(bookOrder.date.desc())
+                        .orderBy(bookOrder.id.desc())
                         .fetch();
         for (BookOrderUserResponse bookOrderUserResponse : bookOrderResponseList) {
             List<OrderDetailInfoResponse> orderDetailInfoResponses =
@@ -170,7 +170,6 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                         )
                         .where(orderDetail.bookOrder.number.eq(orderNumber))
                         .fetch();
-        log.info("레포지토리 함수 안: {}", orderDetailInfoResponses.get(0).getBookName());
 
         BookOrderInfoPayResponse bookOrderInfo =
                 from(bookOrder)
@@ -182,22 +181,13 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                                 bookOrder.pointCost))
                         .where(bookOrder.number.eq(orderNumber))
                         .fetchOne();
-        log.info("bookOrderInfo:{}", bookOrderInfo.getOrderStatus());
-        log.info("bookOrderInfo:{}", bookOrderInfo.getOrderDetails());
-        log.info("bookOrderInfo:{}", bookOrderInfo.getTotalCost());
-        log.info("bookOrderInfo:{}", bookOrderInfo.getIsCouponUsed());
-        log.info("bookOrderInfo:{}", bookOrderInfo.getOrderStatus());
         bookOrderInfo.updateOrderDetails(orderDetailInfoResponses);
-        log.info("bookOrderInfo:{}", bookOrderInfo.getOrderDetails());
-        log.info("bookOrderInfo:{}", bookOrderInfo.getOrderDetails().get(0).getId());
-        log.info("bookOrderInfo:{}", bookOrderInfo.getOrderDetails().get(0).getCouponId());
 
-        return Optional.ofNullable(bookOrderInfo);
+        return Optional.of(bookOrderInfo);
     }
 
     @Override
     public Optional<BookOrderPaymentInfoRespones> findOrderPayInfo(String orderNumber) {
-        QOrderDetail orderDetail = QOrderDetail.orderDetail;
         BookOrderPaymentInfoRespones bookOrderInfoPayResponse = from(bookOrder)
                 .select(Projections.constructor(
                         BookOrderPaymentInfoRespones.class,
@@ -240,7 +230,6 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
 
     @Override
     public List<BookOrderUserResponse> getUserBookOrderInfos(Long userId) {
-        QOrderDetail orderDetail = QOrderDetail.orderDetail;
         return from(orderDetail)
                 .join(image)
                 .on(image.book.eq(orderDetail.book))

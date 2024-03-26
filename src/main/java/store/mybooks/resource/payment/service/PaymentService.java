@@ -3,6 +3,7 @@ package store.mybooks.resource.payment.service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,7 @@ import store.mybooks.resource.user.repository.UserRepository;
  * -----------------------------------------------------------<br>
  * 3/19/24        minsu11       최초 생성<br>
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
@@ -58,7 +60,9 @@ public class PaymentService {
         }
         BookOrder bookOrder = bookOrderRepository.findByNumber(request.getOrderNumber())
                 .orElseThrow(BookOrderNotExistException::new);
-        User user = userRepository.findById(bookOrder.getUser().getId()).orElseThrow(() -> new UserNotExistException(bookOrder.getUser().getId()));
+        User user = userRepository.findById(
+                        bookOrder.getUser().getId())
+                .orElseThrow(() -> new UserNotExistException(bookOrder.getUser().getId()));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
         LocalDateTime requestedAt = LocalDateTime.parse(request.getRequestedAt(), formatter);
         Payment payment =
@@ -87,8 +91,9 @@ public class PaymentService {
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public PayModifyResponse modifyStatus(String orderNumber, String status) {
-        if (!PaymentStatusEnum.DONE.getEngPaymentStatus().equals(status) &&
-                !PaymentStatusEnum.CANCEL.getEngPaymentStatus().equals(status)) {
+
+        if (!PaymentStatusEnum.DONE.getEngPaymentStatus().equals(status)
+                && !PaymentStatusEnum.CANCELED.getEngPaymentStatus().equals(status)) {
             throw new PaymentAlreadyExistException();
         }
         Payment payment = paymentRepository.findByOrderNumber(orderNumber)
