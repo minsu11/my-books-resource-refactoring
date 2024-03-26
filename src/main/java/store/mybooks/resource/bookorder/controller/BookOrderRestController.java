@@ -8,11 +8,22 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.bookorder.dto.request.BookOrderAdminModifyRequest;
 import store.mybooks.resource.bookorder.dto.request.BookOrderCreateRequest;
 import store.mybooks.resource.bookorder.dto.request.BookOrderRegisterInvoiceRequest;
-import store.mybooks.resource.bookorder.dto.response.*;
+import store.mybooks.resource.bookorder.dto.response.BookOrderCreateResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderInfoPayResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderPaymentInfoRespones;
+import store.mybooks.resource.bookorder.dto.response.BookOrderRegisterInvoiceResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminModifyResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminResponse;
 import store.mybooks.resource.bookorder.service.BookOrderService;
@@ -223,23 +234,5 @@ public class BookOrderRestController {
                 .body(bookOrderService.getOrderInfoPayment(orderNumber));
     }
 
-    /**
-     * methodName : getBookOrderUserPage<br>
-     * author : minsu11<br>
-     * description : 회원의 주문 내역 페이징 조회.
-     * <br> *
-     *
-     * @param pageable 페이징
-     * @param userId   회원 아이디
-     * @return the book order user page
-     */
-    @GetMapping("/page")
-    public ResponseEntity<Page<BookOrderUserResponse>> getBookOrderUserPage(
-            Pageable pageable,
-            @RequestHeader(name = HeaderProperties.USER_ID) Long userId) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(bookOrderService.getUserBookOrderInfo(pageable, userId));
-    }
 
 }

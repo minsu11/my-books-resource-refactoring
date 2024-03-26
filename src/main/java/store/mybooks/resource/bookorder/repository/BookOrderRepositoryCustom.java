@@ -1,6 +1,5 @@
 package store.mybooks.resource.bookorder.repository;
 
-import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +32,6 @@ public interface BookOrderRepositoryCustom {
 
     Optional<BookOrderPaymentInfoRespones> findOrderPayInfo(String orderNumber);
 
-    List<BookOrderUserResponse> getUserBookOrderInfos(Long userId);
 
     Long getUserBookOrderCount(Long bookId);
 

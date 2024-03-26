@@ -228,33 +228,5 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                 .fetchCount();
     }
 
-    @Override
-    public List<BookOrderUserResponse> getUserBookOrderInfos(Long userId) {
-        return from(orderDetail)
-                .join(image)
-                .on(image.book.eq(orderDetail.book))
-                .join(bookOrder)
-                .on(bookOrder.eq(orderDetail.bookOrder))
-                .select(Projections.constructor(
-                        BookOrderUserResponse.class,
-                        bookOrder.orderStatus.id,
-                        bookOrder.deliveryRule.deliveryRuleName.id,
-                        bookOrder.deliveryRule.cost,
-                        bookOrder.date,
-                        bookOrder.invoiceNumber,
-                        bookOrder.receiverName,
-                        bookOrder.receiverAddress,
-                        bookOrder.receiverPhoneNumber,
-                        bookOrder.receiverMessage,
-                        bookOrder.totalCost,
-                        bookOrder.pointCost,
-                        bookOrder.couponCost,
-                        bookOrder.number,
-                        image.path.concat(image.fileName).concat(image.extension)
-
-                )).where(bookOrder.user.id.eq(userId))
-                .fetch();
-    }
-
 
 }

@@ -15,17 +15,23 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import store.mybooks.resource.book.entity.Book;
+import store.mybooks.resource.bookorder.dto.response.BookOrderPaymentInfoRespones;
 import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
 import store.mybooks.resource.bookorder.entity.BookOrder;
 import store.mybooks.resource.bookorder.exception.BookOrderNotExistException;
+import store.mybooks.resource.bookstatus.entity.BookStatus;
 import store.mybooks.resource.category.entity.Category;
 import store.mybooks.resource.coupon.entity.Coupon;
 import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
 import store.mybooks.resource.delivery_rule_name.entity.DeliveryRuleName;
 import store.mybooks.resource.delivery_rule_name.enumulation.DeliveryRuleNameEnum;
 import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
+import store.mybooks.resource.orderdetail.entity.OrderDetail;
+import store.mybooks.resource.orderdetailstatus.entity.OrderDetailStatus;
 import store.mybooks.resource.ordersstatus.entity.OrdersStatus;
 import store.mybooks.resource.ordersstatus.enumulation.OrdersStatusEnum;
+import store.mybooks.resource.publisher.entity.Publisher;
 import store.mybooks.resource.user.entity.User;
 import store.mybooks.resource.user_grade.entity.UserGrade;
 import store.mybooks.resource.user_grade_name.entity.UserGradeName;
@@ -33,6 +39,8 @@ import store.mybooks.resource.user_grade_name.enumeration.UserGradeNameEnum;
 import store.mybooks.resource.user_status.entity.UserStatus;
 import store.mybooks.resource.user_status.enumeration.UserStatusEnum;
 import store.mybooks.resource.usercoupon.entity.UserCoupon;
+import store.mybooks.resource.utils.TimeUtils;
+import store.mybooks.resource.wrap.entity.Wrap;
 
 /**
  * packageName    : store.mybooks.resource.bookorder.repository<br>
@@ -69,6 +77,14 @@ class BookOrderRepositoryTest {
 
     private BookOrder bookOrder;
 
+    private OrderDetail orderDetail1;
+    private OrderDetail orderDetail2;
+
+    private Wrap wrap;
+    private OrderDetailStatus orderDetailStatus;
+
+    private Book book1;
+    private Book book2;
     private final int page = 0;
     private final int size = 2;
 
@@ -128,7 +144,6 @@ class BookOrderRepositoryTest {
 
 
         bookOrder = BookOrder.builder()
-                .id(1L)
                 .deliveryDate(LocalDate.of(2024, 3, 5))
                 .date(LocalDate.of(2024, 3, 3))
                 .receiverName("이순신")
@@ -147,6 +162,85 @@ class BookOrderRepositoryTest {
                 .build();
         bookOrderRepository.save(bookOrder);
 
+        orderDetailStatus = testEntityManager.persist(new OrderDetailStatus(
+                OrdersStatusEnum.ORDERS_COMPLETE.toString()
+        ));
+
+        wrap = testEntityManager.persist(new Wrap());
+
+        Publisher publisher = new Publisher("출판사명");
+        testEntityManager.persist(publisher);
+
+        BookStatus bookStatus = new BookStatus("상태명");
+        testEntityManager.persist(bookStatus);
+
+        book1 = testEntityManager.persist(Book.builder()
+                .bookStatus(bookStatus)
+                .publisher(publisher)
+                .name("도서명")
+                .isbn("1234567890123")
+                .publishDate(LocalDate.of(2024, 1, 1))
+                .page(100)
+                .index("index")
+                .explanation("content")
+                .originalCost(20000)
+                .saleCost(16000)
+                .discountRate(20)
+                .stock(5)
+                .createdDate(TimeUtils.nowDate())
+                .viewCount(1)
+                .isPackaging(true)
+                .build()
+        );
+
+        book2 = testEntityManager.persist(Book.builder()
+                .bookStatus(bookStatus)
+                .publisher(publisher)
+                .name("도서명1")
+                .isbn("1234567890122")
+                .publishDate(LocalDate.of(2024, 1, 1))
+                .page(100)
+                .index("index")
+                .explanation("content")
+                .originalCost(20000)
+                .saleCost(16000)
+                .discountRate(20)
+                .stock(5)
+                .createdDate(TimeUtils.nowDate())
+                .viewCount(1)
+                .isPackaging(true)
+                .build()
+        );
+
+        orderDetail1 = testEntityManager.persist(
+                OrderDetail
+                        .builder()
+                        .amount(1)
+                        .book(book1)
+                        .bookCost(book1.getSaleCost())
+                        .bookOrder(bookOrder)
+                        .createDate(bookOrder.getDate())
+                        .detailStatus(orderDetailStatus)
+                        .isCouponUsed(false)
+                        .userCoupon(userCoupon)
+                        .wrap(wrap)
+                        .build()
+        );
+
+        orderDetail2 = testEntityManager.persist(
+                OrderDetail
+                        .builder()
+                        .amount(1)
+                        .book(book2)
+                        .bookCost(book2.getSaleCost())
+                        .bookOrder(bookOrder)
+                        .createDate(LocalDate.of(2024, 3, 25))
+                        .detailStatus(orderDetailStatus)
+                        .isCouponUsed(false)
+                        .userCoupon(userCoupon)
+                        .wrap(wrap)
+                        .build()
+        );
 
         detailInfoResponse = new OrderDetailInfoResponse(1L, "test book",
                 coupon.getId(), 10000, 1,
@@ -223,6 +317,7 @@ class BookOrderRepositoryTest {
     void givenPageable_whenGetBookOrderPageByOrderStatusId_thenReturnBookOrderAdminResponsePage() {
         Pageable pageable = PageRequest.of(page, size);
         bookOrderRepository.getBookOrderPageByOrderStatusId(pageable);
+
     }
 
     @Test
@@ -242,5 +337,32 @@ class BookOrderRepositoryTest {
     void givenOrderNumber_whenFindBookOrderInfo_thenReturnOptionalBookOrderInfoPayResponse() {
         List<OrderDetailInfoResponse> orderDetailInfoResponses = List.of(detailInfoResponse);
         bookOrderRepository.findBookOrderInfo("testOrderNumber");
+
     }
+
+    @Test
+    @DisplayName("주문 할 때 주문 번호로 결제 정보 조회")
+    void givenOrderNumber_whenFindOrderPayInfo_thenReturnBookOrderPaymentInfoResponse() {
+        BookOrderPaymentInfoRespones expected = new BookOrderPaymentInfoRespones(
+                user.getName(), "test@test.com", user.getPhoneNumber(),
+                bookOrder.getNumber(), ordersStatus.getId()
+        );
+
+        BookOrderPaymentInfoRespones actual = bookOrderRepository.findOrderPayInfo("testOrderNumber")
+                .orElseThrow(BookOrderNotExistException::new);
+
+        Assertions.assertEquals(expected.getOrderNumber(), actual.getOrderNumber());
+        Assertions.assertEquals(expected.getPhoneNumber(), actual.getPhoneNumber());
+        Assertions.assertEquals(expected.getName(), actual.getName());
+        Assertions.assertEquals(expected.getEmail(), actual.getEmail());
+        Assertions.assertEquals(expected.getOrderStatus(), actual.getOrderStatus());
+    }
+
+    @Test
+    @DisplayName("회원의 주문의 건 수 계산")
+    void givenUserId_whenGetUserBookOrderCount_thenReturnLong() {
+        Assertions.assertEquals(1L, bookOrderRepository.getUserBookOrderCount(user.getId()));
+    }
+
+    
 }

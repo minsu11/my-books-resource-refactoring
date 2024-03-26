@@ -4,7 +4,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +12,11 @@ import store.mybooks.resource.bookorder.dto.request.BookOrderAdminModifyRequest;
 import store.mybooks.resource.bookorder.dto.request.BookOrderCreateRequest;
 import store.mybooks.resource.bookorder.dto.request.BookOrderInfoRequest;
 import store.mybooks.resource.bookorder.dto.request.BookOrderRegisterInvoiceRequest;
-import store.mybooks.resource.bookorder.dto.response.*;
+import store.mybooks.resource.bookorder.dto.response.BookOrderCreateResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderInfoPayResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderPaymentInfoRespones;
+import store.mybooks.resource.bookorder.dto.response.BookOrderRegisterInvoiceResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminModifyResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminResponse;
 import store.mybooks.resource.bookorder.entity.BookOrder;
@@ -25,7 +28,6 @@ import store.mybooks.resource.delivery_rule.entity.DeliveryRule;
 import store.mybooks.resource.delivery_rule.exception.DeliveryRuleNotExistsException;
 import store.mybooks.resource.delivery_rule.repository.DeliveryRuleRepository;
 import store.mybooks.resource.orderdetail.dto.response.OrderDetailCreateResponse;
-import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
 import store.mybooks.resource.orderdetail.repository.OrderDetailRepository;
 import store.mybooks.resource.ordersstatus.entity.OrdersStatus;
 import store.mybooks.resource.ordersstatus.enumulation.OrdersStatusEnum;
@@ -255,27 +257,6 @@ public class BookOrderService {
                 .orElseThrow(OrdersStatusNotExistException::new);
         bookOrder.updateBookOrderStatus(ordersStatus);
 
-    }
-
-    /**
-     * methodName : getUserBookOrderInfo<br>
-     * author : minsu11<br>
-     * description : 회원의 주문 정보 목록 조회 페이징.
-     * <br> *
-     *
-     * @param pageable the pageable
-     * @param userId   the user id
-     * @return the user book order info
-     */
-    public Page<BookOrderUserResponse> getUserBookOrderInfo(Pageable pageable, Long userId) {
-        List<BookOrderUserResponse> bookOrderUserList = bookOrderRepository.getUserBookOrderInfos(userId);
-        for (int i = 0; i < bookOrderUserList.size(); i++) {
-            List<OrderDetailInfoResponse> orderDetailInfoResponses =
-                    orderDetailRepository.getOrderDetailList(userId);
-            bookOrderUserList.get(i).createOrderDetailInfos(orderDetailInfoResponses);
-        }
-        Long size = bookOrderRepository.getUserBookOrderCount(userId);
-        return new PageImpl<>(bookOrderUserList, pageable, size);
     }
 
 
