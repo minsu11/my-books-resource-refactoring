@@ -43,8 +43,6 @@ public class UserCreateRequest {
     @PastOrPresent
     private LocalDate birth;
 
-    @NotNull
-    private Boolean isAdmin;
 
 
 }
