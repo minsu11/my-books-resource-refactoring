@@ -162,7 +162,7 @@ class ReviewRepositoryTest {
         assertThat(list.get(0).getBookName()).isEqualTo("name");
         assertThat(list.get(0).getTitle()).isEqualTo("review_title");
         assertThat(list.get(0).getUserName()).isEqualTo("name");
-        assertThat(list.get(0).getReviewImage()).isEqualTo(null);
+        assertThat(list.get(0).getReviewImage()).isNull();
         assertThat(list.get(1).getReviewId()).isEqualTo(reviewId2);
         assertThat(list.get(1).getRate()).isEqualTo(3);
         assertThat(list.get(1).getBookId()).isEqualTo(bookId);
