@@ -12,5 +12,8 @@ package store.mybooks.resource.config;
  * 3/4/24        masiljangajji       최초 생성
  */
 public class HeaderProperties {
+
+    private HeaderProperties(){
+    }
     public static final String USER_ID = "X-User-Id";
 }
