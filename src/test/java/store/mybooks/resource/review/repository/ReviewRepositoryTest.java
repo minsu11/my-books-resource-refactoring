@@ -169,7 +169,7 @@ class ReviewRepositoryTest {
         assertThat(list.get(1).getBookName()).isEqualTo("name");
         assertThat(list.get(1).getTitle()).isEqualTo("review_title_2");
         assertThat(list.get(1).getUserName()).isEqualTo("name");
-        assertThat(list.get(1).getReviewImage()).isEqualTo(null);
+        assertThat(list.get(1).getReviewImage()).isNull();
 
 
     }
@@ -190,7 +190,7 @@ class ReviewRepositoryTest {
         assertThat(reviewGetResponse.getRate()).isEqualTo(5);
         assertThat(reviewGetResponse.getTitle()).isEqualTo("review_title");
         assertThat(reviewGetResponse.getContent()).isEqualTo("review_content");
-        assertThat(reviewGetResponse.getReviewImage()).isEqualTo(null);
+        assertThat(reviewGetResponse.getReviewImage()).isNull();
     }
 
     @Test
@@ -207,14 +207,14 @@ class ReviewRepositoryTest {
         assertThat(list2.get(0).getUserName()).isEqualTo("name");
         assertThat(list2.get(0).getTitle()).isEqualTo("review_title");
         assertThat(list2.get(0).getContent()).isEqualTo("review_content");
-        assertThat(list2.get(0).getReviewImage()).isEqualTo(null);
+        assertThat(list2.get(0).getReviewImage()).isNull();
 
         assertThat(list2.get(1).getReviewId()).isEqualTo(reviewId2);
         assertThat(list2.get(1).getRate()).isEqualTo(3);
         assertThat(list2.get(1).getUserName()).isEqualTo("name");
         assertThat(list2.get(1).getTitle()).isEqualTo("review_title_2");
         assertThat(list2.get(1).getContent()).isEqualTo("review_content_2");
-        assertThat(list2.get(1).getReviewImage()).isEqualTo(null);
+        assertThat(list2.get(1).getReviewImage()).isNull();
     }
     @Test
     @DisplayName("책 아이디로 전체 리뷰 평점평균 및 개수 조회")
