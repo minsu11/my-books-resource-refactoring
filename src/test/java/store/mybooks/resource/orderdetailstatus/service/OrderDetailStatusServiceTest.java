@@ -50,11 +50,9 @@ class OrderDetailStatusServiceTest {
         when(orderDetailStatusRepository.findById(orderDetailStatusId)).thenReturn(Optional.of(new OrderDetailStatus(orderDetailStatusId)));
         when(mapper.mapToOrderDetailStatusResponse(any())).thenReturn(new OrderDetailStatusResponse(orderDetailStatusId));
 
-        OrderDetailStatus orderDetailStatus = orderDetailStatusRepository.findById(orderDetailStatusId).orElseThrow(OrderDetailStatusNotFoundException::new);
-        OrderDetailStatusResponse actual = mapper.mapToOrderDetailStatusResponse(orderDetailStatus);
         OrderDetailStatusResponse expected = new OrderDetailStatusResponse(orderDetailStatusId);
 
-        OrderDetailStatusResponse orderDetailStatus1 =
+        OrderDetailStatusResponse actual =
                 orderDetailStatusService.getOrderDetailStatus(orderDetailStatusId);
         
         assertEquals(expected.getId(), actual.getId());
