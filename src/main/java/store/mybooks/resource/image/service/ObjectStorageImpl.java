@@ -179,8 +179,6 @@ public class ObjectStorageImpl implements ImageService {
     @Override
     public void deleteObject(Image image) {
         String url = image.getPath() + image.getFileName() + image.getExtension();
-        System.out.println("hihihihi");
-        System.out.println(url);
         HttpHeaders headers = new HttpHeaders();
         headers.add(X_AUTH_TOKEN, requestToken());
         HttpEntity<String> requestHttpEntity = new HttpEntity<>(null, headers);
