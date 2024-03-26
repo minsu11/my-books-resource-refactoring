@@ -74,7 +74,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                                 bookOrder.id
                         ))
                         .where(bookOrder.user.id.eq(userId)
-                                .and(bookOrder.orderStatus.id.eq(BookOrderStatusName.ORDER_COMPLETED.toString()).not()))
+                                .and(bookOrder.orderStatus.id.eq(BookOrderStatusName.ORDER_WAIT.toString()).not()))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .orderBy(bookOrder.id.desc())
