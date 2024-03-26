@@ -18,7 +18,9 @@ public enum OrdersStatusEnum {
     DELIVERY("배송 중"),
     DELIVERY_COMPLETE("배송 완료"),
 
-    PAY_COMPLETE("구매 완료");
+    PAY_COMPLETE("구매 완료"),
+    ORDERS_COMPLETE("주문 완료"),
+    ORDER_CANCEL("주문 취소");
 
 
     private final String stauts;

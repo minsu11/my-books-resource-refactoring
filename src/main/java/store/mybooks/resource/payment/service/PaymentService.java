@@ -118,13 +118,4 @@ public class PaymentService {
                 .orElseThrow(PaymentNotExistException::new);
 
     }
-
-    private void changePointStatus(String paymentKey, String status) {
-        Payment payment = paymentRepository.findByOrderNumber(paymentKey)
-                .orElseThrow(PaymentNotExistException::new);
-        payment.update(status);
-
-    }
-
-
 }

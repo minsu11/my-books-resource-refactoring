@@ -20,7 +20,7 @@ import store.mybooks.resource.payment.entity.QPayment;
  * 3/20/24        minsu11       최초 생성<br>
  */
 public class PaymentRepositoryImpl extends QuerydslRepositorySupport implements PaymentRepositoryCustom {
-    private final QPayment payment = QPayment.payment;
+    private static final QPayment payment = QPayment.payment;
 
     public PaymentRepositoryImpl() {
         super(Payment.class);

@@ -2,7 +2,6 @@ package store.mybooks.resource.bookorder.controller;
 
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -33,7 +32,6 @@ import store.mybooks.resource.error.Utils;
  * -----------------------------------------------------------<br>
  * 3/2/24        minsu11       최초 생성<br>
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
@@ -202,9 +200,7 @@ public class BookOrderRestController {
     @GetMapping("/info/pay/{orderNumber}")
     public ResponseEntity<BookOrderInfoPayResponse> getBookOrderInfo(
             @PathVariable String orderNumber) {
-        log.info("주문 번호: {}", orderNumber);
         BookOrderInfoPayResponse response = bookOrderService.getBookInfo(orderNumber);
-        log.debug("결제 처리하고 나오는 결과값: {}", response);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);

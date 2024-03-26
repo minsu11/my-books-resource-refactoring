@@ -108,7 +108,8 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
 
 
         long count = from(bookOrder)
-                .where(bookOrder.user.id.eq(userId))
+                .where(bookOrder.user.id.eq(userId)
+                        .and(bookOrder.orderStatus.id.eq(BookOrderStatusName.ORDER_WAIT.toString()).not()))
                 .fetchCount();
 
         return new PageImpl<>(bookOrderResponseList, pageable, count);
@@ -148,7 +149,6 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
 
     @Override
     public Optional<BookOrderInfoPayResponse> findBookOrderInfo(String orderNumber) {
-        QImageStatus imageStatus = QImageStatus.imageStatus;
         List<OrderDetailInfoResponse> orderDetailInfoResponses =
                 from(orderDetail)
                         .join(image).on(image.book.eq(orderDetail.book))
