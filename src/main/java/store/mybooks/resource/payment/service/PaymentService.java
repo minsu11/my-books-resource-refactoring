@@ -3,6 +3,7 @@ package store.mybooks.resource.payment.service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,7 @@ import store.mybooks.resource.user.repository.UserRepository;
  * -----------------------------------------------------------<br>
  * 3/19/24        minsu11       최초 생성<br>
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
@@ -87,6 +89,12 @@ public class PaymentService {
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public PayModifyResponse modifyStatus(String orderNumber, String status) {
+        log.info("결제 상태:{}", status);
+        log.info("결제 주문:{}", orderNumber);
+        log.info("결제 enum: {}", PaymentStatusEnum.DONE.getEngPaymentStatus());
+        log.info("결제 enum: {}", PaymentStatusEnum.DONE.getKorPaymentStatus());
+        log.info("결제 enum: {}", PaymentStatusEnum.CANCEL.getEngPaymentStatus());
+        log.info("결제 enum: {}", PaymentStatusEnum.CANCEL.getKorPaymentStatus());
         if (!PaymentStatusEnum.DONE.getEngPaymentStatus().equals(status) &&
                 !PaymentStatusEnum.CANCEL.getEngPaymentStatus().equals(status)) {
             throw new PaymentAlreadyExistException();
