@@ -63,7 +63,6 @@ import store.mybooks.resource.user.repository.UserRepository;
  * -----------------------------------------------------------
  * 3/17/24        masiljangajji       최초 생성
  */
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -93,6 +92,25 @@ public class ReviewService {
 
     private final PointRuleRepository pointRuleRepository;
 
+    /**
+     * methodName : createReview
+     * author : masiljangajji
+     * description : 리뷰를 생성함
+     * 리뷰를 작성시 주문상세의 상태를 "구매확정" 으로 변경 후 포인트를 적립함
+     *
+     * @param createRequest 주문 , 주문디테일 아이디 , 제목 본문 별점
+     * @param userId        id
+     * @param image         이미지파일
+     * @return review create response
+     * @throws IOException                        the io exception
+     * @throws OrderDetailNotExistException       주문상세가 존재하지 않는 경우
+     * @throws ReviewAlreadyExistException        해당 주문상세에 대해서 리뷰가 존재하는 경우
+     * @throws OrderDetailStatusNotFoundException 주문상세 상태가 존재하지 않는 경우
+     * @throws BookOrderNotExistException         주문이 존재하지 않는 경우
+     * @throws PointRuleNotExistException         리뷰 포인트 규정이 존재하지 않는 경우
+     * @throws PointRuleNameNotExistException     리뷰 포인트 규정 이름이 존재하지 않는 경우
+     * @throws ImageStatusNotExistException       리뷰 이미지 상태가 존재하지 않는 경우
+     */
     @Transactional
     public ReviewCreateResponse createReview(ReviewCreateRequest createRequest, Long userId,
                                              MultipartFile image)
@@ -156,6 +174,19 @@ public class ReviewService {
         return reviewMapper.toReviewCreateResponse(resultReview);
     }
 
+    /**
+     * methodName : modifyReview
+     * author : masiljangajji
+     * description : 리뷰 수정
+     *
+     * @param userId        id
+     * @param reviewId      id
+     * @param modifyRequest 제목 본문 별점
+     * @param modifyImage   image
+     * @return review modify response
+     * @throws ImageStatusNotExistException 리뷰 이미지 상태가 존재하지 않는 경우
+     * @throws IOException                  the io exception
+     */
     @Transactional
     public ReviewModifyResponse modifyReview(Long userId, Long reviewId, ReviewModifyRequest modifyRequest,
                                              MultipartFile modifyImage)
@@ -175,7 +206,7 @@ public class ReviewService {
             Optional<Image> image = imageService.getReviewImage(reviewId);
 
 
-            image.ifPresent(value -> imageService.deleteObject(value));
+            image.ifPresent(imageService::deleteObject);
 
             imageService.saveImage(imageStatus, review, null, modifyImage);
         }
@@ -183,6 +214,17 @@ public class ReviewService {
         return reviewMapper.toReviewModifyResponse(review);
     }
 
+    /**
+     * methodName : findReview
+     * author : masiljangajji
+     * description : 유저가 작성한 특정 리뷰를 반환
+     *
+     * @param userId   id
+     * @param reviewId id
+     * @return review get response
+     * @throws UserNotExistException   유저가 존재하지 않음
+     * @throws ReviewNotExistException 리뷰가 존재하지 않음
+     */
     public ReviewGetResponse findReview(Long userId, Long reviewId) {
 
         if (!userRepository.existsById(userId)) {
@@ -198,6 +240,16 @@ public class ReviewService {
         return response.get();
     }
 
+    /**
+     * methodName : findReviewByUserId
+     * author : masiljangajji
+     * description : 유저가 작성한 모든 리뷰를 반환
+     *
+     * @param userId   id
+     * @param pageable pageable
+     * @return page
+     * @throws UserNotExistException 유저가 존재하지 않음
+     */
     public Page<ReviewGetResponse> findReviewByUserId(Long userId, Pageable pageable) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotExistException(userId);
@@ -205,6 +257,16 @@ public class ReviewService {
         return reviewRepository.getReviewByUserId(userId, pageable);
     }
 
+    /**
+     * methodName : findReviewByBookId
+     * author : masiljangajji
+     * description : 책의 모든 리뷰를 반환
+     *
+     * @param bookId   id
+     * @param pageable pageable
+     * @return page
+     * @throws BookNotExistException 책이 존재하지 않음
+     */
     public Page<ReviewDetailGetResponse> findReviewByBookId(Long bookId, Pageable pageable) {
         if (!bookRepository.existsById(bookId)) {
             throw new BookNotExistException(bookId);
@@ -212,6 +274,15 @@ public class ReviewService {
         return reviewRepository.getReviewByBookId(bookId, pageable);
     }
 
+    /**
+     * methodName : findReviewRateByBookId
+     * author : masiljangajji
+     * description : 책의 리뷰 별점 및 총 리뷰 개수를 반환
+     *
+     * @param bookId id
+     * @return review rate response
+     * @throws BookNotExistException 책이 존재하지 않음
+     */
     public ReviewRateResponse findReviewRateByBookId(Long bookId) {
 
         if (!bookRepository.existsById(bookId)) {
