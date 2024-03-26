@@ -68,11 +68,11 @@ class UserGradeRepositoryTest {
 
         UserGrade userGrade = userGradeRepository.findByUserGradeNameIdAndIsAvailableIsTrue("일반").get();
 
-        assertEquals(userGrade.getMinCost(),1);
-        assertEquals(userGrade.getMaxCost(),1000);
-        assertEquals(userGrade.getRate(),3);
-        assertEquals(userGrade.getCreatedDate(),localDate);
-        assertEquals(userGrade.getIsAvailable(),true);
+        assertEquals(1,userGrade.getMinCost());
+        assertEquals(1000,userGrade.getMaxCost());
+        assertEquals(3,userGrade.getRate());
+        assertEquals(localDate,userGrade.getCreatedDate());
+        assertEquals(true,userGrade.getIsAvailable());
         assertEquals("일반", userGrade.getUserGradeName().getId());
         assertEquals(true, userGrade.getIsAvailable());
     }

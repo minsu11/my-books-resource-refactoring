@@ -3,7 +3,6 @@ package store.mybooks.resource.user_grade.dto.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
-import org.mapstruct.factory.Mappers;
 import store.mybooks.resource.user_grade.dto.response.UserGradeCreateResponse;
 import store.mybooks.resource.user_grade.entity.UserGrade;
 

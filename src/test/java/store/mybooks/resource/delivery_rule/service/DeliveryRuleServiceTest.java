@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -186,9 +187,9 @@ class DeliveryRuleServiceTest {
     @DisplayName("DeliveryRule 가 없을 경우 예외 테스트")
     void givenNotDeliveryRuleId_whenGetDeliveryRule_thenThrowDeliveryRuleNotFoundException() {
 
-        when(deliveryRuleRepository.findById(deliveryRule.getId())).thenReturn(Optional.empty());
-        assertThrows(DeliveryRuleNotExistsException.class,
-                () -> deliveryRuleService.getDeliveryRule(deliveryRule.getId()));
+        when(deliveryRuleRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
+        Assertions.assertThrows(DeliveryRuleNotExistsException.class,
+                () -> deliveryRuleService.getDeliveryRule(1));
 
         verify(deliveryRuleRepository, times(1)).findById(deliveryRule.getId());
 
@@ -242,10 +243,11 @@ class DeliveryRuleServiceTest {
     @DisplayName("DeliveryRule 약삭제 테스트")
     void givenDeliveryRuleId_whenDeleteDeliveryRule_thenDeleteDeliveryRuleReturnNothing() {
         Integer deliveryRuleId = 1;
+        Integer deleteDeliveryRuleId = 0;
         when(deliveryRuleRepository.findById(deliveryRuleId)).thenReturn(Optional.of(deliveryRule));
-        assertEquals(deliveryRule.getIsAvailable(), 1);
+        assertEquals(deliveryRule.getIsAvailable(), deliveryRuleId);
         deliveryRuleService.deleteDeliveryRule(deliveryRuleId);
-        assertEquals(deliveryRule.getIsAvailable(), 0);
+        assertEquals(deliveryRule.getIsAvailable(), deleteDeliveryRuleId);
     }
 
     @Test
@@ -255,6 +257,6 @@ class DeliveryRuleServiceTest {
         when(deliveryRuleRepository.findById(deliveryRuleId)).thenReturn(Optional.empty());
         assertThrows(DeliveryRuleNotExistsException.class,
                 () -> deliveryRuleService.deleteDeliveryRule(deliveryRuleId));
-        assertEquals(deliveryRule.getIsAvailable(), 1);
+        assertEquals(deliveryRule.getIsAvailable(), deliveryRuleId);
     }
 }

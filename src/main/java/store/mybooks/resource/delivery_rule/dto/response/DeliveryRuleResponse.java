@@ -3,8 +3,6 @@ package store.mybooks.resource.delivery_rule.dto.response;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * packageName    : store.mybooks.resource.delivery_rule.dto
