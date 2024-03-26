@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
 
@@ -22,6 +23,7 @@ import store.mybooks.resource.orderdetail.dto.response.OrderDetailInfoResponse;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class BookOrderInfoPayResponse {
     private String orderStatus;
     private String number;
