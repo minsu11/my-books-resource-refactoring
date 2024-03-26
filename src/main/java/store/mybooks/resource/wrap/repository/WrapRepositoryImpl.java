@@ -34,7 +34,7 @@ public class WrapRepositoryImpl extends QuerydslRepositorySupport implements Wra
     @Override
     public Optional<WrapResponse> findWrapResponseById(Integer id) {
 
-        return Optional.of(from(wrap)
+        return Optional.ofNullable(from(wrap)
                 .select(Projections.constructor(WrapResponse.class,
                         wrap.id,
                         wrap.name,

@@ -635,11 +635,18 @@ class BookOrderRestControllerTest {
     @Test
     @DisplayName("주문 생성 테스트")
     void givenBookOrderCreateRequest_whenCreateOrder_thenReturnBookOrderCreateResponse() throws Exception {
+        BookInfoRequest bookInfoRequest = new BookInfoRequest();
+        ReflectionTestUtils.setField(bookInfoRequest, "bookId", 1L);
+        ReflectionTestUtils.setField(bookInfoRequest, "saleCost", 1000);
+        ReflectionTestUtils.setField(bookInfoRequest, "bookCost", 1000);
+        ReflectionTestUtils.setField(bookInfoRequest, "amount", 1);
+        ReflectionTestUtils.setField(bookInfoRequest, "selectWrapId", 1);
+        ReflectionTestUtils.setField(bookInfoRequest, "selectCouponId", 1L);
         BookOrderCreateRequest request = new BookOrderCreateRequest();
         ReflectionTestUtils.setField(request, "name", "test");
         ReflectionTestUtils.setField(request, "email", "test@test.com");
         ReflectionTestUtils.setField(request, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(request, "bookInfoList", new ArrayList<BookInfoRequest>());
+        ReflectionTestUtils.setField(request, "bookInfoList", List.of(bookInfoRequest));
         ReflectionTestUtils.setField(request, "orderInfo", new BookOrderInfoRequest());
         ReflectionTestUtils.setField(request, "orderNumber", "test");
         ReflectionTestUtils.setField(request, "pointCost", 0);
@@ -671,6 +678,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),

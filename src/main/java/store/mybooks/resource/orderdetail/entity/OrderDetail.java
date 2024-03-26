@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.bookorder.entity.BookOrder;
 import store.mybooks.resource.orderdetailstatus.entity.OrderDetailStatus;
@@ -33,6 +34,7 @@ import store.mybooks.resource.wrap.entity.Wrap;
  * 2/13/24        minsu11       최초 생성
  */
 @Getter
+@Setter
 @Entity
 @Builder
 @Table(name = "order_detail")
