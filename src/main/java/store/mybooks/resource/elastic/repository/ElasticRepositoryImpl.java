@@ -35,10 +35,14 @@ public class ElasticRepositoryImpl implements ElasticRepositoryCustom {
     public Page<BookBriefResponse> search(String query, Pageable pageable) {
         QueryBuilder queryBuilder = QueryBuilders.multiMatchQuery(query)
                 .field("book_name", 100)
-                .field("book_explanation", 10)
-                .field("tag_names", 70)
-                .field("publisher_name", 30)
-                .field("author_names", 50);
+                .field("book_name.ngram", 85)
+                .field("book_name.nori", 90)
+                .field("book_explanation", 40)
+                .field("book_explanation.ngram", 35)
+                .field("book_explanation.nori", 15)
+                .field("tag_names", 75)
+                .field("publisher_name", 40)
+                .field("author_names", 65);
 
         NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder()
                 .withQuery(queryBuilder)
