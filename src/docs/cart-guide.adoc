@@ -27,3 +27,27 @@ include::{snippets}/move-cartData-mysql-to-redis/http-response.adoc[]
 ==== ResponseFields
 
 include::{snippets}/move-cartData-mysql-to-redis/response-fields.adoc[]
+
+=== 장바구니 item 삭제
+
+==== PathParameters
+
+include::{snippets}/cartData-delete/path-parameters.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/cartData-delete/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/cartData-delete/http-response.adoc[]
+
+=== 모든 장바구니 item 삭제
+
+==== HTTP Request
+
+include::{snippets}/cartData-delete-all/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/cartData-delete-all/http-response.adoc[]
