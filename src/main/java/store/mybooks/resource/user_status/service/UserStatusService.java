@@ -26,8 +26,6 @@ public class UserStatusService {
     private final UserStatusRepository userStatusRepository;
 
 
-
-
     /**
      * methodName : findAllUserStatus
      * author : masiljangajji

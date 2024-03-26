@@ -80,7 +80,7 @@ public class UserAddressRestController {
     public ResponseEntity<UserAddressModifyResponse> modifyUserAddress(
             @RequestHeader(name = HeaderProperties.USER_ID) Long userId,
             @PathVariable(name = "addressId") Long addressId,
-            @Valid @RequestBody UserAddressModifyRequest modifyRequest,BindingResult bindingResult) {
+            @Valid @RequestBody UserAddressModifyRequest modifyRequest, BindingResult bindingResult) {
         Utils.validateRequest(bindingResult);
 
         UserAddressModifyResponse modifyResponse =

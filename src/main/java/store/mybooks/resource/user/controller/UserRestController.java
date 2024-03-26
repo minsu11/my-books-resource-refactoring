@@ -64,13 +64,13 @@ public class UserRestController {
     private final PointHistoryService pointHistoryService;
 
 
-
     /**
      * methodName : createUser
      * author : masiljangajji
-     * description : 유저를 생성함
+     * description : 회원가입 처리
      *
-     * @param createRequest request
+     * @param createRequest 유저정보
+     * @param bindingResult result
      * @return response entity
      */
     @PostMapping
@@ -85,6 +85,15 @@ public class UserRestController {
     }
 
 
+    /**
+     * methodName : loginOauthUser
+     * author : masiljangajji
+     * description : 소셜로그인 처리
+     *
+     * @param loginRequest  oauthId
+     * @param bindingResult result
+     * @return response entity
+     */
     @PostMapping("/oauth/login")
     public ResponseEntity<UserLoginResponse> loginOauthUser(
             @Valid @RequestBody UserOauthLoginRequest loginRequest, BindingResult bindingResult) {
@@ -94,9 +103,18 @@ public class UserRestController {
         return new ResponseEntity<>(loginResponse, HttpStatus.OK);
     }
 
+    /**
+     * methodName : createOauthUser
+     * author : masiljangajji
+     * description : 최초 소셜 로그인시 회원가입 처리 (정보제공 동의시)
+     *
+     * @param createRequest 제공된 유저 정보
+     * @param bindingResult result
+     * @return response entity
+     */
     @PostMapping("/oauth")
     public ResponseEntity<UserOauthCreateResponse> createOauthUser(
-            @Valid @RequestBody UserOauthCreateRequest createRequest,BindingResult bindingResult) {
+            @Valid @RequestBody UserOauthCreateRequest createRequest, BindingResult bindingResult) {
 
 
         Utils.validateRequest(bindingResult);
@@ -107,16 +125,25 @@ public class UserRestController {
         return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
     }
 
+    /**
+     * methodName : createAndLoginOauthUser
+     * author : masiljangajji
+     * description : 최초 소셜 로그인시 회원가입처리 (정보제공 비동의)
+     *
+     * @param request       유저에게 추가로 입력받은 정보
+     * @param bindingResult result
+     * @return response entity
+     */
     @PostMapping("/oauth/no-info")
-    public ResponseEntity<UserOauthCreateResponse> createAndLoginOauthUser(@Valid @RequestBody UserOauthRequest request,BindingResult bindingResult){
+    public ResponseEntity<UserOauthCreateResponse> createAndLoginOauthUser(@Valid @RequestBody UserOauthRequest request,
+                                                                           BindingResult bindingResult) {
 
         Utils.validateRequest(bindingResult);
         UserOauthCreateResponse createResponse = userService.createOauthUser(request);
         pointHistoryService.saveSignUpPoint(createResponse.getEmail());
         pointHistoryService.saveOauthLoginPoint(createResponse.getId());
-        return new ResponseEntity<>(createResponse,HttpStatus.CREATED);
+        return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
     }
-
 
 
     /**
@@ -125,7 +152,8 @@ public class UserRestController {
      * description : 유저의 정보를 변경함 (이름,전화번호)
      *
      * @param id            id
-     * @param modifyRequest request
+     * @param modifyRequest 이름 ,전화번호
+     * @param bindingResult result
      * @return response entity
      */
     @PutMapping
@@ -146,7 +174,8 @@ public class UserRestController {
      * description : 유저의 등급을 변경함
      *
      * @param id            id
-     * @param modifyRequest request
+     * @param modifyRequest 등급이름
+     * @param bindingResult result
      * @return response entity
      */
     @PutMapping("/{id}/grade")
@@ -166,7 +195,8 @@ public class UserRestController {
      * description : 유저의 상태를 변경
      *
      * @param id            id
-     * @param modifyRequest request
+     * @param modifyRequest 상태이름
+     * @param bindingResult result
      * @return response entity
      */
     @PutMapping("/{id}/status")
@@ -187,7 +217,8 @@ public class UserRestController {
      * description : 유저의 비밀번호를 변경
      *
      * @param id            id
-     * @param modifyRequest request
+     * @param modifyRequest 비밀번호
+     * @param bindingResult result
      * @return response entity
      */
     @PutMapping("/password")
@@ -249,16 +280,27 @@ public class UserRestController {
         return new ResponseEntity<>(paginationUsr, HttpStatus.OK);
     }
 
+    /**
+     * methodName : verifyUserEmail
+     * author : masiljangajji
+     * description :
+     *
+     * @param email 이메일
+     * @return response entity
+     */
     @GetMapping("/email/verify/{email}")
-    public ResponseEntity<UserEmailCheckResponse> verifyUserEmail(@PathVariable(name="email")String email){
-        return new ResponseEntity<>(userService.verifyUserEmail(new UserEmailRequest(email)),HttpStatus.OK);
+    public ResponseEntity<UserEmailCheckResponse> verifyUserEmail(@PathVariable(name = "email") String email) {
+        return new ResponseEntity<>(userService.verifyUserEmail(new UserEmailRequest(email)), HttpStatus.OK);
     }
 
     /**
      * methodName : loginUser
      * author : masiljangajji
      * description : 유저의 로그인을 처리함
+     * 이메일을 확인후 일치하는 이메일이 존재한다면 암호화된 비밀번호를 front 로 보냄
      *
+     * @param request       이메일
+     * @param bindingResult result
      * @return response entity
      */
     @PostMapping("/verification")
@@ -270,6 +312,16 @@ public class UserRestController {
         return new ResponseEntity<>(userEncryptedPasswordResponse, HttpStatus.OK);
     }
 
+    /**
+     * methodName : completeLoginProcess
+     * author : masiljangajji
+     * description : 로그인 완료를 처리함
+     * 마지막 로그인시간 변경 및 로그인 포인트를 적립
+     *
+     * @param request       이메일
+     * @param bindingResult result
+     * @return response entity
+     */
     @PostMapping("/verification/complete")
     public ResponseEntity<UserLoginResponse> completeLoginProcess(@Valid @RequestBody UserEmailRequest request,
                                                                   BindingResult bindingResult
@@ -280,6 +332,14 @@ public class UserRestController {
         return new ResponseEntity<>(userLoginResponse, HttpStatus.OK);
     }
 
+    /**
+     * methodName : dormancyUserVerification
+     * author : masiljangajji
+     * description : 휴면회원 인증을 처리
+     *
+     * @param id id
+     * @return response entity
+     */
     @PostMapping("/verification/dormancy")
     public ResponseEntity<UserInactiveVerificationResponse> dormancyUserVerification(
             @RequestHeader(name = HeaderProperties.USER_ID) Long id) {
@@ -288,6 +348,17 @@ public class UserRestController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    /**
+     * methodName : lockUserVerification
+     * author : masiljangajji
+     * description : 잠금회원 인증을 처리
+     * 잠금회원의 경우 비밀번호를 변경해야 함
+     *
+     * @param id            id
+     * @param request       변경될 비밀번호
+     * @param bindingResult result
+     * @return response entity
+     */
     @PostMapping("/verification/lock")
     public ResponseEntity<UserInactiveVerificationResponse> lockUserVerification(
             @RequestHeader(name = HeaderProperties.USER_ID) Long id,
@@ -298,9 +369,6 @@ public class UserRestController {
         UserInactiveVerificationResponse response = userService.verifyLockUser(id, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-
-
 
 
 }
