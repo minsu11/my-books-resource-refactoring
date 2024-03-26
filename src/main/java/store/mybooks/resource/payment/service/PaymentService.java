@@ -54,14 +54,14 @@ public class PaymentService {
      * @return the pay create response
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public PayCreateResponse createPayment(PayCreateRequest request) {
+    public PayCreateResponse createPayment(PayCreateRequest request, Long userId) {
         if (paymentRepository.existPaymentByOrderNumber(request.getOrderNumber())) {
             throw new PaymentAlreadyExistException();
         }
         BookOrder bookOrder = bookOrderRepository.findByNumber(request.getOrderNumber())
                 .orElseThrow(BookOrderNotExistException::new);
         User user = userRepository.findById(
-                        bookOrder.getUser().getId())
+                        userId)
                 .orElseThrow(() -> new UserNotExistException(bookOrder.getUser().getId()));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
         LocalDateTime requestedAt = LocalDateTime.parse(request.getRequestedAt(), formatter);
@@ -94,7 +94,7 @@ public class PaymentService {
 
         if (!PaymentStatusEnum.DONE.getEngPaymentStatus().equals(status)
                 && !PaymentStatusEnum.CANCELED.getEngPaymentStatus().equals(status)) {
-            throw new PaymentAlreadyExistException();
+            throw new PaymentNotExistException();
         }
         Payment payment = paymentRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(PaymentNotExistException::new);

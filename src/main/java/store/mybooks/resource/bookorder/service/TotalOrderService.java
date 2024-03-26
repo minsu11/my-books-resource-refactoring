@@ -88,7 +88,7 @@ public class TotalOrderService {
         BookOrderInfoPayResponse bookOrderInfo = bookOrderService.getBookInfo(request.getOrderNumber());
         orderCalculateService.checkBookStock(bookOrderInfo.getOrderDetails());
 
-        PayCreateResponse response = paymentService.createPayment(request);
+        PayCreateResponse response = paymentService.createPayment(request, userId);
         orderCalculateService.calculateBookStock(bookOrderInfo.getOrderDetails(), BookOrderStatusName.ORDER_COMPLETED);
         orderCalculateService.useCouponProcessing(bookOrderInfo);
         orderCalculateService.pointProcessing(bookOrderInfo.getNumber(), bookOrderInfo.getPointCost(), userId, PointRuleNameEnum.USE_POINT);

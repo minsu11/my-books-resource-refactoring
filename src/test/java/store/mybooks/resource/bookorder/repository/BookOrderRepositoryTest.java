@@ -16,8 +16,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import store.mybooks.resource.book.entity.Book;
+import store.mybooks.resource.bookorder.dto.response.BookOrderInfoPayResponse;
 import store.mybooks.resource.bookorder.dto.response.BookOrderPaymentInfoRespones;
 import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
+import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminResponse;
 import store.mybooks.resource.bookorder.entity.BookOrder;
 import store.mybooks.resource.bookorder.exception.BookOrderNotExistException;
 import store.mybooks.resource.bookstatus.entity.BookStatus;
@@ -69,13 +71,15 @@ class BookOrderRepositoryTest {
     private UserStatus userStatus;
     private Category category;
 
-    private OrdersStatus ordersStatus;
+    private OrdersStatus ordersStatus1;
+    private OrdersStatus ordersStatus2;
     private DeliveryRule deliveryRule;
     private DeliveryRuleName deliveryRuleName;
     private UserCoupon userCoupon;
     private Coupon coupon;
 
-    private BookOrder bookOrder;
+    private BookOrder bookOrder1;
+    private BookOrder bookOrder2;
 
     private OrderDetail orderDetail1;
     private OrderDetail orderDetail2;
@@ -107,9 +111,13 @@ class BookOrderRepositoryTest {
         userStatus = testEntityManager.persist(new UserStatus(UserStatusEnum.ACTIVE.toString()));
         user = testEntityManager.persist(new User("test@test.com", 2024, "03-24", "1234", "010-1111-1111", false,
                 "testUserName", userStatus, userGrade, "testOauthId"));
-        ordersStatus = testEntityManager.persist(
+        ordersStatus1 = testEntityManager.persist(
+                new OrdersStatus(OrdersStatusEnum.WAIT.toString())
+        );
+        ordersStatus2 = testEntityManager.persist(
                 new OrdersStatus(OrdersStatusEnum.ORDERS_COMPLETE.toString())
         );
+
 
         deliveryRuleName = testEntityManager.persist(
                 new DeliveryRuleName(DeliveryRuleNameEnum.DELIVERY_FEE.getValue())
@@ -143,7 +151,7 @@ class BookOrderRepositoryTest {
         );
 
 
-        bookOrder = BookOrder.builder()
+        bookOrder1 = BookOrder.builder()
                 .deliveryDate(LocalDate.of(2024, 3, 5))
                 .date(LocalDate.of(2024, 3, 3))
                 .receiverName("이순신")
@@ -156,14 +164,34 @@ class BookOrderRepositoryTest {
                 .isCouponUsed(false)
                 .number("testOrderNumber")
                 .user(user)
-                .orderStatus(ordersStatus)
+                .orderStatus(ordersStatus1)
                 .deliveryRule(deliveryRule)
                 .userCoupon(userCoupon)
                 .build();
-        bookOrderRepository.save(bookOrder);
+
+        bookOrderRepository.save(bookOrder1);
+
+        bookOrder2 = BookOrder.builder()
+                .deliveryDate(LocalDate.of(2024, 3, 5))
+                .date(LocalDate.of(2024, 3, 3))
+                .receiverName("이순신")
+                .receiverAddress("거북선")
+                .receiverPhoneNumber("010-1234-1234")
+                .receiverMessage("광화문 앞에 두세요")
+                .totalCost(99000)
+                .pointCost(1000)
+                .couponCost(0)
+                .isCouponUsed(false)
+                .number("testOrderNumber2")
+                .user(user)
+                .orderStatus(ordersStatus2)
+                .deliveryRule(deliveryRule)
+                .userCoupon(userCoupon)
+                .build();
+        bookOrderRepository.save(bookOrder2);
 
         orderDetailStatus = testEntityManager.persist(new OrderDetailStatus(
-                OrdersStatusEnum.ORDERS_COMPLETE.toString()
+                OrdersStatusEnum.WAIT.toString()
         ));
 
         wrap = testEntityManager.persist(new Wrap());
@@ -218,8 +246,8 @@ class BookOrderRepositoryTest {
                         .amount(1)
                         .book(book1)
                         .bookCost(book1.getSaleCost())
-                        .bookOrder(bookOrder)
-                        .createDate(bookOrder.getDate())
+                        .bookOrder(bookOrder1)
+                        .createDate(bookOrder1.getDate())
                         .detailStatus(orderDetailStatus)
                         .isCouponUsed(false)
                         .userCoupon(userCoupon)
@@ -233,7 +261,7 @@ class BookOrderRepositoryTest {
                         .amount(1)
                         .book(book2)
                         .bookCost(book2.getSaleCost())
-                        .bookOrder(bookOrder)
+                        .bookOrder(bookOrder1)
                         .createDate(LocalDate.of(2024, 3, 25))
                         .detailStatus(orderDetailStatus)
                         .isCouponUsed(false)
@@ -250,17 +278,17 @@ class BookOrderRepositoryTest {
                 OrdersStatusEnum.ORDERS_COMPLETE.name(),
                 DeliveryRuleNameEnum.DELIVERY_FEE.getValue(),
                 deliveryRule.getCost(),
-                bookOrder.getDate(),
-                bookOrder.getInvoiceNumber(),
-                bookOrder.getReceiverName(),
-                bookOrder.getReceiverAddress(),
-                bookOrder.getReceiverPhoneNumber(),
-                bookOrder.getReceiverMessage(),
-                bookOrder.getTotalCost(),
-                bookOrder.getPointCost(),
-                bookOrder.getCouponCost(),
-                bookOrder.getNumber(),
-                bookOrder.getId(),
+                bookOrder2.getDate(),
+                bookOrder2.getInvoiceNumber(),
+                bookOrder2.getReceiverName(),
+                bookOrder2.getReceiverAddress(),
+                bookOrder2.getReceiverPhoneNumber(),
+                bookOrder2.getReceiverMessage(),
+                bookOrder2.getTotalCost(),
+                bookOrder2.getPointCost(),
+                bookOrder2.getCouponCost(),
+                bookOrder2.getNumber(),
+                bookOrder2.getId(),
                 List.of(detailInfoResponse));
 
 
@@ -272,19 +300,19 @@ class BookOrderRepositoryTest {
         BookOrder actual = bookOrderRepository.findByNumber("testOrderNumber")
                 .orElseThrow(BookOrderNotExistException::new);
 
-        Assertions.assertEquals(bookOrder.getNumber(), actual.getNumber());
-        Assertions.assertEquals(bookOrder.getOrderStatus(), actual.getOrderStatus());
-        Assertions.assertEquals(bookOrder.getInvoiceNumber(), actual.getInvoiceNumber());
-        Assertions.assertEquals(bookOrder.getUser(), actual.getUser());
-        Assertions.assertEquals(bookOrder.getDate(), actual.getDate());
-        Assertions.assertEquals(bookOrder.getReceiverAddress(), actual.getReceiverAddress());
-        Assertions.assertEquals(bookOrder.getReceiverMessage(), actual.getReceiverMessage());
-        Assertions.assertEquals(bookOrder.getReceiverName(), actual.getReceiverName());
-        Assertions.assertEquals(bookOrder.getReceiverPhoneNumber(), actual.getReceiverPhoneNumber());
-        Assertions.assertEquals(bookOrder.getIsCouponUsed(), actual.getIsCouponUsed());
-        Assertions.assertEquals(bookOrder.getTotalCost(), actual.getTotalCost());
-        Assertions.assertEquals(bookOrder.getPointCost(), actual.getPointCost());
-        Assertions.assertEquals(bookOrder.getCouponCost(), actual.getCouponCost());
+        Assertions.assertEquals(bookOrder1.getNumber(), actual.getNumber());
+        Assertions.assertEquals(bookOrder1.getOrderStatus(), actual.getOrderStatus());
+        Assertions.assertEquals(bookOrder1.getInvoiceNumber(), actual.getInvoiceNumber());
+        Assertions.assertEquals(bookOrder1.getUser(), actual.getUser());
+        Assertions.assertEquals(bookOrder1.getDate(), actual.getDate());
+        Assertions.assertEquals(bookOrder1.getReceiverAddress(), actual.getReceiverAddress());
+        Assertions.assertEquals(bookOrder1.getReceiverMessage(), actual.getReceiverMessage());
+        Assertions.assertEquals(bookOrder1.getReceiverName(), actual.getReceiverName());
+        Assertions.assertEquals(bookOrder1.getReceiverPhoneNumber(), actual.getReceiverPhoneNumber());
+        Assertions.assertEquals(bookOrder1.getIsCouponUsed(), actual.getIsCouponUsed());
+        Assertions.assertEquals(bookOrder1.getTotalCost(), actual.getTotalCost());
+        Assertions.assertEquals(bookOrder1.getPointCost(), actual.getPointCost());
+        Assertions.assertEquals(bookOrder1.getCouponCost(), actual.getCouponCost());
         assertThat(actual.getOutDate()).isNull();
         assertThat(actual.getInvoiceNumber()).isNull();
         assertThat(actual.getFindPassword()).isNull();
@@ -316,7 +344,17 @@ class BookOrderRepositoryTest {
     @DisplayName("관리자 페이지에서 회원의 주문 내역 조회")
     void givenPageable_whenGetBookOrderPageByOrderStatusId_thenReturnBookOrderAdminResponsePage() {
         Pageable pageable = PageRequest.of(page, size);
-        bookOrderRepository.getBookOrderPageByOrderStatusId(pageable);
+        BookOrderAdminResponse bookOrderAdminResponse = new BookOrderAdminResponse(1L, bookOrder1.getId(), bookOrder1.getOrderStatus().getId(),
+                bookOrder1.getDate(), LocalDate.of(2024, 3, 25), bookOrder1.getInvoiceNumber(), bookOrder1.getNumber());
+
+        List<BookOrderAdminResponse> orderAdminResponses = List.of(bookOrderAdminResponse);
+        Page<BookOrderAdminResponse> expected = new PageImpl<>(orderAdminResponses, pageable, orderAdminResponses.size());
+        Page<BookOrderAdminResponse> actual = bookOrderRepository.getBookOrderPageByOrderStatusId(pageable);
+        Assertions.assertEquals(expected.getContent().get(0).getNumber(), actual.getContent().get(0).getNumber());
+        Assertions.assertEquals(expected.getContent().get(0).getInvoiceNumber(), actual.getContent().get(0).getInvoiceNumber());
+        Assertions.assertEquals(expected.getContent().get(0).getDate(), actual.getContent().get(0).getDate());
+        Assertions.assertEquals(expected.getContent().get(0).getStatusId(), actual.getContent().get(0).getStatusId());
+
 
     }
 
@@ -336,8 +374,16 @@ class BookOrderRepositoryTest {
     @DisplayName("주문번호가 있는 주문 조회")
     void givenOrderNumber_whenFindBookOrderInfo_thenReturnOptionalBookOrderInfoPayResponse() {
         List<OrderDetailInfoResponse> orderDetailInfoResponses = List.of(detailInfoResponse);
-        bookOrderRepository.findBookOrderInfo("testOrderNumber");
-
+        BookOrderInfoPayResponse expected = new BookOrderInfoPayResponse(OrdersStatusEnum.WAIT.toString(),
+                bookOrder1.getNumber(), bookOrder1.getTotalCost(), bookOrder1.getIsCouponUsed(), bookOrder1.getPointCost()
+        );
+        BookOrderInfoPayResponse actual = bookOrderRepository.findBookOrderInfo("testOrderNumber")
+                .orElseThrow(BookOrderNotExistException::new);
+        Assertions.assertEquals(expected.getNumber(), actual.getNumber());
+        Assertions.assertEquals(expected.getOrderStatus(), actual.getOrderStatus());
+        Assertions.assertEquals(expected.getTotalCost(), actual.getTotalCost());
+        Assertions.assertEquals(expected.getPointCost(), actual.getPointCost());
+        Assertions.assertEquals(expected.getIsCouponUsed(), actual.getIsCouponUsed());
     }
 
     @Test
@@ -345,7 +391,7 @@ class BookOrderRepositoryTest {
     void givenOrderNumber_whenFindOrderPayInfo_thenReturnBookOrderPaymentInfoResponse() {
         BookOrderPaymentInfoRespones expected = new BookOrderPaymentInfoRespones(
                 user.getName(), "test@test.com", user.getPhoneNumber(),
-                bookOrder.getNumber(), ordersStatus.getId()
+                bookOrder1.getNumber(), ordersStatus1.getId()
         );
 
         BookOrderPaymentInfoRespones actual = bookOrderRepository.findOrderPayInfo("testOrderNumber")
@@ -361,8 +407,8 @@ class BookOrderRepositoryTest {
     @Test
     @DisplayName("회원의 주문의 건 수 계산")
     void givenUserId_whenGetUserBookOrderCount_thenReturnLong() {
-        Assertions.assertEquals(1L, bookOrderRepository.getUserBookOrderCount(user.getId()));
+        Assertions.assertEquals(2L, bookOrderRepository.getUserBookOrderCount(user.getId()));
     }
 
-    
+
 }
