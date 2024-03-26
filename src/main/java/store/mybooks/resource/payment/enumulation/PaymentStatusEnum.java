@@ -16,7 +16,7 @@ import lombok.Getter;
 @Getter
 public enum PaymentStatusEnum {
     DONE("결제 완료", "DONE"),
-    CANCEL("결제 취소", "CANCEL");
+    CANCELED("결제 취소", "CANCELED");
     private final String korPaymentStatus;
     private final String engPaymentStatus;
 
