@@ -102,7 +102,7 @@ public class UserService {
 
         User user = new User(createRequest.getEmail(), createRequest.getBirth(),
                 createRequest.getPassword(),
-                createRequest.getPhoneNumber(), createRequest.getIsAdmin(), createRequest.getName(), userStatus,
+                createRequest.getPhoneNumber(), false, createRequest.getName(), userStatus,
                 userGrade, null);
 
         userRepository.save(user);

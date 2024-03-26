@@ -124,7 +124,7 @@ class UserRestControllerTest {
     @DisplayName("유저 UserCreateRequest - Validation 실패")
     void givenUserCreateRequest_whenValidationFailure_thenReturnBadRequest() throws Exception {
 
-        UserCreateRequest request = new UserCreateRequest("test", null, "01000000", "asdas", null, false);
+        UserCreateRequest request = new UserCreateRequest("test", null, "01000000", "asdas", null);
 
         String content = objectMapper.writeValueAsString(request);
 
@@ -268,7 +268,7 @@ class UserRestControllerTest {
     void givenUserCreateRequest_whenCallCreateUser_thenReturnUserCreateResponse() throws Exception {
 
         UserCreateRequest userCreateRequest =
-                new UserCreateRequest("test", "test", "test", "test@naver.com", LocalDate.now(), false);
+                new UserCreateRequest("test", "test", "test", "test@naver.com", LocalDate.now());
 
         UserCreateResponse userCreateResponse = new UserCreateResponse("test", "test", 1000, "01-01", "test", "test");
 
@@ -290,8 +290,7 @@ class UserRestControllerTest {
                                 fieldWithPath("password").description("비밀번호"),
                                 fieldWithPath("phoneNumber").description("핸드폰"),
                                 fieldWithPath("email").description("이메일"),
-                                fieldWithPath("birth").description("생일"),
-                                fieldWithPath("isAdmin").description("관리자 유무")
+                                fieldWithPath("birth").description("생일")
                         ),
                         responseFields(
                                 fieldWithPath("name").description("이름"),
