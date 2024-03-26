@@ -75,9 +75,9 @@ public class UserService {
     /**
      * methodName : createUser
      * author : masiljangajji
-     * description : 유저를 생성
+     * description : 회원가입처리
      *
-     * @param createRequest request
+     * @param createRequest 유저의 정보
      * @return user create response
      * @throws UserAlreadyExistException      이미 등록된 이메일인 경우
      * @throws UserStatusNotExistException    유저의 상태가 존재하지 않는 경우
@@ -103,13 +103,23 @@ public class UserService {
         User user = new User(createRequest.getEmail(), createRequest.getBirth(),
                 createRequest.getPassword(),
                 createRequest.getPhoneNumber(), createRequest.getIsAdmin(), createRequest.getName(), userStatus,
-                userGrade,null);
+                userGrade, null);
 
         userRepository.save(user);
 
         return userMapper.toUserCreateResponse(user);
     }
 
+    /**
+     * methodName : createOauthUser
+     * author : masiljangajji
+     * description : 소셜회원 최초 로그인시 회원가입 처리 (정보제공 동의시)
+     *
+     * @param createRequest 제공 동의된 유저 정보
+     * @return user oauth create response
+     * @throws UserStatusNotExistException    유저 상태가 존재하지 않는 경우
+     * @throws UserGradeNameNotExistException 유저 등급이름이 존재하지 않는 경우
+     */
     public UserOauthCreateResponse createOauthUser(UserOauthCreateRequest createRequest) {
 
         String userStatusName = UserStatusEnum.ACTIVE.toString();
@@ -122,12 +132,25 @@ public class UserService {
                 .orElseThrow(() -> new UserGradeNameNotExistException(userGradeName));
 
         User user = new User(createRequest.getEmail(), null, createRequest.getBirthMonthDay(), "dummy",
-                createRequest.getPhoneNumber(), false, createRequest.getName(), userStatus, userGrade,createRequest.getOauthId());
+                createRequest.getPhoneNumber(), false, createRequest.getName(), userStatus, userGrade,
+                createRequest.getOauthId());
 
         User resultUser = userRepository.save(user);
         return userMapper.toUserOauthCreateResponse(resultUser);
     }
 
+    /**
+     * methodName : createOauthUser
+     * author : masiljangajji
+     * description : 소셜회원 최초 로그인시 회원가입 처리 (정보제공 바동의시)
+     * 추가로 입력받은 정보를 이용해 회원가입 처리
+     *
+     * @param request 유저에게 입력받은 정보
+     * @return user oauth create response
+     * @throws UserStatusNotExistException    유저 상태가 존재하지 않는 경우
+     * @throws UserGradeNameNotExistException 유저 등급이름이 존재하지 않는 경우
+     * @throws UserAlreadyExistException      이미 회원가입한 유저인 경우
+     */
     public UserOauthCreateResponse createOauthUser(UserOauthRequest request) {
 
         String userStatusName = UserStatusEnum.ACTIVE.toString();
@@ -145,13 +168,21 @@ public class UserService {
         }
 
         User user = new User(request.getEmail(), request.getBirth(), "dummy", request.getPhoneNumber(), false,
-                request.getName(), userStatus, userGrade,request.getOauthId());
+                request.getName(), userStatus, userGrade, request.getOauthId());
         user.modifyLatestLogin();
         User resultUser = userRepository.save(user);
         return userMapper.toUserOauthCreateResponse(resultUser);
     }
 
 
+    /**
+     * methodName : loginOauthUser
+     * author : masiljangajji
+     * description : 소셜로그인을 처리
+     *
+     * @param loginRequest oauthId
+     * @return user login response
+     */
     public UserLoginResponse loginOauthUser(UserOauthLoginRequest loginRequest) {
 
         Optional<User> user = userRepository.findByOauthId(loginRequest.getOauthId());
@@ -175,7 +206,7 @@ public class UserService {
      * description : 유저의 정보를 변경함 (이름,전화번호)
      *
      * @param id            id
-     * @param modifyRequest request
+     * @param modifyRequest 이름 , 전화번호
      * @return user modify response
      * @throws UserNotExistException 유저가 존재하지 않는 경우
      */
@@ -222,7 +253,7 @@ public class UserService {
      * description : 유저의 상태를 변경함
      *
      * @param id            id
-     * @param modifyRequest request
+     * @param modifyRequest 유저상태 이름
      * @return user status modify response
      * @throws UserNotExistException       유저가 존재하지 않는 경우
      * @throws UserStatusNotExistException 유저상태가 존재하지 않는 경우
@@ -247,7 +278,7 @@ public class UserService {
      * description : 유저의 비밀번호 변경
      *
      * @param id            id
-     * @param modifyRequest request
+     * @param modifyRequest 비밀번호
      * @return user password modify response
      * @throws UserNotExistException 유저가 존재하지 않는 경우
      */
@@ -264,7 +295,7 @@ public class UserService {
     /**
      * methodName : deleteUser
      * author : masiljangajji
-     * description :유저 삭제
+     * description :유저 삭제 (강삭제가 아닌 약삭제로 탈퇴시 상태가 탈퇴로 변경됨)
      *
      * @param id id
      * @return user delete response
@@ -311,14 +342,16 @@ public class UserService {
         return userRepository.queryAllBy(pageable);
     }
 
+
     /**
-     * methodName : loginUser
+     * methodName : completeLoginProcess
      * author : masiljangajji
-     * description : 로그인요청 처리
+     * description : 로그인 완료를 처리함
+     * 로그인 포인트 적립 및 마지막 로그인 시간을 갱신
      *
+     * @param request 이메일
      * @return user login response
-     * @throws UserLoginFailException     로그인 실패하는 경우
-     * @throws UserAlreadyResignException 이미 탈퇴한 유저인 경우
+     * @throws UserLoginFailException 이메일이 존재하지 않는 경우
      */
     public UserLoginResponse completeLoginProcess(UserEmailRequest request) {
 
@@ -332,6 +365,17 @@ public class UserService {
     }
 
 
+    /**
+     * methodName : verifyUserStatusByEmail
+     * author : masiljangajji
+     * description : 로그인 처리를 진행함
+     * 이메일을 이용해 유저가 존재하는지 확인 후 암호화된 비밀번호를 응답
+     *
+     * @param request 이메일
+     * @return user encrypted password response 암호화된 비밀번호
+     * @throws UserAlreadyResignException 탈퇴한 회원인 경우
+     * @throws UserLoginFailException     이메일이 존재하지 않는 경우
+     */
     @Transactional(readOnly = true)
     public UserEncryptedPasswordResponse verifyUserStatusByEmail(UserEmailRequest request) {
 
@@ -347,6 +391,14 @@ public class UserService {
         return new UserEncryptedPasswordResponse(user.getPassword());
     }
 
+    /**
+     * methodName : verifyDormancyUser
+     * author : masiljangajji
+     * description : 휴면회원을 인증함
+     *
+     * @param id id
+     * @return user inactive verification response
+     */
     public UserInactiveVerificationResponse verifyDormancyUser(Long id) {
 
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotExistException(id));
@@ -356,6 +408,16 @@ public class UserService {
         return new UserInactiveVerificationResponse(userStatus.getId());
     }
 
+    /**
+     * methodName : verifyLockUser
+     * author : masiljangajji
+     * description :잠금회원을 인증함
+     * 잠금회원인 경우 비밀번호를 변경해야 함
+     *
+     * @param id      id
+     * @param request 비밀번호
+     * @return user inactive verification response
+     */
     public UserInactiveVerificationResponse verifyLockUser(Long id, UserPasswordModifyRequest request) {
 
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotExistException(id));
@@ -366,7 +428,15 @@ public class UserService {
         return new UserInactiveVerificationResponse(userStatus.getId());
     }
 
-    public UserEmailCheckResponse verifyUserEmail(UserEmailRequest request){
+    /**
+     * methodName : verifyUserEmail
+     * author : masiljangajji
+     * description : 회원가입시 사용 가능한 이메일인지 검증
+     *
+     * @param request 이메일
+     * @return user email check response
+     */
+    public UserEmailCheckResponse verifyUserEmail(UserEmailRequest request) {
         return new UserEmailCheckResponse(!userRepository.existsByEmail(request.getEmail()));
     }
 

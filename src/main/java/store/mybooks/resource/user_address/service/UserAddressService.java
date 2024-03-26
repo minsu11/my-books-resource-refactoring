@@ -47,7 +47,7 @@ public class UserAddressService {
      * description : 유저주소를 생성
      *
      * @param userId        id
-     * @param createRequest request
+     * @param createRequest 별명 , 도로명 주소 , 상세주소
      * @return user address create response
      */
     @Transactional

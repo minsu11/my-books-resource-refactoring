@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Table(name="user_grade_name")
+@Table(name = "user_grade_name")
 public class UserGradeName {
 
 

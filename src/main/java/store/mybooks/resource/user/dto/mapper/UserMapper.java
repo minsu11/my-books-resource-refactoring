@@ -35,6 +35,7 @@ public interface UserMapper {
 
     @Mapping(source = "userGrade.userGradeName.id", target = "userGradeName")
     UserGradeModifyResponse toUserGradeModifyResponse(User user);
+
     @Mapping(source = "userStatus.id", target = "userStatusName")
     UserStatusModifyResponse toUserStatusModifyResponse(User user);
 

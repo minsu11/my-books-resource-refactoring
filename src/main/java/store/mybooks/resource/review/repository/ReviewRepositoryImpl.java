@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import store.mybooks.resource.book.entity.QBook;
 import store.mybooks.resource.image.entity.QImage;
-import store.mybooks.resource.image_status.entity.QImageStatus;
 import store.mybooks.resource.orderdetail.entity.QOrderDetail;
 import store.mybooks.resource.review.dto.response.ReviewDetailGetResponse;
 import store.mybooks.resource.review.dto.response.ReviewGetResponse;
@@ -40,7 +39,6 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
 
     QImage image = QImage.image;
 
-    QImageStatus imageStatus = QImageStatus.imageStatus;
 
     QUser user = QUser.user;
 
@@ -155,7 +153,7 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
                         review.content,
                         image.path.concat(image.fileName).concat(image.extension)
                 ))
-                .groupBy(review,user,image,book)
+                .groupBy(review, user, image, book)
                 .where(review.id.eq(reviewId))
                 .fetchOne();
 
