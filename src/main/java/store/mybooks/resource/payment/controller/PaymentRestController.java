@@ -5,9 +5,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import store.mybooks.resource.bookorder.service.TotalOrderService;
 import store.mybooks.resource.config.HeaderProperties;
+import store.mybooks.resource.error.Utils;
 import store.mybooks.resource.payment.dto.request.PayCancelRequest;
 import store.mybooks.resource.payment.dto.request.PayCreateRequest;
 import store.mybooks.resource.payment.dto.response.PayCreateResponse;
@@ -40,8 +48,10 @@ public class PaymentRestController {
      * @return the response entity
      */
     @PostMapping("/non/user")
-    public ResponseEntity<PayCreateResponse> createPayment(@Valid @RequestBody PayCreateRequest request
+    public ResponseEntity<PayCreateResponse> createPayment(@Valid @RequestBody PayCreateRequest request,
+                                                           BindingResult bindingResult
     ) {
+        Utils.validateRequest(bindingResult);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(totalOrderService.payUser(request, 0L));
@@ -57,8 +67,10 @@ public class PaymentRestController {
      */
     @PostMapping
     public ResponseEntity<PayCreateResponse> pay(@Valid @RequestBody PayCreateRequest request,
-                                                 @RequestHeader(name = HeaderProperties.USER_ID) Long userId) {
+                                                 @RequestHeader(name = HeaderProperties.USER_ID) Long userId,
+                                                 BindingResult bindingResult) {
 
+        Utils.validateRequest(bindingResult);
         PayCreateResponse response = totalOrderService.payUser(request, userId);
 
         return ResponseEntity

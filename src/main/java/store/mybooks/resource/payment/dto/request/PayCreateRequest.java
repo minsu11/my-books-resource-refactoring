@@ -1,5 +1,10 @@
 package store.mybooks.resource.payment.dto.request;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,10 +22,21 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class PayCreateRequest {
+    @Size(max = 20)
+    @NotBlank
     private String orderNumber;
+    @NotBlank
+    @Size(max = 50)
     private String paymentKey;
+    @Size(max = 20)
+    @NotBlank
     private String status;
+    @NotBlank
     private String requestedAt;
+    @Positive
+    @NotNull
+    @Max(Integer.MAX_VALUE - 1)
     private Integer totalAmount;
+    @NotBlank
     private String method;
 }
