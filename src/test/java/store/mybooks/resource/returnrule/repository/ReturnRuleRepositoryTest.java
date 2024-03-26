@@ -83,5 +83,23 @@ class ReturnRuleRepositoryTest {
         Assertions.assertEquals(expected.get(0).getIsAvailable(), actual.get(0).getIsAvailable());
     }
 
+    @Test
+    @DisplayName("반품 규정 명을 이용한 반품 규정 조회 ")
+    void findByReturnRuleNameIdTest() {
+        ReturnRuleName returnRuleName = new ReturnRuleName("test1", LocalDate.of(1212, 12, 12));
+        ReturnRule expected = new ReturnRule(6, 10, 10, true, LocalDate.of(1212, 12, 12), returnRuleName);
+        ReturnRule result = returnRuleRepository.findByReturnRuleNameId(returnRuleName.getId());
+
+        Assertions.assertEquals(expected.getDeliveryFee(), result.getDeliveryFee());
+        Assertions.assertEquals(expected.getTerm(), result.getTerm());
+        Assertions.assertEquals(expected.getIsAvailable(), result.getIsAvailable());
+        Assertions.assertEquals(expected.getCreatedDate(), result.getCreatedDate());
+        Assertions.assertEquals(expected.getReturnRuleName().getId(), result.getReturnRuleName().getId());
+        Assertions.assertEquals(expected.getReturnRuleName().getCreatedDate(),
+                result.getReturnRuleName().getCreatedDate());
+
+
+    }
+
 
 }

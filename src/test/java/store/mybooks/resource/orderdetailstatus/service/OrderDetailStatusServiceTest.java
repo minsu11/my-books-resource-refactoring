@@ -32,7 +32,7 @@ import store.mybooks.resource.orderdetailstatus.repository.OrderDetailStatusRepo
  * 2/20/24        minsu11       최초 생성<br>
  */
 @ExtendWith(MockitoExtension.class)
-class OrderDetailStatusServiceUnitTest {
+class OrderDetailStatusServiceTest {
 
     @InjectMocks
     OrderDetailStatusService orderDetailStatusService;
@@ -54,6 +54,9 @@ class OrderDetailStatusServiceUnitTest {
         OrderDetailStatusResponse actual = mapper.mapToOrderDetailStatusResponse(orderDetailStatus);
         OrderDetailStatusResponse expected = new OrderDetailStatusResponse(orderDetailStatusId);
 
+        OrderDetailStatusResponse orderDetailStatus1 =
+                orderDetailStatusService.getOrderDetailStatus(orderDetailStatusId);
+        
         assertEquals(expected.getId(), actual.getId());
 
         verify(orderDetailStatusRepository, times(1)).findById(anyString());

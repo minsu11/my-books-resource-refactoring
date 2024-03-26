@@ -1,16 +1,21 @@
 package store.mybooks.resource.cart_item.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -106,6 +111,39 @@ class CartItemControllerTest {
                                 fieldWithPath("[].stock").description("상품 재고"),
                                 fieldWithPath("[].sellingStatus").description("상품 판매 상태")
                         )));
+    }
+
+    @Test
+    @DisplayName("모든 카트 아이템 삭제")
+    void cartItemAllDeleteTest() throws Exception {
+        Long userId = 123L;
+        mockMvc.perform(delete("/api/carts/delete")
+                        .header(HeaderProperties.USER_ID, userId))
+                .andExpect(status().isNoContent())
+                .andDo(document("cartData-delete-all",
+                        requestHeaders(
+                                headerWithName("X-USER-ID").description("회원 아이디")
+                        )));
+
+        verify(cartItemService, times(1)).deleteAllItem(any(Long.class));
+    }
+
+    @Test
+    @DisplayName("카트 아이템 삭제")
+    void cartItemDeleteTest() throws Exception {
+        Long userId = 123L;
+        Long id = 1L;
+        mockMvc.perform(delete("/api/carts/delete/{id}", id)
+                        .header(HeaderProperties.USER_ID, userId))
+                .andExpect(status().isNoContent())
+                .andDo(document("cartData-delete",
+                        requestHeaders(
+                                headerWithName("X-USER-ID").description("회원 아이디")
+                        ),
+                        pathParameters(
+                                parameterWithName("id").description("카트 아이템 아이디")
+                        )));
+
     }
 
 
