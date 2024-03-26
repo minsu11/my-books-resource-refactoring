@@ -44,9 +44,11 @@ public class UserGradeService {
      * author : masiljangajji
      * description : 유저 등급을 생성
      * 유저등급은 추가될시 자동으로 기존의 등급을 대체함 (기존 등급은 비활성으로 변경)
+     *
      * @param createRequest request
      * @return user grade create response
      * @throws UserGradeNameNotExistException 유저등급 이름이 존재하지 않는 경우
+     * @throws UserGradeIdNotExistException   유저등급이 존재하지 않는 경우
      */
     @Transactional
     public UserGradeCreateResponse createUserGrade(UserGradeCreateRequest createRequest) {
@@ -78,7 +80,7 @@ public class UserGradeService {
     /**
      * methodName : findAllUserGrade
      * author : masiljangajji
-     * description : 모든 유저 등급을 확인 (비활성 상태 + 활성상태)
+     * description : 활성상태인 유저 등급을 반환
      *
      * @return list
      */
@@ -87,6 +89,13 @@ public class UserGradeService {
         return userGradeRepository.queryAllByIsAvailableIsTrueOrderByMinCost();
     }
 
+    /**
+     * methodName : findAllUserGrade
+     * author : masiljangajji
+     * description : 활성+비활성 사애인 유저 등급을 반환
+     *
+     * @return list
+     */
     public List<UserGradeGetResponse> findAllUserGrade() {
         return userGradeRepository.queryAllByOrderByMinCost();
     }

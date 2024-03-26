@@ -16,6 +16,7 @@ import java.time.LocalDate;
 public interface UserGradeGetResponse {
 
     String getId();
+
     String getUserGradeNameId();
 
     Integer getMinCost();
