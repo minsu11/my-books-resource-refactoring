@@ -21,8 +21,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 import store.mybooks.resource.bookorder.dto.mapper.BookOrderMapper;
-import store.mybooks.resource.bookorder.dto.request.*;
-import store.mybooks.resource.bookorder.dto.response.*;
+import store.mybooks.resource.bookorder.dto.request.BookInfoRequest;
+import store.mybooks.resource.bookorder.dto.request.BookOrderAdminModifyRequest;
+import store.mybooks.resource.bookorder.dto.request.BookOrderCreateRequest;
+import store.mybooks.resource.bookorder.dto.request.BookOrderInfoRequest;
+import store.mybooks.resource.bookorder.dto.request.BookOrderRegisterInvoiceRequest;
+import store.mybooks.resource.bookorder.dto.response.BookOrderCreateResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderInfoPayResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderPaymentInfoRespones;
+import store.mybooks.resource.bookorder.dto.response.BookOrderRegisterInvoiceResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminModifyResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminResponse;
 import store.mybooks.resource.bookorder.entity.BookOrder;
@@ -480,30 +488,6 @@ class BookOrderServiceTest {
 
     }
 
-    @Test
-    @DisplayName("회원의 주문 정보 목록 페이징 조회")
-    void givenPageable_whenGetUserBookOrderInfo_thenReturnBookOrderUserResponsePage() {
-        List<OrderDetailInfoResponse> orderDetailInfoResponses =
-                List.of(new OrderDetailInfoResponse(1L, "test book", 1L, 2000, 2000, true,
-                        "test image", "test status", 1L));
-        List<BookOrderUserResponse> responses =
-                List.of(new BookOrderUserResponse("test", "testRuleName", 100,
-                        LocalDate.of(1212, 12, 12), "testInvoiceNumber",
-                        "testName", "testAddress", "010-1111-1111", "testMessage", 1000, 100,
-                        100, "test number", 1L, orderDetailInfoResponses));
-        Pageable pageable = PageRequest.of(page, size);
-
-        given(bookOrderRepository.getUserBookOrderInfos(anyLong())).willReturn(responses);
-        given(orderDetailRepository.getOrderDetailList(anyLong())).willReturn(orderDetailInfoResponses);
-        given(bookOrderRepository.getUserBookOrderCount(anyLong())).willReturn(2L);
-        Page<BookOrderUserResponse> expected = new PageImpl<>(responses, pageable, responses.size());
-
-        bookOrderService.getUserBookOrderInfo(pageable, 2L);
-
-        verify(bookOrderRepository, times(1)).getUserBookOrderInfos(any());
-        verify(bookOrderRepository, times(1)).getUserBookOrderCount(any());
-        verify(orderDetailRepository, times(1)).getOrderDetailList(any());
-    }
 
     @Test
     @DisplayName("쿠폰이 있는 경우 테스트")

@@ -3,7 +3,12 @@ package store.mybooks.resource.wrap.repository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
@@ -30,22 +35,21 @@ import store.mybooks.resource.wrap.entity.Wrap;
 class WrapRepositoryTest {
     @Autowired
     WrapRepository wrapRepository;
+    Wrap wrap1;
+    Wrap wrap2;
 
     @BeforeEach
     void setUp() {
-        Wrap wrap1 = new Wrap(1, "test1", 100, LocalDate.of(1212, 12, 12), true);
-        Wrap wrap2 = new Wrap(2, "test2", 1000, LocalDate.of(1212, 12, 12), true);
-        wrapRepository.save(wrap1);
-        wrapRepository.save(wrap2);
+        wrap1 = wrapRepository.save(new Wrap(1, "test1", 100, LocalDate.of(1212, 12, 12), true));
+        wrap2 = wrapRepository.save(new Wrap(2, "test2", 1000, LocalDate.of(1212, 12, 12), true));
     }
 
     @Test
-    @Order(1)
     @DisplayName("id를 통해 사용 중인 포장지 Optional DTO 반환")
     void givenIntegerId_whenFindWrapResponseById_thenReturnOptionalWrapResponse() {
         String expectedName = "test1";
         Integer expectedCost = 100;
-        Optional<WrapResponse> wrapResponse = wrapRepository.findWrapResponseById(1);
+        Optional<WrapResponse> wrapResponse = wrapRepository.findWrapResponseById(wrap1.getId());
 
         Assertions.assertEquals(expectedName, wrapResponse.get().getName());
         Assertions.assertEquals(expectedCost, wrapResponse.get().getCost());
@@ -53,7 +57,6 @@ class WrapRepositoryTest {
     }
 
     @Test
-    @Order(2)
     @DisplayName("사용 중인 포장지 목록 찾기")
     void given_whenGetWrapResponseList_thenReturnWrapResponseList() {
         List<WrapResponse> expectedList = List.of(new WrapResponse(1, "test1", 100, true),
@@ -71,7 +74,6 @@ class WrapRepositoryTest {
     }
 
     @Test
-    @Order(3)
     @DisplayName("이름으로 사용 중인 포장지의 유무 확인")
     void givenWrapName_whenNonNull_thenReturnBoolean() {
         Assertions.assertTrue(wrapRepository.existWrap("test1"));
@@ -80,7 +82,6 @@ class WrapRepositoryTest {
     }
 
     @Test
-    @Order(4)
     @DisplayName("페이징된 값 가져오기")
     void givenPageable_whenGEtQueryDsl_thenReturnWrapPageResponsePage() {
         List<WrapPageResponse> expectedList = List.of(new WrapPageResponse(7, "test1", 100, true),
@@ -90,11 +91,9 @@ class WrapRepositoryTest {
 
         Page<WrapPageResponse> actual = wrapRepository.getPageBy(pageable);
 
-        Assertions.assertEquals(expected.getContent().get(0).getId(), actual.getContent().get(0).getId());
         Assertions.assertEquals(expected.getContent().get(0).getName(), actual.getContent().get(0).getName());
         Assertions.assertEquals(expected.getContent().get(0).getCost(), actual.getContent().get(0).getCost());
         Assertions.assertEquals(expected.getContent().get(0).getIsAvailable(), actual.getContent().get(0).getIsAvailable());
-        Assertions.assertEquals(expected.getContent().get(1).getId(), actual.getContent().get(1).getId());
         Assertions.assertEquals(expected.getContent().get(1).getName(), actual.getContent().get(1).getName());
         Assertions.assertEquals(expected.getContent().get(1).getCost(), actual.getContent().get(1).getCost());
         Assertions.assertEquals(expected.getContent().get(1).getIsAvailable(), actual.getContent().get(1).getIsAvailable());

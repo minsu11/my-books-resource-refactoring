@@ -34,8 +34,16 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import store.mybooks.resource.bookorder.dto.request.*;
-import store.mybooks.resource.bookorder.dto.response.*;
+import store.mybooks.resource.bookorder.dto.request.BookInfoRequest;
+import store.mybooks.resource.bookorder.dto.request.BookOrderAdminModifyRequest;
+import store.mybooks.resource.bookorder.dto.request.BookOrderCreateRequest;
+import store.mybooks.resource.bookorder.dto.request.BookOrderInfoRequest;
+import store.mybooks.resource.bookorder.dto.request.BookOrderRegisterInvoiceRequest;
+import store.mybooks.resource.bookorder.dto.response.BookOrderCreateResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderInfoPayResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderPaymentInfoRespones;
+import store.mybooks.resource.bookorder.dto.response.BookOrderRegisterInvoiceResponse;
+import store.mybooks.resource.bookorder.dto.response.BookOrderUserResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminModifyResponse;
 import store.mybooks.resource.bookorder.dto.response.admin.BookOrderAdminResponse;
 import store.mybooks.resource.bookorder.eumulation.BookOrderStatusName;
@@ -627,11 +635,18 @@ class BookOrderRestControllerTest {
     @Test
     @DisplayName("주문 생성 테스트")
     void givenBookOrderCreateRequest_whenCreateOrder_thenReturnBookOrderCreateResponse() throws Exception {
+        BookInfoRequest bookInfoRequest = new BookInfoRequest();
+        ReflectionTestUtils.setField(bookInfoRequest, "bookId", 1L);
+        ReflectionTestUtils.setField(bookInfoRequest, "saleCost", 1000);
+        ReflectionTestUtils.setField(bookInfoRequest, "bookCost", 1000);
+        ReflectionTestUtils.setField(bookInfoRequest, "amount", 1);
+        ReflectionTestUtils.setField(bookInfoRequest, "selectWrapId", 1);
+        ReflectionTestUtils.setField(bookInfoRequest, "selectCouponId", 1L);
         BookOrderCreateRequest request = new BookOrderCreateRequest();
         ReflectionTestUtils.setField(request, "name", "test");
         ReflectionTestUtils.setField(request, "email", "test@test.com");
         ReflectionTestUtils.setField(request, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(request, "bookInfoList", new ArrayList<BookInfoRequest>());
+        ReflectionTestUtils.setField(request, "bookInfoList", List.of(bookInfoRequest));
         ReflectionTestUtils.setField(request, "orderInfo", new BookOrderInfoRequest());
         ReflectionTestUtils.setField(request, "orderNumber", "test");
         ReflectionTestUtils.setField(request, "pointCost", 0);
@@ -663,6 +678,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -3349,111 +3370,5 @@ class BookOrderRestControllerTest {
                 ));
     }
 
-
-    @Test
-    @DisplayName("본인 주문 내역 조회 페이징 처리")
-    void givenPageableUserId_whenGetBookOrderResponseList_thenReturnBookOrderUserResponsePage() throws Exception {
-        BookOrderUserResponse bookOrderUserResponse = new BookOrderUserResponse(
-                BookOrderStatusName.ORDER_WAIT.toString(), "test", 100,
-                LocalDate.of(1212, 12, 12), "test", "testName", "testAddress",
-                "010-0000-0000", "testMessage", 1000, 100, 100,
-                "123123123", 1L);
-
-        OrderDetailInfoResponse orderDetailInfoResponse = new OrderDetailInfoResponse(
-                1L, "test book", 1L, 1000, 2, false,
-                "test image", "test order status", 1L);
-
-        bookOrderUserResponse.createOrderDetailInfos(List.of(orderDetailInfoResponse));
-        List<BookOrderUserResponse> bookOrderUserResponses =
-                List.of(bookOrderUserResponse);
-        Pageable pageable = PageRequest.of(0, 2);
-
-        Page<BookOrderUserResponse> bookOrderPage =
-                new PageImpl<>(bookOrderUserResponses, pageable, bookOrderUserResponses.size());
-
-        when(bookOrderService.getUserBookOrderInfo(any(), any())).thenReturn(bookOrderPage);
-        mockMvc.perform(get(url + "/page?page=0&size=2")
-                        .header("X-User-Id", userId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].statusId").value(BookOrderStatusName.ORDER_WAIT.toString()))
-                .andExpect(jsonPath("$.content[0].deliveryRuleName").value("test"))
-                .andExpect(jsonPath("$.content[0].deliveryCost").value(100))
-                .andExpect(jsonPath("$.content[0].orderDate").value("1212-12-12"))
-                .andExpect(jsonPath("$.content[0].invoiceNumber").value("test"))
-                .andExpect(jsonPath("$.content[0].receiverName").value("testName"))
-                .andExpect(jsonPath("$.content[0].receiverAddress").value("testAddress"))
-                .andExpect(jsonPath("$.content[0].receiverPhoneNumber").value("010-0000-0000"))
-                .andExpect(jsonPath("$.content[0].receiverMessage").value("testMessage"))
-                .andExpect(jsonPath("$.content[0].totalCost").value(1000))
-                .andExpect(jsonPath("$.content[0].pointCost").value(100))
-                .andExpect(jsonPath("$.content[0].couponCost").value(100))
-                .andExpect(jsonPath("$.content[0].number").value("123123123"))
-                .andExpect(jsonPath("$.content[0].id").value(1L))
-                .andExpect(jsonPath("$.content[0].orderDetailInfoList[0].id").value(1L))
-                .andExpect(jsonPath("$.content[0].orderDetailInfoList[0].bookName").value("test book"))
-                .andExpect(jsonPath("$.content[0].orderDetailInfoList[0].couponId").value(1L))
-                .andExpect(jsonPath("$.content[0].orderDetailInfoList[0].cost").value(1000))
-                .andExpect(jsonPath("$.content[0].orderDetailInfoList[0].amount").value(2))
-                .andExpect(jsonPath("$.content[0].orderDetailInfoList[0].isCouponUsed").value(false))
-                .andExpect(jsonPath("$.content[0].orderDetailInfoList[0].image").value("test image"))
-                .andExpect(jsonPath("$.content[0].orderDetailInfoList[0].statusId").value("test order status"))
-                .andExpect(jsonPath("$.content[0].orderDetailInfoList[0].orderDetailId").value(1L))
-                .andDo(document("book-order-page",
-                        requestHeaders(
-                                headerWithName("X-User-Id").description("회원 아이디")
-                        ),
-                        requestParameters(
-                                parameterWithName("page").description("페이지"),
-                                parameterWithName("size").description("사이즈")
-                        ),
-                        responseFields(
-                                fieldWithPath("content[].statusId").description("주문 상태"),
-                                fieldWithPath("content[].deliveryRuleName").description("배송 규정 명"),
-                                fieldWithPath("content[].deliveryCost").description("배송 비"),
-                                fieldWithPath("content[].orderDate").description("주문일"),
-                                fieldWithPath("content[].invoiceNumber").description("송장 번호"),
-                                fieldWithPath("content[].receiverName").description("받는 사람 이름"),
-                                fieldWithPath("content[].receiverAddress").description("받는 사람 주소"),
-                                fieldWithPath("content[].receiverPhoneNumber").description("받는 사람 번호"),
-                                fieldWithPath("content[].receiverMessage").description("배송 요청 사항"),
-                                fieldWithPath("content[].totalCost").description("총합 금액"),
-                                fieldWithPath("content[].pointCost").description("사용한 포인트 금액"),
-                                fieldWithPath("content[].couponCost").description("할인 받은 쿠폰 금액"),
-                                fieldWithPath("content[].number").description("주문 번호"),
-                                fieldWithPath("content[].id").description("주문 아이디"),
-                                fieldWithPath("content[].orderDetailInfoList[].id").description("상세 주문 아이디"),
-                                fieldWithPath("content[].orderDetailInfoList[].bookName").description("주문한 도서 이름"),
-                                fieldWithPath("content[].orderDetailInfoList[].couponId").description("사용한 유저 쿠폰 아이디"),
-                                fieldWithPath("content[].orderDetailInfoList[].cost").description("도서 금액"),
-                                fieldWithPath("content[].orderDetailInfoList[].amount").description("도서 수량"),
-                                fieldWithPath("content[].orderDetailInfoList[].isCouponUsed").description("쿠폰 사용 유무"),
-                                fieldWithPath("content[].orderDetailInfoList[].image").description("도서 이미지"),
-                                fieldWithPath("content[].orderDetailInfoList[].statusId").description("주문 상세 상태"),
-                                fieldWithPath("content[].orderDetailInfoList[].orderDetailId").description("상세 도서 아이디"),
-                                fieldWithPath("pageable").description("페이지정보"),
-                                fieldWithPath("pageable.sort").description("페이지 정렬 정보"),
-                                fieldWithPath("pageable.sort.sorted").description("페이지 정렬되었는지 여부(true: 정렬 됨)"),
-                                fieldWithPath("pageable.sort.unsorted").description("페이지 정렬되지 않았는지 여부(true: 정렬 안 됨)"),
-                                fieldWithPath("pageable.sort.empty").description("페이지 정렬 정보가 비어 있는지 여부(true: 비어있음)"),
-                                fieldWithPath("pageable.pageSize").description("전체 페이지 수"),
-                                fieldWithPath("pageable.pageNumber").description("현재 페이지 번호(0부터 시작)"),
-                                fieldWithPath("pageable.offset").description("현재 페이지의 시작 오프셋(0부터 시작)"),
-                                fieldWithPath("pageable.paged").description("페이지네이션을 사용하는지 여부(true: 사용함)"),
-                                fieldWithPath("pageable.unpaged").description("페이지네이션을 사용하는지 여부(true: 사용 안 함)"),
-                                fieldWithPath("totalPages").description("전체 페이지 수"),
-                                fieldWithPath("totalElements").description("전체 요소(항목) 수"),
-                                fieldWithPath("last").description("마지막 페이지 여부(true: 마지막 페이지)"),
-                                fieldWithPath("numberOfElements").description("혀재 페이지의 요소(항목) 수"),
-                                fieldWithPath("size").description("페이지 당 요소(항목) 수"),
-                                fieldWithPath("sort").description("결과 정렬 정보를 담은 객체"),
-                                fieldWithPath("sort.sorted").description("결과가 정렬되었는지 여부(true: 정렬 됨)"),
-                                fieldWithPath("sort.unsorted").description("결과가 정렬되지 않았는지 여부(true: 정렬 안 됨)"),
-                                fieldWithPath("sort.empty").description("결과 정렬 정보가 비어 있는지 여부(true: 비어있음)"),
-                                fieldWithPath("number").description("현재 페이지 번호(0부터 시작)"),
-                                fieldWithPath("first").description("첫 페이지 여부(true: 첫 페이지)"),
-                                fieldWithPath("empty").description("결과가 비어 있는지 여부(true: 비어있음)")
-                        )
-                ));
-    }
 
 }

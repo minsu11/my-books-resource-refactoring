@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import store.mybooks.resource.pointrule.dto.response.PointRuleResponse;
 import store.mybooks.resource.pointrule.entity.PointRule;
+import store.mybooks.resource.pointrule.exception.PointRuleNotExistException;
 import store.mybooks.resource.pointrulename.entity.PointRuleName;
 import store.mybooks.resource.pointrulename.repository.PointRuleNameRepository;
 
@@ -40,6 +41,8 @@ class PointRuleRepositoryTest {
 
     @Autowired
     private PointRuleNameRepository pointRuleNameRepository;
+    PointRule pointRule1;
+    PointRule pointRule2;
 
     @BeforeEach
     void setUp() {
@@ -48,10 +51,9 @@ class PointRuleRepositoryTest {
         pointRuleNameRepository.save(pointRuleName1);
         pointRuleNameRepository.save(pointRuleName2);
 
-        PointRule pointRule1 = new PointRule(1, pointRuleName1, 10, null, LocalDate.of(1212, 12, 12), true);
-        PointRule pointRule2 = new PointRule(2, pointRuleName2, null, 10, LocalDate.of(1212, 12, 12), false);
-        pointRuleRepository.save(pointRule1);
-        pointRuleRepository.save(pointRule2);
+
+        pointRule1 = pointRuleRepository.save(new PointRule(1, pointRuleName1, 10, null, LocalDate.of(1212, 12, 12), true));
+        pointRule2 = pointRuleRepository.save(new PointRule(2, pointRuleName2, null, 10, LocalDate.of(1212, 12, 12), false));
     }
 
     @Test
@@ -100,5 +102,16 @@ class PointRuleRepositoryTest {
 
     }
 
+    @Test
+    @DisplayName("규정 명으로 포인트 규정 조회")
+    void givenRuleName_whenGetPointRuleByName_thenReturnPointRuleResponse() {
+        PointRuleResponse expected = new PointRuleResponse(1, pointRule1.getPointRuleName().getId(), 10, null);
+
+        PointRuleResponse actual = pointRuleRepository.getPointRuleByName("test1")
+                .orElseThrow(PointRuleNotExistException::new);
+        Assertions.assertEquals(expected.getPointRuleName(), actual.getPointRuleName());
+        Assertions.assertEquals(expected.getRate(), actual.getRate());
+
+    }
 
 }
