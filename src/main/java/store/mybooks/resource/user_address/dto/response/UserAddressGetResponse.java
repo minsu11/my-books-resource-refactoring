@@ -14,6 +14,7 @@ package store.mybooks.resource.user_address.dto.response;
 public interface UserAddressGetResponse {
 
     Long getId();
+
     String getAlias();
 
     String getRoadName();
