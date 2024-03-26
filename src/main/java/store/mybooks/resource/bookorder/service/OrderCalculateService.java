@@ -2,7 +2,6 @@ package store.mybooks.resource.bookorder.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.book.dto.response.BookStockResponse;
@@ -34,7 +33,6 @@ import store.mybooks.resource.usercoupon.service.UserCouponService;
  * -----------------------------------------------------------<br>
  * 3/25/24        minsu11       최초 생성<br>
  */
-@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -65,7 +63,7 @@ public class OrderCalculateService {
     /**
      * methodName : pointProcessing<br>
      * author : minsu11<br>
-     * description : 포인트 사용 처리.
+     * description : 포인트 사용 및 상품 적립 외의 포인트 적립 처리.
      * <br>
      *
      * @param orderNumber the book order
@@ -74,12 +72,15 @@ public class OrderCalculateService {
      */
     public void pointProcessing(String orderNumber, Integer pointValue,
                                 Long userId, PointRuleNameEnum pointRuleNameEnum) {
-        PointRuleNameResponse pointRuleName = new PointRuleNameResponse();
+        PointRuleNameResponse pointRuleName;
         PointHistoryCreateRequest point;
-        if (pointValue > 0 || userId != 0) {
+        if (userId == 0 || pointValue <= 0) {
+            return;
+        } else {
             pointRuleName = pointRuleNameService
                     .getPointRuleName(pointRuleNameEnum.getValue());
         }
+
         if (pointRuleNameEnum == PointRuleNameEnum.USE_POINT) {
             point = new PointHistoryCreateRequest(orderNumber,
                     pointRuleName.getId(), -pointValue);
@@ -111,10 +112,6 @@ public class OrderCalculateService {
 
         PointRuleResponse pointRule = pointRuleService
                 .getPointRuleResponseByName(PointRuleNameEnum.BOOK_POINT.getValue());
-        log.debug("등급 별 포인트: {}", user.getUserGrade().getRate());
-        log.debug("등급: {}", user.getUserGrade());
-        log.debug("포인트 규칙 : {}", pointRule);
-        log.debug("포인트 규칙 비율 : {}", pointRule.getRate());
 
         int earnPoint = ((bookOrder.getTotalCost() * userGradeRate) / 100)
                 + ((bookOrder.getTotalCost() * pointRule.getRate()) / 100);

@@ -108,16 +108,11 @@ public class TotalOrderService {
     public void cancelOrderProcess(PayCancelRequest request, Long userId) {
         BookOrderInfoPayResponse bookOrderInfo = bookOrderService.getBookInfo(request.getOrderNumber());
         bookOrderService.updateBookOrderStatus(bookOrderInfo.getNumber(), BookOrderStatusName.ORDER_CANCEL);
-
         orderCalculateService.calculateBookStock(bookOrderInfo.getOrderDetails(), BookOrderStatusName.ORDER_CANCEL);
-
-
         int usedPoint = pointHistoryService.getUsedPointOrder(request.getOrderNumber());
         int total = request.getTotalAmount();
         int result = total - usedPoint;
-        // 결제 상태 변경
         paymentService.modifyStatus(request.getOrderNumber(), request.getStatus());
-        // 총합 포인트 처리
         orderCalculateService.pointProcessing(request.getOrderNumber(), result, userId, PointRuleNameEnum.RETURN_POINT);
     }
 
