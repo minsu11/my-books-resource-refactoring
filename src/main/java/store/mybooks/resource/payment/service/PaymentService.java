@@ -60,7 +60,9 @@ public class PaymentService {
         }
         BookOrder bookOrder = bookOrderRepository.findByNumber(request.getOrderNumber())
                 .orElseThrow(BookOrderNotExistException::new);
-        User user = userRepository.findById(bookOrder.getUser().getId()).orElseThrow(() -> new UserNotExistException(bookOrder.getUser().getId()));
+        User user = userRepository.findById(
+                        bookOrder.getUser().getId())
+                .orElseThrow(() -> new UserNotExistException(bookOrder.getUser().getId()));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
         LocalDateTime requestedAt = LocalDateTime.parse(request.getRequestedAt(), formatter);
         Payment payment =
@@ -89,14 +91,9 @@ public class PaymentService {
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public PayModifyResponse modifyStatus(String orderNumber, String status) {
-        log.info("결제 상태:{}", status);
-        log.info("결제 주문:{}", orderNumber);
-        log.info("결제 enum: {}", PaymentStatusEnum.DONE.getEngPaymentStatus());
-        log.info("결제 enum: {}", PaymentStatusEnum.DONE.getKorPaymentStatus());
-        log.info("결제 enum: {}", PaymentStatusEnum.CANCEL.getEngPaymentStatus());
-        log.info("결제 enum: {}", PaymentStatusEnum.CANCEL.getKorPaymentStatus());
-        if (!PaymentStatusEnum.DONE.getEngPaymentStatus().equals(status) &&
-                !PaymentStatusEnum.CANCEL.getEngPaymentStatus().equals(status)) {
+
+        if (!PaymentStatusEnum.DONE.getEngPaymentStatus().equals(status)
+                && !PaymentStatusEnum.CANCELED.getEngPaymentStatus().equals(status)) {
             throw new PaymentAlreadyExistException();
         }
         Payment payment = paymentRepository.findByOrderNumber(orderNumber)
