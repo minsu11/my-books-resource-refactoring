@@ -184,7 +184,7 @@ class BookOrderRestControllerTest {
 
     @Test
     @DisplayName("관리자 주문 조회 페이징")
-    public void givenPageable_whenGetBookOrderAdminResponseList_thenReturnBookOrderAdminResponseList() throws Exception {
+    void givenPageable_whenGetBookOrderAdminResponseList_thenReturnBookOrderAdminResponseList() throws Exception {
         BookOrderAdminResponse bookOrderAdminResponse = new BookOrderAdminResponse(1L, 1L, "test", LocalDate.of(1212, 12, 12),
                 LocalDate.of(1212, 12, 12), "test invoice number", "test order number");
 
@@ -247,7 +247,7 @@ class BookOrderRestControllerTest {
 
     @Test
     @DisplayName("관리자 페이지에서 주문 상태 변경")
-    public void givenBookOrderAdminModifyRequest_whenModifyBookOrderAdminStatus_thenReturnBookOrderAdminModifyResponse() throws Exception {
+    void givenBookOrderAdminModifyRequest_whenModifyBookOrderAdminStatus_thenReturnBookOrderAdminModifyResponse() throws Exception {
         BookOrderAdminModifyRequest request = new BookOrderAdminModifyRequest();
         BookOrderAdminModifyResponse bookOrderAdminModifyResponse = new BookOrderAdminModifyResponse(1L, "test", LocalDate.of(1212, 12, 12));
 
