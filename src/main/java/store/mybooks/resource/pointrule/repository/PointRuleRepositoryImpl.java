@@ -42,6 +42,7 @@ public class PointRuleRepositoryImpl extends QuerydslRepositorySupport implement
                         pointRule.cost))
                 .where(pointRule.isAvailable.eq(true)
                         .and(pointRule.id.eq(id)))
+
                 .fetchOne());
     }
 
@@ -96,6 +97,7 @@ public class PointRuleRepositoryImpl extends QuerydslRepositorySupport implement
                         .where(pointRule.isAvailable.eq(true))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
+                        .orderBy(pointRule.id.desc())
                         .fetch();
         long total = from(pointRule)
                 .where(pointRule.isAvailable.eq(true))

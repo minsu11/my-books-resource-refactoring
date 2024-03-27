@@ -6,20 +6,19 @@ import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import store.mybooks.resource.pointrule.dto.response.PointRuleResponse;
 import store.mybooks.resource.pointrule.entity.PointRule;
 import store.mybooks.resource.pointrule.exception.PointRuleNotExistException;
 import store.mybooks.resource.pointrulename.entity.PointRuleName;
-import store.mybooks.resource.pointrulename.repository.PointRuleNameRepository;
 
 /**
  * packageName    : store.mybooks.resource.point_rule.repository<br>
@@ -34,23 +33,21 @@ import store.mybooks.resource.pointrulename.repository.PointRuleNameRepository;
  */
 @DataJpaTest
 @TestMethodOrder(OrderAnnotation.class)
-@Disabled
 class PointRuleRepositoryTest {
     @Autowired
     private PointRuleRepository pointRuleRepository;
-
     @Autowired
-    private PointRuleNameRepository pointRuleNameRepository;
+    TestEntityManager testEntityManager;
+
     PointRule pointRule1;
     PointRule pointRule2;
+    PointRuleName pointRuleName1;
+    PointRuleName pointRuleName2;
 
     @BeforeEach
     void setUp() {
-        PointRuleName pointRuleName1 = new PointRuleName("test1");
-        PointRuleName pointRuleName2 = new PointRuleName("test2");
-        pointRuleNameRepository.save(pointRuleName1);
-        pointRuleNameRepository.save(pointRuleName2);
-
+        pointRuleName1 = testEntityManager.persist(new PointRuleName("test1"));
+        pointRuleName2 = testEntityManager.persist(new PointRuleName("test2"));
 
         pointRule1 = pointRuleRepository.save(new PointRule(1, pointRuleName1, 10, null, LocalDate.of(1212, 12, 12), true));
         pointRule2 = pointRuleRepository.save(new PointRule(2, pointRuleName2, null, 10, LocalDate.of(1212, 12, 12), false));
@@ -60,11 +57,11 @@ class PointRuleRepositoryTest {
     @Order(1)
     @DisplayName("id에 맞는 포인트 규정 조회")
     void givenId_whenGetPointRuleById_thenReturnPointRuleResponseOptional() {
-        PointRuleResponse actual = pointRuleRepository.getPointRuleById(1).orElse(null);
+        PointRuleResponse actual = pointRuleRepository.getPointRuleById(pointRule1.getId()).orElse(null);
         assert actual != null;
-        Assertions.assertEquals(1, actual.getId());
+        Assertions.assertEquals(pointRule1.getId(), actual.getId());
         Assertions.assertEquals("test1", actual.getPointRuleName());
-        Assertions.assertEquals(10, actual.getRate());
+        Assertions.assertEquals(pointRule1.getRate(), actual.getRate());
 
     }
 
