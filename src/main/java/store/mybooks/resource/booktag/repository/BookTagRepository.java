@@ -33,4 +33,6 @@ public interface BookTagRepository extends JpaRepository<BookTag, BookTag.Pk> {
      * @param bookId Long
      */
     void deleteByPk_BookId(Long bookId);
+
+    void deleteByPk_TagId(Integer tagId);
 }
