@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import store.mybooks.resource.book.entity.Book;
 import store.mybooks.resource.cart.entity.Cart;
 
@@ -30,6 +31,7 @@ import store.mybooks.resource.cart.entity.Cart;
 @NoArgsConstructor
 @Getter
 @Entity
+@ToString
 @Table(name = "cart_detail")
 public class CartItem {
 

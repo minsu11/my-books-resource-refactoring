@@ -16,7 +16,4 @@ public class ReturnRuleNotExistException extends RuntimeException {
         super("반품 규정이 존재하지 않음");
     }
 
-    public ReturnRuleNotExistException(String message) {
-        super(message);
-    }
 }
