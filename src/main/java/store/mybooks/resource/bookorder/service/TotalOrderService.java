@@ -2,6 +2,7 @@ package store.mybooks.resource.bookorder.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.bookorder.dto.request.BookInfoRequest;
@@ -29,6 +30,7 @@ import store.mybooks.resource.pointrulename.enumulation.PointRuleNameEnum;
  * -----------------------------------------------------------<br>
  * 3/16/24        minsu11       최초 생성<br>
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TotalOrderService {
@@ -97,7 +99,10 @@ public class TotalOrderService {
         orderCalculateService.calculateBookStock(bookOrderInfo.getOrderDetails(), BookOrderStatusName.ORDER_CANCEL);
         int usedPoint = pointHistoryService.getUsedPointOrder(request.getOrderNumber());
         int total = request.getTotalAmount();
+        log.debug("사용한 포인트: {}", usedPoint);
+        log.debug("총합 값: {}", total);
         int result = total - usedPoint;
+        log.debug("결과값 : {}", total);
         paymentService.modifyStatus(request.getOrderNumber(), request.getStatus());
         orderCalculateService.pointProcessing(request.getOrderNumber(), result, userId, PointRuleNameEnum.RETURN_POINT);
     }
