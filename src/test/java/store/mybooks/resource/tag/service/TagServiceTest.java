@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import store.mybooks.resource.booktag.repository.BookTagRepository;
 import store.mybooks.resource.tag.dto.request.TagCreateRequest;
 import store.mybooks.resource.tag.dto.request.TagModifyRequest;
 import store.mybooks.resource.tag.dto.response.TagCreateResponse;
@@ -48,6 +50,9 @@ import store.mybooks.resource.tag.repository.TagRepository;
 class TagServiceTest {
     @Mock
     TagRepository tagRepository;
+
+    @Mock
+    BookTagRepository bookTagRepository;
 
     @Mock
     TagMapper tagMapper;
@@ -195,6 +200,7 @@ class TagServiceTest {
 
         when(tagRepository.findById(anyInt())).thenReturn(Optional.of(tag));
         when(tagMapper.deleteResponse(any())).thenReturn(tagDeleteResponse);
+        doNothing().when(bookTagRepository).deleteByPk_TagId(anyInt());
 
         TagDeleteResponse actualResponse = tagService.deleteTag(1);
 
