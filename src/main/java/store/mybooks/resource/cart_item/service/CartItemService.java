@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,7 @@ import store.mybooks.resource.user.repository.UserRepository;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class CartItemService {
     private final CartItemRepository cartItemRepository;
     private final RedisTemplate<String, CartDetail> redisTemplate;
@@ -61,17 +63,24 @@ public class CartItemService {
     }
 
     public List<CartDetail> registerMysqlToRedis(Long userId, CartUserRedisKeyNameRequest cartUserRedisKeyNameRequest) {
+        log.debug("registerMysqlToRedis 메서드에 들어왔습니다");
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotExistException(userId));
+        log.debug("user가 있나 봅니다.");
         Optional<Cart> optionalCart = cartRepository.findCartByUserId(user.getId());
         if (optionalCart.isEmpty()) {
+            log.debug("cart가 비어있습니다.");
             return new ArrayList<>();
         }
+        log.debug("cart가 있나봅니다.");
         Cart userCart = optionalCart.get();
         List<CartItem> cartItemList = cartItemRepository.findCartItemsByCart_Id(userCart.getId());
+        log.debug("cartItemList 입니다:  {}", cartItemList);
         if (cartItemList.isEmpty()) {
+            log.debug("cartItemList 가 비어있습니다.");
             return new ArrayList<>();
         }
+        log.debug("cartItemList 입니다 : {}", cartItemList);
         redisTemplate.delete(cartUserRedisKeyNameRequest.getCartKey());
         List<CartDetail> cartDetailList = new ArrayList<>();
 
@@ -91,6 +100,8 @@ public class CartItemService {
                     cartUserRedisKeyNameRequest.getCartKey(), cartDetail
             );
         }
+        log.debug("최종 입니다");
+        log.debug("cartDetailList 입니다 {}", cartDetailList);
         stringRedisTemplate.expire(getExpiredKey(cartUserRedisKeyNameRequest.getCartKey()), 179, TimeUnit.MINUTES);
         redisTemplate.expire(cartUserRedisKeyNameRequest.getCartKey(), 180, TimeUnit.MINUTES);
 

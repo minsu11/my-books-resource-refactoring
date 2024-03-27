@@ -2,6 +2,7 @@ package store.mybooks.resource.cart_item.controller;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,6 +31,7 @@ import store.mybooks.resource.config.HeaderProperties;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/carts")
+@Slf4j
 public class CartItemController {
 
     private final CartItemService cartItemService;
@@ -48,7 +50,10 @@ public class CartItemController {
     public ResponseEntity<List<CartDetail>> moveDataMysqlToRedis(
             @RequestHeader(name = HeaderProperties.USER_ID) Long userId,
             @RequestBody CartUserRedisKeyNameRequest cartUserRedisKeyNameRequest) {
+        log.debug("moveDataMysqlToRedis controller 들어왔습니다.");
         List<CartDetail> cartDetailList = cartItemService.registerMysqlToRedis(userId, cartUserRedisKeyNameRequest);
+        log.debug("registerMysqlToRedis service 빠져나왔습니다.");
+        log.debug("cartDetailList는 {}", cartDetailList);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(cartDetailList);

@@ -3,6 +3,7 @@ package store.mybooks.front.cart.domain;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * packageName    : store.mybooks.front.cart.domain <br/>
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class CartDetail {
     private Long bookId;
     private int cartDetailAmount;
