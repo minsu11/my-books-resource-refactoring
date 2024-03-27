@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import store.mybooks.resource.booktag.repository.BookTagRepository;
 import store.mybooks.resource.tag.dto.request.TagCreateRequest;
 import store.mybooks.resource.tag.dto.request.TagModifyRequest;
 import store.mybooks.resource.tag.dto.response.TagCreateResponse;
@@ -35,6 +36,7 @@ import store.mybooks.resource.tag.repository.TagRepository;
 public class TagService {
     private final TagRepository tagRepository;
     private final TagMapper tagMapper;
+    private final BookTagRepository bookTagRepository;
 
     /**
      * methodName : getTag <br>
@@ -112,7 +114,7 @@ public class TagService {
      */
     public TagDeleteResponse deleteTag(int id) {
         Tag tag = tagRepository.findById(id).orElseThrow(() -> new TagNotExistsException(id));
-
+        bookTagRepository.deleteByPk_TagId(id);
         tagRepository.deleteById(id);
 
         return tagMapper.deleteResponse(tag);
