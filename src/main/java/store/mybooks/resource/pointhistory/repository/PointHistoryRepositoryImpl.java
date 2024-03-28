@@ -58,6 +58,7 @@ public class PointHistoryRepositoryImpl extends QuerydslRepositorySupport implem
                         .where(pointHistory.user.id.eq(userId))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
+                        .orderBy(pointHistory.id.desc())
                         .fetch();
 
         long total = from(pointHistory)

@@ -106,6 +106,4 @@ public class TotalOrderService {
         paymentService.modifyStatus(request.getOrderNumber(), request.getStatus());
         orderCalculateService.pointProcessing(request.getOrderNumber(), result, userId, PointRuleNameEnum.RETURN_POINT);
     }
-
-
 }
