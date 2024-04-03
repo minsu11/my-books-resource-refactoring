@@ -9,3 +9,224 @@
 :sectanchors:
 
 == 포장 API
+
+=== id에 맞는 포장지 조회
+
+===== 요청
+
+include::{snippets}/wrap-find-success/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/wrap-find-success/path-parameters.adoc[]
+
+===== 응답
+
+include::{snippets}/wrap-find-success/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/wrap-find-success/response-fields.adoc[]
+
+=== 포장지 page 조회
+
+===== 요청
+
+include::{snippets}/wrap-page-find-success/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/wrap-page-find-success/request-parameters.adoc[]
+
+===== 응답
+
+include::{snippets}/wrap-page-find-success/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/wrap-page-find-success/response-fields.adoc[]
+
+=== 전체 포장지 조회
+
+===== 요청
+
+include::{snippets}/wrap-list-find-success/http-request.adoc[]
+
+===== 응답
+
+include::{snippets}/wrap-list-find-success/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/wrap-list-find-success/response-fields.adoc[]
+
+=== 포장지 등록
+
+===== 요청
+
+include::{snippets}/wrap-create-success/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/wrap-create-success/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/wrap-create-success/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/wrap-create-success/response-fields.adoc[]
+
+=== 포장지 등록 실패
+
+==== 이름 빈 값
+
+===== 요청
+
+include::{snippets}/wrap-create-name-empty-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/wrap-create-name-empty-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/wrap-create-name-empty-validation/http-response.adoc[]
+
+==== 이름 최대 글자수 초과
+
+===== 요청
+
+include::{snippets}/wrap-create-name-max-size-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/wrap-create-name-max-size-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/wrap-create-name-max-size-validation/http-response.adoc[]
+
+==== 가격이 음수
+
+===== 요청
+
+include::{snippets}/wrap-create-cost-negative-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/wrap-create-cost-negative-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/wrap-create-cost-negative-validation/http-response.adoc[]
+
+==== 가격 최댓 값 초과
+
+===== 요청
+
+include::{snippets}/wrap-cost-max-value-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/wrap-cost-max-value-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/wrap-cost-max-value-validation/http-response.adoc[]
+
+=== 포장지 수정
+
+===== 요청
+
+include::{snippets}/wrap-modify-success/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/wrap-modify-success/request-fields.adoc[]
+include::{snippets}/wrap-modify-success/path-parameters.adoc[]
+
+===== 응답
+
+include::{snippets}/wrap-modify-success/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/wrap-modify-success/response-fields.adoc[]
+
+=== 포장지 수정 실패
+
+==== 이름 빈 값
+
+===== 요청
+
+include::{snippets}/wrap-modify-name-empty-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/wrap-modify-name-empty-validation/request-fields.adoc[]
+include::{snippets}/wrap-modify-name-empty-validation/path-parameters.adoc[]
+
+===== 응답
+
+include::{snippets}/wrap-modify-name-empty-validation/http-response.adoc[]
+
+==== 이름 글자 수 최대 길이 초과
+
+===== 요청
+
+include::{snippets}/wrap-modify-name-max-over-size-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/wrap-modify-name-max-over-size-validation/request-fields.adoc[]
+include::{snippets}/wrap-modify-name-max-over-size-validation/path-parameters.adoc[]
+
+===== 응답
+
+include::{snippets}/wrap-modify-name-max-over-size-validation/http-response.adoc[]
+
+==== 가격이 음수
+
+===== 요청
+
+include::{snippets}/wrap-modify-cost-negative-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/wrap-modify-cost-negative-validation/request-fields.adoc[]
+include::{snippets}/wrap-modify-cost-negative-validation/path-parameters.adoc[]
+
+===== 응답
+
+include::{snippets}/wrap-modify-cost-negative-validation/http-response.adoc[]
+
+==== 가격이 최댓 값 초과
+
+===== 요청
+
+include::{snippets}/wrap-modify-cost-max-value-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/wrap-modify-cost-max-value-validation/request-fields.adoc[]
+include::{snippets}/wrap-modify-cost-max-value-validation/path-parameters.adoc[]
+
+===== 응답
+
+include::{snippets}/wrap-modify-cost-max-value-validation/http-response.adoc[]
+
+=== 포장지 삭제
+
+===== 요청
+
+include::{snippets}/wrap-delete-success/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/wrap-delete-success/path-parameters.adoc[]
+
+===== 응답
+
+include::{snippets}/wrap-delete-success/http-response.adoc[]

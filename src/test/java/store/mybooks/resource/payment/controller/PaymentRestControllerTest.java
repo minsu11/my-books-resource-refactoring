@@ -129,7 +129,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(orderNullRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-id-null-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호가 null"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키"),
@@ -157,7 +157,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(orderNumberEmptyRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-orderNumber-empty-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호가 빈값"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키"),
@@ -174,7 +174,7 @@ class PaymentRestControllerTest {
     @DisplayName("비회원 결제 처리 유효성 실패 검사(주문 번호 공백)")
     void givenPayCreateRequestOrderNumberBlank_whenCreatePayment() throws Exception {
         PayCreateRequest orderNumberBlankRequest = new PayCreateRequest();
-        ReflectionTestUtils.setField(orderNumberBlankRequest, "orderNumber", "");
+        ReflectionTestUtils.setField(orderNumberBlankRequest, "orderNumber", " ");
         ReflectionTestUtils.setField(orderNumberBlankRequest, "paymentKey", "toss payment key");
         ReflectionTestUtils.setField(orderNumberBlankRequest, "status", "test status");
         ReflectionTestUtils.setField(orderNumberBlankRequest, "requestedAt", "2022-01-03");
@@ -186,7 +186,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(orderNumberBlankRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-orderNumber-blank-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호가 공백"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키"),
@@ -214,7 +214,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(orderNumberMaxOverSizeRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-orderNumber-max-size-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호가 20자리 넘어감"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키"),
@@ -242,7 +242,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(tossPaymentKeyNullRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-toss-null-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키가 null"),
@@ -270,7 +270,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(tossPaymentKeyEmptyRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-toss-empty-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키가 빈값"),
@@ -298,7 +298,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(tossPaymentKeyBlankRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-toss-blank-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키가 공백"),
@@ -328,7 +328,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(tossPaymentKeyMaxOverSizeRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-toss-max-over-size-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키가 50자리 넘어감"),
@@ -356,7 +356,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(statusNullRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-status-null-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키"),
@@ -384,7 +384,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(statusBlankRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-status-blank-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키"),
@@ -412,7 +412,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(statusEmptyRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-status-empty-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키"),
@@ -440,7 +440,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(statusMaxOverSizeRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-status-max-over-size-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키"),
@@ -468,7 +468,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestedAtNullRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-requestedAt-null-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키"),
@@ -496,7 +496,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestedAtNullRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-requestedAt-empty-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키"),
@@ -524,7 +524,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestedAtBlankRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-requestAt-blank-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키"),
@@ -552,7 +552,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(totalAmountNullRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-total-cost-null-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키"),
@@ -580,7 +580,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(totalAmountNegativeNumRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-total-cost-negative-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키"),
@@ -608,7 +608,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(totalAmountMaxOverNumRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-total-cost-max-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키"),
@@ -636,7 +636,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(methodNullRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-method-null-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키"),
@@ -664,7 +664,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(methodEmptyRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-method-empty-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키"),
@@ -692,7 +692,7 @@ class PaymentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(methodBlankRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-non-user-method-blank-validation-fail",
                         requestFields(
                                 fieldWithPath("orderNumber").description("주문 번호"),
                                 fieldWithPath("paymentKey").description("토스 페이먼츠 키"),
@@ -728,7 +728,7 @@ class PaymentRestControllerTest {
                 .andExpect(jsonPath("$.payId").value(response.getPayId()))
                 .andExpect(jsonPath("$.paymentKey").value(response.getPaymentKey()))
                 .andExpect(jsonPath("$.totalAmount").value(response.getTotalAmount()))
-                .andDo(document("payment-non-user-created",
+                .andDo(document("payment-user-created",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -766,7 +766,7 @@ class PaymentRestControllerTest {
                         .header("X-User-Id", userId)
                 )
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-orderNumber-null-validation-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -798,7 +798,7 @@ class PaymentRestControllerTest {
                         .content(objectMapper.writeValueAsString(orderNumberEmptyRequest))
                         .header("X-User-Id", userId))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-orderNumber-empty-validation-test-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -831,7 +831,7 @@ class PaymentRestControllerTest {
                         .content(objectMapper.writeValueAsString(orderNumberBlankRequest))
                         .header("X-User-Id", userId))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-orderNumber-blank-validation-test-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -864,7 +864,7 @@ class PaymentRestControllerTest {
                         .header("X-User-Id", userId)
                 )
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-orderNumber-max-over-size-validation-test-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -896,7 +896,7 @@ class PaymentRestControllerTest {
                         .content(objectMapper.writeValueAsString(tossPaymentKeyNullRequest))
                         .header("X-User-Id", userId))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-toss-null-validation-test-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -928,7 +928,7 @@ class PaymentRestControllerTest {
                         .content(objectMapper.writeValueAsString(tossPaymentKeyEmptyRequest))
                         .header("X-User-Id", userId))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-toss-empty-validation-test-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -960,7 +960,7 @@ class PaymentRestControllerTest {
                         .content(objectMapper.writeValueAsString(tossPaymentKeyBlankRequest))
                         .header("X-User-Id", userId))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-toss-blank-validation-test-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -994,7 +994,7 @@ class PaymentRestControllerTest {
                         .content(objectMapper.writeValueAsString(tossPaymentKeyMaxOverSizeRequest))
                         .header("X-User-Id", userId))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-toss-max-over-size-validation-test-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1026,7 +1026,7 @@ class PaymentRestControllerTest {
                         .content(objectMapper.writeValueAsString(statusNullRequest))
                         .header("X-User-Id", userId))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-status-null-validation-test-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1058,7 +1058,7 @@ class PaymentRestControllerTest {
                         .content(objectMapper.writeValueAsString(statusBlankRequest))
                         .header("X-User-Id", userId))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-status-blank-validation-test-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1090,7 +1090,7 @@ class PaymentRestControllerTest {
                         .content(objectMapper.writeValueAsString(statusEmptyRequest))
                         .header("X-User-Id", userId))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-status-empty-validation-test-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1122,7 +1122,7 @@ class PaymentRestControllerTest {
                         .content(objectMapper.writeValueAsString(statusMaxOverSizeRequest))
                         .header("X-User-Id", userId))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-status-max-over-size-validation-test-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1154,7 +1154,7 @@ class PaymentRestControllerTest {
                         .content(objectMapper.writeValueAsString(requestedAtNullRequest))
                         .header("X-User-Id", userId))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-requestAt-null-validation-test-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1186,7 +1186,7 @@ class PaymentRestControllerTest {
                         .content(objectMapper.writeValueAsString(requestedAtNullRequest))
                         .header("X-User-Id", userId))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-requestAt-empty-validation-test-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1218,7 +1218,7 @@ class PaymentRestControllerTest {
                         .content(objectMapper.writeValueAsString(requestedAtBlankRequest))
                         .header("X-User-Id", userId))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-requestAt-blank-validation-test-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1250,7 +1250,7 @@ class PaymentRestControllerTest {
                         .content(objectMapper.writeValueAsString(totalAmountNullRequest))
                         .header("X-User-Id", userId))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-total-cost-null-validation-test-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1282,7 +1282,7 @@ class PaymentRestControllerTest {
                         .content(objectMapper.writeValueAsString(totalAmountNegativeNumRequest))
                         .header("X-User-Id", userId))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-total-cost-negative-validation-test-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1314,7 +1314,7 @@ class PaymentRestControllerTest {
                         .content(objectMapper.writeValueAsString(totalAmountMaxOverNumRequest))
                         .header("X-User-Id", userId))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-total-cost-max-over-validation-test-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1346,7 +1346,7 @@ class PaymentRestControllerTest {
                         .content(objectMapper.writeValueAsString(methodNullRequest))
                         .header("X-User-Id", userId))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-method-null-validation-test-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1378,7 +1378,7 @@ class PaymentRestControllerTest {
                         .content(objectMapper.writeValueAsString(methodEmptyRequest))
                         .header("X-User-Id", userId))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-method-empty-validation-test-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1410,7 +1410,7 @@ class PaymentRestControllerTest {
                         .content(objectMapper.writeValueAsString(methodBlankRequest))
                         .header("X-User-Id", userId))
                 .andExpect(status().isBadRequest())
-                .andDo(document("payment-non-user-validation-test-fail",
+                .andDo(document("payment-user-method-blank-validation-test-fail",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1447,6 +1447,7 @@ class PaymentRestControllerTest {
     }
 
     @Test
+    @DisplayName("결제 취소")
     void givenPayCancelRequest_whenCancelOrderProcess_thenReturnVoid() throws Exception {
         PayCancelRequest request = new PayCancelRequest();
         ReflectionTestUtils.setField(request, "paymentKey", "toss payment key");

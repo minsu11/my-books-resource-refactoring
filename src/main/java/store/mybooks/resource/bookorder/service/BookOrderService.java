@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.mybooks.resource.bookorder.dto.mapper.BookOrderMapper;
@@ -259,5 +260,25 @@ public class BookOrderService {
 
     }
 
+    /**
+     * methodName : updateBookOrderStatus<br>
+     * author : minsu11<br>
+     * description : 일정 시간이 지나면 배송 완료 주문 상태 변경.
+     */
+    @Scheduled(cron = "0 30 0 * * *", zone = "Asia/Seoul")
+    @Transactional
+    public void updateOrderStatus() {
+        List<BookOrder> bookOrders =
+                bookOrderRepository.getBookOrderByOutDate();
+        if (bookOrders.isEmpty()) {
+            return;
+        }
+        for (BookOrder order : bookOrders) {
+            OrdersStatus ordersStatus =
+                    ordersStatusRepository.findById(OrdersStatusEnum.DELIVERY_COMPLETE.toString())
+                            .orElseThrow(OrdersStatusNotExistException::new);
+            order.updateBookOrderStatus(ordersStatus);
+        }
 
+    }
 }

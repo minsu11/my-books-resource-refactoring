@@ -136,7 +136,11 @@ class PointRuleNameRestControllerTest {
         mockMvc.perform(post("/api/point-rule-names")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andDo(document("point-rule-name-create-validation",
+                        requestFields(
+                                fieldWithPath("id").description("포인트 규정 명")
+                        )));
         verify(pointRuleNameService, never()).createPointRuleName(any());
     }
 }

@@ -234,6 +234,9 @@ class PointRuleControllerTest {
                 .andExpect(jsonPath("$.pointRuleName").value("test123"))
                 .andExpect(jsonPath("$.rate").value(10))
                 .andDo(document("point-rule-modify",
+                        pathParameters(
+                                parameterWithName("id").description("수정할 포인트 규정 아이디")
+                        ),
                         requestFields(
                                 fieldWithPath("pointRuleName").description("포인트 규정 명"),
                                 fieldWithPath("rate").description("포인트 적립률"),
@@ -257,7 +260,16 @@ class PointRuleControllerTest {
         mockMvc.perform(put("/api/point-rules/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(request)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andDo(document("point-rule-modify-validation",
+                        pathParameters(
+                                parameterWithName("id").description("수정할 포인트 규정 아이디")
+                        ),
+                        requestFields(
+                                fieldWithPath("pointRuleName").description("포인트 규정 명"),
+                                fieldWithPath("rate").description("포인트 적립률"),
+                                fieldWithPath("cost").description("포인트 적립액")
+                        )));
         verify(pointRuleService, never()).modifyPointRuleResponse(any(PointRuleModifyRequest.class), any());
     }
 
@@ -266,7 +278,11 @@ class PointRuleControllerTest {
     void givenId_whenDeletePointRuleResponse_thenReturnNoContent() throws Exception {
         doNothing().when(pointRuleService).deletePointRuleResponse(any());
         mockMvc.perform(delete("/api/point-rules/{id}", 1))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isNoContent())
+                .andDo(document("point-rule-delete",
+                        pathParameters(
+                                parameterWithName("id").description("삭제할 포인트 규정 아이디")
+                        )));
         verify(pointRuleService, times(1)).deletePointRuleResponse(any());
 
     }

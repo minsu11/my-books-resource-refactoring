@@ -1,6 +1,7 @@
 package store.mybooks.resource.bookorder.repository;
 
 import com.querydsl.core.types.Projections;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -229,4 +230,11 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
     }
 
 
+    @Override
+    public List<BookOrder> getBookOrderByOutDate() {
+        return from(bookOrder)
+                .where(bookOrder.outDate.eq(LocalDate.now().minusDays(2)))
+                .where(bookOrder.orderStatus.id.eq(BookOrderStatusName.DELIVERING.toString()))
+                .fetch();
+    }
 }

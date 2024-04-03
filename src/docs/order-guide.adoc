@@ -10,8 +10,1077 @@
 
 == 주문 API
 
-== 주문-상태 API
+=== 주문 내역 페이징 조히
 
-== 주문-상세 API
+===== 요청
 
-== 주문-상세-상태 API
+include::{snippets}/book-order-page/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-page/request-parameters.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-page/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/book-order-page/response-fields.adoc[]
+
+=== 관리자 회원 주문 내역 페이징
+
+===== 요청
+
+include::{snippets}/book-admin-order-page/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-admin-order-page/request-parameters.adoc[]
+
+===== 응답
+
+include::{snippets}/book-admin-order-page/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/book-admin-order-page/response-fields.adoc[]
+
+=== 관리자 회원의 주문 상태 변경
+
+===== 요청
+
+include::{snippets}/book-order-admin-modify/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-admin-modify/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-admin-modify/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/book-order-admin-modify/response-fields.adoc[]
+
+==== 예외 상황
+
+===== id null
+
+====== 요청
+
+include::{snippets}/book-order-admin-modify-id-null-validation/http-request.adoc[]
+
+====== 요청 파라미터
+
+include::{snippets}/book-order-admin-modify-id-null-validation/request-fields.adoc[]
+
+====== 응답
+
+include::{snippets}/book-order-admin-modify-id-null-validation/http-response.adoc[]
+
+=====  송장 번호 min size(8자리)
+
+====== 요청
+
+include::{snippets}/book-order-admin-modify-invoice-number-min-size-fail/http-request.adoc[]
+
+====== 요청 파라미터
+
+include::{snippets}/book-order-admin-modify-invoice-number-min-size-fail/request-fields.adoc[]
+
+====== 응답
+
+include::{snippets}/book-order-admin-modify-invoice-number-min-size-fail/http-response.adoc[]
+
+===== 송장 번호 max size(20자리)
+
+====== 요청
+
+include::{snippets}/book-order-admin-modify-invoice-number-max-size-fail/http-request.adoc[]
+
+====== 요청 파라미터
+
+include::{snippets}/book-order-admin-modify-invoice-number-max-size-fail/request-fields.adoc[]
+
+====== 응답
+
+include::{snippets}/book-order-admin-modify-invoice-number-max-size-fail/http-response.adoc[]
+
+===== 송장 번호 null
+
+====== 요청
+
+include::{snippets}/book-order-admin-modify-invoice-null-fail/http-response.adoc[]
+
+====== 요청 파라미터
+
+include::{snippets}/book-order-admin-modify-invoice-null-fail/request-fields.adoc[]
+
+====== 응답
+
+include::{snippets}/book-order-admin-modify-invoice-null-fail/http-response.adoc[]
+
+===== 송장 번호가 빈 값
+
+====== 요청
+
+include::{snippets}/book-order-admin-modify-invoice-empty-fail/http-request.adoc[]
+
+====== 요청 파마미터
+
+include::{snippets}/book-order-admin-modify-invoice-empty-fail/request-fields.adoc[]
+
+====== 응답
+
+include::{snippets}/book-order-admin-modify-invoice-empty-fail/http-response.adoc[]
+
+===== 송장 번호가 공백인 경우
+
+====== 요청
+
+include::{snippets}/book-order-admin-modify-invoice-number-blank-validation/http-request.adoc[]
+
+====== 요청 파라미터
+
+include::{snippets}/book-order-admin-modify-invoice-number-blank-validation/request-fields.adoc[]
+
+====== 응답
+
+include::{snippets}/book-order-admin-modify-invoice-number-blank-validation/http-response.adoc[]
+
+=== 관리자 페이지에서 송장 번호 등록
+
+===== 요청
+
+include::{snippets}/book-order-register-invoice-success/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-register-invoice-success/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-register-invoice-success/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/book-order-register-invoice-success/response-fields.adoc[]
+
+==== 예외 상황
+
+===== id 값이 null
+
+====== 요청
+
+include::{snippets}/book-order-register-invoice-id-null-fail/http-request.adoc[]
+
+====== 요청 파라미터
+
+include::{snippets}/book-order-register-invoice-id-null-fail/request-fields.adoc[]
+
+====== 응답
+
+include::{snippets}/book-order-register-invoice-id-null-fail/http-response.adoc[]
+
+===== 송장 번호 null
+
+====== 요청
+
+include::{snippets}/book-order-register-invoice-number-null/http-request.adoc[]
+
+====== 요청 파라미터
+
+include::{snippets}/book-order-register-invoice-number-null/request-fields.adoc[]
+
+====== 응답
+
+include::{snippets}/book-order-register-invoice-id-null-fail/http-response.adoc[]
+
+===== 송장 번호 빈값
+
+====== 요청
+
+include::{snippets}/book-order-register-invoice-number-empty-fail/http-request.adoc[]
+
+====== 요청 파라미터
+
+include::{snippets}/book-order-register-invoice-number-empty-fail/request-fields.adoc[]
+
+====== 응답
+
+include::{snippets}/book-order-register-invoice-number-empty-fail/http-response.adoc[]
+
+===== 송장 번호 공백
+
+====== 요청
+
+include::{snippets}/book-order-register-invoice-number-blank-fail/http-request.adoc[]
+
+====== 요청 파라미터
+
+include::{snippets}/book-order-register-invoice-number-blank-fail/request-fields.adoc[]
+
+====== 응답
+
+include::{snippets}/book-order-register-invoice-number-blank-fail/http-response.adoc[]
+
+===== 송장 번호 8자리 미만
+
+====== 요청
+
+include::{snippets}/book-order-register-invoice-number-min-under-size-fail/http-request.adoc[]
+
+====== 요청 파라미터
+
+include::{snippets}/book-order-register-invoice-number-min-under-size-fail/request-fields.adoc[]
+
+====== 응답
+
+include::{snippets}/book-order-register-invoice-number-min-under-size-fail/http-response.adoc[]
+
+===== 송장 번호 20자리 초과
+
+====== 요청
+
+include::{snippets}/book-order-register-invoice-number-max-over-size-fail/http-request.adoc[]
+
+====== 요청 파라미터
+
+include::{snippets}/book-order-register-invoice-number-max-over-size-fail/request-fields.adoc[]
+
+====== 응답
+
+include::{snippets}/book-order-register-invoice-number-max-over-size-fail/http-response.adoc[]
+
+=== 주소 확인
+
+===== 요청
+
+include::{snippets}/book-order-address-check-success/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-address-check-success/path-parameters.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-address-check-success/http-response.adoc[]
+
+=== 주문 생성
+
+===== 요청
+
+include::{snippets}/book-order-info-create-success/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-success/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-success/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/book-order-info-create-success/response-fields.adoc[]
+
+=== 주문 등록 실패
+
+==== 이름 null
+
+===== 요청
+
+include::{snippets}/book-order-info-create-name-null-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-name-null-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-name-null-validation/http-response.adoc[]
+
+==== 이름 빈 값
+
+===== 요청
+
+include::{snippets}/book-order-info-create-name-empty-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-name-empty-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-name-empty-validation/http-response.adoc[]
+
+==== 이름 공백
+
+===== 요청
+
+include::{snippets}/book-order-info-create-name-blank-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-name-blank-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-name-blank-validation/http-response.adoc[]
+
+==== 이메일 null
+
+===== 요청
+
+include::{snippets}/book-order-info-create-email-null-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-email-null-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-email-null-validation/http-response.adoc[]
+
+==== 이메일 빈 값
+
+===== 요청
+
+include::{snippets}/book-order-info-create-email-empty-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-email-empty-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-email-empty-validation/http-response.adoc[]
+
+==== 이메일 공백
+
+===== 요청
+
+include::{snippets}/book-order-info-create-email-blank-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-email-blank-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-email-blank-validation/http-response.adoc[]
+
+==== 이메일 형식이 아닌 경우
+
+===== 요청
+
+include::{snippets}/book-order-info-create-email-not-format-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-email-not-format-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-email-not-format-validation/http-response.adoc[]
+
+==== 이메일 30자리 넘는 경우
+
+===== 요청
+
+include::{snippets}/book-order-info-create-email-max-over-size-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-email-max-over-size-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-email-max-over-size-validation/http-response.adoc[]
+
+==== 회원 전화 번호 null
+
+===== 요청
+
+include::{snippets}/book-order-info-create-phone-null-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-phone-null-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-phone-null-validation/http-response.adoc[]
+
+==== 회원 전화 번호 빈 값
+
+===== 요청
+
+include::{snippets}/book-order-info-create-phone-empty-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-phone-empty-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-phone-empty-validation/http-response.adoc[]
+
+==== 회원 전화 번호 공백
+
+===== 요청
+
+include::{snippets}/book-order-info-create-phone-blank-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-phone-blank-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-phone-blank-validation/http-response.adoc[]
+
+==== 회원 전화 번호 길이가 10 미만
+
+===== 요청
+
+include::{snippets}/book-order-info-create-phone-min-under-size-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-phone-min-under-size-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-phone-min-under-size-validation/http-response.adoc[]
+
+==== 회원 전화 번호 길이 13 초과
+
+===== 요청
+
+include::{snippets}/book-order-info-create-phone-max-over-size-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-phone-max-over-size-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-phone-max-over-size-validation/http-response.adoc[]
+
+==== 주문한 도서 목록 null
+
+===== 요청
+
+include::{snippets}/book-order-info-create-bookInfoList-null-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-bookInfoList-null-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-bookInfoList-null-validation/http-response.adoc[]
+
+==== 주문 정보 null
+
+===== 요청
+
+include::{snippets}/book-order-info-create-orderInfo-null-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-orderInfo-null-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-orderInfo-null-validation/http-response.adoc[]
+
+==== 주문 번호 null
+
+===== 요청
+
+include::{snippets}/book-order-info-create-orderNumber-null-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-orderNumber-null-validation/request-fields.adoc[]
+
+====== 응답
+
+include::{snippets}/book-order-info-create-orderNumber-null-validation/http-response.adoc[]
+
+==== 주문 번호 빈 값
+
+===== 요청
+
+include::{snippets}/book-order-info-create-orderNumber-empty-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-orderNumber-empty-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-orderNumber-empty-validation/http-response.adoc[]
+
+==== 주문 번호 공백
+
+===== 요청
+
+include::{snippets}/book-order-info-create-orderNumber-blank-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-orderNumber-blank-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-orderNumber-blank-validation/http-response.adoc[]
+
+==== 주문 번호 20 초과
+
+===== 요청
+
+include::{snippets}/book-order-info-create-orderNumber-max-over-size-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-orderNumber-max-over-size-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-orderNumber-max-over-size-validation/http-response.adoc[]
+
+==== 포인트 null
+
+===== 요청
+
+include::{snippets}/book-order-info-create-pointCost-null-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-pointCost-null-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-pointCost-null-validation/http-response.adoc[]
+
+==== 포인트 음수
+
+===== 요청
+
+include::{snippets}/book-order-info-create-pointCost-negative-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-pointCost-negative-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-pointCost-negative-validation/http-response.adoc[]
+
+==== 쿠폰 null
+
+===== 요청
+
+include::{snippets}/book-order-info-create-couponCost-null-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-couponCost-null-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-couponCost-null-validation/http-response.adoc[]
+
+==== 쿠폰 음수
+
+===== 요청
+
+include::{snippets}/book-order-info-create-couponCost-negative-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-couponCost-negative-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-couponCost-negative-validation/http-response.adoc[]
+
+==== 총액 null
+
+===== 요청
+
+include::{snippets}/book-order-info-create-totalCost-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-totalCost-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-totalCost-validation/http-response.adoc[]
+
+==== 총액 음수
+
+===== 요청
+
+include::{snippets}/book-order-info-create-totalCost-negative-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-totalCost-negative-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-totalCost-negative-validation/http-response.adoc[]
+
+==== 포장비 음수
+
+===== 요청
+
+include::{snippets}/book-order-info-create-wrap-negative-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-info-create-wrap-negative-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-info-create-wrap-negative-validation/http-response.adoc[]
+
+=== 주문 번호 확인
+
+===== 요청
+
+include::{snippets}/book-order-number-check-success/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-number-check-success/path-parameters.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-number-check-success/http-response.adoc[]
+
+=== 비회원 주문
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-success/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-success/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-success/http-response.adoc[]
+
+=== 비회원 주문 실패
+
+==== 이름 null
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-name-null-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-name-null-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-name-null-validation/http-response.adoc[]
+
+==== 이름 빈 값
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-name-empty-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-name-empty-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-name-empty-validation/http-response.adoc[]
+
+==== 이름 공백
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-name-blank-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-name-blank-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-name-blank-validation/http-response.adoc[]
+
+==== 이메일 null
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-email-null-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-email-null-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-email-null-validation/http-response.adoc[]
+
+==== 이메일 빈 값
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-email-empty-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-email-empty-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-email-empty-validation/http-response.adoc[]
+
+==== 이메일 공백
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-email-blank-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-email-blank-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-email-blank-validation/http-response.adoc[]
+
+==== 이메일 형식 아님
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-email-not-format-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-email-not-format-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-email-not-format-validation/http-response.adoc[]
+
+==== 이메일 길이 30초과
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-email-max-over-size-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-email-max-over-size-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-email-max-over-size-validation/http-response.adoc[]
+
+==== 비회원 전화번호 null
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-phone-null-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-phone-null-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-phone-null-validation/http-response.adoc[]
+
+==== 비회원 전화 번호 빈값
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-phone-empty-validation/http-request.adoc[]
+
+===== 요청 파라미토
+
+include::{snippets}/book-order-non-user-create-phone-empty-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-phone-empty-validation/http-response.adoc[]
+
+==== 비회원 전화 번호 공백
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-phone-blank-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-phone-blank-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-phone-blank-validation/http-response.adoc[]
+
+==== 비회원 전화 번호 10 미만
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-phone-min-size-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-phone-min-size-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-phone-min-size-validation/http-response.adoc[]
+
+==== 비회원 전화 번호 13 초과
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-phone-max-size-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-phone-max-size-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-phone-max-size-validation/http-response.adoc[]
+
+==== 주문 도서 정보 목록 null
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-bookInfoList-null-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-bookInfoList-null-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-bookInfoList-null-validation/http-response.adoc[]
+
+==== 주문 정보 null
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-orderInfo-null-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-orderInfo-null-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-orderInfo-null-validation/http-response.adoc[]
+
+==== 주문 번호 null
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-orderNumber-null-Validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-orderNumber-null-Validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-orderNumber-null-Validation/http-response.adoc[]
+
+==== 주문 번호 빈 값
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-orderNumber-empty-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-orderNumber-empty-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-orderNumber-empty-validation/http-response.adoc[]
+
+==== 주문 번호 공백
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-orderNumber-blank-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-orderNumber-blank-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-orderNumber-blank-validation/http-response.adoc[]
+
+==== 주문 번호 20 초과
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-orderNumber-max-size-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-orderNumber-max-size-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-orderNumber-max-size-validation/http-response.adoc[]
+
+==== 포인트 null
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-pointCost-null-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-pointCost-null-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-pointCost-null-validation/http-response.adoc[]
+
+==== 포인트 음수
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-pointCost-negative-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-pointCost-negative-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-pointCost-negative-validation/http-response.adoc[]
+
+==== 쿠폰 null
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-couponCost-null-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-couponCost-null-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-couponCost-null-validation/http-response.adoc[]
+
+==== 쿠폰 음수
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-couponCost-negative-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-couponCost-negative-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-couponCost-negative-validation/http-response.adoc[]
+
+==== 총액 null
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-totalCost-null-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-totalCost-null-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-totalCost-null-validation/http-response.adoc[]
+
+==== 총액 음수
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-totalCost-negative-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-totalCost-negative-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-totalCost-negative-validation/http-response.adoc[]
+
+==== 주문코드 6자리 초과
+
+===== 요청
+
+include::{snippets}/book-order-non-user-create-orderCode-max-size-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-non-user-create-orderCode-max-size-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-non-user-create-orderCode-max-size-validation/http-response.adoc[]
+
+=== 주문 번호로 주문한 도서 정보 조회
+
+===== 요청
+
+include::{snippets}/book-order-get-pay-info/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-get-pay-info/path-parameters.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-get-pay-info/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/book-order-get-pay-info/response-fields.adoc[]
+
+=== 주문번호로 결제 정보 조회
+
+===== 요청
+
+include::{snippets}/book-order-find-pay-info-by-orderNumber/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/book-order-find-pay-info-by-orderNumber/path-parameters.adoc[]
+
+===== 응답
+
+include::{snippets}/book-order-find-pay-info-by-orderNumber/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/book-order-find-pay-info-by-orderNumber/response-fields.adoc[]
+
+== 주문 상태
+

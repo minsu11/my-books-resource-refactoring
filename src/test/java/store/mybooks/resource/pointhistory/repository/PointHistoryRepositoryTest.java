@@ -272,18 +272,18 @@ class PointHistoryRepositoryTest {
 
         assertThat(actual).isNotNull();
         assertThat(actualList).isNotNull().hasSize(3);
-        assertThat(actualList.get(0).getPointRuleName()).isEqualTo(
+        assertThat(actualList.get(2).getPointRuleName()).isEqualTo(
                 signupPointHistory.getPointRule().getPointRuleName().getId());
-        assertThat(actualList.get(0).getStatusCost()).isEqualTo(signupPointHistory.getPointStatusCost());
-        assertThat(actualList.get(0).getCreatedDate()).isEqualTo(signupPointHistory.getCreatedDate());
+        assertThat(actualList.get(2).getStatusCost()).isEqualTo(signupPointHistory.getPointStatusCost());
+        assertThat(actualList.get(2).getCreatedDate()).isEqualTo(signupPointHistory.getCreatedDate());
         assertThat(actualList.get(1).getPointRuleName()).isEqualTo(
                 loginPointHistory.getPointRule().getPointRuleName().getId());
         assertThat(actualList.get(1).getStatusCost()).isEqualTo(loginPointHistory.getPointStatusCost());
         assertThat(actualList.get(1).getCreatedDate()).isEqualTo(loginPointHistory.getCreatedDate());
-        assertThat(actualList.get(2).getPointRuleName()).isEqualTo(
+        assertThat(actualList.get(0).getPointRuleName()).isEqualTo(
                 usePointHistory.getPointRule().getPointRuleName().getId());
-        assertThat(actualList.get(2).getStatusCost()).isEqualTo(usePointHistory.getPointStatusCost());
-        assertThat(actualList.get(2).getCreatedDate()).isEqualTo(usePointHistory.getCreatedDate());
+        assertThat(actualList.get(0).getStatusCost()).isEqualTo(usePointHistory.getPointStatusCost());
+        assertThat(actualList.get(0).getCreatedDate()).isEqualTo(usePointHistory.getCreatedDate());
     }
 
     @Test
