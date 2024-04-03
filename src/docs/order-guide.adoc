@@ -1082,4 +1082,5 @@ include::{snippets}/book-order-find-pay-info-by-orderNumber/http-response.adoc[]
 
 include::{snippets}/book-order-find-pay-info-by-orderNumber/response-fields.adoc[]
 
-}
+== 주문 상태
+
