@@ -13,7 +13,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -75,9 +74,28 @@ class BookOrderRestControllerTest {
     private Long userId = 1L;
     private String url = "/api/orders";
 
+    BookInfoRequest bookInfoRequest = new BookInfoRequest();
+    BookOrderInfoRequest bookOrderInfoRequest = new BookOrderInfoRequest();
+
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,
                RestDocumentationContextProvider restDocumentation) {
+
+        ReflectionTestUtils.setField(bookInfoRequest, "bookId", 1L);
+        ReflectionTestUtils.setField(bookInfoRequest, "saleCost", 1000);
+        ReflectionTestUtils.setField(bookInfoRequest, "bookCost", 1000);
+        ReflectionTestUtils.setField(bookInfoRequest, "amount", 1);
+        ReflectionTestUtils.setField(bookInfoRequest, "selectWrapId", 1);
+        ReflectionTestUtils.setField(bookInfoRequest, "selectCouponId", 1L);
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "deliveryId", 1);
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "deliveryDate", LocalDate.of(1212, 12, 12));
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "recipientName", "이순신");
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "recipientAddress", "거북선");
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "recipientPhoneNumber", "010-1111-1111");
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "receiverMessage", "경비");
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "usingPoint", 0);
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "wrapCost", 1000);
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "couponApplicationAmount", 0);
 
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .apply(documentationConfiguration(restDocumentation))
@@ -300,7 +318,7 @@ class BookOrderRestControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-admin-modify",
+                .andDo(document("book-order-admin-modify-id-null-validation",
                         requestFields(
                                 fieldWithPath("id").description("수정할 주문 아이디"),
                                 fieldWithPath("invoiceNumber").description("송장 번호")
@@ -310,28 +328,6 @@ class BookOrderRestControllerTest {
 
     }
 
-    @Test
-    @DisplayName("관리자 페이지에서 주문 상태 변경 유효성 검사(id 음수일 때 실패)")
-    void givenBookOrderAdminModifyRequestIdNegative_whenHashErrors_thenThrowRequestValidationFailedException() throws Exception {
-        BookOrderAdminModifyRequest request = new BookOrderAdminModifyRequest();
-
-        ReflectionTestUtils.setField(request, "id", null);
-        ReflectionTestUtils.setField(request, "invoiceNumber", "test12345");
-        mockMvc.perform(
-                        put("/api/orders/statuses")
-                                .content(mapper.writeValueAsString(request))
-                                .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isBadRequest())
-                .andDo(document("book-order-admin-modify",
-                        requestFields(
-                                fieldWithPath("id").description("수정할 주문 아이디"),
-                                fieldWithPath("invoiceNumber").description("송장 번호")
-                        )
-                ));
-        verify(bookOrderService, never()).modifyBookOrderAdminStatus(any());
-
-    }
 
     @Test
     @DisplayName("관리자 페이지에서 주문 상태 변경 유효성 검사 실패(송장 번호 8자리보다 작음)")
@@ -346,7 +342,7 @@ class BookOrderRestControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-admin-modify",
+                .andDo(document("book-order-admin-modify-invoice-number-min-size-fail",
                         requestFields(
                                 fieldWithPath("id").description("수정할 주문 아이디"),
                                 fieldWithPath("invoiceNumber").description("송장 번호")
@@ -359,17 +355,17 @@ class BookOrderRestControllerTest {
     @Test
     @DisplayName("관리자 페이지에서 주문 상태 변경 유효성 검사 실패(송장 번호 20자리 넘어감)")
     void givenBookOrderAdminModifyRequestInvoiceNumberMaxSize_whenHashError_thenThrowRequestValidationException() throws Exception {
-        BookOrderAdminModifyRequest request = new BookOrderAdminModifyRequest();
+        BookOrderAdminModifyRequest maxSizeOverrequest = new BookOrderAdminModifyRequest();
 
-        ReflectionTestUtils.setField(request, "id", 1L);
-        ReflectionTestUtils.setField(request, "invoiceNumber", "test123456789test12123123124dwasd3");
+        ReflectionTestUtils.setField(maxSizeOverrequest, "id", 1L);
+        ReflectionTestUtils.setField(maxSizeOverrequest, "invoiceNumber", "test123456789test12123123124dwasd3");
         mockMvc.perform(
                         put("/api/orders/statuses")
-                                .content(mapper.writeValueAsString(request))
+                                .content(mapper.writeValueAsString(maxSizeOverrequest))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-admin-modify",
+                .andDo(document("book-order-admin-modify-invoice-number-max-size-fail",
                         requestFields(
                                 fieldWithPath("id").description("수정할 주문 아이디"),
                                 fieldWithPath("invoiceNumber").description("송장 번호")
@@ -382,17 +378,17 @@ class BookOrderRestControllerTest {
     @Test
     @DisplayName("관리자 페이지에서 주문 상태 변경 유효성 검사 실패(송장 번호 null 값")
     void givenBookOrderAdminModifyRequestInvoiceNumberNull_whenHashError_thenThrowRequestValidationException() throws Exception {
-        BookOrderAdminModifyRequest request = new BookOrderAdminModifyRequest();
+        BookOrderAdminModifyRequest nullRequest = new BookOrderAdminModifyRequest();
 
-        ReflectionTestUtils.setField(request, "id", 1L);
-        ReflectionTestUtils.setField(request, "invoiceNumber", null);
+        ReflectionTestUtils.setField(nullRequest, "id", 1L);
+        ReflectionTestUtils.setField(nullRequest, "invoiceNumber", null);
         mockMvc.perform(
                         put("/api/orders/statuses")
-                                .content(mapper.writeValueAsString(request))
+                                .content(mapper.writeValueAsString(nullRequest))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-admin-modify",
+                .andDo(document("book-order-admin-modify-invoice-null-fail",
                         requestFields(
                                 fieldWithPath("id").description("수정할 주문 아이디"),
                                 fieldWithPath("invoiceNumber").description("송장 번호")
@@ -405,17 +401,17 @@ class BookOrderRestControllerTest {
     @Test
     @DisplayName("관리자 페이지에서 주문 상태 변경 유효성 검사 실패(송장 번호 빈 값인 경우)")
     void givenBookOrderAdminModifyRequestInvoiceNumberEmpty_whenHashError_thenThrowRequestValidationException() throws Exception {
-        BookOrderAdminModifyRequest request = new BookOrderAdminModifyRequest();
+        BookOrderAdminModifyRequest emptyRequest = new BookOrderAdminModifyRequest();
 
-        ReflectionTestUtils.setField(request, "id", 1L);
-        ReflectionTestUtils.setField(request, "invoiceNumber", "");
+        ReflectionTestUtils.setField(emptyRequest, "id", 1L);
+        ReflectionTestUtils.setField(emptyRequest, "invoiceNumber", "");
         mockMvc.perform(
                         put("/api/orders/statuses")
-                                .content(mapper.writeValueAsString(request))
+                                .content(mapper.writeValueAsString(emptyRequest))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-admin-modify",
+                .andDo(document("book-order-admin-modify-invoice-empty-fail",
                         requestFields(
                                 fieldWithPath("id").description("수정할 주문 아이디"),
                                 fieldWithPath("invoiceNumber").description("송장 번호")
@@ -426,19 +422,19 @@ class BookOrderRestControllerTest {
     }
 
     @Test
-    @DisplayName("관리자 페이지에서 주문 상태 변경 유효성 검사 실패(송장 번호 8자리보다 작음)")
+    @DisplayName("관리자 페이지에서 주문 상태 변경 유효성 검사 실패(송장 번호 공백)")
     void givenBookOrderAdminModifyRequestInvoiceNumberBlank_whenHashError_thenThrowRequestValidationException() throws Exception {
-        BookOrderAdminModifyRequest request = new BookOrderAdminModifyRequest();
+        BookOrderAdminModifyRequest blankRequest = new BookOrderAdminModifyRequest();
 
-        ReflectionTestUtils.setField(request, "id", 1L);
-        ReflectionTestUtils.setField(request, "invoiceNumber", " ");
+        ReflectionTestUtils.setField(blankRequest, "id", 1L);
+        ReflectionTestUtils.setField(blankRequest, "invoiceNumber", " ");
         mockMvc.perform(
                         put("/api/orders/statuses")
-                                .content(mapper.writeValueAsString(request))
+                                .content(mapper.writeValueAsString(blankRequest))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-admin-modify",
+                .andDo(document("book-order-admin-modify-invoice-number-blank-validation",
                         requestFields(
                                 fieldWithPath("id").description("수정할 주문 아이디"),
                                 fieldWithPath("invoiceNumber").description("송장 번호")
@@ -463,7 +459,7 @@ class BookOrderRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.invoiceNumber").value("invoiceNumber"))
-                .andDo(document("book-order-register-invoice",
+                .andDo(document("book-order-register-invoice-success",
                         requestFields(
                                 fieldWithPath("id").description("송장 번호 등록할 주문 아이디"),
                                 fieldWithPath("invoiceNumber").description("등록할 송장 번호")
@@ -486,7 +482,7 @@ class BookOrderRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-register-invoice",
+                .andDo(document("book-order-register-invoice-id-null-fail",
                         requestFields(
                                 fieldWithPath("id").description("송장 번호 등록할 주문 아이디"),
                                 fieldWithPath("invoiceNumber").description("송장 번호")
@@ -499,14 +495,14 @@ class BookOrderRestControllerTest {
     @Test
     @DisplayName("송장 번호 등록 유효성 실패 검사(id 음수 유효성 검사)")
     void givenBookOrderRegisterInvoiceRequestIdNegativeNum_whenValidateRequest_thenThrowRequestValidationException() throws Exception {
-        BookOrderRegisterInvoiceRequest request = new BookOrderRegisterInvoiceRequest();
-        ReflectionTestUtils.setField(request, "id", -1L);
-        ReflectionTestUtils.setField(request, "invoiceNumber", "invoiceNumber");
+        BookOrderRegisterInvoiceRequest invoiceNegativeRequest = new BookOrderRegisterInvoiceRequest();
+        ReflectionTestUtils.setField(invoiceNegativeRequest, "id", -1L);
+        ReflectionTestUtils.setField(invoiceNegativeRequest, "invoiceNumber", "invoiceNumber");
         mockMvc.perform(put(url + "/invoiceNumbers")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
+                        .content(mapper.writeValueAsString(invoiceNegativeRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-register-invoice",
+                .andDo(document("book-order-register-invoice-id-negative-number-fail",
                         requestFields(
                                 fieldWithPath("id").description("송장 번호 등록할 주문 아이디"),
                                 fieldWithPath("invoiceNumber").description("송장 번호")
@@ -519,14 +515,14 @@ class BookOrderRestControllerTest {
     @Test
     @DisplayName("송장 번호 등록 유효성 실패 검사(송장 번호 null인 경우)")
     void givenBookOrderRegisterInvoiceRequestInvoiceNumberNull_whenValidateRequest_thenThrowRequestValidationException() throws Exception {
-        BookOrderRegisterInvoiceRequest invoiceRequest = new BookOrderRegisterInvoiceRequest();
-        ReflectionTestUtils.setField(invoiceRequest, "id", 1L);
-        ReflectionTestUtils.setField(invoiceRequest, "invoiceNumber", null);
+        BookOrderRegisterInvoiceRequest invoiceNullRequest = new BookOrderRegisterInvoiceRequest();
+        ReflectionTestUtils.setField(invoiceNullRequest, "id", 1L);
+        ReflectionTestUtils.setField(invoiceNullRequest, "invoiceNumber", null);
         mockMvc.perform(put(url + "/invoiceNumbers")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(invoiceRequest)))
+                        .content(mapper.writeValueAsString(invoiceNullRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-register-invoice",
+                .andDo(document("book-order-register-invoice-number-null",
                         requestFields(
                                 fieldWithPath("id").description("송장 번호 등록할 주문 아이디"),
                                 fieldWithPath("invoiceNumber").description("송장 번호")
@@ -539,14 +535,14 @@ class BookOrderRestControllerTest {
     @Test
     @DisplayName("송장 번호 등록 유효성 실패 검사(송장 번호 빈 값인 경우)")
     void givenBookOrderRegisterInvoiceRequestInvoiceNumberEmpty_whenValidateRequest_thenThrowRequestValidationException() throws Exception {
-        BookOrderRegisterInvoiceRequest invoiceRequest = new BookOrderRegisterInvoiceRequest();
-        ReflectionTestUtils.setField(invoiceRequest, "id", 1L);
-        ReflectionTestUtils.setField(invoiceRequest, "invoiceNumber", "");
+        BookOrderRegisterInvoiceRequest invoiceEmptyRequest = new BookOrderRegisterInvoiceRequest();
+        ReflectionTestUtils.setField(invoiceEmptyRequest, "id", 1L);
+        ReflectionTestUtils.setField(invoiceEmptyRequest, "invoiceNumber", "");
         mockMvc.perform(put(url + "/invoiceNumbers")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(invoiceRequest)))
+                        .content(mapper.writeValueAsString(invoiceEmptyRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-register-invoice",
+                .andDo(document("book-order-register-invoice-number-empty-fail",
                         requestFields(
                                 fieldWithPath("id").description("송장 번호 등록할 주문 아이디"),
                                 fieldWithPath("invoiceNumber").description("송장 번호")
@@ -559,14 +555,14 @@ class BookOrderRestControllerTest {
     @Test
     @DisplayName("송장 번호 등록 유효성 실패 검사(송장 번호 공백인 경우)")
     void givenBookOrderRegisterInvoiceRequestInvoiceNumberBlank_whenValidateRequest_thenThrowRequestValidationException() throws Exception {
-        BookOrderRegisterInvoiceRequest invoiceRequestEmptyRequest = new BookOrderRegisterInvoiceRequest();
-        ReflectionTestUtils.setField(invoiceRequestEmptyRequest, "id", 1L);
-        ReflectionTestUtils.setField(invoiceRequestEmptyRequest, "invoiceNumber", " ");
+        BookOrderRegisterInvoiceRequest invoiceRequestBlankRequest = new BookOrderRegisterInvoiceRequest();
+        ReflectionTestUtils.setField(invoiceRequestBlankRequest, "id", 1L);
+        ReflectionTestUtils.setField(invoiceRequestBlankRequest, "invoiceNumber", " ");
         mockMvc.perform(put(url + "/invoiceNumbers")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(invoiceRequestEmptyRequest)))
+                        .content(mapper.writeValueAsString(invoiceRequestBlankRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-register-invoice",
+                .andDo(document("book-order-register-invoice-number-blank-fail",
                         requestFields(
                                 fieldWithPath("id").description("송장 번호 등록할 주문 아이디"),
                                 fieldWithPath("invoiceNumber").description("송장 번호")
@@ -586,7 +582,7 @@ class BookOrderRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(invoiceMinRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-register-invoice",
+                .andDo(document("book-order-register-invoice-number-min-under-size-fail",
                         requestFields(
                                 fieldWithPath("id").description("송장 번호 등록할 주문 아이디"),
                                 fieldWithPath("invoiceNumber").description("송장 번호")
@@ -606,7 +602,7 @@ class BookOrderRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(invoiceMaxRequest)))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-register-invoice",
+                .andDo(document("book-order-register-invoice-number-max-over-size-fail",
                         requestFields(
                                 fieldWithPath("id").description("송장 번호 등록할 주문 아이디"),
                                 fieldWithPath("invoiceNumber").description("송장 번호")
@@ -623,7 +619,7 @@ class BookOrderRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string("true"))
-                .andDo(document("book-order-address-check",
+                .andDo(document("book-order-address-check-success",
                         pathParameters(
                                 parameterWithName("id").description("주소 확인할 주소 아이디")
                         )
@@ -642,18 +638,30 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(bookInfoRequest, "amount", 1);
         ReflectionTestUtils.setField(bookInfoRequest, "selectWrapId", 1);
         ReflectionTestUtils.setField(bookInfoRequest, "selectCouponId", 1L);
+        BookOrderInfoRequest bookOrderInfoRequest = new BookOrderInfoRequest();
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "deliveryId", 1);
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "deliveryDate", LocalDate.of(1212, 12, 12));
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "recipientName", "이순신");
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "recipientAddress", "거북선");
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "recipientPhoneNumber", "010-1111-1111");
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "receiverMessage", "경비");
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "usingPoint", 0);
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "wrapCost", 1000);
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "couponApplicationAmount", 0);
+
         BookOrderCreateRequest request = new BookOrderCreateRequest();
         ReflectionTestUtils.setField(request, "name", "test");
         ReflectionTestUtils.setField(request, "email", "test@test.com");
         ReflectionTestUtils.setField(request, "phone", "010-1234-1234");
         ReflectionTestUtils.setField(request, "bookInfoList", List.of(bookInfoRequest));
-        ReflectionTestUtils.setField(request, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(request, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(request, "orderNumber", "test");
         ReflectionTestUtils.setField(request, "pointCost", 0);
         ReflectionTestUtils.setField(request, "couponCost", 0);
         ReflectionTestUtils.setField(request, "totalCost", 1000);
         ReflectionTestUtils.setField(request, "wrapCost", 500);
         ReflectionTestUtils.setField(request, "orderCode", null);
+
 
         BookOrderCreateResponse response =
                 new BookOrderCreateResponse("주문 대기", "test", 1000, false);
@@ -669,7 +677,7 @@ class BookOrderRestControllerTest {
                 .andExpect(jsonPath("$.number").value("test"))
                 .andExpect(jsonPath("$.totalCost").value(1000))
                 .andExpect(jsonPath("$.isCouponUsed").value(false))
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-success",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -714,12 +722,30 @@ class BookOrderRestControllerTest {
     @Test
     @DisplayName("주문 생성 시 유효성 실패 검사(이름이 null 인 경우")
     void givenBookOrderCreateRequestNameNull_whenCreateOrder_thenThrowRequestValidationFailedException() throws Exception {
+        BookInfoRequest bookInfoRequest = new BookInfoRequest();
+        ReflectionTestUtils.setField(bookInfoRequest, "bookId", 1L);
+        ReflectionTestUtils.setField(bookInfoRequest, "saleCost", 1000);
+        ReflectionTestUtils.setField(bookInfoRequest, "bookCost", 1000);
+        ReflectionTestUtils.setField(bookInfoRequest, "amount", 1);
+        ReflectionTestUtils.setField(bookInfoRequest, "selectWrapId", 1);
+        ReflectionTestUtils.setField(bookInfoRequest, "selectCouponId", 1L);
+        BookOrderInfoRequest bookOrderInfoRequest = new BookOrderInfoRequest();
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "deliveryId", 1);
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "deliveryDate", LocalDate.of(1212, 12, 12));
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "recipientName", "이순신");
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "recipientAddress", "거북선");
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "recipientPhoneNumber", "010-1111-1111");
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "receiverMessage", "경비");
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "usingPoint", 0);
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "wrapCost", 1000);
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "couponApplicationAmount", 0);
+
         BookOrderCreateRequest nameNullRequest = new BookOrderCreateRequest();
         ReflectionTestUtils.setField(nameNullRequest, "name", null);
         ReflectionTestUtils.setField(nameNullRequest, "email", "test@test.com");
         ReflectionTestUtils.setField(nameNullRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(nameNullRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(nameNullRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(nameNullRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(nameNullRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(nameNullRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(nameNullRequest, "pointCost", 0);
         ReflectionTestUtils.setField(nameNullRequest, "couponCost", 0);
@@ -733,7 +759,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(nameNullRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-name-null-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -742,6 +768,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -766,12 +798,30 @@ class BookOrderRestControllerTest {
     @Test
     @DisplayName("주문 생성 시 유효성 실패 검사(이름이 빈 값 인 경우")
     void givenBookOrderCreateRequestNameEmpty_whenCreateOrder_thenThrowRequestValidationFailedException() throws Exception {
+        BookInfoRequest bookInfoRequest = new BookInfoRequest();
+        ReflectionTestUtils.setField(bookInfoRequest, "bookId", 1L);
+        ReflectionTestUtils.setField(bookInfoRequest, "saleCost", 1000);
+        ReflectionTestUtils.setField(bookInfoRequest, "bookCost", 1000);
+        ReflectionTestUtils.setField(bookInfoRequest, "amount", 1);
+        ReflectionTestUtils.setField(bookInfoRequest, "selectWrapId", 1);
+        ReflectionTestUtils.setField(bookInfoRequest, "selectCouponId", 1L);
+        BookOrderInfoRequest bookOrderInfoRequest = new BookOrderInfoRequest();
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "deliveryId", 1);
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "deliveryDate", LocalDate.of(1212, 12, 12));
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "recipientName", "이순신");
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "recipientAddress", "거북선");
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "recipientPhoneNumber", "010-1111-1111");
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "receiverMessage", "경비");
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "usingPoint", 0);
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "wrapCost", 1000);
+        ReflectionTestUtils.setField(bookOrderInfoRequest, "couponApplicationAmount", 0);
+
         BookOrderCreateRequest nameEmptyRequest = new BookOrderCreateRequest();
         ReflectionTestUtils.setField(nameEmptyRequest, "name", "");
         ReflectionTestUtils.setField(nameEmptyRequest, "email", "test@test.com");
         ReflectionTestUtils.setField(nameEmptyRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(nameEmptyRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(nameEmptyRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(nameEmptyRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(nameEmptyRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(nameEmptyRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(nameEmptyRequest, "pointCost", 0);
         ReflectionTestUtils.setField(nameEmptyRequest, "couponCost", 0);
@@ -784,7 +834,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(nameEmptyRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-name-empty-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -793,6 +843,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -808,8 +864,7 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
                                 fieldWithPath("orderCode").description("주문 코드")
-                        )
-                ));
+                        )));
         verify(orderService, never()).createOrder(any(), anyLong());
     }
 
@@ -820,8 +875,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(nameBlankRequest, "name", " ");
         ReflectionTestUtils.setField(nameBlankRequest, "email", "test@test.com");
         ReflectionTestUtils.setField(nameBlankRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(nameBlankRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(nameBlankRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(nameBlankRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(nameBlankRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(nameBlankRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(nameBlankRequest, "pointCost", 0);
         ReflectionTestUtils.setField(nameBlankRequest, "couponCost", 0);
@@ -834,7 +889,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(nameBlankRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-name-blank-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -843,6 +898,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -858,8 +919,7 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
                                 fieldWithPath("orderCode").description("주문 코드")
-                        )
-                ));
+                        )));
         verify(orderService, never()).createOrder(any(), anyLong());
     }
 
@@ -870,8 +930,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(emailNullRequest, "name", "test");
         ReflectionTestUtils.setField(emailNullRequest, "email", null);
         ReflectionTestUtils.setField(emailNullRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(emailNullRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(emailNullRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(emailNullRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(emailNullRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(emailNullRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(emailNullRequest, "pointCost", 0);
         ReflectionTestUtils.setField(emailNullRequest, "couponCost", 0);
@@ -884,7 +944,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(emailNullRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-email-null-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -893,6 +953,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -920,8 +986,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(emailEmptyRequest, "name", "test");
         ReflectionTestUtils.setField(emailEmptyRequest, "email", "");
         ReflectionTestUtils.setField(emailEmptyRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(emailEmptyRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(emailEmptyRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(emailEmptyRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(emailEmptyRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(emailEmptyRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(emailEmptyRequest, "pointCost", 0);
         ReflectionTestUtils.setField(emailEmptyRequest, "couponCost", 0);
@@ -934,7 +1000,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(emailEmptyRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-email-empty-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -943,6 +1009,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -970,8 +1042,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(emailBlankRequest, "name", "test");
         ReflectionTestUtils.setField(emailBlankRequest, "email", " ");
         ReflectionTestUtils.setField(emailBlankRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(emailBlankRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(emailBlankRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(emailBlankRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(emailBlankRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(emailBlankRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(emailBlankRequest, "pointCost", 0);
         ReflectionTestUtils.setField(emailBlankRequest, "couponCost", 0);
@@ -984,7 +1056,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(emailBlankRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-email-blank-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -993,6 +1065,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -1007,8 +1085,7 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("couponCost").description("총 쿠폰 적용 금액"),
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
-                                fieldWithPath("orderCode").description("주문 코드")
-                        )
+                                fieldWithPath("orderCode").description("주문 코드"))
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
     }
@@ -1020,8 +1097,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(emailNotFormatRequest, "name", "test");
         ReflectionTestUtils.setField(emailNotFormatRequest, "email", "test");
         ReflectionTestUtils.setField(emailNotFormatRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(emailNotFormatRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(emailNotFormatRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(emailNotFormatRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(emailNotFormatRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(emailNotFormatRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(emailNotFormatRequest, "pointCost", 0);
         ReflectionTestUtils.setField(emailNotFormatRequest, "couponCost", 0);
@@ -1034,7 +1111,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(emailNotFormatRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-email-not-format-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1043,6 +1120,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -1071,8 +1154,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(emailMaxOverRequest, "name", "test");
         ReflectionTestUtils.setField(emailMaxOverRequest, "email", "test1234test1234test1234test1234test1234@naver.com");
         ReflectionTestUtils.setField(emailMaxOverRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(emailMaxOverRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(emailMaxOverRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(emailMaxOverRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(emailMaxOverRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(emailMaxOverRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(emailMaxOverRequest, "pointCost", 0);
         ReflectionTestUtils.setField(emailMaxOverRequest, "couponCost", 0);
@@ -1085,7 +1168,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(emailMaxOverRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-email-max-over-size-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1094,6 +1177,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -1121,8 +1210,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(phoneNullRequest, "name", "test");
         ReflectionTestUtils.setField(phoneNullRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(phoneNullRequest, "phone", null);
-        ReflectionTestUtils.setField(phoneNullRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(phoneNullRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(phoneNullRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(phoneNullRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(phoneNullRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(phoneNullRequest, "pointCost", 0);
         ReflectionTestUtils.setField(phoneNullRequest, "couponCost", 0);
@@ -1135,7 +1224,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(phoneNullRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-phone-null-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1144,6 +1233,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -1171,8 +1266,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(phoneEmptyRequest, "name", "test");
         ReflectionTestUtils.setField(phoneEmptyRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(phoneEmptyRequest, "phone", "");
-        ReflectionTestUtils.setField(phoneEmptyRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(phoneEmptyRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(phoneEmptyRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(phoneEmptyRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(phoneEmptyRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(phoneEmptyRequest, "pointCost", 0);
         ReflectionTestUtils.setField(phoneEmptyRequest, "couponCost", 0);
@@ -1185,7 +1280,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(phoneEmptyRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-phone-empty-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1194,6 +1289,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -1222,8 +1323,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(phoneBlankRequest, "name", "test");
         ReflectionTestUtils.setField(phoneBlankRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(phoneBlankRequest, "phone", " ");
-        ReflectionTestUtils.setField(phoneBlankRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(phoneBlankRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(phoneBlankRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(phoneBlankRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(phoneBlankRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(phoneBlankRequest, "pointCost", 0);
         ReflectionTestUtils.setField(phoneBlankRequest, "couponCost", 0);
@@ -1236,7 +1337,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(phoneBlankRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-phone-blank-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1245,6 +1346,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -1259,8 +1366,7 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("couponCost").description("총 쿠폰 적용 금액"),
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
-                                fieldWithPath("orderCode").description("주문 코드")
-                        )
+                                fieldWithPath("orderCode").description("주문 코드"))
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
     }
@@ -1272,8 +1378,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(phoneMinUnderRequest, "name", "test");
         ReflectionTestUtils.setField(phoneMinUnderRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(phoneMinUnderRequest, "phone", "010123");
-        ReflectionTestUtils.setField(phoneMinUnderRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(phoneMinUnderRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(phoneMinUnderRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(phoneMinUnderRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(phoneMinUnderRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(phoneMinUnderRequest, "pointCost", 0);
         ReflectionTestUtils.setField(phoneMinUnderRequest, "couponCost", 0);
@@ -1286,7 +1392,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(phoneMinUnderRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-phone-min-under-size-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1295,6 +1401,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -1322,8 +1434,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(phoneMaxOverRequest, "name", "test");
         ReflectionTestUtils.setField(phoneMaxOverRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(phoneMaxOverRequest, "phone", "010-1234-12345");
-        ReflectionTestUtils.setField(phoneMaxOverRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(phoneMaxOverRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(phoneMaxOverRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(phoneMaxOverRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(phoneMaxOverRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(phoneMaxOverRequest, "pointCost", 0);
         ReflectionTestUtils.setField(phoneMaxOverRequest, "couponCost", 0);
@@ -1336,7 +1448,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(phoneMaxOverRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-phone-max-over-size-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1345,6 +1457,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -1373,7 +1491,7 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(phoneMaxOverRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(phoneMaxOverRequest, "phone", "010-1234-1234");
         ReflectionTestUtils.setField(phoneMaxOverRequest, "bookInfoList", null);
-        ReflectionTestUtils.setField(phoneMaxOverRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(phoneMaxOverRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(phoneMaxOverRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(phoneMaxOverRequest, "pointCost", 0);
         ReflectionTestUtils.setField(phoneMaxOverRequest, "couponCost", 0);
@@ -1386,7 +1504,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(phoneMaxOverRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-bookInfoList-null-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1423,7 +1541,7 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(orderInfoNullRequest, "name", "test");
         ReflectionTestUtils.setField(orderInfoNullRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(orderInfoNullRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(orderInfoNullRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
+        ReflectionTestUtils.setField(orderInfoNullRequest, "bookInfoList", List.of(bookInfoRequest));
         ReflectionTestUtils.setField(orderInfoNullRequest, "orderInfo", null);
         ReflectionTestUtils.setField(orderInfoNullRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(orderInfoNullRequest, "pointCost", 0);
@@ -1437,7 +1555,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(orderInfoNullRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-orderInfo-null-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1446,7 +1564,13 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
-                                fieldWithPath("orderInfo").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
+                                fieldWithPath("orderInfo").description("주문 정보"),
                                 fieldWithPath("orderNumber").description("주문 번호"),
                                 fieldWithPath("pointCost").description("포인트 적립금"),
                                 fieldWithPath("couponCost").description("총 쿠폰 적용 금액"),
@@ -1465,8 +1589,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(orderNumberNullRequest, "name", "test");
         ReflectionTestUtils.setField(orderNumberNullRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(orderNumberNullRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(orderNumberNullRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(orderNumberNullRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(orderNumberNullRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(orderNumberNullRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(orderNumberNullRequest, "orderNumber", null);
         ReflectionTestUtils.setField(orderNumberNullRequest, "pointCost", 0);
         ReflectionTestUtils.setField(orderNumberNullRequest, "couponCost", 0);
@@ -1479,7 +1603,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(orderNumberNullRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-orderNumber-null-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1488,6 +1612,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -1515,8 +1645,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(bookOrderEmptyRequest, "name", "test");
         ReflectionTestUtils.setField(bookOrderEmptyRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(bookOrderEmptyRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(bookOrderEmptyRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(bookOrderEmptyRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(bookOrderEmptyRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(bookOrderEmptyRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(bookOrderEmptyRequest, "orderNumber", "");
         ReflectionTestUtils.setField(bookOrderEmptyRequest, "pointCost", 0);
         ReflectionTestUtils.setField(bookOrderEmptyRequest, "couponCost", 0);
@@ -1529,7 +1659,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(bookOrderEmptyRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-orderNumber-empty-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1538,6 +1668,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -1565,8 +1701,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(bookOrderBlankRequest, "name", "test");
         ReflectionTestUtils.setField(bookOrderBlankRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(bookOrderBlankRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(bookOrderBlankRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(bookOrderBlankRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(bookOrderBlankRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(bookOrderBlankRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(bookOrderBlankRequest, "orderNumber", " ");
         ReflectionTestUtils.setField(bookOrderBlankRequest, "pointCost", 0);
         ReflectionTestUtils.setField(bookOrderBlankRequest, "couponCost", 0);
@@ -1579,7 +1715,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(bookOrderBlankRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-orderNumber-blank-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1588,6 +1724,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -1603,7 +1745,6 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
                                 fieldWithPath("orderCode").description("주문 코드")
-
                         )
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
@@ -1616,8 +1757,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(bookOrderMaxOverSizeRequest, "name", "test");
         ReflectionTestUtils.setField(bookOrderMaxOverSizeRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(bookOrderMaxOverSizeRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(bookOrderMaxOverSizeRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(bookOrderMaxOverSizeRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(bookOrderMaxOverSizeRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(bookOrderMaxOverSizeRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(bookOrderMaxOverSizeRequest, "orderNumber", "test123456tset1234566778tes");
         ReflectionTestUtils.setField(bookOrderMaxOverSizeRequest, "pointCost", 0);
         ReflectionTestUtils.setField(bookOrderMaxOverSizeRequest, "couponCost", 0);
@@ -1630,7 +1771,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(bookOrderMaxOverSizeRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-orderNumber-max-over-size-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1639,6 +1780,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -1654,7 +1801,6 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
                                 fieldWithPath("orderCode").description("주문 코드")
-
                         )
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
@@ -1667,8 +1813,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(pointNullRequest, "name", "test");
         ReflectionTestUtils.setField(pointNullRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(pointNullRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(pointNullRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(pointNullRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(pointNullRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(pointNullRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(pointNullRequest, "orderNumber", "test123456tset1234566778tes");
         ReflectionTestUtils.setField(pointNullRequest, "pointCost", null);
         ReflectionTestUtils.setField(pointNullRequest, "couponCost", 0);
@@ -1681,7 +1827,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(pointNullRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-pointCost-null-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1690,6 +1836,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -1718,8 +1870,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(pointNegativeRequest, "name", "test");
         ReflectionTestUtils.setField(pointNegativeRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(pointNegativeRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(pointNegativeRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(pointNegativeRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(pointNegativeRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(pointNegativeRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(pointNegativeRequest, "orderNumber", "test123456tset1234566778tes");
         ReflectionTestUtils.setField(pointNegativeRequest, "pointCost", -1);
         ReflectionTestUtils.setField(pointNegativeRequest, "couponCost", 0);
@@ -1732,7 +1884,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(pointNegativeRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-pointCost-negative-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1741,6 +1893,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -1756,7 +1914,6 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
                                 fieldWithPath("orderCode").description("주문 코드")
-
                         )
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
@@ -1769,8 +1926,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(couponCostNullRequest, "name", "test");
         ReflectionTestUtils.setField(couponCostNullRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(couponCostNullRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(couponCostNullRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(couponCostNullRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(couponCostNullRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(couponCostNullRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(couponCostNullRequest, "orderNumber", "test123456tset1234566778tes");
         ReflectionTestUtils.setField(couponCostNullRequest, "pointCost", 1);
         ReflectionTestUtils.setField(couponCostNullRequest, "couponCost", null);
@@ -1783,7 +1940,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(couponCostNullRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-couponCost-null-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1792,6 +1949,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -1807,7 +1970,6 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
                                 fieldWithPath("orderCode").description("주문 코드")
-
                         )
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
@@ -1820,8 +1982,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(couponCostNegativeRequest, "name", "test");
         ReflectionTestUtils.setField(couponCostNegativeRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(couponCostNegativeRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(couponCostNegativeRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(couponCostNegativeRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(couponCostNegativeRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(couponCostNegativeRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(couponCostNegativeRequest, "orderNumber", "test123456tset1234566778tes");
         ReflectionTestUtils.setField(couponCostNegativeRequest, "pointCost", 1);
         ReflectionTestUtils.setField(couponCostNegativeRequest, "couponCost", -1);
@@ -1834,7 +1996,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(couponCostNegativeRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-couponCost-negative-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1843,6 +2005,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -1870,8 +2038,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(totalCostNullRequest, "name", "test");
         ReflectionTestUtils.setField(totalCostNullRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(totalCostNullRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(totalCostNullRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(totalCostNullRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(totalCostNullRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(totalCostNullRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(totalCostNullRequest, "orderNumber", "test123456tset1234566778tes");
         ReflectionTestUtils.setField(totalCostNullRequest, "pointCost", 1);
         ReflectionTestUtils.setField(totalCostNullRequest, "couponCost", 0);
@@ -1884,7 +2052,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(totalCostNullRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-totalCost-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1893,6 +2061,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -1908,7 +2082,6 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
                                 fieldWithPath("orderCode").description("주문 코드")
-
                         )
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
@@ -1921,8 +2094,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(totalCostNegativeRequest, "name", "test");
         ReflectionTestUtils.setField(totalCostNegativeRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(totalCostNegativeRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(totalCostNegativeRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(totalCostNegativeRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(totalCostNegativeRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(totalCostNegativeRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(totalCostNegativeRequest, "orderNumber", "test123456tset1234566778tes");
         ReflectionTestUtils.setField(totalCostNegativeRequest, "pointCost", 1);
         ReflectionTestUtils.setField(totalCostNegativeRequest, "couponCost", 0);
@@ -1935,7 +2108,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(totalCostNegativeRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-totalCost-negative-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1944,6 +2117,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -1959,21 +2138,20 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
                                 fieldWithPath("orderCode").description("주문 코드")
-
                         )
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
     }
 
     @Test
-    @DisplayName("주문 생성 시 유효성 실패 검사(총액이 음수인 경우")
+    @DisplayName("주문 생성 시 유효성 실패 검사(포장비 음수인 경우")
     void givenBookOrderCreateRequestWrapCostNegative_whenCreateOrder_thenThrowRequestValidationFailedException() throws Exception {
         BookOrderCreateRequest wrapCostNegativeRequest = new BookOrderCreateRequest();
         ReflectionTestUtils.setField(wrapCostNegativeRequest, "name", "test");
         ReflectionTestUtils.setField(wrapCostNegativeRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(wrapCostNegativeRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(wrapCostNegativeRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(wrapCostNegativeRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(wrapCostNegativeRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(wrapCostNegativeRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(wrapCostNegativeRequest, "orderNumber", "test123456tset1234566778tes");
         ReflectionTestUtils.setField(wrapCostNegativeRequest, "pointCost", 1);
         ReflectionTestUtils.setField(wrapCostNegativeRequest, "couponCost", 0);
@@ -1986,7 +2164,7 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(wrapCostNegativeRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-info-create-wrap-negative-validation",
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
@@ -1995,6 +2173,12 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("email").description("회원 이메일"),
                                 fieldWithPath("phone").description("회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -2009,8 +2193,7 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("couponCost").description("총 쿠폰 적용 금액"),
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
-                                fieldWithPath("orderCode").description("주문 코드")
-                        )
+                                fieldWithPath("orderCode").description("주문 코드"))
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
     }
@@ -2024,7 +2207,7 @@ class BookOrderRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string("true"))
-                .andDo(document("book-order-number-check",
+                .andDo(document("book-order-number-check-success",
                         pathParameters(
                                 parameterWithName("orderNumber").description("조회할 주문 번호")
                         )));
@@ -2038,8 +2221,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(request, "name", "test");
         ReflectionTestUtils.setField(request, "email", "test@test.com");
         ReflectionTestUtils.setField(request, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(request, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(request, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(request, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(request, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(request, "orderNumber", "test");
         ReflectionTestUtils.setField(request, "pointCost", 0);
         ReflectionTestUtils.setField(request, "couponCost", 0);
@@ -2061,12 +2244,18 @@ class BookOrderRestControllerTest {
                 .andExpect(jsonPath("$.totalCost").value(1000))
                 .andExpect(jsonPath("$.isCouponUsed").value(false))
 
-                .andDo(document("book-order-non-user",
+                .andDo(document("book-order-non-user-create-success",
                         requestFields(
                                 fieldWithPath("name").description("비회원 이름"),
                                 fieldWithPath("email").description("비회원 이메일"),
                                 fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -2098,8 +2287,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(nameNullRequest, "name", null);
         ReflectionTestUtils.setField(nameNullRequest, "email", "test@test.com");
         ReflectionTestUtils.setField(nameNullRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(nameNullRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(nameNullRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(nameNullRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(nameNullRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(nameNullRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(nameNullRequest, "pointCost", 0);
         ReflectionTestUtils.setField(nameNullRequest, "couponCost", 0);
@@ -2111,13 +2300,19 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(nameNullRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-non-user-info-create",
+                .andDo(document("book-order-non-user-create-name-null-validation",
 
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -2133,7 +2328,6 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
                                 fieldWithPath("orderCode").description("주문 코드")
-
                         )
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
@@ -2146,8 +2340,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(nameEmptyRequest, "name", "");
         ReflectionTestUtils.setField(nameEmptyRequest, "email", "test@test.com");
         ReflectionTestUtils.setField(nameEmptyRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(nameEmptyRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(nameEmptyRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(nameEmptyRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(nameEmptyRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(nameEmptyRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(nameEmptyRequest, "pointCost", 0);
         ReflectionTestUtils.setField(nameEmptyRequest, "couponCost", 0);
@@ -2159,13 +2353,19 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(nameEmptyRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-non-user-info-create",
+                .andDo(document("book-order-non-user-create-name-empty-validation",
 
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -2181,7 +2381,6 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
                                 fieldWithPath("orderCode").description("주문 코드")
-
                         )
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
@@ -2194,8 +2393,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(nameBlankRequest, "name", " ");
         ReflectionTestUtils.setField(nameBlankRequest, "email", "test@test.com");
         ReflectionTestUtils.setField(nameBlankRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(nameBlankRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(nameBlankRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(nameBlankRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(nameBlankRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(nameBlankRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(nameBlankRequest, "pointCost", 0);
         ReflectionTestUtils.setField(nameBlankRequest, "couponCost", 0);
@@ -2207,12 +2406,18 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(nameBlankRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-non-user-info-create",
+                .andDo(document("book-order-non-user-create-name-blank-validation",
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -2241,8 +2446,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(emailNullRequest, "name", "test");
         ReflectionTestUtils.setField(emailNullRequest, "email", null);
         ReflectionTestUtils.setField(emailNullRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(emailNullRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(emailNullRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(emailNullRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(emailNullRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(emailNullRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(emailNullRequest, "pointCost", 0);
         ReflectionTestUtils.setField(emailNullRequest, "couponCost", 0);
@@ -2254,12 +2459,18 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(emailNullRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-non-user-info-create",
+                .andDo(document("book-order-non-user-create-email-null-validation",
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -2274,8 +2485,7 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("couponCost").description("총 쿠폰 적용 금액"),
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
-                                fieldWithPath("orderCode").description("주문 금액")
-
+                                fieldWithPath("orderCode").description("주문 코드")
                         )
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
@@ -2288,8 +2498,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(emailEmptyRequest, "name", "test");
         ReflectionTestUtils.setField(emailEmptyRequest, "email", "");
         ReflectionTestUtils.setField(emailEmptyRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(emailEmptyRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(emailEmptyRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(emailEmptyRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(emailEmptyRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(emailEmptyRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(emailEmptyRequest, "pointCost", 0);
         ReflectionTestUtils.setField(emailEmptyRequest, "couponCost", 0);
@@ -2301,12 +2511,18 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(emailEmptyRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-non-user-info-create",
+                .andDo(document("book-order-non-user-create-email-empty-validation",
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -2334,8 +2550,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(emailBlankRequest, "name", "test");
         ReflectionTestUtils.setField(emailBlankRequest, "email", " ");
         ReflectionTestUtils.setField(emailBlankRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(emailBlankRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(emailBlankRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(emailBlankRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(emailBlankRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(emailBlankRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(emailBlankRequest, "pointCost", 0);
         ReflectionTestUtils.setField(emailBlankRequest, "couponCost", 0);
@@ -2347,12 +2563,18 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(emailBlankRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-non-user-create-email-blank-validation",
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -2367,9 +2589,8 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("couponCost").description("총 쿠폰 적용 금액"),
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
-                                fieldWithPath("orderCode").description("주문 코드")
+                                fieldWithPath("orderCode").description("주문 코드"))
 
-                        )
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
     }
@@ -2381,8 +2602,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(emailNotFormatRequest, "name", "test");
         ReflectionTestUtils.setField(emailNotFormatRequest, "email", "test");
         ReflectionTestUtils.setField(emailNotFormatRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(emailNotFormatRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(emailNotFormatRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(emailNotFormatRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(emailNotFormatRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(emailNotFormatRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(emailNotFormatRequest, "pointCost", 0);
         ReflectionTestUtils.setField(emailNotFormatRequest, "couponCost", 0);
@@ -2394,13 +2615,19 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(emailNotFormatRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-non-user-info-create",
+                .andDo(document("book-order-non-user-create-email-not-format-validation",
 
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -2416,7 +2643,6 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
                                 fieldWithPath("orderCode").description("주문 코드")
-
                         )
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
@@ -2430,8 +2656,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(emailMaxOverRequest, "name", "test");
         ReflectionTestUtils.setField(emailMaxOverRequest, "email", "test1234test1234test1234test1234test1234@naver.com");
         ReflectionTestUtils.setField(emailMaxOverRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(emailMaxOverRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(emailMaxOverRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(emailMaxOverRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(emailMaxOverRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(emailMaxOverRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(emailMaxOverRequest, "pointCost", 0);
         ReflectionTestUtils.setField(emailMaxOverRequest, "couponCost", 0);
@@ -2443,108 +2669,18 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(emailMaxOverRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-non-user-info-create",
+                .andDo(document("book-order-non-user-create-email-max-over-size-validation",
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
-                                fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
-                                fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
-                                fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
-                                fieldWithPath("orderInfo.recipientAddress").description("받는 사람의 주소"),
-                                fieldWithPath("orderInfo.recipientPhoneNumber").description("받는 사람 전화 번호"),
-                                fieldWithPath("orderInfo.receiverMessage").description("배송 시 요청사항"),
-                                fieldWithPath("orderInfo.usingPoint").description("주문에 사용한 포인트"),
-                                fieldWithPath("orderInfo.wrapCost").description("포장지 가격"),
-                                fieldWithPath("orderInfo.couponApplicationAmount").description("쿠폰 적용 금약"),
-                                fieldWithPath("orderNumber").description("주문 번호"),
-                                fieldWithPath("pointCost").description("포인트 적립금"),
-                                fieldWithPath("couponCost").description("총 쿠폰 적용 금액"),
-                                fieldWithPath("totalCost").description("결제 할 금액"),
-                                fieldWithPath("wrapCost").description("포장지 금액"),
-                                fieldWithPath("orderCode").description("주문 콛,")
-
-                        )
-                ));
-        verify(orderService, never()).createOrder(any(), anyLong());
-    }
-
-    @Test
-    @DisplayName("비회원 주문 생성 시 유효성 실패 검사(회원의 번호가 null인 경우")
-    void givenBookOrderNonUserCreateRequestPhoneNull_whenCreateOrder_thenThrowRequestValidationFailedException() throws Exception {
-        BookOrderCreateRequest phoneNullRequest = new BookOrderCreateRequest();
-        ReflectionTestUtils.setField(phoneNullRequest, "name", "test");
-        ReflectionTestUtils.setField(phoneNullRequest, "email", "test1234@naver.com");
-        ReflectionTestUtils.setField(phoneNullRequest, "phone", null);
-        ReflectionTestUtils.setField(phoneNullRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(phoneNullRequest, "orderInfo", new BookOrderInfoRequest());
-        ReflectionTestUtils.setField(phoneNullRequest, "orderNumber", "test");
-        ReflectionTestUtils.setField(phoneNullRequest, "pointCost", 0);
-        ReflectionTestUtils.setField(phoneNullRequest, "couponCost", 0);
-        ReflectionTestUtils.setField(phoneNullRequest, "totalCost", 1000);
-        ReflectionTestUtils.setField(phoneNullRequest, "wrapCost", 500);
-        ReflectionTestUtils.setField(phoneNullRequest, "orderCode", "1234");
-
-        mockMvc.perform(post(url)
-                        .content(mapper.writeValueAsString(phoneNullRequest))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andDo(document("book-order-non-user-info-create",
-
-                        requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
-                                fieldWithPath("bookInfoList").description("주문한 도서 목록"),
-                                fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
-                                fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
-                                fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
-                                fieldWithPath("orderInfo.recipientAddress").description("받는 사람의 주소"),
-                                fieldWithPath("orderInfo.recipientPhoneNumber").description("받는 사람 전화 번호"),
-                                fieldWithPath("orderInfo.receiverMessage").description("배송 시 요청사항"),
-                                fieldWithPath("orderInfo.usingPoint").description("주문에 사용한 포인트"),
-                                fieldWithPath("orderInfo.wrapCost").description("포장지 가격"),
-                                fieldWithPath("orderInfo.couponApplicationAmount").description("쿠폰 적용 금약"),
-                                fieldWithPath("orderNumber").description("주문 번호"),
-                                fieldWithPath("pointCost").description("포인트 적립금"),
-                                fieldWithPath("couponCost").description("총 쿠폰 적용 금액"),
-                                fieldWithPath("totalCost").description("결제 할 금액"),
-                                fieldWithPath("wrapCost").description("포장지 금액"),
-                                fieldWithPath("orderCode").description("주문 콛,")
-
-                        )
-                ));
-        verify(orderService, never()).createOrder(any(), anyLong());
-    }
-
-    @Test
-    @DisplayName("비회원 주문 생성 시 유효성 실패 검사(회원의 번호가 빈 값인 경우")
-    void givenBookOrderNonUserCreateRequestPhoneEmpty_whenCreateOrder_thenThrowRequestValidationFailedException() throws Exception {
-        BookOrderCreateRequest phoneEmptyRequest = new BookOrderCreateRequest();
-        ReflectionTestUtils.setField(phoneEmptyRequest, "name", "test");
-        ReflectionTestUtils.setField(phoneEmptyRequest, "email", "test1234@naver.com");
-        ReflectionTestUtils.setField(phoneEmptyRequest, "phone", "");
-        ReflectionTestUtils.setField(phoneEmptyRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(phoneEmptyRequest, "orderInfo", new BookOrderInfoRequest());
-        ReflectionTestUtils.setField(phoneEmptyRequest, "orderNumber", "test");
-        ReflectionTestUtils.setField(phoneEmptyRequest, "pointCost", 0);
-        ReflectionTestUtils.setField(phoneEmptyRequest, "couponCost", 0);
-        ReflectionTestUtils.setField(phoneEmptyRequest, "totalCost", 1000);
-        ReflectionTestUtils.setField(phoneEmptyRequest, "wrapCost", 500);
-        ReflectionTestUtils.setField(phoneEmptyRequest, "orderCode", "1234");
-
-        mockMvc.perform(post(url)
-                        .content(mapper.writeValueAsString(phoneEmptyRequest))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andDo(document("book-order-non-user-info-create",
-
-                        requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
-                                fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -2560,7 +2696,112 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
                                 fieldWithPath("orderCode").description("주문 코드")
+                        )
+                ));
+        verify(orderService, never()).createOrder(any(), anyLong());
+    }
 
+    @Test
+    @DisplayName("비회원 주문 생성 시 유효성 실패 검사(회원의 번호가 null인 경우")
+    void givenBookOrderNonUserCreateRequestPhoneNull_whenCreateOrder_thenThrowRequestValidationFailedException() throws Exception {
+        BookOrderCreateRequest phoneNullRequest = new BookOrderCreateRequest();
+        ReflectionTestUtils.setField(phoneNullRequest, "name", "test");
+        ReflectionTestUtils.setField(phoneNullRequest, "email", "test1234@naver.com");
+        ReflectionTestUtils.setField(phoneNullRequest, "phone", null);
+        ReflectionTestUtils.setField(phoneNullRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(phoneNullRequest, "orderInfo", bookOrderInfoRequest);
+        ReflectionTestUtils.setField(phoneNullRequest, "orderNumber", "test");
+        ReflectionTestUtils.setField(phoneNullRequest, "pointCost", 0);
+        ReflectionTestUtils.setField(phoneNullRequest, "couponCost", 0);
+        ReflectionTestUtils.setField(phoneNullRequest, "totalCost", 1000);
+        ReflectionTestUtils.setField(phoneNullRequest, "wrapCost", 500);
+        ReflectionTestUtils.setField(phoneNullRequest, "orderCode", "1234");
+
+        mockMvc.perform(post(url)
+                        .content(mapper.writeValueAsString(phoneNullRequest))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(document("book-order-non-user-create-phone-null-validation",
+
+                        requestFields(
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
+                                fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
+                                fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
+                                fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
+                                fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
+                                fieldWithPath("orderInfo.recipientAddress").description("받는 사람의 주소"),
+                                fieldWithPath("orderInfo.recipientPhoneNumber").description("받는 사람 전화 번호"),
+                                fieldWithPath("orderInfo.receiverMessage").description("배송 시 요청사항"),
+                                fieldWithPath("orderInfo.usingPoint").description("주문에 사용한 포인트"),
+                                fieldWithPath("orderInfo.wrapCost").description("포장지 가격"),
+                                fieldWithPath("orderInfo.couponApplicationAmount").description("쿠폰 적용 금약"),
+                                fieldWithPath("orderNumber").description("주문 번호"),
+                                fieldWithPath("pointCost").description("포인트 적립금"),
+                                fieldWithPath("couponCost").description("총 쿠폰 적용 금액"),
+                                fieldWithPath("totalCost").description("결제 할 금액"),
+                                fieldWithPath("wrapCost").description("포장지 금액"),
+                                fieldWithPath("orderCode").description("주문 코드")
+                        )
+                ));
+        verify(orderService, never()).createOrder(any(), anyLong());
+    }
+
+    @Test
+    @DisplayName("비회원 주문 생성 시 유효성 실패 검사(회원의 번호가 빈 값인 경우")
+    void givenBookOrderNonUserCreateRequestPhoneEmpty_whenCreateOrder_thenThrowRequestValidationFailedException() throws Exception {
+        BookOrderCreateRequest phoneEmptyRequest = new BookOrderCreateRequest();
+        ReflectionTestUtils.setField(phoneEmptyRequest, "name", "test");
+        ReflectionTestUtils.setField(phoneEmptyRequest, "email", "test1234@naver.com");
+        ReflectionTestUtils.setField(phoneEmptyRequest, "phone", "");
+        ReflectionTestUtils.setField(phoneEmptyRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(phoneEmptyRequest, "orderInfo", bookOrderInfoRequest);
+        ReflectionTestUtils.setField(phoneEmptyRequest, "orderNumber", "test");
+        ReflectionTestUtils.setField(phoneEmptyRequest, "pointCost", 0);
+        ReflectionTestUtils.setField(phoneEmptyRequest, "couponCost", 0);
+        ReflectionTestUtils.setField(phoneEmptyRequest, "totalCost", 1000);
+        ReflectionTestUtils.setField(phoneEmptyRequest, "wrapCost", 500);
+        ReflectionTestUtils.setField(phoneEmptyRequest, "orderCode", "1234");
+
+        mockMvc.perform(post(url)
+                        .content(mapper.writeValueAsString(phoneEmptyRequest))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(document("book-order-non-user-create-phone-empty-validation",
+
+                        requestFields(
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
+                                fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
+                                fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
+                                fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
+                                fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
+                                fieldWithPath("orderInfo.recipientAddress").description("받는 사람의 주소"),
+                                fieldWithPath("orderInfo.recipientPhoneNumber").description("받는 사람 전화 번호"),
+                                fieldWithPath("orderInfo.receiverMessage").description("배송 시 요청사항"),
+                                fieldWithPath("orderInfo.usingPoint").description("주문에 사용한 포인트"),
+                                fieldWithPath("orderInfo.wrapCost").description("포장지 가격"),
+                                fieldWithPath("orderInfo.couponApplicationAmount").description("쿠폰 적용 금약"),
+                                fieldWithPath("orderNumber").description("주문 번호"),
+                                fieldWithPath("pointCost").description("포인트 적립금"),
+                                fieldWithPath("couponCost").description("총 쿠폰 적용 금액"),
+                                fieldWithPath("totalCost").description("결제 할 금액"),
+                                fieldWithPath("wrapCost").description("포장지 금액"),
+                                fieldWithPath("orderCode").description("주문 코드")
                         )
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
@@ -2573,8 +2814,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(phoneBlankRequest, "name", "test");
         ReflectionTestUtils.setField(phoneBlankRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(phoneBlankRequest, "phone", " ");
-        ReflectionTestUtils.setField(phoneBlankRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(phoneBlankRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(phoneBlankRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(phoneBlankRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(phoneBlankRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(phoneBlankRequest, "pointCost", 0);
         ReflectionTestUtils.setField(phoneBlankRequest, "couponCost", 0);
@@ -2586,12 +2827,18 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(phoneBlankRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-non-user-info-create",
+                .andDo(document("book-order-non-user-create-phone-blank-validation",
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -2619,8 +2866,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(phoneMinUnderRequest, "name", "test");
         ReflectionTestUtils.setField(phoneMinUnderRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(phoneMinUnderRequest, "phone", "010123");
-        ReflectionTestUtils.setField(phoneMinUnderRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(phoneMinUnderRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(phoneMinUnderRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(phoneMinUnderRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(phoneMinUnderRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(phoneMinUnderRequest, "pointCost", 0);
         ReflectionTestUtils.setField(phoneMinUnderRequest, "couponCost", 0);
@@ -2632,12 +2879,18 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(phoneMinUnderRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-non-user-create-phone-min-size-validation",
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -2653,7 +2906,6 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
                                 fieldWithPath("orderCode").description("주문 코드")
-
                         )
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
@@ -2666,8 +2918,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(phoneMaxOverRequest, "name", "test");
         ReflectionTestUtils.setField(phoneMaxOverRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(phoneMaxOverRequest, "phone", "010-1234-12345");
-        ReflectionTestUtils.setField(phoneMaxOverRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(phoneMaxOverRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(phoneMaxOverRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(phoneMaxOverRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(phoneMaxOverRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(phoneMaxOverRequest, "pointCost", 0);
         ReflectionTestUtils.setField(phoneMaxOverRequest, "couponCost", 0);
@@ -2679,13 +2931,19 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(phoneMaxOverRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-non-user-create-phone-max-size-validation",
 
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -2701,7 +2959,6 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
                                 fieldWithPath("orderCode").description("주문 코드")
-
                         )
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
@@ -2715,7 +2972,7 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(phoneMaxOverRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(phoneMaxOverRequest, "phone", "010-1234-1234");
         ReflectionTestUtils.setField(phoneMaxOverRequest, "bookInfoList", null);
-        ReflectionTestUtils.setField(phoneMaxOverRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(phoneMaxOverRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(phoneMaxOverRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(phoneMaxOverRequest, "pointCost", 0);
         ReflectionTestUtils.setField(phoneMaxOverRequest, "couponCost", 0);
@@ -2727,12 +2984,12 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(phoneMaxOverRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-non-user-info-validation",
+                .andDo(document("book-order-non-user-create-bookInfoList-null-validation",
 
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
@@ -2749,7 +3006,6 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
                                 fieldWithPath("orderCode").description("주문 코드")
-
                         )
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
@@ -2762,7 +3018,7 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(orderInfoNullRequest, "name", "test");
         ReflectionTestUtils.setField(orderInfoNullRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(orderInfoNullRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(orderInfoNullRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
+        ReflectionTestUtils.setField(orderInfoNullRequest, "bookInfoList", List.of(bookInfoRequest));
         ReflectionTestUtils.setField(orderInfoNullRequest, "orderInfo", null);
         ReflectionTestUtils.setField(orderInfoNullRequest, "orderNumber", "test");
         ReflectionTestUtils.setField(orderInfoNullRequest, "pointCost", 0);
@@ -2775,14 +3031,20 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(orderInfoNullRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-non-user-info-create",
+                .andDo(document("book-order-non-user-create-orderInfo-null-validation",
 
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
-                                fieldWithPath("orderInfo").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
+                                fieldWithPath("orderInfo").description("주문 정보"),
                                 fieldWithPath("orderNumber").description("주문 번호"),
                                 fieldWithPath("pointCost").description("포인트 적립금"),
                                 fieldWithPath("couponCost").description("총 쿠폰 적용 금액"),
@@ -2801,8 +3063,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(orderNumberNullRequest, "name", "test");
         ReflectionTestUtils.setField(orderNumberNullRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(orderNumberNullRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(orderNumberNullRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(orderNumberNullRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(orderNumberNullRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(orderNumberNullRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(orderNumberNullRequest, "orderNumber", null);
         ReflectionTestUtils.setField(orderNumberNullRequest, "pointCost", 0);
         ReflectionTestUtils.setField(orderNumberNullRequest, "couponCost", 0);
@@ -2814,13 +3076,19 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(orderNumberNullRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-non-user-info-Validation",
+                .andDo(document("book-order-non-user-create-orderNumber-null-Validation",
 
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -2848,8 +3116,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(bookOrderEmptyRequest, "name", "test");
         ReflectionTestUtils.setField(bookOrderEmptyRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(bookOrderEmptyRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(bookOrderEmptyRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(bookOrderEmptyRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(bookOrderEmptyRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(bookOrderEmptyRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(bookOrderEmptyRequest, "orderNumber", "");
         ReflectionTestUtils.setField(bookOrderEmptyRequest, "pointCost", 0);
         ReflectionTestUtils.setField(bookOrderEmptyRequest, "couponCost", 0);
@@ -2860,13 +3128,19 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(bookOrderEmptyRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-non-user-create-orderNumber-empty-validation",
 
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -2894,8 +3168,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(bookOrderBlankRequest, "name", "test");
         ReflectionTestUtils.setField(bookOrderBlankRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(bookOrderBlankRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(bookOrderBlankRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(bookOrderBlankRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(bookOrderBlankRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(bookOrderBlankRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(bookOrderBlankRequest, "orderNumber", " ");
         ReflectionTestUtils.setField(bookOrderBlankRequest, "pointCost", 0);
         ReflectionTestUtils.setField(bookOrderBlankRequest, "couponCost", 0);
@@ -2907,13 +3181,19 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(bookOrderBlankRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-non-user-info-validation-empty",
+                .andDo(document("book-order-non-user-create-orderNumber-blank-validation",
 
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -2941,8 +3221,8 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(bookOrderMaxOverSizeRequest, "name", "test");
         ReflectionTestUtils.setField(bookOrderMaxOverSizeRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(bookOrderMaxOverSizeRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(bookOrderMaxOverSizeRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(bookOrderMaxOverSizeRequest, "orderInfo", new BookOrderInfoRequest());
+        ReflectionTestUtils.setField(bookOrderMaxOverSizeRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(bookOrderMaxOverSizeRequest, "orderInfo", bookOrderInfoRequest);
         ReflectionTestUtils.setField(bookOrderMaxOverSizeRequest, "orderNumber", "test123456tset1234566778tes");
         ReflectionTestUtils.setField(bookOrderMaxOverSizeRequest, "pointCost", 0);
         ReflectionTestUtils.setField(bookOrderMaxOverSizeRequest, "couponCost", 0);
@@ -2954,12 +3234,18 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(bookOrderMaxOverSizeRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-non-user-info-validation",
+                .andDo(document("book-order-non-user-create-orderNumber-max-size-validation",
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -2987,9 +3273,9 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(pointNullRequest, "name", "test");
         ReflectionTestUtils.setField(pointNullRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(pointNullRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(pointNullRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(pointNullRequest, "orderInfo", new BookOrderInfoRequest());
-        ReflectionTestUtils.setField(pointNullRequest, "orderNumber", "test123456tset1234566778tes");
+        ReflectionTestUtils.setField(pointNullRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(pointNullRequest, "orderInfo", bookOrderInfoRequest);
+        ReflectionTestUtils.setField(pointNullRequest, "orderNumber", "test123434566778tes");
         ReflectionTestUtils.setField(pointNullRequest, "pointCost", null);
         ReflectionTestUtils.setField(pointNullRequest, "couponCost", 0);
         ReflectionTestUtils.setField(pointNullRequest, "totalCost", 1000);
@@ -3000,12 +3286,18 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(pointNullRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-non-user-info-validation-null",
+                .andDo(document("book-order-non-user-create-pointCost-null-validation",
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -3033,9 +3325,9 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(pointNegativeRequest, "name", "test");
         ReflectionTestUtils.setField(pointNegativeRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(pointNegativeRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(pointNegativeRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(pointNegativeRequest, "orderInfo", new BookOrderInfoRequest());
-        ReflectionTestUtils.setField(pointNegativeRequest, "orderNumber", "test123456tset1234566778tes");
+        ReflectionTestUtils.setField(pointNegativeRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(pointNegativeRequest, "orderInfo", bookOrderInfoRequest);
+        ReflectionTestUtils.setField(pointNegativeRequest, "orderNumber", "test1234568tes");
         ReflectionTestUtils.setField(pointNegativeRequest, "pointCost", -1);
         ReflectionTestUtils.setField(pointNegativeRequest, "couponCost", 0);
         ReflectionTestUtils.setField(pointNegativeRequest, "totalCost", 1000);
@@ -3046,12 +3338,18 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(pointNegativeRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-non-user-info-validation-negative",
+                .andDo(document("book-order-non-user-create-pointCost-negative-validation",
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -3066,8 +3364,7 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("couponCost").description("총 쿠폰 적용 금액"),
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
-                                fieldWithPath("orderCode").description("주문 코드")
-                        )
+                                fieldWithPath("orderCode").description("주문 코드"))
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
     }
@@ -3079,9 +3376,9 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(couponCostNullRequest, "name", "test");
         ReflectionTestUtils.setField(couponCostNullRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(couponCostNullRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(couponCostNullRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(couponCostNullRequest, "orderInfo", new BookOrderInfoRequest());
-        ReflectionTestUtils.setField(couponCostNullRequest, "orderNumber", "test123456tset1234566778tes");
+        ReflectionTestUtils.setField(couponCostNullRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(couponCostNullRequest, "orderInfo", bookOrderInfoRequest);
+        ReflectionTestUtils.setField(couponCostNullRequest, "orderNumber", "test123456tset1234566");
         ReflectionTestUtils.setField(couponCostNullRequest, "pointCost", 1);
         ReflectionTestUtils.setField(couponCostNullRequest, "couponCost", null);
         ReflectionTestUtils.setField(couponCostNullRequest, "totalCost", 1000);
@@ -3092,13 +3389,19 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(couponCostNullRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-non-user-create-couponCost-null-validation",
 
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -3126,9 +3429,9 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(couponCostNegativeRequest, "name", "test");
         ReflectionTestUtils.setField(couponCostNegativeRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(couponCostNegativeRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(couponCostNegativeRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(couponCostNegativeRequest, "orderInfo", new BookOrderInfoRequest());
-        ReflectionTestUtils.setField(couponCostNegativeRequest, "orderNumber", "test123456tset1234566778tes");
+        ReflectionTestUtils.setField(couponCostNegativeRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(couponCostNegativeRequest, "orderInfo", bookOrderInfoRequest);
+        ReflectionTestUtils.setField(couponCostNegativeRequest, "orderNumber", "test1234set12es");
         ReflectionTestUtils.setField(couponCostNegativeRequest, "pointCost", 1);
         ReflectionTestUtils.setField(couponCostNegativeRequest, "couponCost", -1);
         ReflectionTestUtils.setField(couponCostNegativeRequest, "totalCost", 1000);
@@ -3140,12 +3443,18 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(couponCostNegativeRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-non-user-create-couponCost-negative-validation",
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -3173,9 +3482,9 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(totalCostNullRequest, "name", "test");
         ReflectionTestUtils.setField(totalCostNullRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(totalCostNullRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(totalCostNullRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(totalCostNullRequest, "orderInfo", new BookOrderInfoRequest());
-        ReflectionTestUtils.setField(totalCostNullRequest, "orderNumber", "test123456tset1234566778tes");
+        ReflectionTestUtils.setField(totalCostNullRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(totalCostNullRequest, "orderInfo", bookOrderInfoRequest);
+        ReflectionTestUtils.setField(totalCostNullRequest, "orderNumber", "test134566778tes");
         ReflectionTestUtils.setField(totalCostNullRequest, "pointCost", 1);
         ReflectionTestUtils.setField(totalCostNullRequest, "couponCost", 0);
         ReflectionTestUtils.setField(totalCostNullRequest, "totalCost", null);
@@ -3186,12 +3495,18 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(totalCostNullRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-non-user-create-totalCost-null-validation",
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -3206,8 +3521,7 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("couponCost").description("총 쿠폰 적용 금액"),
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
-                                fieldWithPath("orderCode").description("주문 코드")
-                        )
+                                fieldWithPath("orderCode").description("주문 코드"))
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
     }
@@ -3219,9 +3533,9 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(totalCostNegativeRequest, "name", "test");
         ReflectionTestUtils.setField(totalCostNegativeRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(totalCostNegativeRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(totalCostNegativeRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(totalCostNegativeRequest, "orderInfo", new BookOrderInfoRequest());
-        ReflectionTestUtils.setField(totalCostNegativeRequest, "orderNumber", "test123456tset1234566778tes");
+        ReflectionTestUtils.setField(totalCostNegativeRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(totalCostNegativeRequest, "orderInfo", bookOrderInfoRequest);
+        ReflectionTestUtils.setField(totalCostNegativeRequest, "orderNumber", "test1234566778tes");
         ReflectionTestUtils.setField(totalCostNegativeRequest, "pointCost", 1);
         ReflectionTestUtils.setField(totalCostNegativeRequest, "couponCost", 0);
         ReflectionTestUtils.setField(totalCostNegativeRequest, "totalCost", -1);
@@ -3232,13 +3546,19 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(totalCostNegativeRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-non-user-create-totalCost-negative-validation",
 
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -3253,8 +3573,7 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("couponCost").description("총 쿠폰 적용 금액"),
                                 fieldWithPath("totalCost").description("결제 할 금액"),
                                 fieldWithPath("wrapCost").description("포장지 금액"),
-                                fieldWithPath("orderCode").description("주문 코드")
-                        )
+                                fieldWithPath("orderCode").description("주문 코드"))
                 ));
         verify(orderService, never()).createOrder(any(), anyLong());
     }
@@ -3266,12 +3585,12 @@ class BookOrderRestControllerTest {
         ReflectionTestUtils.setField(totalCostNegativeRequest, "name", "test");
         ReflectionTestUtils.setField(totalCostNegativeRequest, "email", "test1234@naver.com");
         ReflectionTestUtils.setField(totalCostNegativeRequest, "phone", "010-1234-1234");
-        ReflectionTestUtils.setField(totalCostNegativeRequest, "bookInfoList", new ArrayList<BookInfoRequest>());
-        ReflectionTestUtils.setField(totalCostNegativeRequest, "orderInfo", new BookOrderInfoRequest());
-        ReflectionTestUtils.setField(totalCostNegativeRequest, "orderNumber", "test123456tset1234566778tes");
+        ReflectionTestUtils.setField(totalCostNegativeRequest, "bookInfoList", List.of(bookInfoRequest));
+        ReflectionTestUtils.setField(totalCostNegativeRequest, "orderInfo", bookOrderInfoRequest);
+        ReflectionTestUtils.setField(totalCostNegativeRequest, "orderNumber", "test123451778tes");
         ReflectionTestUtils.setField(totalCostNegativeRequest, "pointCost", 1);
         ReflectionTestUtils.setField(totalCostNegativeRequest, "couponCost", 0);
-        ReflectionTestUtils.setField(totalCostNegativeRequest, "totalCost", -1);
+        ReflectionTestUtils.setField(totalCostNegativeRequest, "totalCost", 1000);
         ReflectionTestUtils.setField(totalCostNegativeRequest, "wrapCost", 500);
 
         ReflectionTestUtils.setField(totalCostNegativeRequest, "orderCode", "1234567");
@@ -3279,13 +3598,19 @@ class BookOrderRestControllerTest {
                         .content(mapper.writeValueAsString(totalCostNegativeRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(document("book-order-info-create",
+                .andDo(document("book-order-non-user-create-orderCode-max-size-validation",
 
                         requestFields(
-                                fieldWithPath("name").description("회원 이름"),
-                                fieldWithPath("email").description("회원 이메일"),
-                                fieldWithPath("phone").description("회원 전화 번호"),
+                                fieldWithPath("name").description("비회원 이름"),
+                                fieldWithPath("email").description("비회원 이메일"),
+                                fieldWithPath("phone").description("비회원 전화 번호"),
                                 fieldWithPath("bookInfoList").description("주문한 도서 목록"),
+                                fieldWithPath("bookInfoList[].bookId").description("주문한 도서 목록당 도서 아이디"),
+                                fieldWithPath("bookInfoList[].saleCost").description("주문한 도서 목록당 도서 할인가"),
+                                fieldWithPath("bookInfoList[].bookCost").description("주문한 도서 목록당 도서 가격"),
+                                fieldWithPath("bookInfoList[].amount").description("주문한 도서 목록당 도서 갯수"),
+                                fieldWithPath("bookInfoList[].selectWrapId").description("주문한 도서 목록당 도서에서 선택한 포장지 아이디"),
+                                fieldWithPath("bookInfoList[].selectCouponId").description("주문한 도서 목록당 도서에서 선택된 쿠폰 아이ㅇ"),
                                 fieldWithPath("orderInfo.deliveryId").description("주문 정보에 배송 규정 아이디"),
                                 fieldWithPath("orderInfo.deliveryDate").description("사용자가 원하는 배송 날짜"),
                                 fieldWithPath("orderInfo.recipientName").description("받는 사람 이름"),
@@ -3307,12 +3632,12 @@ class BookOrderRestControllerTest {
     }
 
     @Test
-    @DisplayName("주문 번호로 결제 정보 조회")
+    @DisplayName("주문 번호로 도서 정보 조회")
     void givenOrderNumber_whenGetBookInfo_thenReturnBookOrderInfoPayResponse() throws Exception {
+        OrderDetailInfoResponse response1 = new OrderDetailInfoResponse(1L, "test", 1L, 1000, 1, false, "test image", "test status", 1L);
         BookOrderInfoPayResponse response = new BookOrderInfoPayResponse(
                 "주문 대기", "test", 1000, true, 1000,
-                new ArrayList<OrderDetailInfoResponse>());
-
+                List.of(response1));
         when(bookOrderService.getBookInfo(anyString())).thenReturn(response);
 
         mockMvc.perform(get(url + "/info/pay/{orderNumber}", "test"))
@@ -3332,7 +3657,16 @@ class BookOrderRestControllerTest {
                                 fieldWithPath("totalCost").description("주문 총 액"),
                                 fieldWithPath("isCouponUsed").description("쿠폰 적용 여부"),
                                 fieldWithPath("pointCost").description("포인트"),
-                                fieldWithPath("orderDetails").description("주문 상세 정보 목록")
+                                fieldWithPath("orderDetails").description("주문 상세 정보 목록"),
+                                fieldWithPath("orderDetails[].id").description("주문 상세 정보 아아디"),
+                                fieldWithPath("orderDetails[].bookName").description("주문 상세 정보 도서 이름"),
+                                fieldWithPath("orderDetails[].couponId").description("주문 상세 정보 쿠폰 아이디"),
+                                fieldWithPath("orderDetails[].cost").description("주문 상세 정보 도서 가격"),
+                                fieldWithPath("orderDetails[].amount").description("주문 상세 정보 도서 수량"),
+                                fieldWithPath("orderDetails[].isCouponUsed").description("주문 상세 정보 쿠폰 사용 유무"),
+                                fieldWithPath("orderDetails[].image").description("주문 상세 정보 도서 이미지"),
+                                fieldWithPath("orderDetails[].statusId").description("주문 상세 정보 상태"),
+                                fieldWithPath("orderDetails[].orderDetailId").description("주문 상세 아이디")
                         )));
 
 
