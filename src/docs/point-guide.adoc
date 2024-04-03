@@ -10,12 +10,333 @@
 
 == 포인트 규정 API
 
-=== 규정 추가
+=== id로 규정 조회
 
-==== HTTP Response
+===== 요청
 
-include::{snippets}/point-rule-name-find/http-response.adoc[]
+include::{snippets}/point-rule/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/point-rule/path-parameters.adoc[]
+
+===== 응답
+
+include::{snippets}/point-rule/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/point-rule/response-fields.adoc[]
+
+=== 포인트 규정 전체 조회
+
+===== 요청
+
+include::{snippets}/point-rule-list/http-request.adoc[]
+
+===== 응답
+
+include::{snippets}/point-rule-list/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/point-rule-list/response-fields.adoc[]
+
+=== 포인트 규정 전체 조회 페이징
+
+===== 요청
+
+include::{snippets}/point-rule-pagination/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/point-rule-pagination/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/point-rule-pagination/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/point-rule-pagination/response-fields.adoc[]
+
+=== 포인트 규정 등록
+
+===== 요청
+
+include::{snippets}/point-rule-created/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/point-rule-created/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/point-rule-created/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/point-rule-created/response-fields.adoc[]
+
+=== 포인트 규정 수정
+
+===== 요청
+
+include::{snippets}/point-rule-modify/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/point-rule-modify/request-fields.adoc[]
+include::{snippets}/point-rule-modify/path-parameters.adoc[]
+
+===== 응답
+
+include::{snippets}/point-rule-modify/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/point-rule-modify/response-fields.adoc[]
+
+=== 포인트 규정 수정 실패(유효성 실패)
+
+===== 요청
+
+include::{snippets}/point-rule-modify-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/point-rule-modify-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/point-rule-modify-validation/http-response.adoc[]
+
+=== 포인트 규정 삭제
+
+===== 요청
+
+include::{snippets}/point-rule-delete/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/point-rule-delete/path-parameters.adoc[]
+
+===== 응답
+
+include::{snippets}/point-rule-delete/http-response.adoc[]
 
 == 포인트 규정명 API
 
+=== id로 포인트 규정 명 조회
+
+===== 요청
+
+include::{snippets}/point-rule-name-find/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/point-rule-name-find/path-parameters.adoc[]
+
+===== 응답
+
+include::{snippets}/point-rule-name-find/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/point-rule-name-find/response-fields.adoc[]
+
+=== 포인트 규정 명 전체 조회
+
+===== 요청
+
+include::{snippets}/point-rule-name-list/http-request.adoc[]
+
+===== 응답
+
+include::{snippets}/point-rule-name-list/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/point-rule-name-list/response-fields.adoc[]
+
+=== 포인트 규정 명 생성
+
+===== 요청
+
+include::{snippets}/point-rule-name-create/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/point-rule-name-create/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/point-rule-name-create/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/point-rule-name-create/response-fields.adoc[]
+
+=== 포인트 규정 명 생성 유효성 실패
+
+===== 요청
+
+include::{snippets}/point-rule-name-create-validation/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/point-rule-name-create-validation/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/point-rule-name-create-validation/http-response.adoc[]
+
 == 포인트 내역 API
+
+=== 회원의 잔여 포인트 조회
+
+===== 요청
+
+include::{snippets}/point_history-getRemainPoint/http-request.adoc[]
+
+===== 요청 헤더
+
+include::{snippets}/point_history-getRemainPoint/request-headers.adoc[]
+
+===== 응답
+
+include::{snippets}/point_history-getRemainPoint/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/point_history-getRemainPoint/response-fields.adoc[]
+
+=== 없는 회원의 잔여 포인트 조회
+
+===== 요청
+
+include::{snippets}/point_history-getRemainPoint-notExistsUserId/http-request.adoc[]
+
+===== 요청 헤더
+
+include::{snippets}/point_history-getRemainPoint-notExistsUserId/request-headers.adoc[]
+
+===== 응답
+
+include::{snippets}/point_history-getRemainPoint-notExistsUserId/http-response.adoc[]
+
+=== 회원의 전체 포인트 내역 조회
+
+===== 요청
+
+include::{snippets}/point_history-getPointHistory/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/point_history-getPointHistory/request-headers.adoc[]
+include::{snippets}/point_history-getPointHistory/request-parameters.adoc[]
+
+===== 응답
+
+include::{snippets}/point_history-getPointHistory/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/point_history-getPointHistory/response-fields.adoc[]
+
+=== 없는 회원의 전체 포인트 내역 조회
+
+===== 요청
+
+include::{snippets}/point_history-getPointHistory-notExistsUserId/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/point_history-getPointHistory-notExistsUserId/request-parameters.adoc[]
+include::{snippets}/point_history-getPointHistory-notExistsUserId/request-headers.adoc[]
+
+===== 응답
+
+include::{snippets}/point_history-getPointHistory-notExistsUserId/http-response.adoc[]
+
+=== 포인트 내역 생성
+
+===== 요청
+
+include::{snippets}/point_history-createPointHistory/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/point_history-createPointHistory/request-fields.adoc[]
+include::{snippets}/point_history-createPointHistory/request-headers.adoc[]
+
+===== 응답
+
+include::{snippets}/point_history-createPointHistory/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/point_history-createPointHistory/response-fields.adoc[]
+
+=== 없는 회원의 포인트 내역 생성
+
+===== 요청
+
+include::{snippets}/point_history-createPointHistory-notExistsUserId/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/point_history-createPointHistory-notExistsUserId/request-headers.adoc[]
+include::{snippets}/point_history-createPointHistory-notExistsUserId/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/point_history-createPointHistory-notExistsUserId/http-response.adoc[]
+
+=== 없는 포인트 적립/사용 사유
+
+===== 요청
+
+include::{snippets}/point_history-createPointHistory-notExistsPointRuleName/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/point_history-createPointHistory-notExistsPointRuleName/request-fields.adoc[]
+include::{snippets}/point_history-createPointHistory-notExistsPointRuleName/request-headers.adoc[]
+
+===== 응답
+
+include::{snippets}/point_history-createPointHistory-notExistsPointRuleName/http-response.adoc[]
+
+=== 없는 포인트 규정
+
+===== 요청
+
+include::{snippets}/point_history-createPointHistory-notExistsPointRule/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/point_history-createPointHistory-notExistsPointRule/request-headers.adoc[]
+include::{snippets}/point_history-createPointHistory-notExistsPointRule/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/point_history-createPointHistory-notExistsPointRule/http-response.adoc[]
+
+=== 없는 주문 번호
+
+===== 요청
+
+include::{snippets}/point_history-createPointHistory-notExistsOrderNumber/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/point_history-createPointHistory-notExistsOrderNumber/request-headers.adoc[]
+include::{snippets}/point_history-createPointHistory-notExistsOrderNumber/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/point_history-createPointHistory-notExistsOrderNumber/http-response.adoc[]
+
+
+
