@@ -9,3 +9,671 @@
 :sectanchors:
 
 == 결제 API
+
+=== 비회원 결제
+
+===== 요청
+
+include::{snippets}/payment-non-user-created/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-created/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-created/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/payment-non-user-created/response-fields.adoc[]
+
+=== 비회원 결제 예외 상황
+
+==== 주문 번호 null
+
+===== 요청
+
+include::{snippets}/payment-non-user-id-null-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-id-null-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-id-null-validation-fail/http-response.adoc[]
+
+==== 주문 번호 빈 값
+
+===== 요청
+
+include::{snippets}/payment-non-user-orderNumber-empty-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-orderNumber-empty-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-orderNumber-empty-validation-fail/http-response.adoc[]
+
+==== 주문 번호 공백
+
+===== 요청
+
+include::{snippets}/payment-non-user-orderNumber-blank-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-orderNumber-blank-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-orderNumber-blank-validation-fail/http-response.adoc[]
+
+==== 주문 번호 20자리 초과
+
+===== 요청
+
+include::{snippets}/payment-non-user-orderNumber-max-size-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-orderNumber-max-size-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-orderNumber-max-size-validation-fail/http-response.adoc[]
+
+==== 토스 페이먼츠 키 null
+
+===== 요청
+
+include::{snippets}/payment-non-user-toss-null-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-toss-null-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-toss-null-validation-fail/http-response.adoc[]
+
+==== 토스 페이먼츠 키 빈 값
+
+===== 요청
+
+include::{snippets}/payment-non-user-toss-empty-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-toss-empty-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-toss-empty-validation-fail/http-response.adoc[]
+
+==== 토스 페이먼츠 공백
+
+===== 요청
+
+include::{snippets}/payment-non-user-toss-blank-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-toss-blank-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-toss-blank-validation-fail/http-response.adoc[]
+
+==== 토스 페이먼츠 50자리 초과
+
+===== 요청
+
+include::{snippets}/payment-non-user-toss-max-over-size-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-toss-max-over-size-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-toss-max-over-size-validation-fail/http-response.adoc[]
+
+==== 결제 상태 null
+
+===== 요청
+
+include::{snippets}/payment-non-user-status-null-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-status-null-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-status-null-validation-fail/http-response.adoc[]
+
+==== 결제 상태 빈 값
+
+===== 요청
+
+include::{snippets}/payment-non-user-status-empty-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-status-empty-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-status-empty-validation-fail/http-response.adoc[]
+
+==== 결제 상태 공백
+
+===== 요청
+
+include::{snippets}/payment-non-user-status-blank-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-status-blank-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-status-blank-validation-fail/http-response.adoc[]
+
+==== 결제 상태 20자리 초과
+
+===== 요청
+
+include::{snippets}/payment-non-user-status-max-over-size-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-status-max-over-size-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-status-max-over-size-validation-fail/http-response.adoc[]
+
+==== 결제 승인 시간 null
+
+===== 요청
+
+include::{snippets}/payment-non-user-requestedAt-null-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-requestedAt-null-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-requestedAt-null-validation-fail/http-response.adoc[]
+
+==== 결제 승인 시간 빈 값
+
+===== 요청
+
+include::{snippets}/payment-non-user-requestedAt-empty-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-requestedAt-empty-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-requestedAt-empty-validation-fail/http-response.adoc[]
+
+==== 결제 승인 시간 공백
+
+===== 요청
+
+include::{snippets}/payment-non-user-requestAt-blank-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-requestAt-blank-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-requestAt-blank-validation-fail/http-response.adoc[]
+
+==== 총액 null
+
+===== 요청
+
+include::{snippets}/payment-non-user-total-cost-null-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-total-cost-null-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-total-cost-null-validation-fail/http-response.adoc[]
+
+==== 총액 음수
+
+===== 요청
+
+include::{snippets}/payment-non-user-total-cost-negative-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-total-cost-negative-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-total-cost-negative-validation-fail/http-response.adoc[]
+
+==== 총액 max 값 초과
+
+===== 요청
+
+include::{snippets}/payment-non-user-total-cost-max-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-total-cost-max-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-total-cost-max-validation-fail/http-response.adoc[]
+
+==== method null
+
+===== 요청
+
+include::{snippets}/payment-non-user-method-null-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-method-null-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-method-null-validation-fail/http-response.adoc[]
+
+==== method 빈 값
+
+===== 요청
+
+include::{snippets}/payment-non-user-method-empty-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-method-empty-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-method-empty-validation-fail/http-response.adoc[]
+
+==== method 공백
+
+===== 요청
+
+include::{snippets}/payment-non-user-method-blank-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-non-user-method-blank-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-non-user-method-blank-validation-fail/http-response.adoc[]
+
+=== 회원 결제 처리
+
+===== 요청
+
+include::{snippets}/payment-user-created/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-created/request-fields.adoc[]
+include::{snippets}/payment-user-created/request-headers.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-created/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/payment-user-created/response-fields.adoc[]
+
+=== 회원 결제 실패
+
+==== 주문 번호 null
+
+===== 요청
+
+include::{snippets}/payment-user-orderNumber-null-validation-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-orderNumber-null-validation-fail/request-headers.adoc[]
+include::{snippets}/payment-user-orderNumber-null-validation-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-orderNumber-null-validation-fail/http-response.adoc[]
+
+==== 주문 번호 빈 값
+
+===== 요청
+
+include::{snippets}/payment-user-orderNumber-empty-validation-test-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-orderNumber-empty-validation-test-fail/request-headers.adoc[]
+include::{snippets}/payment-user-orderNumber-empty-validation-test-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-orderNumber-empty-validation-test-fail/http-response.adoc[]
+
+==== 주문 번호 공백
+
+===== 요청
+
+include::{snippets}/payment-user-orderNumber-blank-validation-test-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-orderNumber-blank-validation-test-fail/request-headers.adoc[]
+include::{snippets}/payment-user-orderNumber-blank-validation-test-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-orderNumber-blank-validation-test-fail/http-response.adoc[]
+
+==== 주문 번호 20자리 초과
+
+===== 요청
+
+include::{snippets}/payment-user-orderNumber-max-over-size-validation-test-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-orderNumber-max-over-size-validation-test-fail/request-headers.adoc[]
+include::{snippets}/payment-user-orderNumber-max-over-size-validation-test-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-orderNumber-max-over-size-validation-test-fail/http-response.adoc[]
+
+==== 토스 페이먼츠 키 null
+
+===== 요청
+
+include::{snippets}/payment-user-toss-null-validation-test-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-toss-null-validation-test-fail/request-headers.adoc[]
+include::{snippets}/payment-user-toss-null-validation-test-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-toss-null-validation-test-fail/http-response.adoc[]
+
+==== 토스 페이먼츠 키 빈 값
+
+===== 요청
+
+include::{snippets}/payment-user-toss-empty-validation-test-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-toss-empty-validation-test-fail/request-headers.adoc[]
+include::{snippets}/payment-user-toss-empty-validation-test-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-toss-empty-validation-test-fail/http-response.adoc[]
+
+==== 토스 페이먼츠 키 공백
+
+===== 요청
+
+include::{snippets}/payment-user-toss-blank-validation-test-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-toss-blank-validation-test-fail/request-headers.adoc[]
+include::{snippets}/payment-user-toss-blank-validation-test-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-toss-blank-validation-test-fail/http-response.adoc[]
+
+==== 토스 페이먼츠 키 50자리 초과
+
+===== 요청
+
+include::{snippets}/payment-user-toss-max-over-size-validation-test-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-toss-max-over-size-validation-test-fail/request-headers.adoc[]
+include::{snippets}/payment-user-toss-max-over-size-validation-test-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-toss-max-over-size-validation-test-fail/http-response.adoc[]
+
+==== 결제 상태 null
+
+===== 요청
+
+include::{snippets}/payment-user-status-null-validation-test-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-status-null-validation-test-fail/request-headers.adoc[]
+include::{snippets}/payment-user-status-null-validation-test-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-status-null-validation-test-fail/http-response.adoc[]
+
+==== 결제 상태 빈 값
+
+===== 요청
+
+include::{snippets}/payment-user-status-empty-validation-test-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-status-empty-validation-test-fail/request-headers.adoc[]
+include::{snippets}/payment-user-status-empty-validation-test-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-status-empty-validation-test-fail/http-response.adoc[]
+
+==== 결제 상태 공백
+
+===== 요청
+
+include::{snippets}/payment-user-status-blank-validation-test-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-status-blank-validation-test-fail/request-headers.adoc[]
+include::{snippets}/payment-user-status-blank-validation-test-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-status-blank-validation-test-fail/http-response.adoc[]
+
+==== 결제 승인 시간 null
+
+===== 요청
+
+include::{snippets}/payment-user-requestAt-null-validation-test-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-requestAt-null-validation-test-fail/request-headers.adoc[]
+include::{snippets}/payment-user-requestAt-null-validation-test-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-requestAt-null-validation-test-fail/http-response.adoc
+
+==== 결제 승인 시간 빈 값
+
+===== 요청
+
+include::{snippets}/payment-user-requestAt-empty-validation-test-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-requestAt-empty-validation-test-fail/request-headers.adoc[]
+include::{snippets}/payment-user-requestAt-empty-validation-test-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-requestAt-empty-validation-test-fail/http-response.adoc[]
+
+==== 결제 승인 시간 공백
+
+===== 요청
+
+include::{snippets}/payment-user-requestAt-blank-validation-test-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-requestAt-blank-validation-test-fail/request-headers.adoc[]
+include::{snippets}/payment-user-requestAt-blank-validation-test-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-requestAt-blank-validation-test-fail/http-response.adoc[]
+
+==== 총액 null
+
+===== 요청
+
+include::{snippets}/payment-user-total-cost-null-validation-test-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-total-cost-null-validation-test-fail/request-headers.adoc[]
+include::{snippets}/payment-user-total-cost-null-validation-test-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-total-cost-null-validation-test-fail/http-response.adoc[]
+
+==== 총액 음수
+
+===== 요청
+
+include::{snippets}/payment-user-total-cost-negative-validation-test-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-total-cost-negative-validation-test-fail/request-headers.adoc[]
+include::{snippets}/payment-user-total-cost-negative-validation-test-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-total-cost-negative-validation-test-fail/http-response.adoc[]
+
+==== 총액 max 값 초과
+
+===== 요청
+
+include::{snippets}/payment-user-total-cost-max-over-validation-test-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-total-cost-max-over-validation-test-fail/request-headers.adoc[]
+include::{snippets}/payment-user-total-cost-max-over-validation-test-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-total-cost-max-over-validation-test-fail/http-response.adoc[]
+
+==== method null
+
+===== 요청
+
+include::{snippets}/payment-user-method-null-validation-test-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-method-null-validation-test-fail/request-headers.adoc[]
+include::{snippets}/payment-user-method-null-validation-test-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-method-null-validation-test-fail/http-response.adoc[]
+
+==== method 빈 값
+
+===== 요청
+
+include::{snippets}/payment-user-method-empty-validation-test-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-method-empty-validation-test-fail/request-headers.adoc[]
+include::{snippets}/payment-user-method-empty-validation-test-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-method-empty-validation-test-fail/http-response.adoc[]
+
+==== method 공백
+
+===== 요청
+
+include::{snippets}/payment-user-method-blank-validation-test-fail/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-user-method-blank-validation-test-fail/request-headers.adoc[]
+include::{snippets}/payment-user-method-blank-validation-test-fail/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-user-method-blank-validation-test-fail/http-response.adoc[]
+
+=== 주문 번호 결제 내역 조회
+
+===== 요청
+
+include::{snippets}/order-number-get-payment/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/order-number-get-payment/path-parameters.adoc[]
+
+===== 응답
+
+include::{snippets}/order-number-get-payment/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::{snippets}/order-number-get-payment/response-fields.adoc[]
+
+=== 결제 취소
+
+===== 요청
+
+include::{snippets}/payment-cancel/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::{snippets}/payment-cancel/request-fields.adoc[]
+
+===== 응답
+
+include::{snippets}/payment-cancel/http-response.adoc[]
+
