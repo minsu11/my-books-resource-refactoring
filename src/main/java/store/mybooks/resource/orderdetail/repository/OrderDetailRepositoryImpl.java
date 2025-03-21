@@ -51,7 +51,7 @@ public class OrderDetailRepositoryImpl extends QuerydslRepositorySupport impleme
 
     @Override
     public List<OrderDetailInfoResponse> getOrderDetailListByOrderNumber(String orderNumber) {
-        
+
         return from(orderDetail)
                 .join(image).on(image.book.eq(orderDetail.book))
                 .join(image.imageStatus, imageStatus)

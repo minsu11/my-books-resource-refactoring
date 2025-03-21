@@ -36,10 +36,13 @@ import store.mybooks.resource.error.Utils;
  * 2/20/24        newjaehun       최초 생성
  */
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/authors")
 public class AuthorRestController {
     private final AuthorService authorService;
+
+    public AuthorRestController(AuthorService authorService) {
+        this.authorService = authorService;
+    }
 
     /**
      * methodName : getAllAuthors

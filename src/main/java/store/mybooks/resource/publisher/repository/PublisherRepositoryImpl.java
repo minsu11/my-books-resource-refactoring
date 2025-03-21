@@ -44,7 +44,7 @@ public class PublisherRepositoryImpl extends QuerydslRepositorySupport implement
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .fetch();
-        
+
         long total = from(publisher).fetchCount();
         return new PageImpl<>(lists, pageable, total);
     }
