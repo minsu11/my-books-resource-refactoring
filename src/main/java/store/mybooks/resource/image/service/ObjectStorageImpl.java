@@ -4,10 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.http.HttpEntity;
@@ -113,6 +111,7 @@ public class ObjectStorageImpl implements ImageService {
             List<Image> contentImage =
                     imageRepository.findAllByBook_IdAndImageStatus_Id(book.getId(), contentImageStatus.getId());
 
+
             contentImage.forEach(this::deleteObject);
             for (MultipartFile file : content) {
                 saveImage(contentImageStatus, null, book, file);
@@ -140,6 +139,7 @@ public class ObjectStorageImpl implements ImageService {
 
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setBufferRequestBody(false);
+
         RestTemplate restTemplates = new RestTemplate(requestFactory);
 
         HttpMessageConverterExtractor<String> responseExtractor

@@ -1,9 +1,9 @@
 package store.mybooks.resource.user_grade_name.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,8 +26,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "user_grade_name")
 public class UserGradeName {
-
-
     @Id
     @Column(name = "user_grade_name_id")
     String id;

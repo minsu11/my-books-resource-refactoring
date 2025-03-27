@@ -1,7 +1,7 @@
 package store.mybooks.resource.elastic.entity;
 
 import java.time.LocalDateTime;
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.elasticsearch.annotations.Document;
