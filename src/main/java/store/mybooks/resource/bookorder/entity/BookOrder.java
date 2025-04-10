@@ -1,7 +1,7 @@
 package store.mybooks.resource.bookorder.entity;
 
 import java.time.LocalDate;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

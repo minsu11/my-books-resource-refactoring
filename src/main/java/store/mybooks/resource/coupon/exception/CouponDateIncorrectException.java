@@ -1,7 +1,7 @@
 package store.mybooks.resource.coupon.exception;
 
 import java.time.LocalDate;
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 
 /**
  * packageName    : store.mybooks.resource.coupon.exception

@@ -1,7 +1,7 @@
 package store.mybooks.resource.error.exception;
 
 import java.util.stream.Collectors;
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 import org.springframework.validation.BindingResult;
 
 /**

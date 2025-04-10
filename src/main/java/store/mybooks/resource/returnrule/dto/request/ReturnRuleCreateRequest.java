@@ -1,6 +1,6 @@
 package store.mybooks.resource.returnrule.dto.request;
 
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

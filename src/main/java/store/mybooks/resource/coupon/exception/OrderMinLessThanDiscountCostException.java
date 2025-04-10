@@ -1,6 +1,6 @@
 package store.mybooks.resource.coupon.exception;
 
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 
 /**
  * packageName    : store.mybooks.resource.coupon.exception

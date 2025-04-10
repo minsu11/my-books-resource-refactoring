@@ -8,6 +8,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -30,12 +31,10 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
  */
 @Configuration
 public class DatabaseConfig {
-    private final KeyConfig keyConfig;
     private final DatabaseProperties databaseProperties;
 
     @Autowired
-    public DatabaseConfig(KeyConfig keyConfig, DatabaseProperties databaseProperties) {
-        this.keyConfig = keyConfig;
+    public DatabaseConfig( DatabaseProperties databaseProperties) {
         this.databaseProperties = databaseProperties;
     }
 
@@ -44,9 +43,9 @@ public class DatabaseConfig {
         BasicDataSource dataSource = new BasicDataSource();
 
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setUrl(keyConfig.keyStore(databaseProperties.getUrl()));
-        dataSource.setUsername(keyConfig.keyStore(databaseProperties.getUserName()));
-        dataSource.setPassword(keyConfig.keyStore(databaseProperties.getPassword()));
+        dataSource.setUrl(databaseProperties.getUrl());
+        dataSource.setUsername(databaseProperties.getUserName());
+        dataSource.setPassword(databaseProperties.getPassword());
 
         dataSource.setInitialSize(databaseProperties.getInitialSize());
         dataSource.setMaxTotal(databaseProperties.getMaxTotal());
@@ -98,11 +97,17 @@ public class DatabaseConfig {
         return transactionManager;
     }
 
+    // spring boot 3.x 이상 버전부턴 이렇게 사용
+    // web client 사용하는 방법도 있음
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder
-                .setConnectTimeout(Duration.ofSeconds(10L))
-                .setReadTimeout(Duration.ofSeconds(10L))
+                .requestFactory(() -> {
+                    SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+                    factory.setConnectTimeout(5000); // 5초
+                    factory.setReadTimeout(5000);    // 5초
+                    return factory;
+                })
                 .build();
     }
 

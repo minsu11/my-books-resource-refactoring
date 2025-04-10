@@ -1,9 +1,7 @@
 package store.mybooks.resource.bookauthor.dto.request;
 
 import java.util.List;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -2,7 +2,8 @@ package store.mybooks.resource.returnrulename.controller;
 
 
 import java.util.List;
-import javax.validation.Valid;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

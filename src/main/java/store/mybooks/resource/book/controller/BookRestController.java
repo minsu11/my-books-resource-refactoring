@@ -2,7 +2,7 @@ package store.mybooks.resource.book.controller;
 
 import java.io.IOException;
 import java.util.List;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

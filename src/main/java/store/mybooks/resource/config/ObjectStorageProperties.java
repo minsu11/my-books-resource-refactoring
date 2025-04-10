@@ -19,7 +19,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @RequiredArgsConstructor
 @ConfigurationProperties(prefix = "storage")
 public class ObjectStorageProperties {
-    private final KeyConfig keyConfig;
     private String url;
     private String username;
     private String containerName;
@@ -28,26 +27,26 @@ public class ObjectStorageProperties {
     private String identity;
 
     public void setUrl(String url) {
-        this.url = keyConfig.keyStore(url);
+        this.url = url;
     }
 
     public void setUsername(String username) {
-        this.username = keyConfig.keyStore(username);
+        this.username = username;
     }
 
     public void setContainerName(String containerName) {
-        this.containerName = keyConfig.keyStore(containerName);
+        this.containerName = containerName;
     }
 
     public void setTenantId(String tenantId) {
-        this.tenantId = keyConfig.keyStore(tenantId);
+        this.tenantId = tenantId;
     }
 
     public void setPassword(String password) {
-        this.password = keyConfig.keyStore(password);
+        this.password = password;
     }
 
     public void setIdentity(String identity) {
-        this.identity = keyConfig.keyStore(identity);
+        this.identity = identity;
     }
 }

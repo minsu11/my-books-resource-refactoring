@@ -1,7 +1,8 @@
 package store.mybooks.resource.publisher.controller;
 
 import java.util.List;
-import javax.validation.Valid;
+import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

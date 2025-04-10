@@ -1,10 +1,7 @@
 package store.mybooks.resource.payment.dto.request;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
+
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,6 +30,7 @@ public class PayCreateRequest {
     private String status;
     @NotBlank
     private String requestedAt;
+
     @Positive
     @NotNull
     @Max(Integer.MAX_VALUE - 1)
