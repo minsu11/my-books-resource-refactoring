@@ -4,8 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -15,9 +14,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -36,7 +33,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -88,20 +87,35 @@ import store.mybooks.resource.user.service.UserService;
  */
 
 
-@WebMvcTest(value = UserRestController.class)
-@ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
-class UserRestControllerTest {
 
+
+@WebMvcTest(value = UserRestController.class)
+@Import(UserRestControllerTest.TestConfig.class)
+@ExtendWith(RestDocumentationExtension.class)
+class UserRestControllerTest {
+    @TestConfiguration
+    static class TestConfig{
+        @Bean
+        public UserService userService(){
+            return mock(UserService.class);
+        }
+
+        @Bean
+        public PointHistoryService pointHistoryService(){
+            return mock(PointHistoryService.class);
+        }
+
+    }
     @Autowired
     MockMvc mockMvc;
 
     @Autowired
     ObjectMapper objectMapper;
 
-    @MockBean
+    @Autowired
     UserService userService;
 
-    @MockBean
+    @Autowired
     PointHistoryService pointHistoryService;
 
     UserGetResponse userGetResponse1;
@@ -484,7 +498,7 @@ class UserRestControllerTest {
                 .andExpect(jsonPath("$.number").exists())
                 .andExpect(jsonPath("$.totalPages").exists())
                 .andDo(document("user-findAll",
-                        requestParameters(
+                        queryParameters(
                                 parameterWithName("page").description("요청 페이지 번호(0부터 시작, default = 0)"),
                                 parameterWithName("size").description("페이지 사이즈(default = 10)")
                         ),

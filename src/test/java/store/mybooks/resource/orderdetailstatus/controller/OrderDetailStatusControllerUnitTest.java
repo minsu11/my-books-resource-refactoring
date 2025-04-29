@@ -14,7 +14,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import store.mybooks.resource.orderdetailstatus.dto.response.OrderDetailStatusResponse;
@@ -31,15 +34,23 @@ import store.mybooks.resource.orderdetailstatus.service.OrderDetailStatusService
  * -----------------------------------------------------------<br>
  * 2/20/24        minsu11       최초 생성<br>
  */
+@Import(OrderDetailStatusControllerUnitTest.TestConfig.class)
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(value = OrderDetailStatusController.class)
 class OrderDetailStatusControllerUnitTest {
     @Autowired
     MockMvc mockMvc;
 
-
-    @MockBean
+    @Autowired
     OrderDetailStatusService orderDetailStatusService;
+
+    @TestConfiguration
+    static class TestConfig{
+        @Bean
+        OrderDetailStatusService orderDetailStatusService(){
+            return mock(OrderDetailStatusService.class);
+        }
+    }
 
 
     @Test

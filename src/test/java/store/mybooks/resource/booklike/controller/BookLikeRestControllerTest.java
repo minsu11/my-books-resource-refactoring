@@ -2,18 +2,14 @@ package store.mybooks.resource.booklike.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -25,8 +21,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -39,6 +39,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import store.mybooks.resource.book.dto.response.BookBriefResponse;
+import store.mybooks.resource.book.service.BookService;
 import store.mybooks.resource.booklike.service.BookLikeService;
 
 /**
@@ -52,18 +53,29 @@ import store.mybooks.resource.booklike.service.BookLikeService;
  * -----------------------------------------------------------<br/>
  * 3/7/24        newjaehun       최초 생성<br/>
  */
+
+@Import(BookLikeRestControllerTest.TestConfig.class)
 @WebMvcTest(BookLikeRestController.class)
 @ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 class BookLikeRestControllerTest {
+    @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private BookLikeService bookLikeService;
 
     private final String url = "/api/book-likes";
 
     private final Long userId = 1L;
     private final Long bookId = 5L;
+
+    @TestConfiguration
+    static class TestConfig{
+        @Bean
+        public BookService bookService() {
+            return mock(BookService.class);
+        }
+    }
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,
@@ -125,7 +137,7 @@ class BookLikeRestControllerTest {
                         requestHeaders(
                                 headerWithName("X-User-Id").description("User ID")
                         ),
-                        requestParameters(
+                        queryParameters(
                                 parameterWithName("page").description("페이지"),
                                 parameterWithName("size").description("사이즈")
                         ),

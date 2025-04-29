@@ -8,13 +8,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import java.util.List;
+
+import com.netflix.discovery.converters.Auto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -37,6 +41,7 @@ import store.mybooks.resource.returnrule.service.ReturnRuleService;
  * -----------------------------------------------------------<br>
  * 2/26/24        minsu11       최초 생성<br>
  */
+@Import(ReturnRuleRestControllerUnitTest.TestConfig.class)
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(value = ReturnRuleRestController.class)
 class ReturnRuleRestControllerUnitTest {
@@ -45,8 +50,16 @@ class ReturnRuleRestControllerUnitTest {
     MockMvc mockMvc;
 
 
-    @MockBean
+    @Autowired
     ReturnRuleService returnRuleService;
+
+    @TestConfiguration
+    static class TestConfig{
+        @Bean
+        ReturnRuleService returnRuleService(){
+            return mock(ReturnRuleService.class);
+        }
+    }
 
     @Test
     @DisplayName("반품 규정 id 조회 성공 테스트")

@@ -2,10 +2,7 @@ package store.mybooks.resource.author.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -26,7 +23,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -53,6 +53,7 @@ import store.mybooks.resource.author.service.AuthorService;
  * 2/20/24        newjaehun       최초 생성
  */
 
+@Import(AuthorRestControllerTest.TestConfig.class)
 @WebMvcTest(value = AuthorRestController.class)
 @ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 class AuthorRestControllerTest {
@@ -61,8 +62,16 @@ class AuthorRestControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @Autowired
     private AuthorService authorService;
+
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        public AuthorService authorService() {
+            return mock(AuthorService.class);
+        }
+    }
 
     private final String url = "/api/authors";
 

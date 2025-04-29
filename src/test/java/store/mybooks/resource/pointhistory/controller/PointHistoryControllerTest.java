@@ -2,9 +2,7 @@ package store.mybooks.resource.pointhistory.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -15,7 +13,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -32,7 +30,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -49,6 +50,7 @@ import store.mybooks.resource.pointhistory.dto.response.PointHistoryCreateRespon
 import store.mybooks.resource.pointhistory.dto.response.PointHistoryResponse;
 import store.mybooks.resource.pointhistory.dto.response.PointResponse;
 import store.mybooks.resource.pointhistory.dto.response.PointResponseForUser;
+import store.mybooks.resource.pointhistory.entity.PointHistory;
 import store.mybooks.resource.pointhistory.service.PointHistoryService;
 import store.mybooks.resource.pointrule.exception.PointRuleNotExistException;
 import store.mybooks.resource.pointrulename.exception.PointRuleNameNotExistException;
@@ -65,6 +67,7 @@ import store.mybooks.resource.user.exception.UserNotExistException;
  * -----------------------------------------------------------
  * 3/24/24          damho-lee          최초 생성
  */
+@Import(PointHistoryControllerTest.TestConfig.class)
 @WebMvcTest(value = PointHistoryController.class)
 @ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 class PointHistoryControllerTest {
@@ -73,9 +76,16 @@ class PointHistoryControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    @MockBean
+    @Autowired
     PointHistoryService pointHistoryService;
 
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        PointHistoryService pointHistoryService() {
+            return mock(PointHistoryService.class);
+        }
+    }
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,
                RestDocumentationContextProvider restDocumentation) {
@@ -158,7 +168,7 @@ class PointHistoryControllerTest {
                         requestHeaders(
                                 headerWithName("X-USER-ID").description("회원 아이디")
                         ),
-                        requestParameters(
+                        queryParameters(
                                 parameterWithName("page").description("요청 페이지 번호(0부터 시작, default = 0)"),
                                 parameterWithName("size").description("페이지 사이즈(default = 10)")
                         ),
@@ -221,7 +231,7 @@ class PointHistoryControllerTest {
                         requestHeaders(
                                 headerWithName("X-USER-ID").description("회원 아이디")
                         ),
-                        requestParameters(
+                        queryParameters(
                                 parameterWithName("page").description("요청 페이지 번호(0부터 시작, default = 0)"),
                                 parameterWithName("size").description("페이지 사이즈(default = 10)")
                         )));

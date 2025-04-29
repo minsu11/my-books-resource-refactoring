@@ -2,11 +2,7 @@ package store.mybooks.resource.coupon.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris;
@@ -14,9 +10,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -26,6 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.netflix.discovery.converters.Auto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,6 +30,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -67,6 +65,8 @@ import store.mybooks.resource.utils.TimeUtils;
  * -----------------------------------------------------------
  * 3/8/24          damho-lee          최초 생성
  */
+
+@Import(CouponRestControllerTest.TestConfig.class)
 @WebMvcTest(value = CouponRestController.class)
 @ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 class CouponRestControllerTest {
@@ -75,10 +75,17 @@ class CouponRestControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    @MockBean
+    @Autowired
     CouponService couponService;
 
     CouponCreateRequest couponCreateRequest;
+
+    static class TestConfig{
+        @Bean
+        CouponService couponService(){
+            return mock(CouponService.class);
+        }
+    }
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
@@ -175,7 +182,7 @@ class CouponRestControllerTest {
                 .andExpect(jsonPath("$.content[0].id").value(thirdCoupon.getId()))
                 .andExpect(jsonPath("$.content[1].id").value(fourthCoupon.getId()))
                 .andDo(document("coupon-get-page",
-                        requestParameters(
+                        queryParameters(
                                 parameterWithName("page").description("요청 페이지 번호(0부터 시작, default = 0)"),
                                 parameterWithName("size").description("페이지 사이즈(default = 10)")
                         ),

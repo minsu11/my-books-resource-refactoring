@@ -154,7 +154,7 @@ class BookOrderRestControllerTest {
                         requestHeaders(
                                 headerWithName("X-User-Id").description("회원 아이디")
                         ),
-                        requestParameters(
+                        queryParameters(
                                 parameterWithName("page").description("페이지"),
                                 parameterWithName("size").description("사이즈")
                         ),
@@ -231,7 +231,7 @@ class BookOrderRestControllerTest {
                 .andExpect(jsonPath("$.content[0].invoiceNumber").value("test invoice number"))
                 .andExpect(jsonPath("$.content[0].number").value("test order number"))
                 .andDo(document("book-admin-order-page",
-                        requestParameters(
+                        queryParameters(
                                 parameterWithName("page").description("페이지"),
                                 parameterWithName("size").description("사이즈")
                         ),

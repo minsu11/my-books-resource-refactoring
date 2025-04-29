@@ -1,8 +1,6 @@
 package store.mybooks.resource.bookstatus.controller;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -18,8 +16,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -39,12 +40,22 @@ import store.mybooks.resource.bookstatus.service.BookStatusService;
  * -----------------------------------------------------------<br/>
  * 2/23/24        newjaehun       최초 생성<br/>
  */
+@Import(BookStatusRestControllerTest.TestConfig.class)
 @WebMvcTest(BookStatusRestController.class)
-@ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
+@ExtendWith({RestDocumentationExtension.class})
 class BookStatusRestControllerTest {
     private MockMvc mockMvc;
-    @MockBean
+
+    @Autowired
     private BookStatusService bookStatusService;
+
+    @TestConfiguration
+    static class TestConfig{
+        @Bean
+        public BookStatusService bookStatusService(){
+            return mock(BookStatusService.class);
+        }
+    }
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,

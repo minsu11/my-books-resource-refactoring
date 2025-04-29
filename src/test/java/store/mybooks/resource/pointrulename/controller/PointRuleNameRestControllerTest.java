@@ -20,7 +20,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -45,6 +48,7 @@ import store.mybooks.resource.pointrulename.service.PointRuleNameService;
  * 3/7/24        minsu11       최초 생성<br>
  */
 
+@Import(PointRuleNameRestControllerTest.TestConfig.class)
 @ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 @WebMvcTest(PointRuleNameRestController.class)
 class PointRuleNameRestControllerTest {
@@ -53,8 +57,16 @@ class PointRuleNameRestControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @Autowired
     private PointRuleNameService pointRuleNameService;
+
+    @TestConfiguration
+    static class TestConfig{
+        @Bean
+        public PointRuleNameService pointRuleNameService(){
+            return mock(PointRuleNameService.class);
+        }
+    }
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,

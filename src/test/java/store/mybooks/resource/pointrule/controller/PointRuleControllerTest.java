@@ -19,7 +19,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -49,6 +51,7 @@ import store.mybooks.resource.pointrule.service.PointRuleService;
  * -----------------------------------------------------------<br>
  * 3/8/24        minsu11       최초 생성<br>
  */
+@Import(PointRuleControllerTest.TestContextConfiguration.class)
 @ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 @WebMvcTest(PointRuleController.class)
 class PointRuleControllerTest {
@@ -57,8 +60,17 @@ class PointRuleControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @Autowired
     private PointRuleService pointRuleService;
+
+    @TestConfiguration
+    static class TestContextConfiguration {
+        @Bean
+        PointRuleService pointRuleService() {
+            return mock(PointRuleService.class);
+        }
+    }
+
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,

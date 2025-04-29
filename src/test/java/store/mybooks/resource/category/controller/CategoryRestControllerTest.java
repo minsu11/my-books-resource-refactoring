@@ -5,10 +5,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris;
@@ -16,9 +13,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -36,10 +31,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -82,16 +78,26 @@ import store.mybooks.resource.error.RequestValidationFailedException;
  * -----------------------------------------------------------
  * 2/21/24          damho-lee          최초 생성
  */
+@Import(CategoryRestControllerTest.TestConfig.class)
 @WebMvcTest(value = CategoryRestController.class)
-@ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
+@ExtendWith({RestDocumentationExtension.class})
 class CategoryRestControllerTest {
     MockMvc mockMvc;
 
     @Autowired
     ObjectMapper objectMapper;
 
-    @MockBean
+    @Autowired
     CategoryService categoryService;
+
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        public CategoryService categoryService() {
+            return mock(CategoryService.class);
+        }
+    }
+
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,
@@ -128,7 +134,7 @@ class CategoryRestControllerTest {
                 .andExpect(jsonPath("$.content[1].name").value("childCategory"))
                 .andExpect(jsonPath("$.content[1].parentCategoryName").value("parentCategory"))
                 .andDo(document("category-get-page",
-                        requestParameters(
+                        queryParameters(
                                 parameterWithName("page").description("요청 페이지 번호(0부터 시작, default = 0)"),
                                 parameterWithName("size").description("페이지 사이즈(default = 9)")
                         ),
@@ -507,7 +513,7 @@ class CategoryRestControllerTest {
                         pathParameters(
                                 parameterWithName("categoryId").description("카테고리 아이디")
                         ),
-                        requestParameters(
+                        queryParameters(
                                 parameterWithName("page").description("요청 페이지 번호(0부터 시작, default = 0)"),
                                 parameterWithName("size").description("페이지 사이즈(default = 10)")
                         ),

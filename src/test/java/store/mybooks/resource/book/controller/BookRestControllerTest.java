@@ -3,20 +3,14 @@ package store.mybooks.resource.book.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestPartFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -35,7 +29,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -83,6 +79,7 @@ import store.mybooks.resource.utils.TimeUtils;
  * 2/25/24        newjaehun       최초 생성<br/>
  */
 
+@Import(BookRestControllerTest.BookRestControllerTestContextConfiguration.class)
 @WebMvcTest(BookRestController.class)
 @ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 class BookRestControllerTest {
@@ -91,8 +88,17 @@ class BookRestControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @Autowired
     private BookService bookService;
+
+    @TestConfiguration
+    static class BookRestControllerTestContextConfiguration {
+        @Bean
+        BookService bookService() {
+            return mock(BookService.class);
+        }
+    }
+
 
     private final String url = "/api/books";
 
@@ -421,7 +427,7 @@ class BookRestControllerTest {
                 .andExpect(jsonPath("$.content[1].cost").value(response2.getCost()))
                 .andExpect(jsonPath("$.content[1].saleCost").value(response2.getSaleCost()))
                 .andDo(document("book-getBookBrief",
-                        requestParameters(
+                        queryParameters(
                                 parameterWithName("page").description("페이지"),
                                 parameterWithName("size").description("사이즈")
                         ),

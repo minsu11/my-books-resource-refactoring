@@ -18,7 +18,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -49,6 +51,7 @@ import store.mybooks.resource.wrap.service.WrapService;
  * -----------------------------------------------------------<br>
  * 2/27/24        minsu11       최초 생성<br>
  */
+@Import(WrapRestControllerUnitTest.TestContextConfiguration.class)
 @ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 @WebMvcTest(value = WrapRestController.class)
 class WrapRestControllerUnitTest {
@@ -57,8 +60,16 @@ class WrapRestControllerUnitTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    @MockBean
+    @Autowired
     WrapService wrapService;
+
+    @TestConfiguration
+    static class TestContextConfiguration {
+        @Bean
+        WrapService wrapService() {
+            return mock(WrapService.class);
+        }
+    }
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,
@@ -114,7 +125,7 @@ class WrapRestControllerUnitTest {
                 .andExpect(jsonPath("$.content[1].cost").value(wrapPageResponses.get(1).getCost()))
                 .andExpect(jsonPath("$.content[1].isAvailable").value(wrapPageResponses.get(1).getIsAvailable()))
                 .andDo(document("wrap-page-find-success",
-                        requestParameters(
+                        queryParameters(
                                 parameterWithName("page").description("페이지"),
                                 parameterWithName("size").description("사이즈")
                         ),

@@ -1,10 +1,7 @@
 package store.mybooks.resource.delivery_rule.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -32,7 +29,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -55,14 +55,23 @@ import store.mybooks.resource.delivery_rule.service.DeliveryRuleService;
  * -----------------------------------------------------------
  * 2/18/24        Fiat_lux       최초 생성
  */
+@Import(DeliveryRuleControllerTest.TestConfig.class)
 @WebMvcTest(value = DeliveryRuleController.class)
 @ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 class DeliveryRuleControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private DeliveryRuleService deliveryRuleService;
+
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        DeliveryRuleService deliveryRuleService() {
+            return mock(DeliveryRuleService.class);
+        }
+    }
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,
