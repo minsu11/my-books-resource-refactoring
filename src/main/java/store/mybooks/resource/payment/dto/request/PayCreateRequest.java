@@ -35,6 +35,7 @@ public class PayCreateRequest {
     @NotNull
     @Max(Integer.MAX_VALUE - 1)
     private Integer totalAmount;
+
     @NotBlank
     private String method;
 }

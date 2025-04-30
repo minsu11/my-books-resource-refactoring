@@ -22,7 +22,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -48,22 +51,38 @@ import store.mybooks.resource.payment.service.PaymentService;
  * -----------------------------------------------------------<br>
  * 3/26/24        minsu11       최초 생성<br>
  */
+@Import(PaymentRestControllerTest.TestConfig.class)
 @ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 @WebMvcTest(PaymentRestController.class)
 class PaymentRestControllerTest {
-    @MockBean
+    @Autowired
     private PaymentService paymentService;
-
 
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private TotalOrderService totalOrderService;
+
     private final String url = "/api/pays";
+
     @Autowired
     ObjectMapper objectMapper;
 
     private Long userId = 1L;
+
+    @TestConfiguration
+    static class TestConfig{
+        @Bean
+        TotalOrderService totalOrderService(){
+            return mock(TotalOrderService.class);
+        }
+
+        @Bean
+        PaymentService paymentService(){
+            return mock(PaymentService.class);
+        }
+    }
+
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,

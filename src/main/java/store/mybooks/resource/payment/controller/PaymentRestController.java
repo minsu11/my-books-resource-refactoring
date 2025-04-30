@@ -71,6 +71,7 @@ public class PaymentRestController {
                                                  BindingResult bindingResult) {
 
         Utils.validateRequest(bindingResult);
+
         PayCreateResponse response = totalOrderService.payUser(request, userId);
 
         return ResponseEntity
