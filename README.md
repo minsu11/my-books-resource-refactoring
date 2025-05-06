@@ -3,6 +3,10 @@
 - 도서 팀 프로젝트 local 환경 설정
 - code refactoring 및 기술 공부
 
+## 제일 먼저 할일
+
+- [ ] test code 에러 및 실패 부분 리팩토링
+- [ ] test code 중복된 코드 부분들 리팩토링
 
 ## 리팩토링 할 일
 

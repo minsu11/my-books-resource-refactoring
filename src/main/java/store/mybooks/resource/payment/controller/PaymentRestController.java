@@ -48,13 +48,11 @@ public class PaymentRestController {
      * @return the response entity
      */
     @PostMapping("/non/user")
-    public ResponseEntity<PayCreateResponse> createPayment(@Valid @RequestBody PayCreateRequest request,
-                                                           BindingResult bindingResult
-    ) {
-        Utils.validateRequest(bindingResult);
+    public ResponseEntity<PayCreateResponse> createPayment(@Valid @RequestBody PayCreateRequest request) {
+        PayCreateResponse response =totalOrderService.payUser(request, 0L) ;
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(totalOrderService.payUser(request, 0L));
+                .body(response);
 
     }
 
@@ -67,10 +65,9 @@ public class PaymentRestController {
      */
     @PostMapping
     public ResponseEntity<PayCreateResponse> pay(@Valid @RequestBody PayCreateRequest request,
-                                                 @RequestHeader(name = HeaderProperties.USER_ID) Long userId,
-                                                 BindingResult bindingResult) {
+                                                 @RequestHeader(name = HeaderProperties.USER_ID) Long userId
+                                                 ) {
 
-        Utils.validateRequest(bindingResult);
 
         PayCreateResponse response = totalOrderService.payUser(request, userId);
 

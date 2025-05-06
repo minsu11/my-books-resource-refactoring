@@ -22,12 +22,15 @@ public class PayCreateRequest {
     @Size(max = 20)
     @NotBlank
     private String orderNumber;
+
     @NotBlank
     @Size(max = 50)
     private String paymentKey;
+
     @Size(max = 20)
     @NotBlank
     private String status;
+
     @NotBlank
     private String requestedAt;
 

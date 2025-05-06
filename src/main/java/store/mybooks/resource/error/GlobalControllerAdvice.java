@@ -3,6 +3,7 @@ package store.mybooks.resource.error;
 import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import store.mybooks.resource.book.exception.BookNotExistException;
@@ -41,6 +42,8 @@ import store.mybooks.resource.user_status.exception.UserStatusNotExistException;
 import store.mybooks.resource.usercoupon.exception.UserCouponAlreadyUsedException;
 import store.mybooks.resource.usercoupon.exception.UserCouponNotExistsException;
 import store.mybooks.resource.usercoupon.exception.UserCouponNotUsedException;
+
+import java.net.BindException;
 
 /**
  * packageName    : store.mybooks.resource.error
@@ -106,7 +109,7 @@ public class GlobalControllerAdvice {
      * @return ResponseEntity
      */
     @ExceptionHandler({ValidationException.class, RequestValidationFailedException.class, BookStockException.class,
-            CouponInCompatibleType.class})
+            CouponInCompatibleType.class, MethodArgumentNotValidException.class, BindException.class})
     public ResponseEntity<String> validationException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

@@ -23,17 +23,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import store.mybooks.resource.bookorder.service.TotalOrderService;
+import store.mybooks.resource.error.GlobalControllerAdvice;
 import store.mybooks.resource.payment.dto.request.PayCancelRequest;
 import store.mybooks.resource.payment.dto.request.PayCreateRequest;
 import store.mybooks.resource.payment.dto.response.PayCreateResponse;
@@ -51,7 +52,8 @@ import store.mybooks.resource.payment.service.PaymentService;
  * -----------------------------------------------------------<br>
  * 3/26/24        minsu11       최초 생성<br>
  */
-@Import(PaymentRestControllerTest.TestConfig.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@Import({PaymentRestControllerTest.TestConfig.class, GlobalControllerAdvice.class})
 @ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 @WebMvcTest(PaymentRestController.class)
 class PaymentRestControllerTest {
@@ -83,6 +85,19 @@ class PaymentRestControllerTest {
         }
     }
 
+    // test 내 중복된 구조 리팩토링을 위해 테스트 메서드 선언
+    private PayCreateRequest createRequest(String orderNumber, String paymentKey, String status,
+                                           String requestedAt, Integer totalAmount, String method) {
+        PayCreateRequest request = new PayCreateRequest();
+        ReflectionTestUtils.setField(request, "orderNumber", orderNumber);
+        ReflectionTestUtils.setField(request, "paymentKey", paymentKey);
+        ReflectionTestUtils.setField(request, "status", status);
+        ReflectionTestUtils.setField(request, "requestedAt", requestedAt);
+        ReflectionTestUtils.setField(request, "totalAmount", totalAmount);
+        ReflectionTestUtils.setField(request, "method", method);
+        return request;
+    }
+
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,
@@ -93,17 +108,15 @@ class PaymentRestControllerTest {
                 .build();
     }
 
+
+
     @Test
     @DisplayName("비회원 결제 처리 테스트")
     void givenPayCreateRequest_whenPayUser_thenReturnPayCreateResponse() throws Exception {
         PayCreateResponse response = new PayCreateResponse(1L, "toss payment key", 10);
-        PayCreateRequest request = new PayCreateRequest();
-        ReflectionTestUtils.setField(request, "orderNumber", "testOrderNumber");
-        ReflectionTestUtils.setField(request, "paymentKey", "toss payment key");
-        ReflectionTestUtils.setField(request, "status", "test status");
-        ReflectionTestUtils.setField(request, "requestedAt", "2022-01-03");
-        ReflectionTestUtils.setField(request, "totalAmount", 1000);
-        ReflectionTestUtils.setField(request, "method", "test method");
+        PayCreateRequest request = createRequest("testOrderNumber",
+                "toss payment key","test status", "2022-01-03",1000,"test method");
+
 
         when(totalOrderService.payUser(any(), anyLong())).thenReturn(response);
 
@@ -135,14 +148,7 @@ class PaymentRestControllerTest {
     @Test
     @DisplayName("비회원 결제 처리 유효성 실패 검사(주문 번호 null)")
     void givenPayCreateRequest_whenCreatePayment() throws Exception {
-        PayCreateRequest orderNullRequest = new PayCreateRequest();
-        ReflectionTestUtils.setField(orderNullRequest, "orderNumber", null);
-        ReflectionTestUtils.setField(orderNullRequest, "paymentKey", "toss payment key");
-        ReflectionTestUtils.setField(orderNullRequest, "status", "test status");
-        ReflectionTestUtils.setField(orderNullRequest, "requestedAt", "2022-01-03");
-        ReflectionTestUtils.setField(orderNullRequest, "totalAmount", 1000);
-        ReflectionTestUtils.setField(orderNullRequest, "method", "test method");
-
+        PayCreateRequest orderNullRequest = createRequest(null,"toss payment key", "test status", "2022-01-03",1000,"test method");
 
         mockMvc.perform(post(url + "/non/user")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -163,14 +169,8 @@ class PaymentRestControllerTest {
     @Test
     @DisplayName("비회원 결제 처리 유효성 실패 검사(주문 번호 빈값)")
     void givenPayCreateRequestOrderNumberEmpty_whenCreatePayment() throws Exception {
-        PayCreateRequest orderNumberEmptyRequest = new PayCreateRequest();
-        ReflectionTestUtils.setField(orderNumberEmptyRequest, "orderNumber", "");
-        ReflectionTestUtils.setField(orderNumberEmptyRequest, "paymentKey", "toss payment key");
-        ReflectionTestUtils.setField(orderNumberEmptyRequest, "status", "test status");
-        ReflectionTestUtils.setField(orderNumberEmptyRequest, "requestedAt", "2022-01-03");
-        ReflectionTestUtils.setField(orderNumberEmptyRequest, "totalAmount", 1000);
-        ReflectionTestUtils.setField(orderNumberEmptyRequest, "method", "test method");
-
+        PayCreateRequest orderNumberEmptyRequest = createRequest("","toss payment key",
+                "test status", "2022-01-03",1000,"test method");
 
         mockMvc.perform(post(url + "/non/user")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -192,14 +192,7 @@ class PaymentRestControllerTest {
     @Test
     @DisplayName("비회원 결제 처리 유효성 실패 검사(주문 번호 공백)")
     void givenPayCreateRequestOrderNumberBlank_whenCreatePayment() throws Exception {
-        PayCreateRequest orderNumberBlankRequest = new PayCreateRequest();
-        ReflectionTestUtils.setField(orderNumberBlankRequest, "orderNumber", " ");
-        ReflectionTestUtils.setField(orderNumberBlankRequest, "paymentKey", "toss payment key");
-        ReflectionTestUtils.setField(orderNumberBlankRequest, "status", "test status");
-        ReflectionTestUtils.setField(orderNumberBlankRequest, "requestedAt", "2022-01-03");
-        ReflectionTestUtils.setField(orderNumberBlankRequest, "totalAmount", 1000);
-        ReflectionTestUtils.setField(orderNumberBlankRequest, "method", "test method");
-
+        PayCreateRequest orderNumberBlankRequest = createRequest(" ", "toss payment key", "test status", "2022-01-03", 1000, "test method");
 
         mockMvc.perform(post(url + "/non/user")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -220,14 +213,8 @@ class PaymentRestControllerTest {
     @Test
     @DisplayName("비회원 결제 처리 유효성 실패 검사(주문 번호 20자리 넘어감)")
     void givenPayCreateRequestOrderNumberMaxOverSize_whenCreatePayment() throws Exception {
-        PayCreateRequest orderNumberMaxOverSizeRequest = new PayCreateRequest();
-        ReflectionTestUtils.setField(orderNumberMaxOverSizeRequest, "orderNumber", "test123451sdsadawqqwqfasasfasfwqasda");
-        ReflectionTestUtils.setField(orderNumberMaxOverSizeRequest, "paymentKey", "toss payment key");
-        ReflectionTestUtils.setField(orderNumberMaxOverSizeRequest, "status", "test status");
-        ReflectionTestUtils.setField(orderNumberMaxOverSizeRequest, "requestedAt", "2022-01-03");
-        ReflectionTestUtils.setField(orderNumberMaxOverSizeRequest, "totalAmount", 1000);
-        ReflectionTestUtils.setField(orderNumberMaxOverSizeRequest, "method", "test method");
-
+        PayCreateRequest orderNumberMaxOverSizeRequest = createRequest("test123451sdsadawqqwqfasasfasfwqasda", "toss payment key",
+                "test status", "2022-01-03", 1000, "test method");
 
         mockMvc.perform(post(url + "/non/user")
                         .contentType(MediaType.APPLICATION_JSON)
